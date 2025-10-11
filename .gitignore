@@ -40,7 +40,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-
+.pnpm-store/
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
@@ -137,3 +137,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Vsual Studio Code
+.vscode/*

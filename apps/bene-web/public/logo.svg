@@ -1,0 +1,23 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .heavy {
+      font: bold 40px 'Segoe UI', sans-serif;
+      fill: #0c2d48;
+    }
+    .light {
+      font: bold 40px 'Segoe UI', sans-serif;
+      fill: #007bff;
+    }
+    @media (prefers-color-scheme: dark) {
+      .heavy {
+        fill: #f0f8ff;
+      }
+      .light {
+        fill: #b3d7ff;
+      }
+    }
+  </style>
+  <text x="10" y="45" class="heavy">Bene</text>
+  <text x="105" y="45" class="light">Fit</text>
+  <path d="M175 20 L190 20 L190 25 L195 25 L195 35 L190 35 L190 40 L175 40 L175 35 L170 35 L170 25 L175 25 Z" fill="#007bff" />
+</svg>
