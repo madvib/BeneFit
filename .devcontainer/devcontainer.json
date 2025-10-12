@@ -7,7 +7,7 @@
   },
   "containerEnv": {
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
-    "PNPM_HOME": "/home/root/.local/share/pnpm/"
+    "PNPM_HOME": "/root/.local/share/pnpm/"
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
@@ -15,8 +15,7 @@
   "mounts": [
     "source=global-node_modules,target=/usr/local/lib/node_modules,type=volume",
     "source=vibe-kanban,target=/root/.local/share/vibe-kanban,type=volume",
-    "source=pnpm_home,target=/home/root/.local/share/pnpm/,type=volume"
-    // "source=pnpm-store,target=/home/node/.pnpm-store,type=volume"
+    "source=pnpm_home,target=/root/.local/share/pnpm/,type=volume"
   ],
   "postCreateCommand": "pnpm install", //sudo chown -R node:node $PNPM_HOME && pnpm config set store-dir $PNPM_HOME/store && 
   // 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.

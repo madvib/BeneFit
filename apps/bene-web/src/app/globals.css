@@ -7,6 +7,11 @@
   --primary-foreground: #ffffff;
   --secondary: #b3d7ff;
   --secondary-foreground: #0c2d48;
+  --muted: #e9ecef;
+  --muted-foreground: #6c757d;
+  --accent: #f8f9fa;
+  --accent-foreground: #212529;
+  --ring: #86b7fe;
 }
 
 @theme inline {
@@ -16,19 +21,27 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c2d48;
-    --foreground: #f0f8ff;
-    --primary: #b3d7ff;
-    --primary-foreground: #0c2d48;
-    --secondary: #007bff;
-    --secondary-foreground: #ffffff;
-  }
+.dark {
+  --background: #0c2d48;
+  --foreground: #f0f8ff;
+  --primary: #b3d7ff;
+  --primary-foreground: #0c2d48;
+  --secondary: #007bff;
+  --secondary-foreground: #ffffff;
+  --muted: #2b3440;
+  --muted-foreground: #9ca3af;
+  --accent: #1f2937;
+  --accent-foreground: #f9fafb;
+  --ring: #6366f1;
 }
 
 body {
@@ -47,4 +60,8 @@ body {
 
 .btn-secondary {
   @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+}
+
+.btn-ghost {
+  @apply hover:bg-accent hover:text-accent-foreground;
 }

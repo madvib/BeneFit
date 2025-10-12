@@ -6,11 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.18.2",
   "dependencies": {
     "turbo": "^2.5.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
