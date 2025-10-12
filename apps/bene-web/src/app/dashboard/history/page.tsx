@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SearchFilterBar from '@/components/common/SearchFilterBar';
 import { useState } from 'react';
 
 interface Workout {
@@ -56,6 +57,13 @@ export default function HistoryPage() {
     return matchesSearch && matchesTime;
   });
 
+  const filterOptions = [
+    { value: 'all', label: 'All Time' },
+    { value: 'week', label: 'Last 7 Days' },
+    { value: 'month', label: 'Last 30 Days' },
+    { value: 'quarter', label: 'Last 90 Days' }
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header isLoggedIn={true} />
@@ -67,45 +75,16 @@ export default function HistoryPage() {
           <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <h3 className="text-2xl font-bold">Recent Workouts</h3>
             
-            <div className="flex flex-wrap gap-3 w-full md:w-auto">
-              <div className="relative flex-grow md:flex-grow-0">
-                <input
-                  type="text"
-                  placeholder="Search workouts..."
-                  className="w-full md:w-64 px-4 py-2 rounded-lg border border-muted bg-background"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button 
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                    onClick={() => setSearchTerm('')}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              
-              <select 
-                className="bg-background border border-muted rounded-lg p-2"
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value)}
-              >
-                <option value="all">All Time</option>
-                <option value="week">Last 7 Days</option>
-                <option value="month">Last 30 Days</option>
-                <option value="quarter">Last 90 Days</option>
-              </select>
-              
-              <button className="btn btn-primary flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-                Export
-              </button>
-            </div>
+            <SearchFilterBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filterOptions={filterOptions}
+              selectedFilter={timeFilter}
+              onFilterChange={setTimeFilter}
+              onExport={() => console.log('Exporting data')}
+              placeholder="Search workouts..."
+              showExportButton={true}
+            />
           </div>
           
           {/* Table Headings */}

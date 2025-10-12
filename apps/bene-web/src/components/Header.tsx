@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import AccountDropdown from '@/components/AccountDropdown';
 import PublicNav from '@/components/PublicNav';

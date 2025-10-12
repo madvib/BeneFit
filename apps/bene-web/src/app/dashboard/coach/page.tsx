@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RecommendationCard from '@/components/common/RecommendationCard';
 import { useState } from 'react';
 
 interface Chat {
@@ -197,16 +198,14 @@ export default function CoachPage() {
                 
                 <div className="space-y-4">
                   {recommendations.map((rec) => (
-                    <div key={rec.id} className="p-4 bg-background rounded-lg border border-muted">
-                      <div className="flex justify-between">
-                        <h4 className="font-medium">{rec.title}</h4>
-                        <span className="text-xs bg-muted px-2 py-1 rounded">
-                          {rec.category}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-2">{rec.description}</p>
-                      <button className="mt-3 text-sm btn btn-ghost">Learn More</button>
-                    </div>
+                    <RecommendationCard
+                      key={rec.id}
+                      id={rec.id}
+                      title={rec.title}
+                      description={rec.description}
+                      category={rec.category}
+                      onLearnMore={() => console.log(`Learning more about ${rec.title}`)}
+                    />
                   ))}
                 </div>
               </div>

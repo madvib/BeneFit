@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { formatTimeAgo } from '@/utils/timeUtils';
+import { Card, EmptyState, LoadingSpinner } from '@/components';
 
 type ActivityType = 'workout' | 'nutrition' | 'goal' | 'achievement' | 'progress';
 
@@ -140,50 +142,22 @@ export default function ActivityFeed() {
     }
   };
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffDays > 0) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    } else if (diffHours > 0) {
-      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    } else {
-      return 'Just now';
-    }
-  };
+  // Remove the local formatTime function since we're using the utility function
 
   if (loading) {
     return (
-      <div className="bg-secondary p-6 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-2xl font-bold">Activity Feed</h3>
-        </div>
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="animate-pulse flex space-x-4">
-              <div className="rounded-full bg-muted h-12 w-12"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-4 bg-muted rounded"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Card title="Activity Feed" className="h-full">
+        <LoadingSpinner />
+      </Card>
     );
   }
 
   return (
-    <div className="bg-secondary p-6 rounded-lg shadow-md h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-2xl font-bold">Activity Feed</h3>
-        <button className="btn btn-ghost text-sm">View All</button>
-      </div>
-      
+    <Card 
+      title="Activity Feed" 
+      actions={<button className="btn btn-ghost text-sm">View All</button>}
+      className="h-full"
+    >
       <div className="space-y-4">
         {activities.length > 0 ? (
           activities.map((activity) => (
@@ -197,7 +171,7 @@ export default function ActivityFeed() {
               <div className="flex-1">
                 <div className="flex justify-between">
                   <h4 className="font-semibold">{activity.title}</h4>
-                  <span className="text-sm text-muted-foreground">{formatTime(activity.timestamp)}</span>
+                  <span className="text-sm text-muted-foreground">{formatTimeAgo(activity.timestamp)}</span>
                 </div>
                 <p className="text-foreground/80 text-sm mt-1">{activity.description}</p>
                 
@@ -233,9 +207,21 @@ export default function ActivityFeed() {
             </div>
           ))
         ) : (
-          <p className="text-muted-foreground italic">No recent activity</p>
+          <EmptyState
+            title="No Recent Activity"
+            description="There's no recent activity to display. Start working out to see your activity feed!"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+            action={{
+              label: "Start Workout",
+              onClick: () => console.log("Start workout clicked")
+            }}
+          />
         )}
       </div>
-    </div>
+    </Card>
   );
 }
