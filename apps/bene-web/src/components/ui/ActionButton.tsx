@@ -1,3 +1,5 @@
+'use client';
+
 interface ActionButtonProps {
   onClick: () => void;
   icon: React.ReactNode;

@@ -1,3 +1,5 @@
+'use client';
+
 interface SearchFilterBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;

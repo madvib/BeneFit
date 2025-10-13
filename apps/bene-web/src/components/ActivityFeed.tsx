@@ -4,89 +4,28 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { formatTimeAgo } from '@/utils/timeUtils';
 import { Card, EmptyState, LoadingSpinner } from '@/components';
+import { getActivityFeed, ActivityItem } from '@/data/services/mockDataService';
 
 type ActivityType = 'workout' | 'nutrition' | 'goal' | 'achievement' | 'progress';
-
-interface ActivityItem {
-  id: number;
-  type: ActivityType;
-  title: string;
-  description: string;
-  timestamp: string; // ISO date string
-  user: string;
-  avatar: string;
-  duration?: string;
-  calories?: number;
-  value?: number;
-  goal?: number;
-}
 
 export default function ActivityFeed() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock data for the activity feed
+  // Fetch activity feed data
   useEffect(() => {
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      const mockActivities: ActivityItem[] = [
-        {
-          id: 1,
-          type: 'workout',
-          title: 'Completed 5K Run',
-          description: 'Great pace today! Finished with a new personal best time.',
-          timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-          user: 'Alex Johnson',
-          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-          duration: '28:45',
-        },
-        {
-          id: 2,
-          type: 'nutrition',
-          title: 'Lunch Added',
-          description: 'Grilled chicken salad with vegetables',
-          timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
-          user: 'Sarah Miller',
-          avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-          calories: 420,
-        },
-        {
-          id: 3,
-          type: 'goal',
-          title: 'New Goal Set',
-          description: 'Run 50 miles this month',
-          timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-          user: 'Mike Thompson',
-          avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-          value: 12,
-          goal: 50,
-        },
-        {
-          id: 4,
-          type: 'achievement',
-          title: 'Milestone Reached',
-          description: 'Congratulations on completing 30 consecutive days of exercise!',
-          timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-          user: 'You',
-          avatar: 'https://randomuser.me/api/portraits/men/97.jpg',
-        },
-        {
-          id: 5,
-          type: 'progress',
-          title: 'Weight Loss Progress',
-          description: 'Lost 2 lbs this week',
-          timestamp: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-          user: 'Emma Davis',
-          avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-          value: 2,
-        },
-      ];
-      
-      setActivities(mockActivities);
-      setLoading(false);
-    }, 500);
+    const fetchActivities = async () => {
+      try {
+        const activityData = await getActivityFeed();
+        setActivities(activityData);
+      } catch (error) {
+        console.error('Error fetching activity feed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchActivities();
   }, []);
 
   const getActivityIcon = (type: ActivityType) => {

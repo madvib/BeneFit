@@ -9,10 +9,10 @@ import PublicNav from '@/components/PublicNav';
 import { usePathname } from 'next/navigation';
 
 type HeaderProps = {
-  isLoggedIn?: boolean;
+  variant?: 'marketing' | 'user';
 };
 
-export default function Header({ isLoggedIn = false }: HeaderProps) {
+export default function Header({ variant = 'marketing' }: HeaderProps) {
   const pathname = usePathname();
 
   return (
@@ -28,25 +28,25 @@ export default function Header({ isLoggedIn = false }: HeaderProps) {
           />
         </Link>
         
-        {isLoggedIn ? (
+        {variant === 'user' ? (
           <div className="flex items-center gap-4">
             <DashboardNav 
               items={[
-                { href: '/dashboard', label: 'Feeds' },
-                { href: '/dashboard/history', label: 'History' },
-                { href: '/dashboard/goals', label: 'Goals' },
-                { href: '/dashboard/plan', label: 'Plan' },
-                { href: '/dashboard/coach', label: 'Coach' }
+                { href: '/feed', label: 'Feeds' },
+                { href: '/history', label: 'History' },
+                { href: '/goals', label: 'Goals' },
+                { href: '/plan', label: 'Plan' },
+                { href: '/coach', label: 'Coach' }
               ]} 
             />
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <AccountDropdown isLoggedIn={isLoggedIn} />
+              <AccountDropdown isLoggedIn={true} />
             </div>
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <PublicNav isLoggedIn={isLoggedIn} />
+            <PublicNav isLoggedIn={false} />
             <ThemeToggle />
             <Link href="/login" className="btn btn-secondary">
               Login

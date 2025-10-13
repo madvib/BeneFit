@@ -14,7 +14,7 @@ export default function PageContainer({
   className = '' 
 }: PageContainerProps) {
   return (
-    <main className={`flex-grow container mx-auto p-8 ${className}`}>
+    <div className={`container mx-auto p-8 ${className}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h2 className="text-4xl font-bold">{title}</h2>
@@ -24,6 +24,6 @@ export default function PageContainer({
       </div>
       
       {children}
-    </main>
+    </div>
   );
 }

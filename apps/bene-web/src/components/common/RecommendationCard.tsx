@@ -1,9 +1,10 @@
+'use client';
+
 interface RecommendationCardProps {
   id: number;
   title: string;
   description: string;
   category: string;
-  onLearnMore?: () => void;
   className?: string;
 }
 
@@ -12,7 +13,6 @@ export default function RecommendationCard({
   title,
   description,
   category,
-  onLearnMore,
   className = ''
 }: RecommendationCardProps) {
   return (
@@ -24,14 +24,14 @@ export default function RecommendationCard({
         </span>
       </div>
       <p className="text-sm text-muted-foreground mt-2">{description}</p>
-      {onLearnMore && (
+   
         <button 
-          onClick={onLearnMore}
+          onClick={() => console.log(`Learning more about ${title}`)}
           className="mt-3 text-sm btn btn-ghost"
         >
           Learn More
         </button>
-      )}
+      
     </div>
   );
 }

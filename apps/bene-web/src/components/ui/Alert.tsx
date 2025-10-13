@@ -1,3 +1,5 @@
+'use client';
+
 interface AlertProps {
   title: string;
   description?: string;
