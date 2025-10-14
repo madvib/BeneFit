@@ -11,7 +11,8 @@ import {
   Recommendation,
   BlogPost,
   ChartData,
-  FilterOption
+  FilterOption,
+  PlanSuggestion
 } from '../types/dataTypes';
 
 // Activity Feed Data
@@ -19,7 +20,7 @@ export async function getActivityFeed(): Promise<ActivityItem[]> {
   // In a real app, this would be an API call
   // For now, we'll simulate a network request with a delay
   await new Promise(resolve => setTimeout(resolve, 500));
-  return (await import('../mock/activityFeed.json')).default;
+  return (await import('../mock/activityFeed.json')).default as ActivityItem[];
 }
 
 // Workout History Data
@@ -35,15 +36,15 @@ export async function getServices(): Promise<ServiceConnection[]> {
 }
 
 // Plan Data
-export async function getPlanData(): Promise<{ currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: any[] }> {
+export async function getPlanData(): Promise<{ currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: PlanSuggestion[] }> {
   await new Promise(resolve => setTimeout(resolve, 500));
-  return (await import('../mock/planData.json')).default;
+  return (await import('../mock/planData.json')).default as { currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: PlanSuggestion[] };
 }
 
 // Goals Data
 export async function getGoals(): Promise<Goal[]> {
   await new Promise(resolve => setTimeout(resolve, 500));
-  return (await import('../mock/goals.json')).default;
+  return (await import('../mock/goals.json')).default as Goal[];
 }
 
 // Chat Data
@@ -79,7 +80,7 @@ export async function getChartData(): Promise<ChartData[]> {
 // Current Goal Data
 export async function getCurrentGoal(): Promise<Goal> {
   await new Promise(resolve => setTimeout(resolve, 500));
-  return (await import('../mock/currentGoal.json')).default;
+  return (await import('../mock/currentGoal.json')).default as Goal;
 }
 
 // Blog Categories

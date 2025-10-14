@@ -140,3 +140,5 @@ vite.config.ts.timestamp-*
 
 # Vsual Studio Code
 .vscode/*
+
+.qwen/

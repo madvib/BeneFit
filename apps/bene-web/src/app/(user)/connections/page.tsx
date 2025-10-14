@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link';
 import { PageContainer } from '@/components';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { getServices } from '@/data/services/mockDataService';
 import { ServiceConnection } from '@/data/types/dataTypes';
 
@@ -60,9 +60,11 @@ export default function ConnectionsPage() {
                 <div key={service.id} className="bg-background p-6 rounded-lg shadow-sm border border-muted">
                   <div className="flex items-center mb-4">
                     <div className="bg-white dark:bg-gray-800 p-2 rounded-lg mr-4">
-                      <img 
+                      <Image 
                         src={service.logo} 
                         alt={service.name} 
+                        width={40}
+                        height={40}
                         className="w-10 h-10 object-contain"
                       />
                     </div>
@@ -110,9 +112,11 @@ export default function ConnectionsPage() {
                 <div key={service.id} className="bg-background p-6 rounded-lg shadow-sm border border-muted">
                   <div className="flex items-center mb-4">
                     <div className="bg-white dark:bg-gray-800 p-2 rounded-lg mr-4">
-                      <img 
+                      <Image 
                         src={service.logo} 
                         alt={service.name} 
+                        width={40}
+                        height={40}
                         className="w-10 h-10 object-contain"
                       />
                     </div>

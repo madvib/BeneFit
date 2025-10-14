@@ -8,14 +8,12 @@ import {
   getClientInitialMessages, 
   getClientRecommendations,
 } from '@/data/services/nextDataService';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { Chat, Recommendation, Message } from '@/data/types/dataTypes';
 
 export default function CoachPage() {
   const [savedChats, setSavedChats] = useState<Chat[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
@@ -33,7 +31,6 @@ export default function CoachPage() {
       } catch (error) {
         console.error('Error fetching coach data:', error);
       } finally {
-        setLoading(false);
       }
     };
 

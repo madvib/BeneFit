@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { formatTimeAgo } from '@/utils/timeUtils';
 import { Card, EmptyState, LoadingSpinner } from '@/components';
-import { getActivityFeed, ActivityItem } from '@/data/services/mockDataService';
+import { getActivityFeed } from '@/data/services/mockDataService';
+import { ActivityItem } from '@/data/types/dataTypes';
 
 type ActivityType = 'workout' | 'nutrition' | 'goal' | 'achievement' | 'progress';
 

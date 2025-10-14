@@ -1,10 +1,8 @@
 // Server Component - fetches data on the server
-import Link from 'next/link';
 import ActivityFeed from '@/components/ActivityFeed';
 import ProgressBar from '@/components/common/ProgressBar';
-import { Card, DashboardLayout, PageContainer, InsightCard } from '@/components';
+import { Card, DashboardLayout, PageContainer } from '@/components';
 import { fetchCurrentGoal, fetchChartData } from '@/data/services/nextDataService';
-import type { Goal, ChartData } from '@/data/types/dataTypes';
 
 // This is now a Server Component by default in Next.js App Router
 export default async function DashboardPage() {
@@ -13,11 +11,6 @@ export default async function DashboardPage() {
     fetchCurrentGoal(),
     fetchChartData()
   ]);
-
-  // Calculate progress percentage
-  const progressPercentage = currentGoal 
-    ? Math.min(100, (currentGoal.currentValue / currentGoal.targetValue) * 100) 
-    : 0;
 
   return (
     <PageContainer title="Welcome, User!">

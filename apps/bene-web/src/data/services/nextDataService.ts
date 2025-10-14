@@ -13,7 +13,8 @@ import {
   Recommendation,
   BlogPost,
   ChartData,
-  FilterOption
+  FilterOption,
+  PlanSuggestion
 } from '../types/dataTypes';
 
 // Server-side data fetching functions (for Server Components)
@@ -38,7 +39,7 @@ export async function fetchServices() {
 
 export async function fetchPlanData() {
   const data = await import('../mock/planData.json');
-  return data.default as { currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: any[] };
+  return data.default as { currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: PlanSuggestion[] };
 }
 
 export async function fetchGoals() {
@@ -103,10 +104,10 @@ export async function getClientServices(): Promise<ServiceConnection[]> {
   return data.default as ServiceConnection[];
 }
 
-export async function getClientPlanData(): Promise<{ currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: any[] }> {
+export async function getClientPlanData(): Promise<{ currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: PlanSuggestion[] }> {
   await new Promise(resolve => setTimeout(resolve, 500));
   const data = await import('../mock/planData.json');
-  return data.default as { currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: any[] };
+  return data.default as { currentPlan: Plan; weeklyWorkouts: WorkoutPlan[]; planSuggestions: PlanSuggestion[] };
 }
 
 export async function getClientGoals(): Promise<Goal[]> {

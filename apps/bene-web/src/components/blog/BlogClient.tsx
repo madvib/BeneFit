@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import NewsletterSubscription from '@/components/blog/NewsletterSubscription';
 import type { BlogPost } from '@/data/types/dataTypes';
 
@@ -70,10 +71,13 @@ export default function BlogClient({
         {filteredPosts.map((post) => (
           <article key={post.id} className="bg-secondary rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
             <div className="h-48 overflow-hidden">
-              <img 
+              <Image 
                 src={post.image} 
                 alt={post.title} 
+                width={400}
+                height={300}
                 className="w-full h-full object-cover"
+                style={{ objectFit: 'cover' }}
               />
             </div>
             <div className="p-6">

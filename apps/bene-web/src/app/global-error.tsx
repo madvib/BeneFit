@@ -21,7 +21,7 @@ export default function GlobalError({
           <div className="max-w-md w-full bg-secondary p-8 rounded-lg shadow-lg text-center">
             <h2 className="text-2xl font-bold text-destructive mb-4">Something went wrong!</h2>
             <p className="text-muted-foreground mb-6">
-              We're sorry, but an unexpected error occurred. Our team has been notified.
+              We&apos;re sorry, but an unexpected error occurred. Our team has been notified.
             </p>
             <button
               className="btn btn-primary w-full"

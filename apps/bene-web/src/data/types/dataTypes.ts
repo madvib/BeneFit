@@ -49,6 +49,14 @@ export interface Plan {
   progress: number;
 }
 
+export interface PlanSuggestion {
+  id: number;
+  name: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  duration: string;
+  category: string;
+}
+
 export interface WorkoutPlan {
   id: number;
   day: string;

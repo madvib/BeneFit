@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AboutPage() {
   return (
@@ -59,9 +60,11 @@ export default function AboutPage() {
             <div key={index} className="text-center">
               <div className="relative mx-auto mb-4">
                 <div className="bg-secondary w-32 h-32 rounded-full overflow-hidden border-4 border-primary flex items-center justify-center">
-                  <img 
+                  <Image 
                     src={member.image} 
                     alt={member.name} 
+                    width={128}
+                    height={128}
                     className="w-full h-full object-cover"
                   />
                 </div>

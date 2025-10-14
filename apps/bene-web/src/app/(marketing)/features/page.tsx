@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function FeaturesPage() {
   return (
@@ -129,9 +130,11 @@ export default function FeaturesPage() {
           ].map((service, index) => (
             <div key={index} className="flex flex-col items-center p-4 bg-background rounded-lg">
               <div className="w-12 h-12 rounded-lg bg-white dark:bg-gray-800 p-1 flex items-center justify-center mb-2">
-                <img 
+                <Image 
                   src={service.logo} 
                   alt={service.name} 
+                  width={32}
+                  height={32}
                   className="w-8 h-8 object-contain"
                 />
               </div>

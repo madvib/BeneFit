@@ -6,15 +6,12 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import AccountDropdown from '@/components/AccountDropdown';
 import PublicNav from '@/components/PublicNav';
-import { usePathname } from 'next/navigation';
 
 type HeaderProps = {
   variant?: 'marketing' | 'user';
 };
 
 export default function Header({ variant = 'marketing' }: HeaderProps) {
-  const pathname = usePathname();
-
   return (
     <header className="bg-secondary text-secondary-foreground p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">

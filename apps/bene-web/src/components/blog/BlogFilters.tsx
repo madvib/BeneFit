@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 interface BlogFiltersProps {
   categories: string[];
   onCategorySelect: (category: string) => void;

@@ -1,15 +1,14 @@
 'use client';
 
-import Link from 'next/link';
-import { Card, DashboardLayout, PageContainer, StatCard, ButtonGroup } from '@/components';
+import { Card, DashboardLayout, PageContainer, StatCard } from '@/components';
 import { useState, useEffect } from 'react';
 import { getPlanData } from '@/data/services/mockDataService';
-import { Plan, WorkoutPlan } from '@/data/types/dataTypes';
+import { Plan, WorkoutPlan, PlanSuggestion } from '@/data/types/dataTypes';
 
 export default function PlanPage() {
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
   const [weeklyWorkouts, setWeeklyWorkouts] = useState<WorkoutPlan[]>([]);
-  const [planSuggestions, setPlanSuggestions] = useState<any[]>([]);
+  const [planSuggestions, setPlanSuggestions] = useState<PlanSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -9,7 +9,6 @@ interface RecommendationCardProps {
 }
 
 export default function RecommendationCard({
-  id,
   title,
   description,
   category,

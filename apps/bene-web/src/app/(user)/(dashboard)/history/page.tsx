@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import SearchFilterBar from '@/components/common/SearchFilterBar';
 import { PageContainer } from '@/components';
 import { useState, useEffect } from 'react';
@@ -39,7 +38,7 @@ export default function HistoryPage() {
     
     const workoutDate = new Date(workout.date);
     const now = new Date();
-    let cutoffDate = new Date();
+    const cutoffDate = new Date();
     
     if (timeFilter === 'week') {
       cutoffDate.setDate(now.getDate() - 7);

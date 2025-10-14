@@ -18,7 +18,6 @@ interface GoalCardProps {
 }
 
 export default function GoalCard({
-  id,
   title,
   description,
   currentValue,

@@ -17,7 +17,7 @@
     "source=vibe-kanban,target=/root/.local/share/vibe-kanban,type=volume",
     "source=pnpm_home,target=/root/.local/share/pnpm/,type=volume"
   ],
-  "postCreateCommand": "pnpm install", //sudo chown -R node:node $PNPM_HOME && pnpm config set store-dir $PNPM_HOME/store && 
+  "postCreateCommand": "pnpm config set store-dir $PNPM_HOME/store && pnpm install", //sudo chown -R node:node $PNPM_HOME && 
   // 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // 👇 Configure tool-specific properties.
