@@ -65,10 +65,10 @@ export default function HistoryPage() {
   }
 
   return (
-    <PageContainer title="Workout History">
-      <div className="bg-secondary p-6 rounded-lg shadow-md">
+    <PageContainer title="Workout History" hideTitle={true}>
+      <div className="w-full">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h3 className="text-2xl font-bold">Recent Workouts</h3>
+          <h2 className="text-2xl font-bold">Recent Workouts</h2>
           
           <SearchFilterBar
             searchTerm={searchTerm}
@@ -82,72 +82,121 @@ export default function HistoryPage() {
           />
         </div>
         
-        {/* Table Headings */}
-        <div className="hidden md:grid grid-cols-12 gap-4 mb-2 px-4 py-2 bg-background rounded-lg font-semibold">
-          <div className="col-span-2">Date</div>
-          <div className="col-span-2">Type</div>
-          <div className="col-span-2">Duration</div>
-          <div className="col-span-3">Details</div>
-          <div className="col-span-2">Calories</div>
-          <div className="col-span-1">Actions</div>
-        </div>
-        
-        {/* Card-like rows */}
-        <div className="space-y-3">
+        {/* Card-like rows for mobile, table for desktop */}
+        <div className="space-y-4">
           {filteredWorkouts.length > 0 ? (
             filteredWorkouts.map((workout) => (
               <div 
                 key={workout.id} 
-                className="md:grid md:grid-cols-12 gap-4 bg-background p-4 rounded-xl border border-muted hover:shadow-md transition-shadow"
+                className="bg-background p-4 rounded-xl border border-muted hover:shadow-md transition-shadow w-full"
               >
-                <div className="md:col-span-2 mb-2 md:mb-0 font-medium">
-                  {new Date(workout.date).toLocaleDateString()}
-                </div>
-                <div className="md:col-span-2 mb-2 md:mb-0 font-medium">
-                  {workout.type}
-                </div>
-                <div className="md:col-span-2 mb-2 md-0">
-                  {workout.duration}
-                </div>
-                <div className="md:col-span-3 mb-2 md:mb-0">
-                  <div className="flex flex-wrap gap-2">
+                {/* Mobile List View */}
+                <div className="md:hidden">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-lg">{workout.type}</h3>
+                      <p className="text-muted-foreground text-sm">{new Date(workout.date).toLocaleDateString()}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                        {workout.calories} cal
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">Duration:</span>
+                      <span className="font-medium">{workout.duration}</span>
+                    </div>
+                    
                     {workout.distance && (
-                      <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
-                        {workout.distance}
-                      </span>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Distance:</span>
+                        <span className="font-medium">{workout.distance}</span>
+                      </div>
                     )}
+                    
                     {workout.sets && (
-                      <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
-                        {workout.sets} sets
-                      </span>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Sets:</span>
+                        <span className="font-medium">{workout.sets} sets</span>
+                      </div>
                     )}
+                    
                     {workout.laps && (
-                      <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
-                        {workout.laps} laps
-                      </span>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Laps:</span>
+                        <span className="font-medium">{workout.laps}</span>
+                      </div>
                     )}
                   </div>
+                  
+                  <div className="flex justify-end mt-4 space-x-2">
+                    <button className="p-2 rounded-full hover:bg-accent">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button className="p-2 rounded-full hover:bg-accent text-red-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div className="md:col-span-2 mb-2 md:mb-0">
-                  {workout.calories}
-                </div>
-                <div className="md:col-span-1 flex space-x-2">
-                  <button className="p-2 rounded-full hover:bg-accent">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button className="p-2 rounded-full hover:bg-accent text-red-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+                
+                {/* Desktop Table View */}
+                <div className="hidden md:grid grid-cols-12 gap-4">
+                  <div className="col-span-2 font-medium">
+                    {new Date(workout.date).toLocaleDateString()}
+                  </div>
+                  <div className="col-span-2 font-medium">
+                    {workout.type}
+                  </div>
+                  <div className="col-span-2">
+                    {workout.duration}
+                  </div>
+                  <div className="col-span-3">
+                    <div className="flex flex-wrap gap-2">
+                      {workout.distance && (
+                        <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
+                          {workout.distance}
+                        </span>
+                      )}
+                      {workout.sets && (
+                        <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
+                          {workout.sets} sets
+                        </span>
+                      )}
+                      {workout.laps && (
+                        <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
+                          {workout.laps}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    {workout.calories}
+                  </div>
+                  <div className="col-span-1 flex space-x-2">
+                    <button className="p-2 rounded-full hover:bg-accent">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button className="p-2 rounded-full hover:bg-accent text-red-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              No workouts found matching your criteria
+            <div className="bg-background p-8 rounded-xl border border-muted text-center">
+              <p className="text-muted-foreground">No workouts found matching your criteria</p>
             </div>
           )}
         </div>

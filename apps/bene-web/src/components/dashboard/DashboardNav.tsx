@@ -14,7 +14,7 @@ export default function DashboardNav({ items }: DashboardNavProps) {
   const pathname = usePathname();
 
   return (
-    <div className="hidden md:flex border-b border-secondary/20">
+    <div className="hidden md:flex flex-wrap border-b border-secondary/20">
       {items.map((item) => (
         <Link
           key={item.href}

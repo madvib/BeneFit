@@ -13,7 +13,7 @@ export default function GoalsClient({
   recommendations: Recommendation[];
 }) {
   return (
-    <PageContainer title="Goals">
+    <PageContainer title="Goals" hideTitle={true}>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2">
           <div className="bg-secondary p-6 rounded-lg shadow-md">

@@ -103,42 +103,44 @@ export default function ActivityFeed() {
           activities.map((activity) => (
             <div 
               key={activity.id} 
-              className="bg-background p-4 rounded-lg shadow-sm border border-muted flex items-start"
+              className="bg-background p-4 rounded-lg shadow-sm border border-muted flex flex-col sm:flex-row items-start sm:items-center gap-4"
             >
-              <div className="mr-3">
+              <div className="flex-shrink-0">
                 {getActivityIcon(activity.type)}
               </div>
-              <div className="flex-1">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold">{activity.title}</h4>
-                  <span className="text-sm text-muted-foreground">{formatTimeAgo(activity.timestamp)}</span>
+              <div className="flex-1 min-w-0 w-full">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 w-full">
+                  <h4 className="font-semibold text-base break-words max-w-full">{activity.title}</h4>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap self-start sm:self-auto">{formatTimeAgo(activity.timestamp)}</span>
                 </div>
-                <p className="text-foreground/80 text-sm mt-1">{activity.description}</p>
+                <p className="text-foreground/80 text-sm mt-1 break-words max-w-full">{activity.description}</p>
                 
-                <div className="flex items-center mt-2">
-                  <Image 
-                    src={activity.avatar} 
-                    alt={activity.user} 
-                    width={24} 
-                    height={24} 
-                    className="rounded-full mr-2"
-                  />
-                  <span className="text-sm text-muted-foreground">{activity.user}</span>
+                <div className="flex flex-wrap gap-2 mt-3 items-center">
+                  <div className="flex items-center min-w-0">
+                    <Image 
+                      src={activity.avatar} 
+                      alt={activity.user} 
+                      width={24} 
+                      height={24} 
+                      className="rounded-full mr-2 flex-shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground truncate">{activity.user}</span>
+                  </div>
                   
                   {activity.duration && (
-                    <span className="ml-3 text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                    <span className="text-xs sm:text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
                       {activity.duration}
                     </span>
                   )}
                   
                   {activity.calories !== undefined && (
-                    <span className="ml-3 text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                    <span className="text-xs sm:text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
                       {activity.calories} cal
                     </span>
                   )}
                   
                   {activity.value !== undefined && activity.goal !== undefined && (
-                    <span className="ml-3 text-sm bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded">
+                    <span className="text-xs sm:text-sm bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
                       {activity.value}/{activity.goal}
                     </span>
                   )}

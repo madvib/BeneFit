@@ -74,7 +74,7 @@ export default function CoachPage() {
   // }
 
   return (
-    <PageContainer title="AI Coach">
+    <PageContainer title="AI Coach" hideTitle={true}>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-200px)]">
         {/* Saved Chats Sidebar */}
         <div className="lg:col-span-1">
