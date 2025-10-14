@@ -1,5 +1,3 @@
-## Refactoring Task
-
 **Summary:**  
 Briefly describe the code, file, or system to be refactored.
 

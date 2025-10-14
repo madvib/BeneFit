@@ -1,5 +1,3 @@
-## Bug Report
-
 **Summary:**  
 Describe the bug clearly and concisely.
 
