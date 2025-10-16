@@ -16,9 +16,9 @@ export default function PageContainer({
   hideTitle = false
 }: PageContainerProps) {
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       {!hideTitle && title && (
-        <div className="container mx-auto px-4 py-6 md:py-8">
+        <div className="container mx-auto py-6 md:py-8 px-4 sm:px-0">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
               <h2 className="text-2xl md:text-4xl font-bold">{title}</h2>
@@ -29,7 +29,7 @@ export default function PageContainer({
         </div>
       )}
       
-      <div className={!hideTitle ? "container mx-auto px-4" : "w-full px-4"}>
+      <div className={!hideTitle ? "container mx-auto sm:px-2" : "w-full"}>
         {children}
       </div>
     </div>
