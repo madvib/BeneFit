@@ -3,7 +3,7 @@
 import GoalCard from '@/components/common/GoalCard';
 import RecommendationCard from '@/components/common/RecommendationCard';
 import { InsightCard, PageContainer, TopTabNavigation } from '@/components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Goal, Recommendation } from '@/data/types/dataTypes';
 
 export default function GoalsClient({ 
@@ -16,17 +16,14 @@ export default function GoalsClient({
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if it's mobile view
-  if (typeof window !== 'undefined') {
-    // This will only run client-side
-    useState(() => {
-      const checkMobile = () => {
-        setIsMobile(window.innerWidth < 768);
-      };
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
-    });
-  }
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const goalsView = () => (
     <div className="bg-secondary p-4 sm:p-6 rounded-lg shadow-md">

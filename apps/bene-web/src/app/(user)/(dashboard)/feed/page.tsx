@@ -5,7 +5,6 @@ import ActivityFeed from '@/components/ActivityFeed';
 import ProgressBar from '@/components/common/ProgressBar';
 import { Card, DashboardLayout, PageContainer, TopTabNavigation } from '@/components';
 import { fetchCurrentGoal, fetchChartData } from '@/data/services/nextDataService';
-import DashboardMobileNav from '@/components/navigation/DashboardMobileNav';
 import { Goal, ChartData } from '@/data/types/dataTypes';
 
 export default function DashboardPage() {
