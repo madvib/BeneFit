@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { signup } from '../actions';
 
 export default function SignupPage() {
   return (
@@ -51,9 +52,7 @@ export default function SignupPage() {
               placeholder="********"
             />
           </div>
-          <Button className="w-full btn-primary" type="submit">
-            Create Account
-          </Button>
+            <button className="w-full btn-primary" formAction={signup}>Create Account</button>
         </form>
         <p className="text-center mt-4">
           Already have an account?{' '}
