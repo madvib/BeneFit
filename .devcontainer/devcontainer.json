@@ -4,13 +4,17 @@
   // 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
   "features": {
     "ghcr.io/devcontainers-extra/features/pnpm:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/supabase-cli": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "containerEnv": {
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
     "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
-    "PNPM_HOME": "/root/.local/share/pnpm/"
+    "PNPM_HOME": "/root/.local/share/pnpm/",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://kmgymtxtocnbtfrivljh.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttZ3ltdHh0b2NuYnRmcml2bGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NjMzNjEsImV4cCI6MjA3NjIzOTM2MX0.g1gfr_gqw9XSbVw6XT_0TVGZ7seuC5ifyjxekdxSWnE"
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
