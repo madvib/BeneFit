@@ -14,11 +14,11 @@ export default function PublicNav({ isLoggedIn }: PublicNavProps) {
       <Link href="/features" className="btn btn-ghost text-secondary-foreground hover:text-secondary-foreground/80">
         Features
       </Link>
-      <Link href="/about" className="btn btn-ghost text-secondary-foreground hover:text-secondary-foreground/80">
-        About
-      </Link>
       <Link href="/blog" className="btn btn-ghost text-secondary-foreground hover:text-secondary-foreground/80">
         Blog
+      </Link>
+      <Link href="/about" className="btn btn-ghost text-secondary-foreground hover:text-secondary-foreground/80">
+        About
       </Link>
     </div>
   );

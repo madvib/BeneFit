@@ -141,4 +141,5 @@ vite.config.ts.timestamp-*
 # Vsual Studio Code
 .vscode/*
 
+# LLM congifuration files
 .qwen/

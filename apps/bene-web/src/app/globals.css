@@ -15,11 +15,11 @@
 }
 
 .dark {
-  --background: #0c2d48;
+  --background: #1a1a2e;
   --foreground: #f0f8ff;
   --primary: #b3d7ff;
   --primary-foreground: #0c2d48;
-  --secondary: #034a95;
+  --secondary: #032d5d;
   --secondary-foreground: #ffffff;
   --muted: #2b3440;
   --muted-foreground: #9ca3af;
@@ -53,22 +53,27 @@ body {
 
 /* Hide scrollbars */
 ::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 /* For Firefox */
 html {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* For hiding scrollbars in specific elements if needed */
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .btn {

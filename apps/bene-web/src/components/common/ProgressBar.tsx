@@ -22,7 +22,7 @@ export default function ProgressBar({
         style={{ width: `${percentage}%` }}
       ></div>
       {showPercentage && (
-        <div className="text-right text-xs mt-1">
+        <div className="text-right text-xs sm:text-sm mt-1">
           {Math.round(percentage)}%
         </div>
       )}

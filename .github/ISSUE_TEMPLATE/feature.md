@@ -1,5 +1,3 @@
-## Feature/Enhancement
-
 **Summary:**  
 Briefly describe the new feature or enhancement.
 

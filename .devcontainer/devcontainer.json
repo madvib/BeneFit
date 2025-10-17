@@ -3,11 +3,13 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
   // 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
   "features": {
-    "ghcr.io/devcontainers-extra/features/pnpm:2": {}
+    "ghcr.io/devcontainers-extra/features/pnpm:2": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "containerEnv": {
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
+    "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
     "PNPM_HOME": "/root/.local/share/pnpm/"
   },
   "remoteEnv": {

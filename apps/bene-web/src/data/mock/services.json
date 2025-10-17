@@ -6,7 +6,12 @@
     "connected": true,
     "logo": "/connection_logos/icons8-apple-fitness-48.png",
     "lastSync": "Just now",
-    "dataType": ["Steps", "Heart Rate", "Sleep", "Workouts"]
+    "dataType": [
+      "Steps",
+      "Heart Rate",
+      "Sleep",
+      "Workouts"
+    ]
   },
   {
     "id": 2,
@@ -15,7 +20,11 @@
     "connected": true,
     "logo": "/connection_logos/strava-svgrepo-com.svg",
     "lastSync": "2 hours ago",
-    "dataType": ["Running", "Cycling", "Swimming"]
+    "dataType": [
+      "Running",
+      "Cycling",
+      "Swimming"
+    ]
   },
   {
     "id": 3,
@@ -23,22 +32,37 @@
     "description": "Import fitness data from Google Fit",
     "connected": false,
     "logo": "/connection_logos/google-fit-svgrepo-com.svg",
-    "dataType": ["Steps", "Heart Rate", "Workouts", "Weight"]
+    "dataType": [
+      "Steps",
+      "Heart Rate",
+      "Workouts",
+      "Weight"
+    ]
   },
   {
     "id": 4,
     "name": "Fitbit",
     "description": "Connect your Fitbit to sync health data",
     "connected": false,
-    "logo": "https://logos-world.net/wp-content/uploads/2021/02/Fitbit-Logo.png",
-    "dataType": ["Steps", "Sleep", "Heart Rate", "Calories"]
+    "logo": "/connection_logos/icons8-fitbit-48.png",
+    "dataType": [
+      "Steps",
+      "Sleep",
+      "Heart Rate",
+      "Calories"
+    ]
   },
   {
     "id": 5,
     "name": "WHOOP",
     "description": "Connect your WHOOP strap for recovery insights",
     "connected": false,
-    "logo": "https://logos-world.net/wp-content/uploads/2022/11/WHOOP-Logo.png",
-    "dataType": ["Recovery", "Strain", "Sleep", "Workouts"]
+    "logo": "/connection_logos/whoop.svg",
+    "dataType": [
+      "Recovery",
+      "Strain",
+      "Sleep",
+      "Workouts"
+    ]
   }
 ]
