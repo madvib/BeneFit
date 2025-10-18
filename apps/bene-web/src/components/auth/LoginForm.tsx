@@ -4,6 +4,7 @@ import { useFormStatus } from 'react-dom';
 import { login as loginAction } from '@/app/(auth)/actions';
 import { useActionState } from 'react';
 import { AuthError } from './AuthError';
+import { useSearchParams } from 'next/navigation';
 
 // Define form state type
 type FormState = {
@@ -40,15 +41,19 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
 
 // Auth form component that handles errors and loading states
 export function LoginForm() {
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/feed';
   const [state, formAction] = useActionState<FormState, FormData>(loginWrapper, {
     message: '',
   });
 
-  return (
+  // Create a hidden form field for the 'next' parameter
+  const FormWithNext = () => (
     <form action={formAction} className="space-y-4">
       {state?.error && (
         <AuthError message={state.error} />
       )}
+      <input type="hidden" name="next" value={next} />
       <div className="mb-4">
         <label className="block text-secondary-foreground mb-2" htmlFor="email">
           Email
@@ -77,7 +82,14 @@ export function LoginForm() {
           aria-describedby="password-error"
         />
       </div>
+      <div className="text-right">
+        <a href="/password-reset" className="text-sm text-primary hover:underline">
+          Forgot password?
+        </a>
+      </div>
       <SubmitButton>Sign in</SubmitButton>
     </form>
   );
+
+  return <FormWithNext />;
 }

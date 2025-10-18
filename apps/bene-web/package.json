@@ -29,8 +29,11 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"eslint": "^9",
+		"@typescript-eslint/parser": "^5.62.0",
+		"eslint": "^8.57.1",
 		"eslint-config-next": "15.4.6",
+		"prettier": "^3.6.2",
+		"prettier-eslint": "^16.4.2",
 		"tailwindcss": "^4",
 		"typescript": "^5",
 		"wrangler": "^4.42.2"

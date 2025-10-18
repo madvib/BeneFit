@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -23,12 +24,6 @@ export default function MobileMenu({ isOpen, onClose, navLinks, isLoggedIn }: Mo
   if (!isOpen) {
     return null;
   }
-
-  const handleLogout = () => {
-    // In a real app, you would handle actual logout logic here
-    window.location.href = '/';
-    onClose();
-  };
 
   return (
     <div className="md:hidden fixed inset-0 bg-background z-50 flex flex-col animate-in slide-in-from-right-full">
@@ -79,12 +74,7 @@ export default function MobileMenu({ isOpen, onClose, navLinks, isLoggedIn }: Mo
                 </Link>
               ))}
               <div className="w-1/2 my-4 border-t border-secondary" />
-              <button
-                onClick={handleLogout}
-                className="block py-2 text-xl font-medium text-foreground/80 hover:text-primary"
-              >
-                Logout
-              </button>
+              <LogoutButton variant="ghost" className="block py-2 text-xl font-medium text-foreground/80 hover:text-primary" />
             </>
           )}
         </nav>

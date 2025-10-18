@@ -34,3 +34,46 @@ export class TooManyAttemptsError extends AuthError {
     this.name = 'TooManyAttemptsError';
   }
 }
+
+// Additional Supabase-specific error types based on common error codes
+export class WeakPasswordError extends AuthError {
+  constructor() {
+    super('Password is too weak. Please use at least 6 characters.');
+    this.name = 'WeakPasswordError';
+  }
+}
+
+export class EmailExistsError extends AuthError {
+  constructor() {
+    super('An account with this email already exists. Try logging in instead.');
+    this.name = 'EmailExistsError';
+  }
+}
+
+export class NetworkError extends AuthError {
+  constructor() {
+    super('Network error. Please check your connection and try again.');
+    this.name = 'NetworkError';
+  }
+}
+
+export class RateLimitError extends AuthError {
+  constructor() {
+    super('Too many requests. Please try again later.');
+    this.name = 'RateLimitError';
+  }
+}
+
+export class EmailNotConfirmedError extends AuthError {
+  constructor() {
+    super('Your email has not been confirmed. Please check your email for a confirmation link.');
+    this.name = 'EmailNotConfirmedError';
+  }
+}
+
+export class SessionExpiredError extends AuthError {
+  constructor() {
+    super('Your session has expired. Please log in again.');
+    this.name = 'SessionExpiredError';
+  }
+}

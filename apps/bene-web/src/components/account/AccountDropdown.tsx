@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 
 interface AccountDropdownProps {
   isLoggedIn: boolean;
@@ -23,12 +24,6 @@ export default function AccountDropdown({ isLoggedIn }: AccountDropdownProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const handleLogout = () => {
-    // In a real app, you would handle actual logout logic here
-    // For now, just redirect to home
-    window.location.href = '/';
-  };
 
   if (!isLoggedIn) {
     return null;
@@ -88,12 +83,10 @@ export default function AccountDropdown({ isLoggedIn }: AccountDropdownProps) {
           >
             Settings
           </Link>
-          <button 
-            onClick={handleLogout}
+          <LogoutButton 
+            variant="ghost" 
             className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            Logout
-          </button>
+          />
         </div>
       )}
     </div>
