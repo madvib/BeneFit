@@ -2,8 +2,8 @@
 
 import { Card, DashboardLayout, PageContainer, StatCard, TopTabNavigation } from '@/components';
 import { useState, useEffect } from 'react';
-import { getPlanData } from '@/data/services/mockDataService';
-import { Plan, WorkoutPlan, PlanSuggestion } from '@/data/types/dataTypes';
+import { getPlanData } from '@/lib/data/mockDataService';
+import { Plan, WorkoutPlan, PlanSuggestion } from '@/lib/data/types/dataTypes';
 
 export default function PlanPage() {
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);

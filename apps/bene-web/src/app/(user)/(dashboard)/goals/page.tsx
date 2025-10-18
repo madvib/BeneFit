@@ -1,5 +1,5 @@
 // Server Component - fetches data on the server
-import { fetchGoals, fetchRecommendations } from '@/data/services/nextDataService';
+import { fetchGoals, fetchRecommendations } from '@/lib/data/nextDataService';
 import GoalsClient from '@/components/goals/GoalsClient';
 
 // This page can be mostly server-rendered since it doesn't require much client interaction

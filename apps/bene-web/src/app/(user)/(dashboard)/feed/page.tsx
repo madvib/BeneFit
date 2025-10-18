@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import ActivityFeed from '@/components/ActivityFeed';
 import ProgressBar from '@/components/common/ProgressBar';
 import { Card, DashboardLayout, PageContainer, TopTabNavigation } from '@/components';
-import { fetchCurrentGoal, fetchChartData } from '@/data/services/nextDataService';
-import { Goal, ChartData } from '@/data/types/dataTypes';
+import { fetchCurrentGoal, fetchChartData } from '@/lib/data/nextDataService';
+import { Goal, ChartData } from '@/lib/data/types/dataTypes';
 
 export default function DashboardPage() {
   const [currentGoal, setCurrentGoal] = useState<Goal | null>(null);

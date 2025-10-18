@@ -1,10 +1,13 @@
-'use client';
-
 import { PageContainer } from '@/components';
+import { createClient } from '@/lib/supabase/client';
 
-export default function AccountPage() {
+export default async function AccountPage() {
+   const supabase = await createClient() 
+    const { data, error } = await supabase.auth.getUser()  
+    console.log({data, error})
+    // if (error || !data?.user) {    redirect('/login')  }
   return (
-    <PageContainer title="Account Settings">
+    <PageContainer title={data?.user !== null ? data.user.email : 'asdf'}>
       <div className="bg-secondary p-6 rounded-lg shadow-md max-w-3xl">
         <div className="mb-6">
           <h3 className="text-2xl font-semibold mb-4">Personal Information</h3>

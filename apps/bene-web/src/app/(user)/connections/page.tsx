@@ -3,8 +3,8 @@
 import { PageContainer } from '@/components';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getServices } from '@/data/services/mockDataService';
-import { ServiceConnection } from '@/data/types/dataTypes';
+import { getServices } from '@/lib/data/mockDataService';
+import { ServiceConnection } from '@/lib/data/types/dataTypes';
 
 export default function ConnectionsPage() {
   const [services, setServices] = useState<ServiceConnection[]>([]);

@@ -8,8 +8,8 @@ import {
   getClientSavedChats, 
   getClientInitialMessages, 
   getClientRecommendations,
-} from '@/data/services/nextDataService';
-import { Chat, Recommendation, Message } from '@/data/types/dataTypes';
+} from '@/lib/data/nextDataService';
+import { Chat, Recommendation, Message } from '@/lib/data/types/dataTypes';
 
 export default function CoachPage() {
   const [savedChats, setSavedChats] = useState<Chat[]>([]);

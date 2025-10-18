@@ -3,8 +3,8 @@
 import SearchFilterBar from '@/components/common/SearchFilterBar';
 import { PageContainer } from '@/components';
 import { useState, useEffect } from 'react';
-import { getWorkoutHistory, getFilterOptions } from '@/data/services/mockDataService';
-import { Workout, FilterOption } from '@/data/types/dataTypes';
+import { getWorkoutHistory, getFilterOptions } from '@/lib/data/mockDataService';
+import { Workout, FilterOption } from '@/lib/data/types/dataTypes';
 
 export default function HistoryPage() {
   const [workoutHistory, setWorkoutHistory] = useState<Workout[]>([]);

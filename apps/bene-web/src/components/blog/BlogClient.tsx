@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import NewsletterSubscription from '@/components/blog/NewsletterSubscription';
-import type { BlogPost } from '@/data/types/dataTypes';
+import type { BlogPost } from '@/lib/data/types/dataTypes';
 
 interface BlogFiltersProps {
   categories: string[];

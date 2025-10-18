@@ -4,7 +4,7 @@ import GoalCard from '@/components/common/GoalCard';
 import RecommendationCard from '@/components/common/RecommendationCard';
 import { InsightCard, PageContainer, TopTabNavigation } from '@/components';
 import { useState, useEffect } from 'react';
-import type { Goal, Recommendation } from '@/data/types/dataTypes';
+import type { Goal, Recommendation } from '@/lib/data/types/dataTypes';
 
 export default function GoalsClient({ 
   initialGoals,

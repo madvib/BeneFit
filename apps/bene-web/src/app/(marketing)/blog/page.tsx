@@ -1,5 +1,5 @@
 // Server Component - fetches data on the server
-import { fetchBlogPosts, fetchBlogCategories } from '@/data/services/nextDataService';
+import { fetchBlogPosts, fetchBlogCategories } from '@/lib/data/nextDataService';
 import BlogClient from '@/components/blog/BlogClient';
 
 // This is now a Server Component by default in Next.js App Router
