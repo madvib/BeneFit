@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useFormStatus } from 'react-dom';
-import { useActionState } from 'react';
-import { AuthError } from './AuthError';
-import { resetPassword } from '@/app/(auth)/actions';
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { AuthError } from "./AuthError";
+import { resetPassword } from "@/app/(auth)/actions";
 
 // Define form state type
 type FormState = {
@@ -11,13 +11,19 @@ type FormState = {
   error?: string;
 };
 
-async function resetPasswordWrapper(prevState: FormState | undefined, formData: FormData): Promise<FormState> {
+async function resetPasswordWrapper(
+  prevState: FormState | undefined,
+  formData: FormData,
+): Promise<FormState> {
   try {
     await resetPassword(formData);
-    return { message: 'Password reset email sent successfully' };
+    return { message: "Password reset email sent successfully" };
   } catch (error: unknown) {
-    return { 
-      error: error instanceof Error ? error.message : 'An unknown error occurred during password reset' 
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "An unknown error occurred during password reset",
     };
   }
 }
@@ -27,26 +33,27 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
 
   return (
-    <button 
+    <button
       className="w-full btn btn-primary"
       type="submit"
       aria-disabled={pending}
     >
-      {pending ? 'Sending...' : children}
+      {pending ? "Sending..." : children}
     </button>
   );
 }
 
 export function PasswordResetForm() {
-  const [state, formAction] = useActionState<FormState, FormData>(resetPasswordWrapper, {
-    message: '',
-  });
+  const [state, formAction] = useActionState<FormState, FormData>(
+    resetPasswordWrapper,
+    {
+      message: "",
+    },
+  );
 
   return (
     <form action={formAction} className="space-y-4">
-      {state?.error && (
-        <AuthError message={state.error} />
-      )}
+      {state?.error && <AuthError message={state.error} />}
       {state?.message && (
         <div className="bg-success/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-success">
           <p>{state.message}</p>
@@ -55,7 +62,10 @@ export function PasswordResetForm() {
       {!state?.message && (
         <>
           <div className="mb-4">
-            <label className="block text-secondary-foreground mb-2" htmlFor="email">
+            <label
+              className="block text-secondary-foreground mb-2"
+              htmlFor="email"
+            >
               Email Address
             </label>
             <input

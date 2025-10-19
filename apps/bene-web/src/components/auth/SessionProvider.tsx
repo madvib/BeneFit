@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient as createBrowserClient } from '@/lib/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { createContext, useContext, useEffect, useState } from "react";
+import { createClient as createBrowserClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 type SessionContextType = {
   user: User | null;

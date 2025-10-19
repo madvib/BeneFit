@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
-import { HEADER_CONFIG } from './header-config';
-import { AuthChecker } from './AuthChecker';
-import { UnifiedNavigation } from './UnifiedNavigation';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
+import { HEADER_CONFIG } from "../header-config";
+import { AuthChecker } from "../AuthChecker/AuthChecker";
+import { UnifiedNavigation } from "../UnifiedNavigation/UnifiedNavigation";
 
 interface UnifiedHeaderProps {
-  variant?: 'marketing' | 'user' | 'dashboard';
+  variant?: "marketing" | "user" | "dashboard";
   className?: string;
 }
 
@@ -17,16 +17,18 @@ interface UnifiedHeaderProps {
  * Simplified unified header that replaces all previous header components
  * Handles both mobile and desktop views with unified navigation logic
  */
-export default function UnifiedHeader({ 
-  variant = 'marketing',
-  className = ''
+export default function UnifiedHeader({
+  variant = "marketing",
+  className = "",
 }: UnifiedHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <AuthChecker>
-      {({ isLoggedIn, isLoading }) => (
-        <header className={`bg-secondary text-secondary-foreground p-4 shadow-md sticky top-0 z-40 ${className}`}>
+      {({ isLoggedIn }) => (
+        <header
+          className={`bg-secondary text-secondary-foreground p-4 shadow-md sticky top-0 z-40 ${className}`}
+        >
           {/* Desktop Header */}
           <div className="container mx-auto flex justify-between items-center">
             {/* Logo */}
@@ -42,10 +44,7 @@ export default function UnifiedHeader({
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              <UnifiedNavigation 
-                variant={variant} 
-                isLoggedIn={isLoggedIn} 
-              />
+              <UnifiedNavigation variant={variant} isLoggedIn={isLoggedIn} />
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -65,8 +64,8 @@ export default function UnifiedHeader({
             <div className="md:hidden fixed inset-0 bg-background z-50 flex flex-col animate-in slide-in-from-right-full">
               {/* Mobile Header */}
               <div className="p-4 flex justify-between items-center border-b border-secondary">
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="flex items-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -91,9 +90,9 @@ export default function UnifiedHeader({
 
               {/* Mobile Navigation */}
               <div className="flex-1 flex flex-col p-4 overflow-y-auto">
-                <UnifiedNavigation 
-                  variant={variant} 
-                  isLoggedIn={isLoggedIn} 
+                <UnifiedNavigation
+                  variant={variant}
+                  isLoggedIn={isLoggedIn}
                   isMobile={true}
                   onClose={() => setMobileMenuOpen(false)}
                 />

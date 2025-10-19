@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useFormStatus } from 'react-dom';
-import { login as loginAction } from '@/app/(auth)/actions';
-import { useActionState } from 'react';
-import { AuthError } from './AuthError';
-import { useSearchParams } from 'next/navigation';
+import { useFormStatus } from "react-dom";
+import { login as loginAction } from "@/app/(auth)/actions";
+import { useActionState } from "react";
+import { AuthError } from "./AuthError";
+import { useSearchParams } from "next/navigation";
 
 // Define form state type
 type FormState = {
@@ -13,13 +13,19 @@ type FormState = {
 };
 
 // Wrapper functions that catch errors and return a state object
-async function loginWrapper(prevState: FormState | undefined, formData: FormData): Promise<FormState> {
+async function loginWrapper(
+  prevState: FormState | undefined,
+  formData: FormData,
+): Promise<FormState> {
   try {
     await loginAction(formData);
-    return { message: 'Login successful' };
+    return { message: "Login successful" };
   } catch (error: unknown) {
-    return { 
-      error: error instanceof Error ? error.message : 'An unknown error occurred during login' 
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "An unknown error occurred during login",
     };
   }
 }
@@ -29,12 +35,12 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
 
   return (
-    <button 
+    <button
       className="w-full btn btn-primary"
       type="submit"
       aria-disabled={pending}
     >
-      {pending ? 'Signing in...' : children}
+      {pending ? "Signing in..." : children}
     </button>
   );
 }
@@ -42,17 +48,18 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
 // Auth form component that handles errors and loading states
 export function LoginForm() {
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/feed';
-  const [state, formAction] = useActionState<FormState, FormData>(loginWrapper, {
-    message: '',
-  });
+  const next = searchParams.get("next") || "/feed";
+  const [state, formAction] = useActionState<FormState, FormData>(
+    loginWrapper,
+    {
+      message: "",
+    },
+  );
 
   // Create a hidden form field for the 'next' parameter
   const FormWithNext = () => (
     <form action={formAction} className="space-y-4">
-      {state?.error && (
-        <AuthError message={state.error} />
-      )}
+      {state?.error && <AuthError message={state.error} />}
       <input type="hidden" name="next" value={next} />
       <div className="mb-4">
         <label className="block text-secondary-foreground mb-2" htmlFor="email">
@@ -69,7 +76,10 @@ export function LoginForm() {
         />
       </div>
       <div className="mb-6">
-        <label className="block text-secondary-foreground mb-2" htmlFor="password">
+        <label
+          className="block text-secondary-foreground mb-2"
+          htmlFor="password"
+        >
           Password
         </label>
         <input
@@ -83,7 +93,10 @@ export function LoginForm() {
         />
       </div>
       <div className="text-right">
-        <a href="/password-reset" className="text-sm text-primary hover:underline">
+        <a
+          href="/password-reset"
+          className="text-sm text-primary hover:underline"
+        >
           Forgot password?
         </a>
       </div>

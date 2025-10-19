@@ -1,1 +1,1 @@
-export { useSession } from '@/components/auth/SessionProvider';
+export { useSession } from "@/components/auth/SessionProvider";

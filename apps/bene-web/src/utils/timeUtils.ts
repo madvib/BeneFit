@@ -8,11 +8,11 @@ export function formatTimeAgo(dateString: string): string {
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffDays > 0) {
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   } else if (diffHours > 0) {
-    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
   } else {
-    return 'Just now';
+    return "Just now";
   }
 }
 
@@ -21,5 +21,8 @@ export function formatDate(dateString: string): string {
 }
 
 export function formatTime(dateString: string): string {
-  return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return new Date(dateString).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }

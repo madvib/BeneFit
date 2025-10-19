@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import NewsletterSubscription from '@/components/blog/NewsletterSubscription';
-import type { BlogPost } from '@/lib/data/types/dataTypes';
+import { useState, useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import NewsletterSubscription from "@/components/blog/NewsletterSubscription";
+import type { BlogPost } from "@/lib/data/types/dataTypes";
 
 interface BlogFiltersProps {
   categories: string[];
@@ -12,17 +12,17 @@ interface BlogFiltersProps {
   selectedCategory: string;
 }
 
-function BlogFilters({ 
-  categories, 
+function BlogFilters({
+  categories,
   onCategorySelect,
-  selectedCategory 
+  selectedCategory,
 }: BlogFiltersProps) {
   return (
     <div className="flex flex-wrap justify-center gap-4 mb-12">
       {categories.map((category, index) => (
-        <button 
-          key={index} 
-          className={`btn ${selectedCategory === category ? 'btn-primary' : 'btn-ghost'}`}
+        <button
+          key={index}
+          className={`btn ${selectedCategory === category ? "btn-primary" : "btn-ghost"}`}
           onClick={() => onCategorySelect(category)}
         >
           {category}
@@ -32,25 +32,25 @@ function BlogFilters({
   );
 }
 
-export default function BlogClient({ 
+export default function BlogClient({
   initialPosts,
-  categories 
-}: { 
+  categories,
+}: {
   initialPosts: BlogPost[];
   categories: string[];
 }) {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [blogPosts] = useState<BlogPost[]>(initialPosts);
-  
+
   // Filter posts by selected category
   const filteredPosts = useMemo(() => {
-    if (selectedCategory === 'All') {
+    if (selectedCategory === "All") {
       return blogPosts;
     }
-    return blogPosts.filter(post => post.category === selectedCategory);
+    return blogPosts.filter((post) => post.category === selectedCategory);
   }, [blogPosts, selectedCategory]);
 
-  const allCategories = ['All', ...categories];
+  const allCategories = ["All", ...categories];
 
   return (
     <div className="container mx-auto p-8">
@@ -61,23 +61,26 @@ export default function BlogClient({
         </p>
       </div>
 
-      <BlogFilters 
-        categories={allCategories} 
-        onCategorySelect={setSelectedCategory} 
-        selectedCategory={selectedCategory} 
+      <BlogFilters
+        categories={allCategories}
+        onCategorySelect={setSelectedCategory}
+        selectedCategory={selectedCategory}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
         {filteredPosts.map((post) => (
-          <article key={post.id} className="bg-secondary rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <article
+            key={post.id}
+            className="bg-secondary rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+          >
             <div className="h-48 overflow-hidden">
-              <Image 
-                src={post.image} 
-                alt={post.title} 
+              <Image
+                src={post.image}
+                alt={post.title}
                 width={400}
                 height={300}
                 className="w-full h-full object-cover"
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: "cover" }}
               />
             </div>
             <div className="p-6">
@@ -85,16 +88,22 @@ export default function BlogClient({
                 <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full">
                   {post.category}
                 </span>
-                <span className="text-sm text-muted-foreground">{post.date}</span>
+                <span className="text-sm text-muted-foreground">
+                  {post.date}
+                </span>
               </div>
               <h2 className="text-xl font-bold mb-3">{post.title}</h2>
               <p className="text-muted-foreground mb-4">{post.excerpt}</p>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">By {post.author}</span>
-                <span className="text-sm text-muted-foreground">{post.readTime}</span>
+                <span className="text-sm text-muted-foreground">
+                  By {post.author}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {post.readTime}
+                </span>
               </div>
-              <Link 
-                href={`/blog/${post.id}`} 
+              <Link
+                href={`/blog/${post.id}`}
                 className="mt-4 inline-block text-primary hover:underline"
               >
                 Read More

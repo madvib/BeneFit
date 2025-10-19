@@ -7,7 +7,7 @@ export default function Loading() {
           Expert insights, tips, and guides to help you on your fitness journey.
         </p>
       </div>
-      
+
       <div className="flex justify-center mb-12">
         <div className="animate-pulse flex space-x-4">
           {[1, 2, 3, 4].map((i) => (
@@ -15,10 +15,13 @@ export default function Loading() {
           ))}
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="bg-secondary rounded-xl overflow-hidden shadow-md">
+          <div
+            key={i}
+            className="bg-secondary rounded-xl overflow-hidden shadow-md"
+          >
             <div className="h-48 bg-muted animate-pulse"></div>
             <div className="p-6">
               <div className="flex justify-between items-center mb-3">

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode } from "react";
 
 type Tab = {
   id: string;
@@ -14,11 +14,11 @@ interface TopTabNavigationProps {
   onTabChange?: (tabId: string) => void;
 }
 
-export default function TopTabNavigation({ 
-  tabs, 
-  defaultActiveTab, 
-  children, 
-  onTabChange 
+export default function TopTabNavigation({
+  tabs,
+  defaultActiveTab,
+  children,
+  onTabChange,
 }: TopTabNavigationProps) {
   const [activeTab, setActiveTab] = useState(defaultActiveTab || tabs[0].id);
 
@@ -39,8 +39,8 @@ export default function TopTabNavigation({
             onClick={() => handleTabChange(tab.id)}
             className={`flex-1 py-3 px-4 text-center font-medium text-sm transition-colors ${
               activeTab === tab.id
-                ? 'text-foreground border-b-2 border-primary'
-                : 'text-muted-foreground hover:text-foreground'
+                ? "text-foreground border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.label}
@@ -49,9 +49,7 @@ export default function TopTabNavigation({
       </div>
 
       {/* Tab Content */}
-      <div className="py-4">
-        {children[activeTab]}
-      </div>
+      <div className="py-4">{children[activeTab]}</div>
     </div>
   );
 }

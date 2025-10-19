@@ -1,12 +1,19 @@
-'use client';
+"use client";
 
-import { useSession } from '@/hooks/useSession';
+import { useSession } from "@/hooks/useSession";
+
+interface User {
+  id?: string;
+  email?: string;
+  name?: string;
+  [key: string]: unknown; // Allow additional properties if needed
+}
 
 interface AuthCheckerProps {
   children: (authState: {
     isLoggedIn: boolean;
     isLoading: boolean;
-    user: any;
+    user: User | null;
   }) => React.ReactNode;
 }
 

@@ -9,7 +9,7 @@ export default function InsightCard({
   title,
   value,
   description,
-  className = ''
+  className = "",
 }: InsightCardProps) {
   return (
     <div className={`p-4 bg-background rounded-lg ${className}`}>

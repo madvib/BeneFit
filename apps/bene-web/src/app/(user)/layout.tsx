@@ -1,4 +1,4 @@
-import UserLayout from '@/components/layouts/UserLayout';
+import UserLayout from "@/components/layouts/UserLayout";
 
 export default function UserLayoutWrapper({
   children,

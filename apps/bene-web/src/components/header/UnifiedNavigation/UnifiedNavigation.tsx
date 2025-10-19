@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { HEADER_CONFIG } from './header-config';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import AccountDropdown from '@/components/account/AccountDropdown';
-import AccountDropdownContent from '@/components/account/AccountDropdownContent';
+import Link from "next/link";
+import { HEADER_CONFIG } from "../header-config";
+import { ThemeToggle } from "@/components/ui/ThemeToggle/ThemeToggle";
+import AccountDropdownContent from "@/components/account/AccountDropdownContent/AccountDropdownContent";
+import { AccountDropdown } from "@/components";
 
 interface UnifiedNavigationProps {
-  variant: 'marketing' | 'user' | 'dashboard';
+  variant: "marketing" | "user" | "dashboard";
   isLoggedIn: boolean;
   isMobile?: boolean;
   onClose?: () => void;
@@ -17,11 +17,11 @@ interface UnifiedNavigationProps {
  * Unified navigation component that works for both mobile and desktop
  * Shows appropriate links based on context while providing access to dashboard for logged-in users
  */
-export function UnifiedNavigation({ 
-  variant, 
-  isLoggedIn, 
+export function UnifiedNavigation({
+  variant,
+  isLoggedIn,
   isMobile = false,
-  onClose 
+  onClose,
 }: UnifiedNavigationProps) {
   // Handle click events
   const handleClick = () => {
@@ -29,9 +29,12 @@ export function UnifiedNavigation({
   };
 
   // Render navigation links
-  const renderLinks = (links: { href: string; label: string }[], size: 'normal' | 'large' = 'normal') => {
-    const linkClass = isMobile 
-      ? `block py-2 text-${size === 'large' ? '2xl' : 'xl'} font-medium text-foreground hover:text-primary`
+  const renderLinks = (
+    links: { href: string; label: string }[],
+    size: "normal" | "large" = "normal",
+  ) => {
+    const linkClass = isMobile
+      ? `block py-2 text-${size === "large" ? "2xl" : "xl"} font-medium text-foreground hover:text-primary`
       : `px-4 py-3 font-semibold border-b-2 border-transparent hover:border-secondary-foreground hover:text-secondary-foreground`;
 
     return links.map((link) => (
@@ -50,31 +53,36 @@ export function UnifiedNavigation({
   const renderAuthSection = () => {
     if (isLoggedIn) {
       return (
-        <div className={`flex items-center gap-4 ${isMobile ? 'flex-col' : ''}`}>
-         {isMobile ?        
-     
-          <AccountDropdownContent 
-            onItemClick={handleClick} 
-            showThemeToggle={true} 
-            showLogoutButton={true} 
-          />
-         : <AccountDropdown isLoggedIn={true} />}
+        <div
+          className={`flex items-center gap-4 ${isMobile ? "flex-col" : ""}`}
+        >
+          {isMobile ? (
+            <AccountDropdownContent
+              onItemClick={handleClick}
+              showThemeToggle={true}
+              showLogoutButton={true}
+            />
+          ) : (
+            <AccountDropdown isLoggedIn={true} />
+          )}
         </div>
       );
     }
 
     return (
-      <div className={`flex items-center gap-4 ${isMobile ? 'flex-col w-full' : ''}`}>
+      <div
+        className={`flex items-center gap-4 ${isMobile ? "flex-col w-full" : ""}`}
+      >
         <Link
           href="/login"
-          className={`btn ${isMobile ? 'w-full' : ''} btn-ghost text-lg px-4 py-2 border border-primary`}
+          className={`btn ${isMobile ? "w-full" : ""} btn-ghost text-lg px-4 py-2 border border-primary`}
           onClick={handleClick}
         >
           Login
         </Link>
-        <Link 
-          href="/signup" 
-          className={`btn ${isMobile ? 'w-full' : ''} btn-primary text-lg px-4 py-2`}
+        <Link
+          href="/signup"
+          className={`btn ${isMobile ? "w-full" : ""} btn-primary text-lg px-4 py-2`}
           onClick={handleClick}
         >
           Sign Up
@@ -89,18 +97,19 @@ export function UnifiedNavigation({
     return (
       <nav className="flex-1 flex flex-col items-center justify-center space-y-4 text-center py-4">
         {/* Marketing pages - only shown on marketing variant */}
-        {variant === 'marketing' && renderLinks(HEADER_CONFIG.marketingNavLinks, 'large')}
-        
+        {variant === "marketing" &&
+          renderLinks(HEADER_CONFIG.marketingNavLinks, "large")}
+
         {/* Dashboard links - only shown on dashboard variant */}
-        {variant === 'dashboard' && isLoggedIn && (
+        {variant === "dashboard" && isLoggedIn && (
           <>
-            {renderLinks(HEADER_CONFIG.dashboardNavLinks, 'large')}
+            {renderLinks(HEADER_CONFIG.dashboardNavLinks, "large")}
             <div className="w-1/2 my-4 border-t border-secondary" />
           </>
         )}
-        
+
         {/* Dashboard link for logged-in users on marketing pages */}
-        {variant === 'marketing' && isLoggedIn && (
+        {variant === "marketing" && isLoggedIn && (
           <>
             <div className="w-1/2 my-4 border-t border-secondary" />
             <Link
@@ -110,16 +119,13 @@ export function UnifiedNavigation({
             >
               Dashboard
             </Link>
-  <div className="w-1/2 my-4 border-t border-secondary"/>
+            <div className="w-1/2 my-4 border-t border-secondary" />
           </>
         )}
-        
 
-        
         {/* Auth section */}
-                              
-          {renderAuthSection()}
-     
+
+        {renderAuthSection()}
       </nav>
     );
   }
@@ -128,21 +134,21 @@ export function UnifiedNavigation({
   return (
     <div className="flex items-center gap-4">
       {/* Marketing links - only shown on marketing variant */}
-      {variant === 'marketing' && (
+      {variant === "marketing" && (
         <div className="hidden md:flex flex-wrap">
           {renderLinks(HEADER_CONFIG.marketingNavLinks)}
         </div>
       )}
-      
+
       {/* Dashboard links - only shown on dashboard variant */}
-      {variant === 'dashboard' && isLoggedIn && (
+      {variant === "dashboard" && isLoggedIn && (
         <div className="hidden md:flex flex-wrap">
           {renderLinks(HEADER_CONFIG.dashboardNavLinks)}
         </div>
       )}
-      
+
       {/* Dashboard link for logged-in users on marketing pages */}
-      {variant === 'marketing' && isLoggedIn && (
+      {variant === "marketing" && isLoggedIn && (
         <Link
           href="/feed"
           className="btn ${isMobile ? 'w-full' : ''} btn-primary text-lg px-4 py-2"
@@ -151,7 +157,7 @@ export function UnifiedNavigation({
           Dashboard
         </Link>
       )}
-      
+
       {/* Auth section */}
       {renderAuthSection()}
     </div>

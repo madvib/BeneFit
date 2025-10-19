@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Header from '@/components/header/Header';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
+import Header from "@/components/header/Header/Header";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 
 interface UserLayoutProps {
   children: React.ReactNode;

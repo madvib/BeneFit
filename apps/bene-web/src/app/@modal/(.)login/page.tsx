@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/auth/LoginForm";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/components/ui/Modal/Modal";
 
 export default function LoginModal() {
   return (

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createClient as createBrowserClient } from '@/lib/supabase/client';
+import { useEffect, useState } from "react";
+import { createClient as createBrowserClient } from "@/lib/supabase/client";
 
 // Define types for user session
-import { User } from '@supabase/supabase-js';
+import { User } from "@supabase/supabase-js";
 
 export type UserSession = {
   user: User | null;

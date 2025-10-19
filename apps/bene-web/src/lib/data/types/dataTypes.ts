@@ -3,7 +3,7 @@
 // Activity Feed types
 export interface ActivityItem {
   id: number;
-  type: 'workout' | 'nutrition' | 'goal' | 'achievement' | 'progress';
+  type: "workout" | "nutrition" | "goal" | "achievement" | "progress";
   title: string;
   description: string;
   timestamp: string; // ISO date string
@@ -44,7 +44,7 @@ export interface Plan {
   name: string;
   description: string;
   duration: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
   category: string;
   progress: number;
 }
@@ -52,7 +52,7 @@ export interface Plan {
 export interface PlanSuggestion {
   id: number;
   name: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
   duration: string;
   category: string;
 }
@@ -77,7 +77,7 @@ export interface Goal {
   currentValue: number;
   unit: string;
   deadline: string;
-  status: 'active' | 'completed' | 'overdue';
+  status: "active" | "completed" | "overdue";
 }
 
 // Chat and messaging types
@@ -92,7 +92,7 @@ export interface Chat {
 export interface Message {
   id: number;
   content: string;
-  sender: 'user' | 'coach';
+  sender: "user" | "coach";
   timestamp: string;
 }
 
