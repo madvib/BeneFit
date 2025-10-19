@@ -1,32 +1,33 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import PublicNav from '@/components/navigation/PublicNav';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import BaseHeader from '@/components/header/BaseHeader';
+import { useSession } from "@/hooks/useSession";
+import PublicNav from "@/components/navigation/PublicNav";
+import BaseHeader from "@/components/header/BaseHeader";
+import { AuthNavigation } from "@/components/navigation/AuthNavigation";
 
 const marketingNavLinks = [
-  { href: '/features', label: 'Features' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
+  { href: "/features", label: "Features" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
 ];
 
-export default function MarketingHeader({ className = '' }: { className?: string }) {
+export default function MarketingHeader({
+  className = "",
+}: {
+  className?: string;
+}) {
+  const { user, isLoading } = useSession();
+  const isLoggedIn = !!user && !isLoading;
+
   return (
     <BaseHeader
       navLinks={marketingNavLinks}
-      isLoggedIn={false}
+      isLoggedIn={isLoggedIn}
       className={className}
     >
-      <PublicNav isLoggedIn={false} />
+      <PublicNav isLoggedIn={isLoggedIn} />
       <div className="flex items-center gap-4">
-        <Link href="/login" className="btn btn-ghost text-lg px-4 py-2 border border-primary">
-          Login
-        </Link>
-        <Link href="/signup" className="btn btn-primary text-lg px-4 py-2">
-          Sign Up
-        </Link>
-        <ThemeToggle />
+        <AuthNavigation />
       </div>
     </BaseHeader>
   );

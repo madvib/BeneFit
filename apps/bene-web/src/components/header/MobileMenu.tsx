@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { X } from 'lucide-react';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { LogoutButton } from '@/components/auth/LogoutButton';
+import Link from "next/link";
+import Image from "next/image";
+import { X } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -14,13 +14,18 @@ interface MobileMenuProps {
 }
 
 const accountLinks = [
-  { href: '/account', label: 'Account' },
-  { href: '/profile', label: 'Profile' },
-  { href: '/connections', label: 'Connections' },
-  { href: '/settings', label: 'Settings' },
+  { href: "/account", label: "Account" },
+  { href: "/profile", label: "Profile" },
+  { href: "/connections", label: "Connections" },
+  { href: "/settings", label: "Settings" },
 ];
 
-export default function MobileMenu({ isOpen, onClose, navLinks, isLoggedIn }: MobileMenuProps) {
+export default function MobileMenu({
+  isOpen,
+  onClose,
+  navLinks,
+  isLoggedIn,
+}: MobileMenuProps) {
   if (!isOpen) {
     return null;
   }
@@ -38,7 +43,6 @@ export default function MobileMenu({ isOpen, onClose, navLinks, isLoggedIn }: Mo
           />
         </Link>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
           <button
             onClick={onClose}
             className="p-2 rounded-md hover:bg-accent"
@@ -74,16 +78,33 @@ export default function MobileMenu({ isOpen, onClose, navLinks, isLoggedIn }: Mo
                 </Link>
               ))}
               <div className="w-1/2 my-4 border-t border-secondary" />
-              <LogoutButton variant="ghost" className="block py-2 text-xl font-medium text-foreground/80 hover:text-primary" />
+              <div className="flex items-center justify-between py-2 text-lg font-medium text-foreground/70">
+                <span>Theme</span>
+                <ThemeToggle />
+              </div>
+              <div className="w-1/2 my-4 border-t border-secondary" />
+
+              <LogoutButton
+                variant="ghost"
+                className="block py-2 text-xl font-medium text-foreground/80 hover:text-primary"
+              />
             </>
           )}
         </nav>
         {!isLoggedIn && (
           <div className="flex flex-col space-y-2 p-4 border-t border-secondary">
-            <Link href="/login" className="btn border border-secondary w-full text-center justify-center" onClick={onClose}>
+            <Link
+              href="/login"
+              className="btn border border-secondary w-full text-center justify-center"
+              onClick={onClose}
+            >
               Login
             </Link>
-            <Link href="/signup" className="btn btn-primary w-full text-center justify-center" onClick={onClose}>
+            <Link
+              href="/signup"
+              className="btn btn-primary w-full text-center justify-center"
+              onClick={onClose}
+            >
               Sign Up
             </Link>
           </div>

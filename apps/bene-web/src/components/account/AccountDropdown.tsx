@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { LogoutButton } from '@/components/auth/LogoutButton';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface AccountDropdownProps {
   isLoggedIn: boolean;
@@ -83,6 +84,10 @@ export default function AccountDropdown({ isLoggedIn }: AccountDropdownProps) {
           >
             Settings
           </Link>
+          <div className="px-4 py-2 text-sm text-foreground/70 flex items-center justify-between">
+            <span>Theme</span>
+            <ThemeToggle />
+          </div>
           <LogoutButton 
             variant="ghost" 
             className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"

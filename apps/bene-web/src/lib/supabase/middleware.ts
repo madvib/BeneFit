@@ -38,6 +38,7 @@ export async function updateSession(request: NextRequest) {
 
   // Check if the user is trying to access a protected route
   const isProtectedRoute =
+    !(request.nextUrl.pathname === "/") &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/signup") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
@@ -49,7 +50,6 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/api/") &&
     !request.nextUrl.pathname.startsWith("/blog") &&
     !request.nextUrl.pathname.startsWith("/features") &&
-    !(request.nextUrl.pathname === "/") &&
     !request.nextUrl.pathname.startsWith("/about");
 
   if (!user && isProtectedRoute) {
