@@ -1,16 +1,11 @@
 'use client';
 
-import MarketingHeader from '@/components/header/MarketingHeader';
-import UserHeader from '@/components/header/UserHeader';
+import UnifiedHeader from '@/components/header/UnifiedHeader';
 
 type HeaderProps = {
-  variant?: 'marketing' | 'user';
+  variant?: 'marketing' | 'user' | 'dashboard';
 };
 
 export default function Header({ variant = 'marketing' }: HeaderProps) {
-  if (variant === 'user') {
-    return <UserHeader />;
-  }
-
-  return <MarketingHeader />;
+  return <UnifiedHeader variant={variant} />;
 }

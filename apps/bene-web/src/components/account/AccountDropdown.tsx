@@ -1,8 +1,6 @@
 'use client';
-import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
-import { LogoutButton } from '@/components/auth/LogoutButton';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import AccountDropdownContent from './AccountDropdownContent';
 
 interface AccountDropdownProps {
   isLoggedIn: boolean;
@@ -55,42 +53,11 @@ export default function AccountDropdown({ isLoggedIn }: AccountDropdownProps) {
       </button>
       
       {dropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-lg py-1 z-50 border border-muted">
-          <Link 
-            href="/account" 
-            className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-            onClick={() => setDropdownOpen(false)}
-          >
-            Account
-          </Link>
-          <Link 
-            href="/profile" 
-            className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-            onClick={() => setDropdownOpen(false)}
-          >
-            Profile
-          </Link>
-          <Link 
-            href="/connections" 
-            className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-            onClick={() => setDropdownOpen(false)}
-          >
-            Connections
-          </Link>
-          <Link 
-            href="/settings" 
-            className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
-            onClick={() => setDropdownOpen(false)}
-          >
-            Settings
-          </Link>
-          <div className="px-4 py-2 text-sm text-foreground/70 flex items-center justify-between">
-            <span>Theme</span>
-            <ThemeToggle />
-          </div>
-          <LogoutButton 
-            variant="ghost" 
-            className="block w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground"
+        <div className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-lg z-50 border border-muted">
+          <AccountDropdownContent 
+            onItemClick={() => setDropdownOpen(false)} 
+            showThemeToggle={true} 
+            showLogoutButton={true} 
           />
         </div>
       )}

@@ -34,7 +34,11 @@
     "vscode": {
       "extensions": [
         "rvest.vs-code-prettier-eslint"
-      ]
+      ],
+      "settings": {
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+        "editor.formatOnSave": true
+      }
     }
   }
 }
