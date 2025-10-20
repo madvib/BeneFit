@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { PageContainer } from "@/components";
+import Image from 'next/image';
+import {PageContainer} from '@/components';
 
 export default function ProfilePage() {
   return (

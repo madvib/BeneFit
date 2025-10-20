@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface EmptyStateProps {
   title: string;
@@ -16,24 +16,17 @@ export default function EmptyState({
   description,
   icon,
   action,
-  className = ''
+  className = "",
 }: EmptyStateProps) {
   return (
     <div className={`text-center py-12 ${className}`}>
-      {icon && (
-        <div className="mx-auto mb-6 text-muted-foreground">
-          {icon}
-        </div>
-      )}
+      {icon && <div className="mx-auto mb-6 text-muted-foreground">{icon}</div>}
       <h3 className="text-2xl font-bold mb-2">{title}</h3>
       <p className="text-muted-foreground mb-6 max-w-md mx-auto">
         {description}
       </p>
       {action && (
-        <button 
-          onClick={action.onClick}
-          className="btn btn-primary"
-        >
+        <button onClick={action.onClick} className="btn btn-primary">
           {action.label}
         </button>
       )}

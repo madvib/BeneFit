@@ -17,16 +17,19 @@ vi.mock("@/components", async () => {
     )),
   };
 });
-vi.mock("@/components/account/AccountDropdownContent/AccountDropdownContent", () => ({
-  default: vi.fn(({ showThemeToggle, showLogoutButton }) => (
-    <div data-testid="account-dropdown-content">
-      {showThemeToggle && (
-        <span data-testid="theme-toggle-in-dropdown">Theme Toggle</span>
-      )}
-      {showLogoutButton && <span data-testid="logout-button">Logout</span>}
-    </div>
-  )),
-}));
+vi.mock(
+  "@/components/account/AccountDropdownContent/AccountDropdownContent",
+  () => ({
+    default: vi.fn(({ showThemeToggle, showLogoutButton }) => (
+      <div data-testid="account-dropdown-content">
+        {showThemeToggle && (
+          <span data-testid="theme-toggle-in-dropdown">Theme Toggle</span>
+        )}
+        {showLogoutButton && <span data-testid="logout-button">Logout</span>}
+      </div>
+    )),
+  }),
+);
 
 describe("UnifiedNavigation", () => {
   beforeEach(() => {

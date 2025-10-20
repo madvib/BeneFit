@@ -31,10 +31,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "rvest.vs-code-prettier-eslint"
+        "esbenp.prettier-vscode"
       ],
       "settings": {
-        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
       }
     }

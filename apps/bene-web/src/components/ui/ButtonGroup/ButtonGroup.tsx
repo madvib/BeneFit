@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
+import {ReactNode} from 'react';
 
 interface ButtonGroupProps {
   children: ReactNode;
   className?: string;
-  align?: "left" | "center" | "right";
+  align?: 'left' | 'center' | 'right';
 }
 
 export default function ButtonGroup({
   children,
-  className = "",
-  align = "left",
+  className = '',
+  align = 'left',
 }: ButtonGroupProps) {
   const alignmentClasses = {
-    left: "justify-start",
-    center: "justify-center",
-    right: "justify-end",
+    left: 'justify-start',
+    center: 'justify-center',
+    right: 'justify-end',
   };
 
   return (
