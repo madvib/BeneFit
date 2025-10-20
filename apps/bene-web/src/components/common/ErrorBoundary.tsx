@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function Error({
   error,
@@ -17,9 +17,12 @@ export default function Error({
   return (
     <div className="container mx-auto p-8">
       <div className="bg-destructive/10 border border-destructive rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold text-destructive mb-4">Something went wrong!</h2>
+        <h2 className="text-2xl font-bold text-destructive mb-4">
+          Something went wrong!
+        </h2>
         <p className="text-destructive/80 mb-6">
-          {error.message || 'An unexpected error occurred while loading this page.'}
+          {error.message ||
+            "An unexpected error occurred while loading this page."}
         </p>
         <button
           className="btn btn-primary"

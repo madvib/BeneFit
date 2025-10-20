@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import Button from '@/components/ui/Button';
+import Link from "next/link";
+import Image from "next/image";
+import Button from "@/components/ui/Button/Button";
 
 export default function LandingPage() {
   return (
     <div className="w-full min-h-screen flex items-center">
       <div className="container mx-auto px-4 py-12">
-        
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="flex-1 max-w-2xl text-center lg:text-left">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Welcome to <span className="text-primary">BeneFit</span>
             </h1>
             <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-xl">
-              Your ultimate fitness companion. Track your workouts, monitor your progress, and achieve your goals.
+              Your ultimate fitness companion. Track your workouts, monitor your
+              progress, and achieve your goals.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link href="/feed">
@@ -30,7 +30,7 @@ export default function LandingPage() {
               </Link>
             </div>
           </div>
-          
+
           <div className="flex-1 w-full max-w-2xl">
             <div className="relative rounded-2xl overflow-hidden shadow-xl border border-accent transform transition-transform duration-300 hover:scale-[1.02]">
               <div className="aspect-video w-full">
@@ -47,31 +47,39 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Features section for better mobile viewing */}
         <div className="mt-20">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Why Choose BeneFit?</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
+            Why Choose BeneFit?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-secondary/30 p-6 rounded-xl border border-accent">
               <div className="text-primary text-3xl mb-4">🏃</div>
               <h3 className="text-xl font-semibold mb-2">Track Everything</h3>
-              <p className="text-muted-foreground">Monitor your workouts, nutrition, and progress with detailed analytics.</p>
+              <p className="text-muted-foreground">
+                Monitor your workouts, nutrition, and progress with detailed
+                analytics.
+              </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-accent">
               <div className="text-primary text-3xl mb-4">🎯</div>
               <h3 className="text-xl font-semibold mb-2">Set Goals</h3>
-              <p className="text-muted-foreground">Create and achieve personalized fitness goals with our smart system.</p>
+              <p className="text-muted-foreground">
+                Create and achieve personalized fitness goals with our smart
+                system.
+              </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-accent">
               <div className="text-primary text-3xl mb-4">👥</div>
               <h3 className="text-xl font-semibold mb-2">Community</h3>
-              <p className="text-muted-foreground">Connect with like-minded individuals on your wellness journey.</p>
+              <p className="text-muted-foreground">
+                Connect with like-minded individuals on your wellness journey.
+              </p>
             </div>
           </div>
         </div>
-      
-            </div>
-            
+      </div>
     </div>
   );
 }

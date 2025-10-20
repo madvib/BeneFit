@@ -12,6 +12,7 @@
   --accent: #f8f9fa;
   --accent-foreground: #212529;
   --ring: #86b7fe;
+  --error: #bf1616;
 }
 
 .dark {
@@ -26,6 +27,7 @@
   --accent: #1f2937;
   --accent-foreground: #f9fafb;
   --ring: #6366f1;
+  --error: #bf1616;
 }
 
 @theme inline {

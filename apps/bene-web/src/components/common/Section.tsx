@@ -5,11 +5,11 @@ interface SectionProps {
   className?: string;
 }
 
-export default function Section({ 
-  title, 
-  actions, 
-  children, 
-  className = '' 
+export default function Section({
+  title,
+  actions,
+  children,
+  className = "",
 }: SectionProps) {
   return (
     <div className={className}>
