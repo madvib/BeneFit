@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "title": "Post-Workout Recovery",
+    "lastMessage": "Try light stretching and 8oz of water",
+    "timestamp": "10:24 AM",
+    "unread": false
+  },
+  {
+    "id": 2,
+    "title": "Nutrition Plan",
+    "lastMessage": "Increase protein for muscle recovery",
+    "timestamp": "Yesterday",
+    "unread": true
+  },
+  {
+    "id": 3,
+    "title": "Running Technique",
+    "lastMessage": "Focus on cadence: aim for 170-180 steps/min",
+    "timestamp": "May 8",
+    "unread": false
+  },
+  {
+    "id": 4,
+    "title": "Goal Progress",
+    "lastMessage": "You're ahead of your plan! Keep going!",
+    "timestamp": "May 5",
+    "unread": false
+  },
+  {
+    "id": 5,
+    "title": "Sleep Optimization",
+    "lastMessage": "Aim for 7-9 hours for better recovery",
+    "timestamp": "May 3",
+    "unread": false
+  }
+]

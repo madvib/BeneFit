@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "date": "2023-05-01",
+    "type": "Running",
+    "duration": "45 min",
+    "distance": "5.2 miles",
+    "calories": 420
+  },
+  {
+    "id": 2,
+    "date": "2023-04-29",
+    "type": "Weight Training",
+    "duration": "60 min",
+    "sets": 15,
+    "calories": 380
+  },
+  {
+    "id": 3,
+    "date": "2023-04-27",
+    "type": "Cycling",
+    "duration": "90 min",
+    "distance": "18.5 miles",
+    "calories": 650
+  },
+  {
+    "id": 4,
+    "date": "2023-04-25",
+    "type": "Swimming",
+    "duration": "40 min",
+    "laps": 40,
+    "calories": 400
+  },
+  {
+    "id": 5,
+    "date": "2023-04-23",
+    "type": "HIIT",
+    "duration": "30 min",
+    "calories": 320
+  },
+  {
+    "id": 6,
+    "date": "2023-04-20",
+    "type": "Yoga",
+    "duration": "30 min",
+    "calories": 150
+  },
+  {
+    "id": 7,
+    "date": "2023-04-18",
+    "type": "Rowing",
+    "duration": "45 min",
+    "distance": "5.0 km",
+    "calories": 380
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Run 50 miles",
+    "description": "Complete 50 miles of running this month",
+    "targetValue": 50,
+    "currentValue": 32.5,
+    "unit": "miles",
+    "deadline": "2023-05-31",
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "title": "Strength Training",
+    "description": "Complete 20 strength sessions this month",
+    "targetValue": 20,
+    "currentValue": 14,
+    "unit": "sessions",
+    "deadline": "2023-05-31",
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "title": "Couch to 5K",
+    "description": "Complete the Couch to 5K program",
+    "targetValue": 9,
+    "currentValue": 9,
+    "unit": "weeks",
+    "deadline": "2023-04-15",
+    "status": "completed"
+  },
+  {
+    "id": 4,
+    "title": "Daily Steps",
+    "description": "Walk 10,000 steps per day",
+    "targetValue": 10000,
+    "currentValue": 8542,
+    "unit": "steps/day",
+    "deadline": "2023-05-31",
+    "status": "active"
+  }
+]

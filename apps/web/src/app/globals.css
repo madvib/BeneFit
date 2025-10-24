@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f0f8ff;
+  --foreground: #0c2d48;
+  --primary: #034a95;
+  --primary-foreground: #ffffff;
+  --secondary: #b3d7ff;
+  --secondary-foreground: #0c2d48;
+  --muted: #e9ecef;
+  --muted-foreground: #6c757d;
+  --accent: #f8f9fa;
+  --accent-foreground: #212529;
+  --ring: #86b7fe;
+  --error: #bf1616;
+}
+
+.dark {
+  --background: #1a1a2e;
+  --foreground: #f0f8ff;
+  --primary: #b3d7ff;
+  --primary-foreground: #0c2d48;
+  --secondary: #032d5d;
+  --secondary-foreground: #ffffff;
+  --muted: #2b3440;
+  --muted-foreground: #9ca3af;
+  --accent: #1f2937;
+  --accent-foreground: #f9fafb;
+  --ring: #6366f1;
+  --error: #bf1616;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Hide scrollbars */
+::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* For hiding scrollbars in specific elements if needed */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+.btn {
+  @apply px-4 py-2 rounded-md font-bold transition-colors;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+}
+
+.btn-ghost {
+  @apply hover:bg-accent hover:text-accent-foreground;
+}

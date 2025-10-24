@@ -6,18 +6,18 @@ This document provides instructions for AI agents and automated tools to interac
 
 This is a monorepo managed with pnpm and Turborepo. It contains the following:
 
--   `apps/`: Houses individual applications.
-    -   `bene-web`: A Next.js web application.
--   `packages/`: Intended for shared libraries, UI components, and configurations (e.g., TypeScript, ESLint).
+- `apps/`: Houses individual applications.
+  - `bene-web`: A Next.js web application.
+- `packages/`: Intended for shared libraries, UI components, and configurations (e.g., TypeScript, ESLint).
 
 ## Tech Stack
 
--   **Package Manager**: pnpm
--   **Build System**: Turborepo
--   **Framework (bene-web)**: Next.js
--   **Language**: TypeScript
--   **Styling**: Tailwind CSS
--   **Linting**: ESLint
+- **Package Manager**: pnpm
+- **Build System**: Turborepo
+- **Framework (bene-web)**: Next.js
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Linting**: ESLint
 
 ## Getting Started
 
@@ -36,7 +36,7 @@ All commands should be run from the root of the monorepo.
 To start the development server for the `bene-web` application:
 
 ```bash
-pnpm --filter bene-web dev
+pnpm --filter web dev
 ```
 
 ### Build for Production
@@ -44,7 +44,7 @@ pnpm --filter bene-web dev
 To build the `bene-web` application for production:
 
 ```bash
-pnpm --filter bene-web build
+pnpm --filter web build
 ```
 
 ### Lint the Code
@@ -52,7 +52,7 @@ pnpm --filter bene-web build
 To run the linter on the `bene-web` application:
 
 ```bash
-pnpm --filter bene-web lint
+pnpm --filter web lint
 ```
 
 ## Testing
@@ -61,6 +61,6 @@ There are currently no test scripts configured for the applications.
 
 ## Contribution Guidelines
 
--   Ensure all code passes the linter before committing.
--   Update relevant documentation if you introduce new features or changes.
--   If adding new dependencies, use `pnpm add -w <package>` for root dependencies or `pnpm add --filter <workspace> <package>` for specific apps/packages.
+- Ensure all code passes the linter before committing.
+- Update relevant documentation if you introduce new features or changes.
+- If adding new dependencies, use `pnpm add -w <package>` for root dependencies or `pnpm add --filter <workspace> <package>` for specific apps/packages.

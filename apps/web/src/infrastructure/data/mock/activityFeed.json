@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "type": "workout",
+    "title": "Completed 5K Run",
+    "description": "Great pace today! Finished with a new personal best time.",
+    "timestamp": "2023-05-10T09:00:00.000Z",
+    "user": "Alex Johnson",
+    "avatar": "https://randomuser.me/api/portraits/men/32.jpg",
+    "duration": "28:45"
+  },
+  {
+    "id": 2,
+    "type": "nutrition",
+    "title": "Lunch Added",
+    "description": "Grilled chicken salad with vegetables",
+    "timestamp": "2023-05-10T08:00:00.000Z",
+    "user": "Sarah Miller",
+    "avatar": "https://randomuser.me/api/portraits/women/44.jpg",
+    "calories": 420
+  },
+  {
+    "id": 3,
+    "type": "goal",
+    "title": "New Goal Set",
+    "description": "Run 50 miles this month",
+    "timestamp": "2023-05-09T10:00:00.000Z",
+    "user": "Mike Thompson",
+    "avatar": "https://randomuser.me/api/portraits/men/22.jpg",
+    "value": 12,
+    "goal": 50
+  },
+  {
+    "id": 4,
+    "type": "achievement",
+    "title": "Milestone Reached",
+    "description": "Congratulations on completing 30 consecutive days of exercise!",
+    "timestamp": "2023-05-08T10:00:00.000Z",
+    "user": "You",
+    "avatar": "https://randomuser.me/api/portraits/men/97.jpg"
+  },
+  {
+    "id": 5,
+    "type": "progress",
+    "title": "Weight Loss Progress",
+    "description": "Lost 2 lbs this week",
+    "timestamp": "2023-05-07T10:00:00.000Z",
+    "user": "Emma Davis",
+    "avatar": "https://randomuser.me/api/portraits/women/68.jpg",
+    "value": 2
+  }
+]
