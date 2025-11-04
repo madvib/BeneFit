@@ -141,5 +141,19 @@ vite.config.ts.timestamp-*
 # Vsual Studio Code
 .vscode/*
 
-# Qwen AI files
+# AI Assistant files
 .qwen/*
+.gemini/*
+.ai/*
+
+# NX files
+.nx/cache
+.nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+storybook-static
+
+tools/nx-plugin/*

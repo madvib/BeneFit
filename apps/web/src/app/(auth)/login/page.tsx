@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { LoginForm } from "@/presentation/auth/login-form";
+import Link from 'next/link';
+import { LoginForm } from '@/components/auth/login-form';
 
 export default function LoginPage() {
   return (
@@ -10,7 +10,7 @@ export default function LoginPage() {
         </h2>
         <LoginForm />
         <p className="text-center mt-4">
-          Don&apos;t have an account?{" "}
+          Don&apos;t have an account?{' '}
           <Link href="/signup" className="text-primary hover:underline">
             Sign up
           </Link>

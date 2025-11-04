@@ -1,0 +1,85 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "plugins": [
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "vite:test",
+        "serveTargetName": "serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": [
+        "packages/infrastructure/*",
+        "packages/core/*",
+        "packages/application/*",
+        "packages/utils/*"
+      ],
+      "options": {
+        "build": false,
+        "typecheck": {
+          "targetName": "typecheck"
+        }
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "eslint:lint"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": ["tools/nx-plugin/*"],
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json"
+        }
+      }
+    }
+  ],
+  "targetDefaults": {
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "build": {
+      "cache": true
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    }
+  },
+  "generators": {
+    "@nx/react": {
+      "library": {
+        "unitTestRunner": "none"
+      }
+    }
+  }
+}

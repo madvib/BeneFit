@@ -1,5 +1,5 @@
-import { LoginForm } from "@/presentation/auth/login-form";
-import { Modal } from "@/presentation/ui/Modal/modal";
+import { LoginForm } from '@/components/auth/login-form';
+import { Modal } from '@/components/common/ui-primitives/modal/modal';
 
 export default function LoginModal() {
   return (

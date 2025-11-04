@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient as createBrowserClient } from "@/infrastructure/supabase/client";
-import { AuthError } from "@/presentation/auth/auth-error";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient as createBrowserClient } from '@bene/infrastructure';
+import { AuthError } from '@/components/auth/auth-error/auth-error';
 
 export default function UpdatePasswordPage() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const supabase = createBrowserClient();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError("");
+    setError('');
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError('Password must be at least 6 characters');
       return;
     }
 
@@ -41,14 +41,14 @@ export default function UpdatePasswordPage() {
         setSuccess(true);
         // Redirect after a short delay to show success message
         setTimeout(() => {
-          router.push("/login");
+          router.push('/login');
         }, 2000);
       }
     } catch (error_) {
       setError(
         error_ instanceof Error
           ? error_.message
-          : "An error occurred while updating the password."
+          : 'An error occurred while updating the password.',
       );
     } finally {
       setLoading(false);
@@ -123,9 +123,9 @@ export default function UpdatePasswordPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full btn ${loading ? "btn-disabled" : "btn-primary"}`}
+            className={`w-full btn ${loading ? 'btn-disabled' : 'btn-primary'}`}
           >
-            {loading ? "Updating..." : "Update Password"}
+            {loading ? 'Updating...' : 'Update Password'}
           </button>
         </form>
       </div>

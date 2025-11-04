@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json",
+    "../../apps/web/src/providers/dependencies.ts"
+  ],
+  "references": [
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../application"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

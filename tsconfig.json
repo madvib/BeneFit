@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./packages/application"
+    },
+    {
+      "path": "./packages/infrastructure"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/utils"
+    },
+    {
+      "path": "./tools/nx-plugin"
+    },
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node10",
+      "customConditions": null
+    }
+  }
+}

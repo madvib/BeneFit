@@ -1,15 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { createClient as createBrowserClient } from "@/infrastructure/supabase/client";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function EmailConfirmedPage() {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const router = useRouter();
-  const supabase = createBrowserClient();
 
   useEffect(() => {
     // Check if user is already signed in
@@ -24,14 +22,14 @@ export default function EmailConfirmedPage() {
           setSuccess(true);
           // Redirect after a delay to show success message
           setTimeout(() => {
-            router.push("/feed");
+            router.push('/feed');
           }, 3000);
         } else {
           setError(true);
         }
       } else {
         // If no session, redirect to login
-        router.push("/login");
+        router.push('/login');
       }
 
       setLoading(false);
@@ -114,7 +112,7 @@ export default function EmailConfirmedPage() {
         </p>
         <div className="mt-6">
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push('/login')}
             className="btn btn-primary w-full"
           >
             Go to Login

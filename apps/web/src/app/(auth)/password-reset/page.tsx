@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { PasswordResetForm } from "@/presentation/auth/password-reset-form";
+import Link from 'next/link';
+import { PasswordResetForm } from '@/components/auth/password-reset-form';
 
 export default function PasswordResetPage() {
   return (
@@ -12,7 +12,7 @@ export default function PasswordResetPage() {
         </h2>
         <PasswordResetForm />
         <p className="text-center mt-4">
-          Remember your password?{" "}
+          Remember your password?{' '}
           <Link href="/login" className="text-primary hover:underline">
             Log in
           </Link>

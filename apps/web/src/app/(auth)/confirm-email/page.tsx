@@ -1,20 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { createClient as createBrowserClient } from "@/infrastructure/supabase/client";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AuthError } from "@/presentation/auth/auth-error";
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { AuthError } from '@/components/auth/auth-error/auth-error';
 
 export default function ConfirmEmailPage() {
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const [resendSuccess, setResendSuccess] = useState(false);
   const searchParameters = useSearchParams();
   const router = useRouter();
-  const email = searchParameters.get("email") || "";
-
-  const supabase = createBrowserClient();
+  const email = searchParameters.get('email') || '';
 
   useEffect(() => {
     // Check current session to see if user is already logged in
@@ -24,7 +21,7 @@ export default function ConfirmEmailPage() {
       } = await supabase.auth.getSession();
       if (session?.user) {
         // If user is already logged in, redirect to feed
-        router.push("/feed");
+        router.push('/feed');
       } else {
         setLoading(false);
       }
@@ -35,16 +32,16 @@ export default function ConfirmEmailPage() {
 
   const handleResendEmail = async () => {
     if (!email) {
-      setError("Email is required to resend confirmation.");
+      setError('Email is required to resend confirmation.');
       return;
     }
 
     try {
-      setError("");
+      setError('');
       setLoading(true);
 
       const { error } = await supabase.auth.resend({
-        type: "signup",
+        type: 'signup',
         email: email,
         options: {
           emailRedirectTo: `${globalThis.location.origin}/auth/callback`,
@@ -55,13 +52,13 @@ export default function ConfirmEmailPage() {
         setError(error.message);
       } else {
         setResendSuccess(true);
-        setMessage("Confirmation email has been sent successfully!");
+        setMessage('Confirmation email has been sent successfully!');
       }
     } catch (error_) {
       setError(
         error_ instanceof Error
           ? error_.message
-          : "An error occurred while resending the email.",
+          : 'An error occurred while resending the email.',
       );
     } finally {
       setLoading(false);
@@ -90,7 +87,7 @@ export default function ConfirmEmailPage() {
 
         <div className="mb-6 p-4 bg-blue-50/20 rounded-md border border-blue-200">
           <p className="text-secondary-foreground text-center">
-            We{"'"}ve sent a confirmation email to{" "}
+            We{"'"}ve sent a confirmation email to{' '}
             <span className="font-semibold">{email}</span>
           </p>
         </div>
@@ -111,13 +108,13 @@ export default function ConfirmEmailPage() {
           <button
             onClick={handleResendEmail}
             disabled={loading}
-            className={`w-full btn ${loading ? "btn-disabled" : "btn-primary"}`}
+            className={`w-full btn ${loading ? 'btn-disabled' : 'btn-primary'}`}
           >
-            {loading ? "Sending..." : "Resend Confirmation Email"}
+            {loading ? 'Sending...' : 'Resend Confirmation Email'}
           </button>
 
           <div className="text-center mt-4 text-sm text-secondary-foreground">
-            Already confirmed?{" "}
+            Already confirmed?{' '}
             <a href="/login" className="text-primary hover:underline">
               Log in
             </a>

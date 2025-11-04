@@ -1,4 +1,4 @@
-import MarketingLayout from "@/presentation/layouts/marketing-layout";
+import MarketingLayout from '@/components/marketing/marketing-layout';
 
 export default function MarketingLayoutWrapper({
   children,

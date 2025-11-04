@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { createClient as createBrowserClient } from "@/infrastructure/supabase/client";
+import { createClient as createBrowserClient } from "infrastructure";
 import { useSearchParams } from "next/navigation";
 
 export default function AuthErrorPage() {

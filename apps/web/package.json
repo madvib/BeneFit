@@ -1,16 +1,16 @@
 {
-  "name": "bene-fit-web",
+  "name": "@bene/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "lint": "nx eslint:lint",
+    "test": "nx vite:test",
+    "test:ui": "nx vite:test --ui",
+    "test:run": "nx vite:test run",
+    "test:coverage": "nx vite:test run --coverage",
     "cf-build": "opennextjs-cloudflare build",
     "cf-deploy": "opennextjs-cloudflare deploy",
     "deploy": "pnpm run cf-build && pnpm run cf-deploy",
@@ -19,29 +19,21 @@
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.11.0",
-    "@supabase/ssr": "^0.7.0",
-    "@supabase/supabase-js": "^2.76.1",
     "lucide-react": "^0.546.0",
     "next": "15.5.6",
     "next-themes": "^0.4.6",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.16",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/node": "^24.9.1",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "happy-dom": "^20.0.8",
-    "jsdom": "^27.0.1",
-    "tailwindcss": "^4.1.16",
-    "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4",
-    "wrangler": "^4.44.0"
+    "@bene/application": "workspace:*",
+    "@bene/core": "workspace:*",
+    "@bene/infrastructure": "workspace:*",
+    "@bene/utils": "workspace:*"
+  },
+  "nx": {
+    "tags": [
+      "layer:presentation"
+    ]
   }
 }
