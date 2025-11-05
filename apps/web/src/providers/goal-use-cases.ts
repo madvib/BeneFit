@@ -9,7 +9,7 @@ export const getCurrentGoalUseCase = new GetCurrentGoalUseCase(goalsRepository);
 export const getGoalsUseCase = new GetGoalsUseCase(goalsRepository);
 
 // Export all feed-related use cases
-export const feedUseCases = {
+export const goalUseCases = {
   getCurrentGoalUseCase,
   getGoalsUseCase,
 };

@@ -2,10 +2,12 @@
 
 import { Card } from '@/components';
 
+type ProfileVisibility = 'Public' | 'Friends Only' | 'Private';
+
 interface PrivacySettingsProps {
-  profileVisibility: 'Public' | 'Friends Only' | 'Private';
+  profileVisibility: ProfileVisibility;
   activitySharing: boolean;
-  onProfileVisibilityChange: (value: 'Public' | 'Friends Only' | 'Private') => void;
+  onProfileVisibilityChange: (value: ProfileVisibility) => void;
   onActivitySharingChange: (checked: boolean) => void;
 }
 

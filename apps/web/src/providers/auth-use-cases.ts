@@ -8,7 +8,7 @@ const authRepository = new MockAuthRepository();
 export const loginUseCase = new LoginUseCase(authRepository);
 export const signupUseCase = new SignupUseCase(authRepository);
 export const resetPasswordUseCase = new ResetPasswordUseCase(authRepository);
-export const signOutUseCase = new SignOutUseCase();
+export const signOutUseCase = new SignOutUseCase(authRepository);
 
 // Export all auth-related use cases
 export const authUseCases = {

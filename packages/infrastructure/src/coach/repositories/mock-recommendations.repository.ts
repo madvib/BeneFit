@@ -21,13 +21,16 @@ export class MockRecommendationsRepository implements RecommendationsRepository 
       return Result.fail(new Error('Recommendation not found'));
     }
 
-    const recommendationOrError = Recommendation.create({
-      id: recData.id.toString(),
-      title: recData.title,
-      description: recData.description,
-      category: recData.category,
-      createdAt: new Date(),
-    });
+    const recommendationOrError = Recommendation.create(
+      {
+        id: recData.id.toString(),
+        title: recData.title,
+        description: recData.description,
+        category: recData.category,
+        createdAt: new Date(),
+      },
+      recData.id.toString(),
+    );
 
     if (recommendationOrError.isFailure) {
       return Result.fail(recommendationOrError.error);
@@ -53,13 +56,16 @@ export class MockRecommendationsRepository implements RecommendationsRepository 
 
     const recommendationEntities: Recommendation[] = [];
     for (const rec of recommendations) {
-      const recommendationOrError = Recommendation.create({
-        id: rec.id.toString(),
-        title: rec.title,
-        description: rec.description,
-        category: rec.category,
-        createdAt: new Date(),
-      });
+      const recommendationOrError = Recommendation.create(
+        {
+          id: rec.id.toString(),
+          title: rec.title,
+          description: rec.description,
+          category: rec.category,
+          createdAt: new Date(),
+        },
+        rec.id.toString(),
+      );
 
       if (recommendationOrError.isSuccess) {
         recommendationEntities.push(recommendationOrError.value);

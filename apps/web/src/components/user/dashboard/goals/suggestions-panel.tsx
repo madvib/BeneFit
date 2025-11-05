@@ -1,8 +1,14 @@
 import RecommendationCard from '@/components/user/dashboard/recommendation-card';
-import { Recommendation } from '@bene/core/coach';
+
+interface RecommendationDTO {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+}
 
 interface SuggestionsPanelProps {
-  recommendations: Recommendation[];
+  recommendations: RecommendationDTO[];
 }
 
 export default function SuggestionsPanel({ recommendations }: SuggestionsPanelProps) {

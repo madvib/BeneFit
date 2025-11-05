@@ -4,7 +4,6 @@ import vitest from 'eslint-plugin-vitest';
 import security from 'eslint-plugin-security';
 import unicorn from 'eslint-plugin-unicorn';
 import testing_library from 'eslint-plugin-testing-library';
-import boundaries from 'eslint-plugin-boundaries';
 import nx from '@nx/eslint-plugin';
 import custom from '../index.js';
 
@@ -30,7 +29,6 @@ export const recommended = (name, projectDir) => [
       unicorn,
       'testing-library': testing_library,
       vitest,
-      boundaries,
       '@nx': nx,
       custom,
     },

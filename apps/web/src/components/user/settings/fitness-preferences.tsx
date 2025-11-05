@@ -1,10 +1,13 @@
 'use client';
 
+type PreferredUnits = 'Metric (kg, km)' | 'Imperial (lbs, miles)';
+type GoalFocus = 'Weight Loss' | 'Muscle Building' | 'General Fitness';
+
 interface FitnessPreferencesProps {
-  preferredUnits: 'Metric (kg, km)' | 'Imperial (lbs, miles)';
-  goalFocus: 'Weight Loss' | 'Muscle Building' | 'General Fitness';
-  onPreferredUnitsChange: (value: 'Metric (kg, km)' | 'Imperial (lbs, miles)') => void;
-  onGoalFocusChange: (value: 'Weight Loss' | 'Muscle Building' | 'General Fitness') => void;
+  preferredUnits: PreferredUnits;
+  goalFocus: GoalFocus;
+  onPreferredUnitsChange: (value: PreferredUnits) => void;
+  onGoalFocusChange: (value: GoalFocus) => void;
 }
 
 export default function FitnessPreferences({ 

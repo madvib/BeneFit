@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getGoals, type GoalData } from '@/controllers/goals';
 
-// Define the recommendation type
-export interface RecommendationData {
+interface RecommendationDTO {
   id: string;
   title: string;
   description: string;
@@ -13,7 +12,7 @@ export interface RecommendationData {
 
 interface GetRecommendationsResult {
   success: boolean;
-  data: RecommendationData[];
+  data: RecommendationDTO[];
   error?: string;
 }
 
@@ -22,7 +21,7 @@ async function getRecommendations(): Promise<GetRecommendationsResult> {
   // This would typically be a server action that calls a use case
   // For now, return mock data
   try {
-    const mockRecommendations: RecommendationData[] = [
+    const mockRecommendations: RecommendationDTO[] = [
       {
         id: '1',
         title: 'Try HIIT Training',
@@ -62,7 +61,7 @@ async function getRecommendations(): Promise<GetRecommendationsResult> {
 
 interface UseGoalsControllerResult {
   goals: GoalData[];
-  recommendations: RecommendationData[];
+  recommendations: RecommendationDTO[];
   isLoading: boolean;
   error: string | null;
   fetchGoalsData: () => Promise<void>;
@@ -74,7 +73,7 @@ interface UseGoalsControllerResult {
 
 export function useGoalsController(): UseGoalsControllerResult {
   const [goals, setGoals] = useState<GoalData[]>([]);
-  const [recommendations, setRecommendations] = useState<RecommendationData[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendationDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

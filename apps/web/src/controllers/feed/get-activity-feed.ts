@@ -1,6 +1,6 @@
 'use server';
 
-import { feedUseCases } from '@/providers/goal-use-cases';
+import { feedUseCases } from '@/providers/feed-use-cases';
 
 // Define the return types for transformed activity data
 export interface ActivityData {
@@ -25,59 +25,35 @@ interface GetActivityFeedResult {
 
 export async function getActivityFeed(): Promise<GetActivityFeedResult> {
   try {
-    // In a real implementation, we would use the actual use case
-    // For now, return mock data that matches the expected format
-    // The actual implementation would be:
-    // const result = await feedUseCases.getActivityFeedUseCase.execute();
+    // Use the use case to get activity feed data
+    const result = await feedUseCases.getActivityFeedUseCase.execute();
 
-    const mockActivities: ActivityData[] = [
-      {
-        id: '1',
-        type: 'workout',
-        title: 'Morning Run',
-        description: 'Completed 5km run in 25 minutes',
-        timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-        user: 'John Doe',
-        duration: '25 min',
-        calories: 320,
-      },
-      {
-        id: '2',
-        type: 'nutrition',
-        title: 'Post-Workout Meal',
-        description: 'High protein meal after workout',
-        timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
-        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-        user: 'Jane Smith',
-        calories: 450,
-      },
-      {
-        id: '3',
-        type: 'goal',
-        title: 'Weekly Goal Update',
-        description: 'Reached 80% of weekly exercise target',
-        timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-        avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-        user: 'Mike Johnson',
-        value: 80,
-        goal: 100,
-      },
-      {
-        id: '4',
-        type: 'achievement',
-        title: 'New Personal Record',
-        description: 'Achieved new personal record in bench press',
-        timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-        avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-        user: 'Sarah Williams',
-      },
-    ];
+    if (result.isSuccess) {
+      // Transform Workout entities to ActivityData format
+      const transformedActivities = result.value.map(workout => ({
+        id: workout.id,
+        type: 'workout' as const, // For now, default to workout type
+        title: workout.type, // Use workout type as title
+        description: `Completed ${workout.type} workout`,
+        timestamp: workout.date,
+        avatar: 'https://randomuser.me/api/portraits/men/32.jpg', // Default avatar
+        user: 'Current User', // Could get from context
+        duration: workout.duration,
+        calories: workout.calories,
+      }));
 
-    return {
-      success: true,
-      data: mockActivities,
-    };
+      return {
+        success: true,
+        data: transformedActivities,
+      };
+    } else {
+      console.error('Use case failed:', result.error);
+      return {
+        success: false,
+        data: [],
+        error: result.error?.message || 'Failed to fetch activity feed',
+      };
+    }
   } catch (error) {
     console.error('Error in getActivityFeed controller:', error);
     return {

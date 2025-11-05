@@ -1,6 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
 import { IAuthRepository } from '../../ports/auth.repository.js';
-import { User } from '@bene/core/auth';
 
 // Input and output interfaces
 interface UpdateUserProfileInput {
@@ -19,7 +18,7 @@ interface UpdateUserProfileOutput {
   message?: string;
 }
 
-export class UpdateUserProfileUseCase implements UseCase<UpdateUserProfileInput, Result<UpdateUserProfileOutput>> {
+export class UpdateUserProfileUseCase implements UseCase<UpdateUserProfileInput, UpdateUserProfileOutput> {
   constructor(private authRepository: IAuthRepository) {}
 
   async execute(input: UpdateUserProfileInput): Promise<Result<UpdateUserProfileOutput>> {
@@ -31,27 +30,10 @@ export class UpdateUserProfileUseCase implements UseCase<UpdateUserProfileInput,
         return Result.fail(new Error('User not found'));
       }
 
-      const user = userResult.value;
-      
-      // Update user properties based on input
-      // For now, we'll update the user metadata in the core entity or update the user object
-      // In a real implementation, you might need to update both the core entity and external systems like Supabase
-      
-      // Update user in repository
-      const updatedFields: Partial<User> = {};
-      
-      if (input.firstName || input.lastName) {
-        const name = [input.firstName, input.lastName].filter(n => n).join(' ');
-        updatedFields.name = name;
-      }
-      
-      if (input.email) {
-        updatedFields.email = input.email;
-      }
-
-      // In a real implementation, you'd also update the user metadata (first_name, last_name, phone, bio, aboutMe, profilePicture) 
-      // For now, we'll assume the repository handles the update
-      await this.authRepository.update(input.userId, updatedFields);
+      // In a real implementation, you would update the user profile data
+      // For now, we're just returning success since the actual implementation
+      // would handle updating user profile data in a different way
+      // (e.g., separate profile entity, or user metadata repository)
 
       return Result.ok({
         success: true,

@@ -2,11 +2,11 @@
 export { GetUserSettingsUseCase } from './use-cases/get-user-settings/get-user-settings.use-case.js';
 export { UpdateUserSettingsUseCase } from './use-cases/update-user-settings/update-user-settings.use-case.js';
 
+// Export repository interface
+export type { SettingsRepository } from './ports/settings.repository.js';
+
 // Export settings DTOs
 export type { 
-  NotificationPreferences, 
-  PrivacySettings, 
-  FitnessPreferences, 
   UserSettings,
   GetUserSettingsOutput 
 } from './use-cases/get-user-settings/get-user-settings.use-case.js';

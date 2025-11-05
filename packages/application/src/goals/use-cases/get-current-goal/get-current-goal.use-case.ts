@@ -1,4 +1,4 @@
-import { UseCase } from '@bene/application/shared';
+import { UseCase } from '@bene/core/shared';
 import { GoalsRepository } from '../../ports/goals.repository.js';
 import { Goal } from '@bene/core/goals';
 import { Result } from '@bene/core/shared';

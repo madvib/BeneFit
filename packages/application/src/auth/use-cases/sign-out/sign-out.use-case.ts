@@ -26,6 +26,8 @@ export class SignOutUseCase {
       return Result.ok({});
     }
     
-    return signOutResult as Result<SignOutOutput>;
+    // If the auth repository signOut returns void but we need SignOutOutput,
+    // we need to handle the error case properly
+    return Result.fail(signOutResult.error);
   }
 }

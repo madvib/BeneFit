@@ -6,7 +6,7 @@ import {
   NotificationPreferences, 
   PrivacySettings, 
   FitnessPreferences 
-} from '@bene/application/settings';
+} from '@bene/core/settings';
 
 // Define the return types for settings data
 export interface SettingsData {

@@ -1,21 +1,11 @@
 import { Result, UseCase } from '@bene/core/shared';
+import { SettingsRepository } from '../../ports/settings.repository.js';
 
-// Define the user settings interfaces
-export interface NotificationPreferences {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  workoutReminders: boolean;
-}
-
-export interface PrivacySettings {
-  profileVisibility: 'Public' | 'Friends Only' | 'Private';
-  activitySharing: boolean;
-}
-
-export interface FitnessPreferences {
-  preferredUnits: 'Metric (kg, km)' | 'Imperial (lbs, miles)';
-  goalFocus: 'Weight Loss' | 'Muscle Building' | 'General Fitness';
-}
+import { 
+  NotificationPreferences, 
+  PrivacySettings, 
+  FitnessPreferences 
+} from '@bene/core/settings';
 
 export interface UserSettings {
   notificationPreferences: NotificationPreferences;
@@ -28,26 +18,40 @@ export interface GetUserSettingsOutput extends UserSettings {
   userId: string;
 }
 
-export class GetUserSettingsUseCase implements UseCase<string, Result<GetUserSettingsOutput>> {
+export class GetUserSettingsUseCase implements UseCase<string, GetUserSettingsOutput> {
+  constructor(private settingsRepository: SettingsRepository) {}
+
   async execute(userId: string): Promise<Result<GetUserSettingsOutput>> {
     try {
-      // In a real implementation, this would fetch user settings from a repository
-      // For now, return mock data
+      // Fetch user settings from repository
+      const settingsResult = await this.settingsRepository.findById(userId);
+
+      if (settingsResult.isFailure || !settingsResult.value) {
+        // Return default settings if user doesn't have settings saved
+        return Result.ok({
+          userId,
+          notificationPreferences: {
+            emailNotifications: true,
+            pushNotifications: true,
+            workoutReminders: true,
+          },
+          privacySettings: {
+            profileVisibility: 'Public',
+            activitySharing: false,
+          },
+          fitnessPreferences: {
+            preferredUnits: 'Metric (kg, km)',
+            goalFocus: 'General Fitness',
+          }
+        });
+      }
+
+      const settings = settingsResult.value;
       return Result.ok({
-        userId,
-        notificationPreferences: {
-          emailNotifications: true,
-          pushNotifications: true,
-          workoutReminders: true,
-        },
-        privacySettings: {
-          profileVisibility: 'Public',
-          activitySharing: false,
-        },
-        fitnessPreferences: {
-          preferredUnits: 'Metric (kg, km)',
-          goalFocus: 'General Fitness',
-        }
+        notificationPreferences: settings.notificationPreferences,
+        privacySettings: settings.privacySettings,
+        fitnessPreferences: settings.fitnessPreferences,
+        userId: settings.userId
       });
     } catch (error) {
       console.error('Error getting user settings:', error);

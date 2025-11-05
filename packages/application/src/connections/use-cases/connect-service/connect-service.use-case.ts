@@ -10,7 +10,7 @@ interface ConnectServiceOutput {
   message?: string;
 }
 
-export class ConnectServiceUseCase implements UseCase<ConnectServiceInput, Result<ConnectServiceOutput>> {
+export class ConnectServiceUseCase implements UseCase<ConnectServiceInput, ConnectServiceOutput> {
   constructor(private serviceConnectionRepository: ServiceConnectionRepository) {}
 
   async execute(input: ConnectServiceInput): Promise<Result<ConnectServiceOutput>> {

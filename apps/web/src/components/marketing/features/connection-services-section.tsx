@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import ConnectionServiceCard from './connection-service-card';
 
 interface ConnectionServicesSectionProps {

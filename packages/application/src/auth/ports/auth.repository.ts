@@ -1,9 +1,8 @@
-import { Result } from '@bene/core/shared';
+import { Result, Repository } from '@bene/core/shared';
 import { User } from '@bene/core/auth';
-import { LoginInput, LoginOutput } from '../dto/login.dto.js';
-import { SignupInput, SignupOutput } from '../dto/signup.dto.js';
-import { ResetPasswordInput } from '../dto/reset-password.dto.js';
-import { Repository } from '@bene/application/shared';
+import { LoginInput, LoginOutput } from '../use-cases/login/login.use-case.js';
+import { SignupInput, SignupOutput } from '../use-cases/signup/signup.use-case.js';
+import { ResetPasswordInput } from '../use-cases/reset-password/reset-password.use-case.js';
 
 /**
  * Repository interface for Auth

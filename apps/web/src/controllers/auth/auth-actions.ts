@@ -5,13 +5,13 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 // Define the return types for auth operations
-interface LoginInput {
+export interface LoginInput {
   email: string;
   password: string;
   next?: string;
 }
 
-interface LoginResult {
+export interface LoginResult {
   success: boolean;
   message?: string;
   error?: string;
@@ -51,12 +51,12 @@ export async function loginAction(input: LoginInput): Promise<LoginResult> {
   }
 }
 
-interface SignupInput {
+export interface SignupInput {
   email: string;
   password: string;
 }
 
-interface SignupResult {
+export interface SignupResult {
   success: boolean;
   message?: string;
   error?: string;
@@ -96,11 +96,11 @@ export async function signupAction(input: SignupInput): Promise<SignupResult> {
   }
 }
 
-interface ResetPasswordInput {
+export interface ResetPasswordInput {
   email: string;
 }
 
-interface ResetPasswordResult {
+export interface ResetPasswordResult {
   success: boolean;
   message?: string;
   error?: string;
@@ -115,7 +115,7 @@ export async function resetPasswordAction(input: ResetPasswordInput): Promise<Re
     if (result.isSuccess) {
       return {
         success: true,
-        message: result.value.message || 'Password reset instructions sent to your email',
+        message: 'Password reset instructions sent to your email',
       };
     } else {
       console.error('Reset password failed:', result.error);
@@ -133,7 +133,7 @@ export async function resetPasswordAction(input: ResetPasswordInput): Promise<Re
   }
 }
 
-interface SignOutResult {
+export interface SignOutResult {
   success: boolean;
   message?: string;
   error?: string;

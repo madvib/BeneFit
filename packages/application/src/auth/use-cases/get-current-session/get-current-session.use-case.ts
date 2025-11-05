@@ -15,7 +15,7 @@ export interface GetCurrentSessionOutput {
   expiresAt?: Date;
 }
 
-export class GetCurrentSessionUseCase implements UseCase<void, Result<GetCurrentSessionOutput>> {
+export class GetCurrentSessionUseCase implements UseCase<void, GetCurrentSessionOutput> {
   async execute(): Promise<Result<GetCurrentSessionOutput>> {
     try {
       // In a real implementation, this would get the session from the request context

@@ -12,6 +12,7 @@
     "./coach": "./src/coach/index.ts",
     "./connections": "./src/connections/index.ts",
     "./goals": "./src/goals/index.ts",
+    "./settings": "./src/settings/index.ts",
     "./package.json": "./package.json"
   },
   "dependencies": {},

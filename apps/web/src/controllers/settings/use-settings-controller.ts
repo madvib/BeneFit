@@ -68,6 +68,9 @@ export function useSettingsController(): UseSettingsControllerResult {
     setTempSettings(prev => ({
       ...prev,
       notificationPreferences: {
+        emailNotifications: false, // provide defaults
+        pushNotifications: false,
+        workoutReminders: false,
         ...prev?.notificationPreferences,
         ...prefs
       }
@@ -78,6 +81,8 @@ export function useSettingsController(): UseSettingsControllerResult {
     setTempSettings(prev => ({
       ...prev,
       privacySettings: {
+        profileVisibility: 'Public',
+        activitySharing: false,
         ...prev?.privacySettings,
         ...prefs
       }
@@ -88,6 +93,8 @@ export function useSettingsController(): UseSettingsControllerResult {
     setTempSettings(prev => ({
       ...prev,
       fitnessPreferences: {
+        preferredUnits: 'Metric (kg, km)',
+        goalFocus: 'General Fitness',
         ...prev?.fitnessPreferences,
         ...prefs
       }

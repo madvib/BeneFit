@@ -57,8 +57,5 @@ export class Message extends Entity<MessageProps> {
     return this.props.createdAt;
   }
 
-  // Business logic methods
-  private touch(): void {
-    (this.props as any).updatedAt = new Date();
-  }
+
 }

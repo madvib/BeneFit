@@ -1,0 +1,23 @@
+[
+  {
+    "id": "user-1",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "isActive": true,
+    "createdAt": "2023-01-15T10:30:00.000Z"
+  },
+  {
+    "id": "user-2", 
+    "email": "jane.smith@example.com",
+    "name": "Jane Smith",
+    "isActive": true,
+    "createdAt": "2023-02-20T14:45:00.000Z"
+  },
+  {
+    "id": "user-3",
+    "email": "mike.johnson@example.com", 
+    "name": "Mike Johnson",
+    "isActive": true,
+    "createdAt": "2023-03-10T09:15:00.000Z"
+  }
+]

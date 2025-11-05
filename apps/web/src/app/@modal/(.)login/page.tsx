@@ -1,10 +1,13 @@
+import { Suspense } from 'react';
 import { LoginForm } from '@/components/auth/login-form';
 import { Modal } from '@/components/common/ui-primitives/modal/modal';
 
 export default function LoginModal() {
   return (
     <Modal title="Login to BeneFit">
-      <LoginForm />
+      <Suspense fallback={<div>Loading login form...</div>}>
+        <LoginForm />
+      </Suspense>
     </Modal>
   );
 }

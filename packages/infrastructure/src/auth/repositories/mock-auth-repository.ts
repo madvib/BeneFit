@@ -16,6 +16,56 @@ export class MockAuthRepository implements IAuthRepository {
   private users: Map<string, User> = new Map();
   private emailToIdMap: Map<string, string> = new Map();
 
+  constructor() {
+    // Initialize with mock data
+    this.loadMockUsers();
+  }
+
+  private async loadMockUsers() {
+    try {
+      const data = await import('../data/mock/users.json');
+      const userData = data.default as Array<{
+        id: string;
+        email: string;
+        name: string;
+        isActive: boolean;
+        createdAt: string;
+      }>;
+
+      userData.forEach(user => {
+        const userResult = User.create({
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        });
+
+        if (userResult.isSuccess) {
+          // The user is created with default isActive=true
+          // If we need to load the specific isActive status from mock data, 
+          // we would need a reconstitute method in the User entity
+          this.users.set(userResult.value.id, userResult.value);
+          this.emailToIdMap.set(userResult.value.email, userResult.value.id);
+        }
+      });
+    } catch (error) {
+      console.error('Failed to load mock users:', error);
+      // Initialize with default user if loading fails
+      this.initializeDefaultUser();
+    }
+  }
+
+  private initializeDefaultUser() {
+    const defaultUserResult = User.create({
+      id: 'user-default',
+      email: 'user@example.com',
+    });
+
+    if (defaultUserResult.isSuccess) {
+      this.users.set(defaultUserResult.value.id, defaultUserResult.value);
+      this.emailToIdMap.set(defaultUserResult.value.email, defaultUserResult.value.id);
+    }
+  }
+
   async login(input: LoginInput): Promise<Result<LoginOutput>> {
     const userResult = await this.findByEmail(input.email);
 

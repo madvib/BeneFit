@@ -27,8 +27,43 @@ export class MockWorkoutRepository implements WorkoutRepository {
     console.log(`${id} deleted`);
     return Result.ok();
   }
-  getActivityFeed(): Promise<Workout[]> {
-    throw new Error('Method not implemented.');
+  async getActivityFeed(): Promise<Workout[]> {
+    await new Promise((resolve) => setTimeout(resolve, 300)); // Simulate network delay
+    const data = await import('../data/mock/activityFeed.json');
+    const dtoData = data.default as Array<{
+      id: number;
+      date: string;
+      type: string;
+      duration: string;
+      distance: string | null;
+      sets: number | null;
+      laps: number | null;
+      calories: number;
+      isActive: boolean;
+    }>;
+
+    const workouts: Workout[] = [];
+    for (const dto of dtoData) {
+      const entityResult = Workout.create({
+        id: dto.id.toString(),
+        date: dto.date,
+        type: dto.type,
+        duration: dto.duration,
+        calories: dto.calories,
+        distance: dto.distance !== null ? dto.distance : undefined,
+        sets: dto.sets !== null ? dto.sets : undefined,
+        laps: dto.laps !== null ? dto.laps : undefined,
+        isActive: dto.isActive,
+      });
+
+      if (entityResult.isSuccess) {
+        workouts.push(entityResult.value);
+      } else {
+        console.error('Failed to create Workout entity:', entityResult.error);
+      }
+    }
+
+    return workouts;
   }
   async getWorkoutHistory(): Promise<Workout[]> {
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -51,9 +86,9 @@ export class MockWorkoutRepository implements WorkoutRepository {
         type: dto.type,
         duration: dto.duration,
         calories: dto.calories,
-        distance: dto.distance,
-        sets: dto.sets,
-        laps: dto.laps,
+        distance: dto.distance !== null ? dto.distance : undefined,
+        sets: dto.sets !== null ? dto.sets : undefined,
+        laps: dto.laps !== null ? dto.laps : undefined,
         id: dto.id.toString(),
         isActive: false,
       });

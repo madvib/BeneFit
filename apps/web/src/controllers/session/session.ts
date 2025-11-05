@@ -36,11 +36,12 @@ export async function getCurrentUser(): Promise<CurrentUserResult> {
     // This could be from cookies, headers, or session context
 
     // Return mock user data
+    // Use an ID that exists in the mock data: 'user-1', 'user-2', or 'user-3'
     return {
       success: true,
       data: {
-        id: 'mock-user-id-123', // This would come from actual session
-        email: 'user@example.com', // This would come from actual session
+        id: 'user-1', // This would come from actual session
+        email: 'john.doe@example.com', // This would come from actual session
       },
     };
   } catch (error) {
@@ -64,9 +65,9 @@ export async function getSession(): Promise<SessionResult> {
       success: true,
       data: {
         user: {
-          id: 'mock-user-id-123',
-          email: 'user@example.com',
-          name: 'Mock User',
+          id: 'user-1',
+          email: 'john.doe@example.com',
+          name: 'John Doe',
         },
         isAuthenticated: true,
       },

@@ -10,7 +10,7 @@ interface DisconnectServiceOutput {
   message?: string;
 }
 
-export class DisconnectServiceUseCase implements UseCase<DisconnectServiceInput, Result<DisconnectServiceOutput>> {
+export class DisconnectServiceUseCase implements UseCase<DisconnectServiceInput, DisconnectServiceOutput> {
   constructor(private serviceConnectionRepository: ServiceConnectionRepository) {}
 
   async execute(input: DisconnectServiceInput): Promise<Result<DisconnectServiceOutput>> {

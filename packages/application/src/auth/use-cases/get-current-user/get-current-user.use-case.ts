@@ -7,7 +7,7 @@ export interface GetCurrentUserOutput {
   name?: string;
 }
 
-export class GetCurrentUserUseCase implements UseCase<void, Result<GetCurrentUserOutput>> {
+export class GetCurrentUserUseCase implements UseCase<void, GetCurrentUserOutput> {
   async execute(): Promise<Result<GetCurrentUserOutput>> {
     try {
       // In a real implementation, this would get the user from the session context

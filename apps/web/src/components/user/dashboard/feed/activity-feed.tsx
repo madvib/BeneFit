@@ -5,7 +5,7 @@ import { Card, EmptyState, LoadingSpinner } from '@/components';
 import { useActivityFeed } from '@/controllers';
 import { ActivityIcon } from './icons';
 
-type ActivityType = 'workout' | 'nutrition' | 'goal' | 'achievement' | 'progress';
+
 
 export default function ActivityFeed() {
   const { activities, loading, error } = useActivityFeed();

@@ -25,11 +25,19 @@ export default function AccountClient() {
 
   useEffect(() => {
     if (userProfile) {
-      setFormState({
+      const newFormState = {
         firstName: userProfile.firstName || '',
         lastName: userProfile.lastName || '',
         email: userProfile.email || '',
         phone: userProfile.phone || ''
+      };
+      
+      setFormState(prevState => {
+        // Compare with previous state to avoid unnecessary updates
+        if (JSON.stringify(prevState) !== JSON.stringify(newFormState)) {
+          return newFormState;
+        }
+        return prevState;
       });
     }
   }, [userProfile]);

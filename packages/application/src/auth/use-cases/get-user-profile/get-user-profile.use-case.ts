@@ -1,6 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
 import { IAuthRepository } from '../../ports/auth.repository.js';
-import { WorkoutRepository } from '../../../index.js';
 
 // Define the profile goal interface
 interface ProfileGoal {
@@ -40,7 +39,6 @@ export interface GetUserProfileOutput {
 export class GetUserProfileUseCase implements UseCase<string, GetUserProfileOutput> {
   constructor(
     private authRepository: IAuthRepository,
-    private workoutRepository: WorkoutRepository,
   ) {}
 
   async execute(userId: string): Promise<Result<GetUserProfileOutput>> {

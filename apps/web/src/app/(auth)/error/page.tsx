@@ -1,12 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { createClient as createBrowserClient } from "infrastructure";
 import { useSearchParams } from "next/navigation";
 
 export default function AuthErrorPage() {
   const searchParameters = useSearchParams();
-  const supabase = createBrowserClient();
 
   const { errorType, errorMessage } = useMemo(() => {
     const error = searchParameters.get("error");
@@ -19,10 +17,8 @@ export default function AuthErrorPage() {
   }, [searchParameters]);
 
   const handleRetry = () => {
-    // Attempt to get current session to see if user is still logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      globalThis.location.href = session ? "/feed" : "/login";
-    });
+    // For now, redirect to login
+    globalThis.location.href = "/login";
   };
 
   const getErrorTitle = () => {
