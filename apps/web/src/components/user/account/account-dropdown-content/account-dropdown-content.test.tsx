@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import AccountDropdownContent from "./account-dropdown-content";
 
 // Mock child components
-vi.mock("@/components/auth/LogoutButton", () => ({
+vi.mock('@/components/auth/logout-button/logout-button', () => ({
   LogoutButton: vi.fn(({ className, onItemClick, children }) => (
     <button
       data-testid="logout-button"
@@ -15,8 +15,8 @@ vi.mock("@/components/auth/LogoutButton", () => ({
   )),
 }));
 
-vi.mock("@/components/common/ui/ThemeToggle/ThemeToggle", () => ({
-  ThemeToggle: vi.fn(() => <div data-testid="theme-toggle">ThemeToggle</div>),
+vi.mock('@/components/theme/theme-toggle/theme-toggle', () => ({
+  ThemeToggle: vi.fn(() => <button data-testid="theme-toggle">ThemeToggle</button>),
 }));
 
 describe("AccountDropdownContent", () => {

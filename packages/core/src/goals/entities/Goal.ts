@@ -79,16 +79,16 @@ export class Goal extends Entity<GoalProps> {
 
   // Business logic methods
   deactivate(): void {
-    (this.props as any).isActive = false;
+    this.props.isActive = false;
     this.touch();
   }
 
   activate(): void {
-    (this.props as any).isActive = true;
+    this.props.isActive = true;
     this.touch();
   }
 
   private touch(): void {
-    (this.props as any).updatedAt = new Date();
+    this.props.updatedAt = new Date();
   }
 }

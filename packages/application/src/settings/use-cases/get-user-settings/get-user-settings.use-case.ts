@@ -55,7 +55,7 @@ export class GetUserSettingsUseCase implements UseCase<string, GetUserSettingsOu
       });
     } catch (error) {
       console.error('Error getting user settings:', error);
-      return Result.fail(error instanceof Error ? error : new Error('Failed to get user settings'));
+      return Result.fail(new Error('Failed to get user settings'));
     }
   }
 }

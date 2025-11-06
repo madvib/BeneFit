@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import UnifiedHeader from "./UnifiedHeader";
+import UnifiedHeader from "./unified-header";
 
 // Mock child components to avoid deep integration issues
-vi.mock("../AuthChecker/AuthChecker", () => ({
+vi.mock("../AuthChecker/auth-checker", () => ({
   AuthChecker: vi.fn(({ children }) =>
     children({ isLoggedIn: true, isLoading: false, user: { id: "123" } }),
   ),
 }));
-vi.mock("../UnifiedNavigation/UnifiedNavigation", () => ({
+vi.mock("../UnifiedNavigation/unified-navigation", () => ({
   UnifiedNavigation: vi.fn(({ isLoggedIn, variant }) => (
     <div
       data-testid="unified-navigation"
@@ -135,10 +135,10 @@ describe("UnifiedHeader", () => {
     const menuToggle = screen.getByLabelText("Open menu");
     fireEvent.click(menuToggle);
 
-    // Find the parent link using testing-library methods instead of direct DOM access
-    // Try to find the link by its accessible name or role
-    const logoLink = screen.getByRole("link", { name: /logo|home/i });
-    fireEvent.click(logoLink);
+    // There are two logo links (desktop and mobile), so use getAllByRole
+    const logoLinks = screen.getAllByRole("link", { name: /logo|home/i });
+    const mobileLogoLink = logoLinks[1]; // Get the second one (mobile version)
+    fireEvent.click(mobileLogoLink);
 
     // Mobile menu should close
     await waitFor(() => {
@@ -163,13 +163,13 @@ describe("UnifiedHeader", () => {
 
     // Check header structure by verifying the presence of expected child elements
     // instead of checking for the container class directly
-    const header = screen.getByRole("banner");
+    const headerElement = screen.getByRole("banner");
     const logoImage = screen.getByAltText(/BeneFit Logo/);
     const mobileMenuToggle = screen.getByLabelText("Open menu");
     
     // Verify that these elements are within the header structure
-    expect(header.contains(logoImage)).toBe(true);
-    expect(header.contains(mobileMenuToggle)).toBe(true);
+    expect(headerElement.contains(logoImage)).toBe(true);
+    expect(headerElement.contains(mobileMenuToggle)).toBe(true);
 
     // Check desktop navigation is hidden on small screens
     expect(screen.getByTestId("unified-navigation")).toBeInTheDocument();

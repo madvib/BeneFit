@@ -71,6 +71,11 @@ export class Chat extends Entity<ChatProps> {
     this.touch();
   }
 
+  deactivate(): void {
+    this.props.isActive = false;
+    this.touch();
+  }
+
   private touch(): void {
     this.props.updatedAt = new Date();
   }

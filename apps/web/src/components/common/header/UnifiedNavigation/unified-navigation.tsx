@@ -148,7 +148,7 @@ export function UnifiedNavigation({
       {variant === 'marketing' && isLoggedIn && (
         <Link
           href="/feed"
-          className="btn ${isMobile ? 'w-full' : ''} btn-primary text-lg px-4 py-2"
+          className={`btn ${isMobile ? 'w-full' : ''} btn-primary text-lg px-4 py-2`}
           onClick={handleClick}
         >
           Dashboard

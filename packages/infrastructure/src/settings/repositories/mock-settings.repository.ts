@@ -2,24 +2,51 @@ import { Result } from '@bene/core/shared';
 import { SettingsRepository } from '@bene/application/settings';
 import { Settings, NotificationPreferences, PrivacySettings, FitnessPreferences } from '@bene/core/settings';
 
+// Mock data directly in the code instead of importing JSON to avoid async issues
+const MOCK_SETTINGS_DATA = {
+  'default': {
+    notificationPreferences: {
+      emailNotifications: true,
+      pushNotifications: true,
+      workoutReminders: true
+    },
+    privacySettings: {
+      profileVisibility: 'Public' as const,
+      activitySharing: false
+    },
+    fitnessPreferences: {
+      preferredUnits: 'Metric (kg, km)' as const,
+      goalFocus: 'General Fitness' as const
+    }
+  },
+  'user-1': {
+    notificationPreferences: {
+      emailNotifications: true,
+      pushNotifications: false,
+      workoutReminders: true
+    },
+    privacySettings: {
+      profileVisibility: 'Friends Only' as const,
+      activitySharing: true
+    },
+    fitnessPreferences: {
+      preferredUnits: 'Imperial (lbs, miles)' as const,
+      goalFocus: 'Weight Loss' as const
+    }
+  }
+};
+
 export class MockSettingsRepository implements SettingsRepository {
   private settingsMap: Map<string, Settings> = new Map();
 
   constructor() {
-    // Initialize with mock data
+    // Initialize with mock data synchronously to avoid race conditions
     this.loadMockData();
   }
 
-  private async loadMockData() {
-    const data = await import('../data/mock/user-settings.json');
-    const settingsData = data.default as Record<string, { 
-      notificationPreferences: NotificationPreferences;
-      privacySettings: PrivacySettings; 
-      fitnessPreferences: FitnessPreferences;
-    }>;
-    
-    // Load all settings into the map
-    Object.entries(settingsData).forEach(([userId, settings]) => {
+  private loadMockData() {
+    // Load all settings into the map using the predefined mock data
+    Object.entries(MOCK_SETTINGS_DATA).forEach(([userId, settings]) => {
       const settingsResult = Settings.create({
         id: userId,
         userId: userId,
@@ -35,8 +62,9 @@ export class MockSettingsRepository implements SettingsRepository {
   }
 
   async getUserSettings(userId: string): Promise<Settings | null> {
-    // Return user-specific settings or default settings
-    const userSettings = this.settingsMap.get(userId) || this.settingsMap.get('default') || null;
+    // Return user-specific settings if they exist, or null if they don't exist
+    // Default settings should only be used as template for creating new settings, not returned directly for nonexistent users
+    const userSettings = this.settingsMap.get(userId) || null;
     return userSettings;
   }
 
@@ -114,13 +142,25 @@ export class MockSettingsRepository implements SettingsRepository {
   }
 
   async save(entity: Settings) {
+    // Check if it has the essential structure of a Settings entity
+    if (!entity || typeof entity !== 'object' || 
+        typeof (entity as any).id !== 'string' || 
+        typeof (entity as any).userId !== 'string' ||
+        typeof (entity as any).notificationPreferences === 'undefined' ||
+        typeof (entity as any).privacySettings === 'undefined' ||
+        typeof (entity as any).fitnessPreferences === 'undefined') {
+      return Result.fail(new Error('Invalid entity structure - not a Settings entity'));
+    }
     this.settingsMap.set(entity.id, entity);
     return Result.ok(undefined);
   }
 
   async delete(id: string) {
+    const exists = this.settingsMap.has(id);
     const deleted = this.settingsMap.delete(id);
-    return deleted ? Result.ok(undefined) : Result.fail(new Error('Settings not found'));
+    // The repository should return success even if the settings didn't exist initially
+    // This follows the principle that deletion is idempotent
+    return Result.ok(undefined);
   }
 
   async exists(id: string) {

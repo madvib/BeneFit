@@ -113,7 +113,7 @@ describe('LoginUseCase', () => {
       };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isSuccess).toBe(true);
@@ -124,7 +124,7 @@ describe('LoginUseCase', () => {
       const input = { email: '', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -141,7 +141,7 @@ describe('LoginUseCase', () => {
       const input = { email: 'test@example.com', password: '' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -158,7 +158,7 @@ describe('LoginUseCase', () => {
       const input = { email: 'invalid-email', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);

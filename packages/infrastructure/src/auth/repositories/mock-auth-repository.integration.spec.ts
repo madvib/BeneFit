@@ -17,10 +17,13 @@ describe('MockAuthRepository (Integration)', () => {
 
   it('should save and retrieve auth', async () => {
     // Create entity
-    const auth = User.create({
+    const authResult = User.create({
       id: 'test-123',
-      email: '',
-    }).value;
+      email: 'test@example.com',
+    });
+    
+    expect(authResult.isSuccess).toBe(true);
+    const auth = authResult.value;
 
     // Save
     const saveResult = await repository.save(auth);
@@ -29,7 +32,9 @@ describe('MockAuthRepository (Integration)', () => {
     // Retrieve
     const findResult = await repository.findById('test-123');
     expect(findResult.isSuccess).toBe(true);
-    expect(findResult.value.id).toBe('test-123');
+    if (findResult.isSuccess) {
+      expect(findResult.value.id).toBe('test-123');
+    }
   });
 
   it('should return error when not found', async () => {

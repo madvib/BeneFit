@@ -21,9 +21,39 @@ export class UpdateUserSettingsUseCase implements UseCase<UpdateUserSettingsInpu
       // Check if settings exist for this user
       const existingSettingsResult = await this.settingsRepository.findById(input.userId);
 
-      if (existingSettingsResult.isSuccess && existingSettingsResult.value) {
+      if (existingSettingsResult.isFailure) {
+        // Repository returned failure, meaning settings don't exist - create new ones
+        const newSettingsResult = Settings.create({
+          id: input.userId,
+          userId: input.userId,
+          notificationPreferences: input.settings.notificationPreferences || {
+            emailNotifications: true,
+            pushNotifications: true,
+            workoutReminders: true,
+          },
+          privacySettings: input.settings.privacySettings || {
+            profileVisibility: 'Public',
+            activitySharing: false,
+          },
+          fitnessPreferences: input.settings.fitnessPreferences || {
+            preferredUnits: 'Metric (kg, km)',
+            goalFocus: 'General Fitness',
+          },
+        });
+
+        if (newSettingsResult.isFailure) {
+          return Result.fail(new Error('Failed to create settings'));
+        }
+
+        const saveResult = await this.settingsRepository.save(newSettingsResult.value);
+        return saveResult.isSuccess
+          ? Result.ok({ success: true, message: 'Settings created successfully' })
+          : Result.fail(new Error('Failed to save settings'));
+      } else if (existingSettingsResult.value) {
         // Update existing settings
         const existingSettings = existingSettingsResult.value;
+        
+        // Update the existing settings using the updateSettings method
         existingSettings.updateSettings(
           input.settings.notificationPreferences,
           input.settings.privacySettings,
@@ -35,7 +65,7 @@ export class UpdateUserSettingsUseCase implements UseCase<UpdateUserSettingsInpu
           ? Result.ok({ success: true, message: 'Settings updated successfully' })
           : Result.fail(new Error('Failed to save updated settings'));
       } else {
-        // Create new settings
+        // Result was successful but value was null, meaning no settings exist - create new ones
         const newSettingsResult = Settings.create({
           id: input.userId,
           userId: input.userId,
@@ -65,7 +95,7 @@ export class UpdateUserSettingsUseCase implements UseCase<UpdateUserSettingsInpu
       }
     } catch (error) {
       console.error('Error updating user settings:', error);
-      return Result.fail(error instanceof Error ? error : new Error('Failed to update user settings'));
+      return Result.fail(new Error('Failed to update user settings'));
     }
   }
 }

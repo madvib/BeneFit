@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LogoutButton } from './logout-button';
 
-// Mock the signOut function
+// Mock the signOutAction function
 vi.mock('@/app/(auth)/actions', () => ({
-  signOut: vi.fn(() => Promise.resolve()),
+  signOutAction: vi.fn(() => Promise.resolve()),
 }));
 
 describe('LogoutButton', () => {
@@ -33,13 +33,13 @@ describe('LogoutButton', () => {
   it('applies className prop', () => {
     render(<LogoutButton className="custom-class" />);
 
-    const form = screen.getByTestId('logout-form');
-    expect(form).toHaveClass('custom-class');
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('custom-class');
   });
 
   it('calls signOut when clicked', async () => {
     const importedModule = await import('@/app/(auth)/actions');
-    const { signOutAction } = importedModule;
+    const signOutActionMock = vi.mocked(importedModule.signOutAction);
 
     render(<LogoutButton />);
 
@@ -47,14 +47,15 @@ describe('LogoutButton', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(signOutAction).toHaveBeenCalledTimes(1);
+      expect(signOutActionMock).toHaveBeenCalledTimes(1);
     });
   });
 
   it('shows loading state when signing out', async () => {
     // Mock a slow signOut function
     const importedModule = await import('@/app/(auth)/actions');
-    vi.mocked(importedModule.signOutAction).mockImplementation(
+    const signOutActionMock = vi.mocked(importedModule.signOutAction);
+    signOutActionMock.mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 10)),
     );
 
@@ -76,7 +77,8 @@ describe('LogoutButton', () => {
 
     // Mock signOut to throw an error
     const importedModule2 = await import('@/app/(auth)/actions');
-    vi.mocked(importedModule2.signOutAction).mockRejectedValue(
+    const signOutActionMock = vi.mocked(importedModule2.signOutAction);
+    signOutActionMock.mockRejectedValue(
       new Error('Network error'),
     );
 

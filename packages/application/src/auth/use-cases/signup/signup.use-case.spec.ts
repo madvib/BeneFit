@@ -130,7 +130,7 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isSuccess).toBe(true);
@@ -141,7 +141,7 @@ describe('SignupUseCase', () => {
       const input = { email: '', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -158,7 +158,7 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: '' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -175,7 +175,7 @@ describe('SignupUseCase', () => {
       const input = { email: 'invalid-email', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -190,7 +190,7 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: '123' }; // Less than 6 chars
 
       // Act
-      const validateInput = (useCase as any).validateInput(input);
+      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);

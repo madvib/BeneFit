@@ -57,5 +57,14 @@ export class Message extends Entity<MessageProps> {
     return this.props.createdAt;
   }
 
+  // Business logic methods
+  deactivate(): void {
+    this.props.isActive = false;
+    this.touch();
+  }
+
+  private touch(): void {
+    this.props.updatedAt = new Date();
+  }
 
 }

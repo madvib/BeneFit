@@ -19,13 +19,17 @@ describe("Alert", () => {
   });
 
   it("applies correct type styles", () => {
+    // Test success type
     render(<Alert title="Test Title" type="success" />);
-    const alertElement = screen.getByRole("alert");
-    expect(alertElement).toHaveClass("bg-green-50");
+    const successAlert = screen.getByRole("alert");
+    expect(successAlert).toHaveClass("bg-green-50");
+  });
 
+  it("applies correct error type styles", () => {
+    // Test error type 
     render(<Alert title="Test Title" type="error" />);
-    const alertElement2 = screen.getByRole("alert");
-    expect(alertElement2).toHaveClass("bg-red-50");
+    const errorAlert = screen.getByRole("alert");
+    expect(errorAlert).toHaveClass("bg-red-50");
   });
 
   it("shows close button when onClose is provided", () => {

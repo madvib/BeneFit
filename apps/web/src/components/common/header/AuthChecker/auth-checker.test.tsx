@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AuthChecker } from "./AuthChecker";
-import { useSession } from "@/hooks/useSession";
+import { AuthChecker } from "./auth-checker";
+import { useSession } from "@/controllers/session";
 
 // Mock the useSession hook
-vi.mock("@/hooks/useSession", () => ({
+vi.mock("@/controllers/session", () => ({
   useSession: vi.fn(),
 }));
 
@@ -17,6 +17,7 @@ describe("AuthChecker", () => {
     vi.mocked(useSession).mockReturnValue({
       user: { id: "test-user", email: "test@example.com" },
       isLoading: false,
+      isAuthenticated: true,
     });
 
     render(
@@ -40,6 +41,7 @@ describe("AuthChecker", () => {
     vi.mocked(useSession).mockReturnValue({
       user: undefined,
       isLoading: false,
+      isAuthenticated: false,
     });
 
     render(
@@ -63,6 +65,7 @@ describe("AuthChecker", () => {
     vi.mocked(useSession).mockReturnValue({
       user: undefined,
       isLoading: true,
+      isAuthenticated: false,
     });
 
     render(
@@ -84,6 +87,7 @@ describe("AuthChecker", () => {
     vi.mocked(useSession).mockReturnValue({
       user: { id: "test-user", email: "test@example.com" },
       isLoading: true,
+      isAuthenticated: false,
     });
 
     render(
@@ -111,6 +115,7 @@ describe("AuthChecker", () => {
     vi.mocked(useSession).mockReturnValue({
       user: mockUser,
       isLoading: false,
+      isAuthenticated: true,
     });
 
     render(

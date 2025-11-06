@@ -3,22 +3,18 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { UnifiedNavigation } from "./unified-navigation";
 
 // Mock child components to avoid deep integration issues
-vi.mock("@/components/common/ui/ThemeToggle/ThemeToggle", () => ({
+vi.mock("@/components/theme/theme-toggle/theme-toggle", () => ({
   ThemeToggle: vi.fn(() => (
     <button data-testid="theme-toggle">Theme Toggle</button>
   )),
 }));
-vi.mock("@/components", async () => {
-  const actual = await vi.importActual("@/components");
-  return {
-    ...actual,
-    AccountDropdown: vi.fn(() => (
-      <div data-testid="account-dropdown">Account Dropdown</div>
-    )),
-  };
-});
+vi.mock("@/components/user/account/account-dropdown/account-dropdown", () => ({
+  default: vi.fn(() => (
+    <div data-testid="account-dropdown">Account Dropdown</div>
+  )),
+}));
 vi.mock(
-  "@/components/account/AccountDropdownContent/AccountDropdownContent",
+  "@/components/user/account/account-dropdown-content/account-dropdown-content",
   () => ({
     default: vi.fn(({ showThemeToggle, showLogoutButton }) => (
       <div data-testid="account-dropdown-content">

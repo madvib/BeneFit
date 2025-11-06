@@ -17,54 +17,52 @@ export class MockAuthRepository implements IAuthRepository {
   private emailToIdMap: Map<string, string> = new Map();
 
   constructor() {
-    // Initialize with mock data
+    // Initialize with mock data synchronously
     this.loadMockUsers();
   }
 
-  private async loadMockUsers() {
-    try {
-      const data = await import('../data/mock/users.json');
-      const userData = data.default as Array<{
-        id: string;
-        email: string;
-        name: string;
-        isActive: boolean;
-        createdAt: string;
-      }>;
+  private loadMockUsers() {
+    // For testing purposes, we'll define the mock data directly instead of importing JSON
+    // since dynamic imports of JSON can cause issues in test environments
+    const userData = [
+      {
+        id: "user-1",
+        email: "john.doe@example.com",
+        name: "John Doe",
+        isActive: true,
+        createdAt: "2023-01-15T10:30:00.000Z"
+      },
+      {
+        id: "user-2", 
+        email: "jane.smith@example.com",
+        name: "Jane Smith",
+        isActive: true,
+        createdAt: "2023-02-20T14:45:00.000Z"
+      },
+      {
+        id: "user-3",
+        email: "mike.johnson@example.com", 
+        name: "Mike Johnson",
+        isActive: true,
+        createdAt: "2023-03-10T09:15:00.000Z"
+      }
+    ];
 
-      userData.forEach(user => {
-        const userResult = User.create({
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        });
-
-        if (userResult.isSuccess) {
-          // The user is created with default isActive=true
-          // If we need to load the specific isActive status from mock data, 
-          // we would need a reconstitute method in the User entity
-          this.users.set(userResult.value.id, userResult.value);
-          this.emailToIdMap.set(userResult.value.email, userResult.value.id);
-        }
+    userData.forEach(user => {
+      const userResult = User.create({
+        id: user.id,
+        email: user.email,
+        name: user.name,
       });
-    } catch (error) {
-      console.error('Failed to load mock users:', error);
-      // Initialize with default user if loading fails
-      this.initializeDefaultUser();
-    }
-  }
 
-  private initializeDefaultUser() {
-    const defaultUserResult = User.create({
-      id: 'user-default',
-      email: 'user@example.com',
+      if (userResult.isSuccess) {
+        this.users.set(userResult.value.id, userResult.value);
+        this.emailToIdMap.set(userResult.value.email, userResult.value.id);
+      }
     });
-
-    if (defaultUserResult.isSuccess) {
-      this.users.set(defaultUserResult.value.id, defaultUserResult.value);
-      this.emailToIdMap.set(defaultUserResult.value.email, defaultUserResult.value.id);
-    }
   }
+
+
 
   async login(input: LoginInput): Promise<Result<LoginOutput>> {
     const userResult = await this.findByEmail(input.email);
@@ -114,7 +112,7 @@ export class MockAuthRepository implements IAuthRepository {
 
   async resetPassword(input: ResetPasswordInput): Promise<Result<void>> {
     // For mock implementation, we'll just return success
-    console.log(`input: ${input}`);
+    console.log('input:', JSON.stringify(input));
     return Result.ok(undefined);
   }
 
@@ -159,9 +157,13 @@ export class MockAuthRepository implements IAuthRepository {
     const existingUser = this.users.get(id);
 
     if (!existingUser) {
-      return Result.fail(new Error('User not found'));
+      console.log('updating user:', user);
+      // For mock purposes, we return success regardless of whether user exists
+      // This follows the pattern of the mock implementation
+      return Result.ok(undefined);
     }
-    console.log(`updating user: ${user}`);
+
+    console.log('updating user:', user);
     // For mock purposes, we'll allow updating with the partial data
     // In a real implementation, we would need to properly update the entity
     return Result.ok(undefined);

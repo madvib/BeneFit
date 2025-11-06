@@ -34,6 +34,6 @@
       "@utils/*": [
         "./packages/utils/src/*"
       ]
-    },
+    }
   }
 }

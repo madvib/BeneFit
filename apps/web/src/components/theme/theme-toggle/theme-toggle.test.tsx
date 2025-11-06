@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ThemeToggle } from "./ThemeToggle";
+import { ThemeToggle } from "./theme-toggle";
 import { useTheme } from "next-themes";
 
 // Mock the useTheme hook
