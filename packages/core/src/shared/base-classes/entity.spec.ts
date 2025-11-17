@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Entity } from './entity';
+import { Entity } from './entity.js';
 
 // Create a concrete implementation for testing
 interface TestEntityProps {

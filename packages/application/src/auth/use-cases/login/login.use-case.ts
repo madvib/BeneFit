@@ -1,10 +1,9 @@
-import { Result } from '@bene/core/shared';
-import { IAuthRepository } from '../../ports/auth.repository.js';
-import { isValidEmail } from '@bene/utils/validate';
+import { EmailAddress, Result } from '@bene/core/shared';
+import { IAuthService } from '../../ports/auth.service.js';
 import { AuthError } from '../../errors/index.js';
 
 export interface LoginInput {
-  email: string;
+  email: EmailAddress;
   password: string;
   next?: string;
 }
@@ -26,7 +25,7 @@ export interface LoginOutput {
  * }
  */
 export class LoginUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private authService: IAuthService) {}
 
   async execute(input: LoginInput): Promise<Result<LoginOutput>> {
     // 1. Validate input
@@ -36,7 +35,7 @@ export class LoginUseCase {
     }
 
     // 2. Execute login via repository
-    const loginResult = await this.authRepository.login(input);
+    const loginResult = await this.authService.login(input);
 
     return loginResult;
   }
@@ -44,10 +43,6 @@ export class LoginUseCase {
   private validateInput(input: LoginInput): Result<void> {
     if (!input.email || !input.password) {
       return Result.fail(new AuthError('Email and password are required'));
-    }
-
-    if (!isValidEmail(input.email)) {
-      return Result.fail(new AuthError('Invalid email format'));
     }
 
     return Result.ok();

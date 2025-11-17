@@ -1,7 +1,7 @@
 'use client';
 
 import TopTabNavigation from '@/components/user/dashboard/top-tab-navigation';
-import { PageContainer } from '@/components';
+import { LoadingSpinner, PageContainer } from '@/components';
 import { useCoachController, useIsMobile } from '@/controllers';
 import {
   ChatView,
@@ -26,7 +26,7 @@ export default function CoachPage() {
     return (
       <PageContainer title="AI Coach" hideTitle={true}>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          Loading coach data...
+          <LoadingSpinner />
         </div>
       </PageContainer>
     );

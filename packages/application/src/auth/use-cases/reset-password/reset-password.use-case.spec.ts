@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { ResetPasswordUseCase, ResetPasswordInput } from './reset-password.use-case.js';
 import { AuthError } from '../../errors/index.js';
-import { IAuthRepository } from '../../index.js';
+import { IAuthService } from '../../index.js';
 
 // Create a mock repository interface
-type MockAuthRepository = Mocked<IAuthRepository>;
+type MockAuthRepository = Mocked<IAuthService>;
 
 describe('ResetPasswordUseCase', () => {
   let useCase: ResetPasswordUseCase;
@@ -90,7 +90,9 @@ describe('ResetPasswordUseCase', () => {
       const input = { email: 'test@example.com' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: ResetPasswordInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: ResetPasswordInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isSuccess).toBe(true);
@@ -101,7 +103,9 @@ describe('ResetPasswordUseCase', () => {
       const input = { email: '' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: ResetPasswordInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: ResetPasswordInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -116,7 +120,9 @@ describe('ResetPasswordUseCase', () => {
       const input = { email: 'invalid-email' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: ResetPasswordInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: ResetPasswordInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);

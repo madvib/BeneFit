@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Repository } from './repository';
-import { Entity, Result } from './index';
+import { Repository } from './repository.js';
+import { Entity, Result } from '../index.js';
 
 // Create a concrete entity for testing
 interface TestEntityProps {
@@ -120,7 +120,7 @@ describe('Repository interface', () => {
         // Reference the id param to avoid unused variable error
         if (id === undefined) return Result.fail(new Error('No id provided'));
         return Result.ok(undefined);
-      }
+      },
     };
 
     expect(repo).toBeDefined();

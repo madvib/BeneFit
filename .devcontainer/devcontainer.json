@@ -1,7 +1,6 @@
 {
-  "name": "Node.js & TypeScript",
+  "name": "BeneFit NX Monorepo",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
-  // 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
   "features": {
     "ghcr.io/devcontainers-extra/features/pnpm:2": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -16,14 +15,13 @@
     "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
   },
   "mounts": [
-    "source=global-node_modules,target=/usr/local/lib/node_modules,type=volume",
     "source=pnpm_home,target=/root/.local/share/pnpm/,type=volume"
   ],
   "postCreateCommand": "pnpm config set store-dir $PNPM_HOME/store && pnpm install", //sudo chown -R node:node $PNPM_HOME && 
-  // 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
-  // 👇 Configure tool-specific properties.
-  // "customizations": {},
+  "runArgs": [
+    "--env-file",
+    ".devcontainer/.env"
+  ],
   "remoteUser": "root",
   "customizations": {
     "vscode": {

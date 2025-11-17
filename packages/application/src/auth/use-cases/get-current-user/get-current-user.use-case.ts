@@ -1,4 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
+import { IAuthService, RequestContext } from '../../ports/auth.service';
 
 // Output interface
 export interface GetCurrentUserOutput {
@@ -7,20 +8,37 @@ export interface GetCurrentUserOutput {
   name?: string;
 }
 
-export class GetCurrentUserUseCase implements UseCase<void, GetCurrentUserOutput> {
-  async execute(): Promise<Result<GetCurrentUserOutput>> {
+export class GetCurrentUserUseCase
+  implements UseCase<RequestContext, GetCurrentUserOutput>
+{
+  constructor(private authService: IAuthService) {}
+
+  async execute(requestContext: RequestContext): Promise<Result<GetCurrentUserOutput>> {
     try {
-      // In a real implementation, this would get the user from the session context
-      // For now, I'll return mock data as this would normally get user from request context
-      // The actual session management would happen outside of the application layer
-      // and the user ID would be provided to use cases through other means
-      
-      // This is a placeholder since we need to handle session management differently
-      // Real implementation would get user ID from session/auth context
-      return Result.fail(new Error('Session management needs to be handled in infrastructure layer'));
+      // Use provided context or create a default one
+      const context = requestContext || {
+        headers: new Headers(), // In a real app, you'd pass the actual request headers
+        cookies: {}, // In a real app, you'd pass the actual cookies
+      };
+
+      // Call the infrastructure layer to get current user
+      const result = await this.authService.getCurrentUser(context);
+
+      if (result.isSuccess) {
+        const user = result.value;
+        return Result.ok({
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        });
+      } else {
+        return Result.fail(result.error || new Error('Failed to get current user'));
+      }
     } catch (error) {
       console.error('Error getting current user:', error);
-      return Result.fail(error instanceof Error ? error : new Error('Failed to get current user'));
+      return Result.fail(
+        error instanceof Error ? error : new Error('Failed to get current user'),
+      );
     }
   }
 }

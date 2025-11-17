@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { MockSettingsRepository } from './mock-settings.repository.js';
-import { Settings } from '@core/settings/index.js';
+import { Settings } from '@bene/core/settings';
 
 describe('MockSettingsRepository', () => {
   let repository: MockSettingsRepository;

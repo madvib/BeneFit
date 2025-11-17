@@ -1,14 +1,32 @@
-import { MockAuthRepository } from '@bene/infrastructure/auth';
-import { LoginUseCase, SignupUseCase, ResetPasswordUseCase, SignOutUseCase } from '@bene/application/auth';
+import {
+  LoginUseCase,
+  SignupUseCase,
+  ResetPasswordUseCase,
+  SignOutUseCase,
+  GetCurrentUserUseCase,
+  GetCurrentSessionUseCase,
+} from '@bene/application/auth';
+import { BetterAuthService } from '@bene/infrastructure/auth';
 
-// Create repository instance
-const authRepository = new MockAuthRepository();
+let auth: BetterAuthService;
+const loadAuthService = async () => {
+  if (!auth) {
+    const mod = await import('./repositories.js');
+    auth = mod.authService;
+  }
+  return auth;
+};
 
 // Instantiate auth use cases as constants
-export const loginUseCase = new LoginUseCase(authRepository);
-export const signupUseCase = new SignupUseCase(authRepository);
-export const resetPasswordUseCase = new ResetPasswordUseCase(authRepository);
-export const signOutUseCase = new SignOutUseCase(authRepository);
+export const loginUseCase = async () => new LoginUseCase(await loadAuthService());
+export const signupUseCase = async () => new SignupUseCase(await loadAuthService());
+export const resetPasswordUseCase = async () =>
+  new ResetPasswordUseCase(await loadAuthService());
+export const signOutUseCase = async () => new SignOutUseCase(await loadAuthService());
+export const getCurrentUserUseCase = async () =>
+  new GetCurrentUserUseCase(await loadAuthService());
+export const getCurrentSessionUseCase = async () =>
+  new GetCurrentSessionUseCase(await loadAuthService());
 
 // Export all auth-related use cases
 export const authUseCases = {
@@ -16,4 +34,6 @@ export const authUseCases = {
   signupUseCase,
   resetPasswordUseCase,
   signOutUseCase,
+  getCurrentUserUseCase,
+  getCurrentSessionUseCase,
 };

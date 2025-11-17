@@ -1,5 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IUserRepository } from '../../ports/user.repository.js';
 
 // Define the profile goal interface
 interface ProfileGoal {
@@ -37,14 +37,12 @@ export interface GetUserProfileOutput {
 }
 
 export class GetUserProfileUseCase implements UseCase<string, GetUserProfileOutput> {
-  constructor(
-    private authRepository: IAuthRepository,
-  ) {}
+  constructor(private userRepository: IUserRepository) {}
 
   async execute(userId: string): Promise<Result<GetUserProfileOutput>> {
     try {
       // Get the user from repository
-      const userResult = await this.authRepository.findById(userId);
+      const userResult = await this.userRepository.findById(userId);
 
       if (userResult.isFailure) {
         return Result.fail(new Error('User not found'));

@@ -1,7 +1,7 @@
 'use server';
 
 import { accountUseCases } from '@/providers/account-use-cases';
-import { getCurrentUser } from '@/controllers/session';
+import { getCurrentUser } from '@/controllers/auth';
 
 // Define the profile goal interface
 export interface ProfileGoal {
@@ -46,12 +46,12 @@ export async function getUserProfile(): Promise<GetUserProfileResult> {
   try {
     // Get user ID from session context
     const userResult = await getCurrentUser();
-    
+
     if (!userResult.success || !userResult.data) {
       console.error('Failed to get current user:', userResult.error);
       return {
         success: false,
-        error: userResult.error || 'User not authenticated'
+        error: userResult.error || 'User not authenticated',
       };
     }
 
@@ -124,12 +124,12 @@ export async function updateUserProfile(
   try {
     // Get user ID from session context
     const userResult = await getCurrentUser();
-    
+
     if (!userResult.success || !userResult.data) {
       console.error('Failed to get current user:', userResult.error);
       return {
         success: false,
-        error: userResult.error || 'User not authenticated'
+        error: userResult.error || 'User not authenticated',
       };
     }
 

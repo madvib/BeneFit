@@ -1,5 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IUserRepository } from '../../ports/user.repository.js';
 
 // Input and output interfaces
 interface UpdateUserProfileInput {
@@ -18,14 +18,18 @@ interface UpdateUserProfileOutput {
   message?: string;
 }
 
-export class UpdateUserProfileUseCase implements UseCase<UpdateUserProfileInput, UpdateUserProfileOutput> {
-  constructor(private authRepository: IAuthRepository) {}
+export class UpdateUserProfileUseCase
+  implements UseCase<UpdateUserProfileInput, UpdateUserProfileOutput>
+{
+  constructor(private userRepository: IUserRepository) {}
 
-  async execute(input: UpdateUserProfileInput): Promise<Result<UpdateUserProfileOutput>> {
+  async execute(
+    input: UpdateUserProfileInput,
+  ): Promise<Result<UpdateUserProfileOutput>> {
     try {
       // Get the current user
-      const userResult = await this.authRepository.findById(input.userId);
-      
+      const userResult = await this.userRepository.findById(input.userId);
+
       if (userResult.isFailure) {
         return Result.fail(new Error('User not found'));
       }
@@ -37,11 +41,13 @@ export class UpdateUserProfileUseCase implements UseCase<UpdateUserProfileInput,
 
       return Result.ok({
         success: true,
-        message: 'User profile updated successfully'
+        message: 'User profile updated successfully',
       });
     } catch (error) {
       console.error('Error updating user profile:', error);
-      return Result.fail(error instanceof Error ? error : new Error('Failed to update user profile'));
+      return Result.fail(
+        error instanceof Error ? error : new Error('Failed to update user profile'),
+      );
     }
   }
 }

@@ -1,16 +1,12 @@
 import { Result } from '@bene/core/shared';
 import { isValidEmail } from '@bene/utils/validate';
 import { AuthError, WeakPasswordError } from '../../errors/index.js';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IAuthService } from '../../ports/auth.service.js';
 
 export interface SignupInput {
+  name: string;
   email: string;
   password: string;
-}
-
-export interface SignupOutput {
-  userId: string;
-  email: string;
 }
 
 /**
@@ -25,9 +21,9 @@ export interface SignupOutput {
  * }
  */
 export class SignupUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private authService: IAuthService) {}
 
-  async execute(input: SignupInput): Promise<Result<SignupOutput>> {
+  async execute(input: SignupInput): Promise<Result<void>> {
     // 1. Validate input
     const validationResult = this.validateInput(input);
     if (validationResult.isFailure) {
@@ -35,7 +31,7 @@ export class SignupUseCase {
     }
 
     // 2. Execute signup via repository
-    const signupResult = await this.authRepository.signup(input);
+    const signupResult = await this.authService.signup(input);
 
     return signupResult;
   }

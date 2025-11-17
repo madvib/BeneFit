@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { SignOutUseCase } from './sign-out.use-case.js';
 import { AuthError } from '../../errors/index.js';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IAuthService } from '../../ports/auth.service.js';
 
 // Create a mock repository interface
-type MockAuthRepository = Mocked<IAuthRepository>;
+type MockAuthRepository = Mocked<IAuthService>;
 
 describe('SignOutUseCase', () => {
   let useCase: SignOutUseCase;

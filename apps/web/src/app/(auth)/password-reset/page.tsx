@@ -11,7 +11,7 @@ export default function PasswordResetPage() {
           Reset Your Password
         </h2>
         <PasswordResetForm />
-        <p className="text-center mt-4">
+        <p className="text-center mt-4 text-secondary-foreground">
           Remember your password?{' '}
           <Link href="/login" className="text-primary hover:underline">
             Log in

@@ -1,7 +1,7 @@
 'use server';
 
 import { settingsUseCases } from '@/providers/settings-use-cases';
-import { getCurrentUser } from '@/controllers/session';
+import { getCurrentUser } from '@/controllers/auth';
 import {
   NotificationPreferences,
   PrivacySettings,

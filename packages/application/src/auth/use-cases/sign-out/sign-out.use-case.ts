@@ -1,9 +1,5 @@
 import { Result } from '@bene/core/shared';
-import { IAuthRepository } from '../../ports/auth.repository.js';
-
-export interface SignOutInput {}
-
-export interface SignOutOutput {}
+import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 /**
  * Signs out the currently authenticated user.
@@ -16,16 +12,15 @@ export interface SignOutOutput {}
  * }
  */
 export class SignOutUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private authService: IAuthService) {}
 
-  async execute(input?: SignOutInput): Promise<Result<SignOutOutput>> {
+  async execute(requestContext: RequestContext): Promise<Result<void>> {
     // Execute sign out via repository
-    const signOutResult = await this.authRepository.signOut();
+    const signOutResult = await this.authService.signOut(requestContext);
 
     if (signOutResult.isSuccess) {
-      return Result.ok({});
+      return Result.ok();
     }
-    
     // If the auth repository signOut returns void but we need SignOutOutput,
     // we need to handle the error case properly
     return Result.fail(signOutResult.error);

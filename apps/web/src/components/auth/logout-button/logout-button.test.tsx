@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LogoutButton } from './logout-button';
 
 // Mock the signOutAction function
-vi.mock('@/app/(auth)/actions', () => ({
+vi.mock('@/controllers/auth/auth-actions', () => ({
   signOutAction: vi.fn(() => Promise.resolve()),
 }));
 
@@ -38,7 +38,7 @@ describe('LogoutButton', () => {
   });
 
   it('calls signOut when clicked', async () => {
-    const importedModule = await import('@/app/(auth)/actions');
+    const importedModule = await import('@/controllers/auth/auth-actions');
     const signOutActionMock = vi.mocked(importedModule.signOutAction);
 
     render(<LogoutButton />);
@@ -53,7 +53,7 @@ describe('LogoutButton', () => {
 
   it('shows loading state when signing out', async () => {
     // Mock a slow signOut function
-    const importedModule = await import('@/app/(auth)/actions');
+    const importedModule = await import('@/controllers/auth/auth-actions');
     const signOutActionMock = vi.mocked(importedModule.signOutAction);
     signOutActionMock.mockImplementation(
       () => new Promise((resolve) => setTimeout(resolve, 10)),
@@ -76,11 +76,9 @@ describe('LogoutButton', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Mock signOut to throw an error
-    const importedModule2 = await import('@/app/(auth)/actions');
+    const importedModule2 = await import('@/controllers/auth/auth-actions');
     const signOutActionMock = vi.mocked(importedModule2.signOutAction);
-    signOutActionMock.mockRejectedValue(
-      new Error('Network error'),
-    );
+    signOutActionMock.mockRejectedValue(new Error('Network error'));
 
     render(<LogoutButton />);
 
@@ -88,10 +86,7 @@ describe('LogoutButton', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Error signing out:',
-        expect.any(Error),
-      );
+      expect(consoleSpy).toHaveBeenCalledWith('Error signing out:', expect.any(Error));
     });
 
     consoleSpy.mockRestore();

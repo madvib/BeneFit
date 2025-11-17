@@ -1,6 +1,19 @@
+'use client';
+
+import { LoadingSpinner } from '@/components';
 import { HomeHero, ImageCard, FeaturesSection } from '@/components/marketing/home';
+import { useSession } from '@/controllers';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function LandingPage() {
+  const session = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session.isLoading && session.isAuthenticated) router.replace('/feed');
+  }, [session.isAuthenticated]);
+
   const features = [
     {
       icon: '🏃',
@@ -21,7 +34,9 @@ export default function LandingPage() {
     },
   ];
 
-  return (
+  return session.isLoading ? (
+    <LoadingSpinner />
+  ) : (
     <div className="w-full min-h-screen flex items-center">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
@@ -29,7 +44,7 @@ export default function LandingPage() {
             title="Welcome to"
             primaryWord="BeneFit"
             subtitle="Your ultimate fitness companion. Track your workouts, monitor your progress, and achieve your goals."
-            primaryLink={{ href: '/feed', text: 'Get Started' }}
+            primaryLink={{ href: '/signup', text: 'Get Started' }}
             secondaryLink={{ href: '/features', text: 'Learn More' }}
           />
 

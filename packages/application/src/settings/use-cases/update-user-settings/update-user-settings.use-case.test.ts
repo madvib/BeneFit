@@ -1,16 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Result } from '@bene/core/shared';
-import {
-  Settings,
-  NotificationPreferences,
-  PrivacySettings,
-  FitnessPreferences,
-} from '@bene/core/settings';
+import { Settings } from '@bene/core/settings';
 import { SettingsRepository } from '@bene/application/settings';
-import {
-  UpdateUserSettingsUseCase,
-  UpdateUserSettingsInput,
-} from './update-user-settings.use-case';
+import { UpdateUserSettingsUseCase } from './update-user-settings.use-case';
 
 interface MockSettingsRepository extends SettingsRepository {
   findById: (id: string) => Promise<Result<any>>;

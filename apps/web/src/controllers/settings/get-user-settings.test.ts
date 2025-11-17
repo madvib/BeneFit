@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getCurrentUser } from '../session';
+import { getCurrentUser } from '../auth/session';
 import { settingsUseCases } from '@/providers/settings-use-cases';
 import { getUserSettings, updateUserSettings } from './get-user-settings';
 

@@ -9,12 +9,15 @@ export { GetCurrentSessionUseCase } from './use-cases/get-current-session/get-cu
 
 // Export auth DTOs
 export type { LoginInput, LoginOutput } from './use-cases/login/login.use-case.js';
-export type { SignupInput, SignupOutput } from './use-cases/signup/signup.use-case.js';
+export type { SignupInput } from './use-cases/signup/signup.use-case.js';
 export type { ResetPasswordInput } from './use-cases/reset-password/reset-password.use-case.js';
-export type { SignOutInput, SignOutOutput } from './use-cases/sign-out/sign-out.use-case.js';
 export type { GetCurrentUserOutput } from './use-cases/get-current-user/get-current-user.use-case.js';
-export type { SessionUser, GetCurrentSessionOutput } from './use-cases/get-current-session/get-current-session.use-case.js';
+export type {
+  SessionUser,
+  GetCurrentSessionOutput,
+} from './use-cases/get-current-session/get-current-session.use-case.js';
 
 // Export auth errors
 export * from './errors/index.js';
-export type { IAuthRepository } from './ports/auth.repository.js';
+export type { IAuthService, RequestContext } from './ports/auth.service.js';
+export type { IUserRepository } from './ports/user.repository.js';

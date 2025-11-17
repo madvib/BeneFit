@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { GetUserSettingsUseCase } from './get-user-settings.use-case';
-import { SettingsRepository } from '@application/settings';
+import { SettingsRepository } from '../..';
 
 interface MockSettingsRepository extends SettingsRepository {
   getUserSettings: (userId: string) => Promise<any>;

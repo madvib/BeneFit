@@ -1,7 +1,12 @@
 'use client';
 
 import ActivityFeed from '@/components/user/dashboard/feed/activity-feed';
-import { DashboardLayout, PageContainer, TopTabNavigation } from '@/components';
+import {
+  DashboardLayout,
+  LoadingSpinner,
+  PageContainer,
+  TopTabNavigation,
+} from '@/components';
 import { GoalCard, ProgressChart } from '@/components/user/dashboard/feed';
 import { useFeedController, useIsMobile } from '@/controllers';
 
@@ -15,7 +20,7 @@ export default function DashboardPage() {
     return (
       <PageContainer title="Welcome, User!" hideTitle={true}>
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-          Loading feed data...
+          <LoadingSpinner />
         </div>
       </PageContainer>
     );

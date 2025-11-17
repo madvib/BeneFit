@@ -2,13 +2,9 @@
   "name": "@bene/utils",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "exports": {
-    "./validate": "./src/validate/index.ts",
     ".": "./src/index.ts",
-    "./package.json": "./package.json"
+    "./validate": "./src/validate/index.ts"
   },
   "dependencies": {},
   "nx": {

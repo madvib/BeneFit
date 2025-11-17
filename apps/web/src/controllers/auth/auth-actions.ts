@@ -1,169 +1,152 @@
 'use server';
 
 import { authUseCases } from '@/providers/auth-use-cases';
-import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { getRequestContext } from './get-request-context';
+import { EmailAddress, Password } from '@bene/core/shared';
 
-// Define the return types for auth operations
-export interface LoginInput {
-  email: string;
-  password: string;
-  next?: string;
-}
-
-export interface LoginResult {
-  success: boolean;
+export interface LoginFormState {
+  success?: boolean;
   message?: string;
   error?: string;
   redirectUrl?: string;
 }
 
-export async function loginAction(input: LoginInput): Promise<LoginResult> {
-  try {
-    const result = await authUseCases.loginUseCase.execute({
-      email: input.email,
-      password: input.password,
-    });
+export async function loginAction(
+  previous: LoginFormState,
+  formData: FormData,
+): Promise<LoginFormState> {
+  const email = EmailAddress.create(formData.get('email') as string);
+  const password = Password.create(formData.get('password') as string);
+  const next = (formData.get('next') as string) || '/feed';
 
-    if (result.isSuccess) {
-      // Successful login - redirect to the next page or default
-      const next = input.next || '/feed';
-      redirect(next);
-      
-      // This line will never be reached due to redirect, but included for type safety
-      return {
-        success: true,
-        redirectUrl: next,
-      };
-    } else {
-      console.error('Login failed:', result.error);
-      return {
-        success: false,
-        error: result.error?.message || 'Login failed',
-      };
-    }
-  } catch (error) {
-    console.error('Error in login action:', error);
+  const result = await authUseCases.loginUseCase().then((uc) =>
+    uc.execute({
+      email: email.value,
+      password: password.value.value,
+    }),
+  );
+  if (result.isSuccess) {
+    // Successful login - redirect to the next page or default
+    revalidatePath('/', 'layout');
+    return {
+      success: true,
+      redirectUrl: next,
+    };
+  } else {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: result.error?.message || 'Login failed',
     };
   }
 }
 
-export interface SignupInput {
-  email: string;
-  password: string;
-}
-
-export interface SignupResult {
-  success: boolean;
+export interface SignupFormState {
+  success?: boolean;
   message?: string;
   error?: string;
   requiresEmailConfirmation?: boolean;
 }
 
-export async function signupAction(input: SignupInput): Promise<SignupResult> {
-  try {
-    const result = await authUseCases.signupUseCase.execute({
-      email: input.email,
-      password: input.password,
-    });
+export async function signupAction(
+  prev: SignupFormState,
+  formData: FormData,
+): Promise<SignupFormState> {
+  const email = EmailAddress.create(formData.get('email') as string);
+  const password = Password.create(formData.get('password') as string);
+  const confirmPassword = Password.create(formData.get('confirmPassword') as string);
+  const name = formData.get('name') as string;
+  const surname = formData.get('surname') as string;
 
-    if (result.isSuccess) {
-      // In a real implementation, email confirmation might be required
-      // For now, redirect to feed after successful signup
-      redirect('/feed');
-      
-      // This line will never be reached due to redirect, but included for type safety
-      return {
-        success: true,
-        requiresEmailConfirmation: false, // In real app, this could be true
-      };
-    } else {
-      console.error('Signup failed:', result.error);
-      return {
-        success: false,
-        error: result.error?.message || 'Signup failed',
-      };
-    }
-  } catch (error) {
-    console.error('Error in signup action:', error);
+  if (email.isFailure) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: email.error.message,
+    };
+  }
+  if (password.isFailure) {
+    return {
+      success: false,
+      error: password.error.message,
+    };
+  }
+
+  // Check if passwords match
+  if (!password.value.equals(confirmPassword.value)) {
+    return {
+      success: false,
+      error: 'Passwords do not match',
+    };
+  }
+
+  // Validate that name and surname are provided
+  if (!name || !surname) {
+    return {
+      success: false,
+      error: 'Both first name and last name are required',
+    };
+  }
+
+  const fullName = `${name} ${surname}`;
+
+  const result = await authUseCases.signupUseCase().then((uc) =>
+    uc.execute({
+      email: email.value.value,
+      password: password.value.value,
+      name: fullName,
+    }),
+  );
+
+  if (result.isSuccess) {
+    revalidatePath('/', 'layout');
+    return {
+      success: true,
+    };
+  } else {
+    return {
+      success: false,
+      error: result.error?.message || 'Signup failed',
     };
   }
 }
 
-export interface ResetPasswordInput {
-  email: string;
-}
-
-export interface ResetPasswordResult {
-  success: boolean;
+export interface ResetPasswordFormState {
+  success?: boolean;
   message?: string;
   error?: string;
 }
 
-export async function resetPasswordAction(input: ResetPasswordInput): Promise<ResetPasswordResult> {
-  try {
-    const result = await authUseCases.resetPasswordUseCase.execute({
-      email: input.email,
-    });
+export async function resetPasswordAction(
+  prev: ResetPasswordFormState,
+  formData: FormData,
+): Promise<ResetPasswordFormState> {
+  const email = formData.get('email') as string;
 
-    if (result.isSuccess) {
-      return {
+  const result = await authUseCases.resetPasswordUseCase().then((uc) =>
+    uc.execute({
+      email: email,
+    }),
+  );
+
+  return result.isSuccess
+    ? {
         success: true,
         message: 'Password reset instructions sent to your email',
-      };
-    } else {
-      console.error('Reset password failed:', result.error);
-      return {
+      }
+    : {
         success: false,
         error: result.error?.message || 'Password reset failed',
       };
-    }
-  } catch (error) {
-    console.error('Error in reset password action:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
-    };
-  }
 }
 
-export interface SignOutResult {
-  success: boolean;
-  message?: string;
-  error?: string;
-}
+export async function signOutAction(
+  prev: boolean,
+  formData: FormData,
+): Promise<boolean> {
+  const requestContext = await getRequestContext();
+  const result = await authUseCases
+    .signOutUseCase()
+    .then((uc) => uc.execute(requestContext));
 
-export async function signOutAction(): Promise<SignOutResult> {
-  try {
-    const result = await authUseCases.signOutUseCase.execute();
-
-    if (result.isSuccess) {
-      // Clear any cached data and redirect to home
-      revalidatePath('/', 'layout');
-      redirect('/');
-      
-      // This line will never be reached due to redirect, but included for type safety
-      return {
-        success: true,
-      };
-    } else {
-      console.error('Sign out failed:', result.error);
-      return {
-        success: false,
-        error: result.error?.message || 'Sign out failed',
-      };
-    }
-  } catch (error) {
-    console.error('Error in sign out action:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'An unexpected error occurred',
-    };
-  }
+  return result.isSuccess;
 }

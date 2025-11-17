@@ -1,105 +1,50 @@
 'use client';
 
-import { useFormStatus } from 'react-dom';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { AuthError } from './auth-error/auth-error';
-import { useSearchParams } from 'next/navigation';
-import { loginAction } from '@/app/(auth)/actions';
-
-// Define form state type
-type FormState = {
-  message?: string;
-  error?: string;
-};
-
-// Wrapper functions that catch errors and return a state object
-async function loginWrapper(
-  previousState: FormState | undefined,
-  formData: FormData,
-): Promise<FormState> {
-  try {
-    await loginAction(formData);
-    return { message: 'Login successful' };
-  } catch (error: unknown) {
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during login',
-    };
-  }
-}
-
-// Submit button component that shows loading state
-function SubmitButton({ children }: { children: React.ReactNode }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="w-full btn btn-primary"
-      type="submit"
-      aria-disabled={pending}
-    >
-      {pending ? 'Signing in...' : children}
-    </button>
-  );
-}
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loginAction, LoginFormState } from '@/controllers/auth/auth-actions';
+import { AuthSubmitButton, EmailInput, PasswordInput } from './auth-inputs';
+import { OAuthButton } from './oauth-button';
+import { useSession } from '@/controllers';
 
 // Auth form component that handles errors and loading states
-export function LoginForm() {
+export function LoginForm({ isModal = false }) {
   const searchParameters = useSearchParams();
   const next = searchParameters.get('next') || '/feed';
-  const [state, formAction] = useActionState<FormState, FormData>(
-    loginWrapper,
-    {
-      message: '',
-    },
-  );
+  const [state, formAction] = useActionState<LoginFormState, FormData>(loginAction, {
+    success: false,
+  });
+  const router = useRouter();
+  const session = useSession();
+
+  useEffect(() => {
+    if (state.success) {
+      session.refreshSession();
+      if (isModal) router.back();
+    }
+  }, [state.success]);
 
   return (
     <form action={formAction} className="space-y-4">
       {state?.error && <AuthError message={state.error} />}
       <input type="hidden" name="next" value={next} />
-      <div className="mb-4">
-        <label className="block text-secondary-foreground mb-2" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="w-full px-3 py-2 border rounded-md bg-background text-foreground border-muted"
-          type="email"
-          id="email"
-          name="email"
-          placeholder="you@example.com"
-          required
-          aria-describedby="email-error"
-        />
-      </div>
-      <div className="mb-6">
-        <label
-          className="block text-secondary-foreground mb-2"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className="w-full px-3 py-2 border rounded-md bg-background text-foreground border-muted"
-          type="password"
-          id="password"
-          name="password"
-          placeholder="••••••••"
-          required
-          aria-describedby="password-error"
-        />
-      </div>
+      <EmailInput />
+      <PasswordInput />
       <div className="text-right">
-        <a
-          href="/password-reset"
-          className="text-sm text-primary hover:underline"
-        >
+        <a href="/password-reset" className="text-sm text-primary hover:underline">
           Forgot password?
         </a>
       </div>
-      <SubmitButton>Sign in</SubmitButton>
+      <AuthSubmitButton pendingText="Signing in...">Sign in</AuthSubmitButton>
+
+      <div className="relative flex items-center">
+        <div className="flex-grow border-t text-secondary-foreground"></div>
+        <span className="flex-shrink mx-4 text-secondary-foreground">or</span>
+        <div className="flex-grow border-t text-secondary-foreground"></div>
+      </div>
+
+      <OAuthButton provider="google" />
     </form>
   );
 }

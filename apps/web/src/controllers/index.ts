@@ -10,7 +10,6 @@ export * from './feed';
 export * from './goals';
 export * from './history';
 export * from './plan';
-export * from './session';
 export * from './settings';
 
 // Export hooks

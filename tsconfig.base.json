@@ -3,6 +3,7 @@
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "isolatedModules": true,
     "lib": [
@@ -18,22 +19,22 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": [
-      "bene"
-    ],
     "paths": {
-      "@core/*": [
+      "@cf-env": [
+        "./apps/web/cloudflare-env.d.ts"
+      ],
+      "@bene/core/*": [
         "./packages/core/src/*"
       ],
-      "@application/*": [
+      "@bene/application/*": [
         "./packages/application/src/*"
       ],
-      "@infrastructure/*": [
+      "@bene/infrastructure/*": [
         "./packages/infrastructure/src/*"
       ],
-      "@utils/*": [
+      "@bene/utils/*": [
         "./packages/utils/src/*"
       ]
-    }
+    },
   }
 }

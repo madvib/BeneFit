@@ -1,5 +1,5 @@
 import { Result } from '@bene/core/shared';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IAuthService } from '../../ports/auth.service.js';
 import { isValidEmail } from '@bene/utils/validate';
 import { AuthError } from '../../errors/index.js';
 
@@ -19,7 +19,7 @@ export interface ResetPasswordInput {
  * }
  */
 export class ResetPasswordUseCase {
-  constructor(private authRepository: IAuthRepository) {}
+  constructor(private authRepository: IAuthService) {}
 
   async execute(input: ResetPasswordInput): Promise<Result<void>> {
     // 1. Validate input

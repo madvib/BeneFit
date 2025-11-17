@@ -1,14 +1,10 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import { Result } from '@bene/core/shared';
-import {
-  AuthError,
-  WeakPasswordError,
-  EmailExistsError,
-} from '../../errors/index.js';
-import { IAuthRepository, SignupUseCase } from '../../index.js';
+import { AuthError, WeakPasswordError, EmailExistsError } from '../../errors/index.js';
+import { IAuthService, SignupUseCase } from '../../index.js';
 
 // Create a mock repository interface
-type MockAuthRepository = Mocked<IAuthRepository>;
+type MockAuthRepository = Mocked<IAuthService>;
 
 describe('SignupUseCase', () => {
   let useCase: SignupUseCase;
@@ -130,7 +126,9 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: SignupInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isSuccess).toBe(true);
@@ -141,15 +139,15 @@ describe('SignupUseCase', () => {
       const input = { email: '', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: SignupInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
       if (validateInput.isFailure) {
         expect(validateInput.error).toBeInstanceOf(AuthError);
-        expect(validateInput.error.message).toBe(
-          'Email and password are required',
-        );
+        expect(validateInput.error.message).toBe('Email and password are required');
       }
     });
 
@@ -158,15 +156,15 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: '' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: SignupInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
       if (validateInput.isFailure) {
         expect(validateInput.error).toBeInstanceOf(AuthError);
-        expect(validateInput.error.message).toBe(
-          'Email and password are required',
-        );
+        expect(validateInput.error.message).toBe('Email and password are required');
       }
     });
 
@@ -175,7 +173,9 @@ describe('SignupUseCase', () => {
       const input = { email: 'invalid-email', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: SignupInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
@@ -190,7 +190,9 @@ describe('SignupUseCase', () => {
       const input = { email: 'test@example.com', password: '123' }; // Less than 6 chars
 
       // Act
-      const validateInput = (useCase as { validateInput(input: SignupInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: SignupInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);

@@ -24,7 +24,6 @@ export class GetRecommendationsUseCase
           input.userId,
           input.context,
         );
-      console.log(recommendations);
       return Result.ok(recommendations);
     } catch (error) {
       console.error('Error in GetRecommendationsUseCase:', error);

@@ -7,17 +7,7 @@
       "dom.iterable",
       "esnext"
     ],
-    // "allowJs": true,
-    //     "skipLibCheck": true,
-    // "strict": true,
-    "noEmit": true,
-    // "esModuleInterop": true,
-    // "module": "esnext",
-    // "moduleResolution": "bundler",
-    // "resolveJsonModule": true,
-    // "isolatedModules": true,
     "jsx": "preserve",
-    // "incremental": true,
     "allowJs": true,
     "incremental": true,
     "esModuleInterop": true,
@@ -33,15 +23,17 @@
       ]
     },
     "types": [
-      "./cloudflare-env.d.ts",
+      "../../types/cloudflare-env.d.ts",
       "node"
     ],
   },
   "include": [
     "next-env.d.ts",
+    ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    "src/providers/repositories.ts",
+    "src/providers/auth-use-cases.ts",
   ],
   "exclude": [
     "node_modules"

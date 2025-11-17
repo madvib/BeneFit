@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, createContext, useContext } from 'react';
-import { getSession } from './session';
+import { getSession } from '../auth/session/session';
 
 // Define the session context type
 export type SessionContextType = {
@@ -38,7 +38,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   );
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const fetchSession = async () => {
     setIsLoading(true);
     try {

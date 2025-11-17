@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { LoginUseCase } from './login.use-case.js';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IAuthService } from '../../ports/auth.service.js';
 import { AuthError, InvalidCredentialsError } from '../../errors/index.js';
 
 // Create a mock repository interface
-type MockAuthRepository = Mocked<IAuthRepository>;
+type MockAuthRepository = Mocked<IAuthService>;
 
 describe('LoginUseCase', () => {
   let useCase: LoginUseCase;
@@ -113,7 +113,9 @@ describe('LoginUseCase', () => {
       };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: LoginInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isSuccess).toBe(true);
@@ -124,15 +126,15 @@ describe('LoginUseCase', () => {
       const input = { email: '', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: LoginInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
       if (validateInput.isFailure) {
         expect(validateInput.error).toBeInstanceOf(AuthError);
-        expect(validateInput.error.message).toBe(
-          'Email and password are required',
-        );
+        expect(validateInput.error.message).toBe('Email and password are required');
       }
     });
 
@@ -141,15 +143,15 @@ describe('LoginUseCase', () => {
       const input = { email: 'test@example.com', password: '' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: LoginInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);
       if (validateInput.isFailure) {
         expect(validateInput.error).toBeInstanceOf(AuthError);
-        expect(validateInput.error.message).toBe(
-          'Email and password are required',
-        );
+        expect(validateInput.error.message).toBe('Email and password are required');
       }
     });
 
@@ -158,7 +160,9 @@ describe('LoginUseCase', () => {
       const input = { email: 'invalid-email', password: 'password123' };
 
       // Act
-      const validateInput = (useCase as { validateInput(input: LoginInput): Result<void> }).validateInput(input);
+      const validateInput = (
+        useCase as { validateInput(input: LoginInput): Result<void> }
+      ).validateInput(input);
 
       // Assert
       expect(validateInput.isFailure).toBe(true);

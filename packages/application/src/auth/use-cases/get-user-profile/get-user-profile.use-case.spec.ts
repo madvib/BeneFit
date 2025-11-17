@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { GetUserProfileUseCase } from './get-user-profile.use-case';
-import { IAuthRepository } from '../../ports/auth.repository.js';
+import { IAuthService } from '../../ports/auth.service.js';
 import { User } from '@bene/core/auth';
 
 // Create a mock repository interface
-type MockAuthRepository = Mocked<IAuthRepository>;
+type MockAuthRepository = Mocked<IAuthService>;
 
 describe('GetUserProfileUseCase', () => {
   let useCase: GetUserProfileUseCase;
