@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getCurrentUser } from '../auth/session';
+import { getCurrentUser } from '../auth/session/session';
 import { settingsUseCases } from '@/providers/settings-use-cases';
 import { getUserSettings, updateUserSettings } from './get-user-settings';
 
@@ -15,7 +15,7 @@ vi.mock('@/providers/settings-use-cases', () => ({
   },
 }));
 
-vi.mock('../session', () => ({
+vi.mock('../auth/session/session', () => ({
   getCurrentUser: vi.fn(),
 }));
 

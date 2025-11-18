@@ -2,9 +2,10 @@
   "name": "@bene/application",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "types": "./src/index.ts",
   "exports": {
-    "./shared": "./src/_shared/index.ts",
+    "./shared": "./src/shared/index.ts",
     "./activities": "./src/activities/index.ts",
     "./auth": "./src/auth/index.ts",
     "./blog": "./src/blog/index.ts",

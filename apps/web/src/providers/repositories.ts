@@ -1,13 +1,17 @@
 import { AuthUserRepository, BetterAuthService } from '@bene/infrastructure/auth';
-import { CreateDrizzleD1DB } from '@bene/infrastructure/shared';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { CreateDrizzleD1DB as DrizzleD1DBFactory } from '@bene/infrastructure/shared';
+import { cloudflareEnv } from './cloudflare';
 
-async function authDBBinding(): Promise<D1Database> {
-  return (await getCloudflareContext({ async: true })).env.DB_USER_AUTH;
-}
+let createAuth: DrizzleD1DBFactory;
 
-const authUserDB = new CreateDrizzleD1DB(await authDBBinding()).db;
+const authUserDB = async () => {
+  if (!createAuth) {
+    createAuth = new DrizzleD1DBFactory((await cloudflareEnv()).DB_USER_AUTH);
+  }
+  return createAuth.db;
+};
 
-export const authUserRepository = new AuthUserRepository(authUserDB);
+export const authUserRepository = async () =>
+  new AuthUserRepository(await authUserDB());
 
-export const authService = new BetterAuthService(authUserDB);
+export const authService = async () => new BetterAuthService(await authUserDB());

@@ -45,7 +45,7 @@ export const recommended = (name, projectDir) => [
       ...vitest.configs.recommended.rules,
       'custom/require-colocated-tests': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'sonarjs/no-unused-vars': 'none',
+      'sonarjs/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-unused-expressions': 'warn',
       '@nx/enforce-module-boundaries': [

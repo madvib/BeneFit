@@ -11,8 +11,8 @@ import { BetterAuthService } from '@bene/infrastructure/auth';
 let auth: BetterAuthService;
 const loadAuthService = async () => {
   if (!auth) {
-    const mod = await import('./repositories.js');
-    auth = mod.authService;
+    const container = await import('./repositories.js');
+    auth = await container.authService();
   }
   return auth;
 };

@@ -7,11 +7,13 @@
       "dom.iterable",
       "esnext"
     ],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "allowJs": true,
     "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "noEmit": true,
+    "module": "esnext",
     "plugins": [
       {
         "name": "next"
@@ -22,10 +24,6 @@
         "./src/*"
       ]
     },
-    "types": [
-      "../../types/cloudflare-env.d.ts",
-      "node"
-    ],
   },
   "include": [
     "next-env.d.ts",
@@ -34,6 +32,7 @@
     "**/*.tsx",
     "src/providers/repositories.ts",
     "src/providers/auth-use-cases.ts",
+    "next.config.ts",
   ],
   "exclude": [
     "node_modules"

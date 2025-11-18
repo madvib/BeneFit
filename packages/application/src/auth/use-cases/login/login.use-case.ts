@@ -1,10 +1,10 @@
-import { EmailAddress, Result } from '@bene/core/shared';
+import { EmailAddress, Password, Result } from '@bene/core/shared';
 import { IAuthService } from '../../ports/auth.service.js';
 import { AuthError } from '../../errors/index.js';
 
 export interface LoginInput {
   email: EmailAddress;
-  password: string;
+  password: Password;
   next?: string;
 }
 

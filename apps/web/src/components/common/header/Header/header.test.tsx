@@ -1,6 +1,21 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Header from "./header";
+
+// Mock the repositories that use Cloudflare context to avoid runtime errors in tests
+vi.mock('../../../../src/providers/repositories', () => ({
+  authUserRepository: {},
+  authService: {},
+}));
+
+// Mock providers that depend on repositories
+vi.mock('../../../../providers/auth-use-cases', () => ({
+  authUseCases: {
+    getCurrentUserUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({ isSuccess: true, value: { id: '1', email: 'test@example.com', name: 'Test User' } })
+    })),
+  }
+}));
 
 // Don't mock UnifiedHeader since we want to test the actual implementation
 describe("Header", () => {

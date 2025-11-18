@@ -1,15 +1,23 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Result } from '@bene/core/shared';
 import { GetCurrentUserUseCase } from './get-current-user.use-case';
 
 describe('GetCurrentUserUseCase', () => {
   let useCase: GetCurrentUserUseCase;
+  let mockAuthService: any;
 
   beforeEach(() => {
-    useCase = new GetCurrentUserUseCase();
+    mockAuthService = {
+      getCurrentUser: vi.fn(),
+    };
+    useCase = new GetCurrentUserUseCase(mockAuthService);
   });
 
   it('should return a failure result with appropriate error message', async () => {
-    const result = await useCase.execute();
+    // Mock the authService to return a failure
+    mockAuthService.getCurrentUser.mockResolvedValue(Result.fail(new Error('Session management needs to be handled in infrastructure layer')));
+
+    const result = await useCase.execute({} as any);
 
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
@@ -18,10 +26,17 @@ describe('GetCurrentUserUseCase', () => {
   });
 
   it('should handle unexpected errors gracefully', async () => {
-    // The main test already covers the expected behavior.
-    // This use case is expected to return failure as it's not fully implemented.
-    const result = await useCase.execute();
-    
-    expect(result.isFailure).toBe(true);
+    // Mock the authService to return a success
+    const mockUser = { id: '1', email: 'test@example.com', name: 'Test User' };
+    mockAuthService.getCurrentUser.mockResolvedValue(Result.ok(mockUser));
+
+    const result = await useCase.execute({} as any);
+
+    expect(result.isSuccess).toBe(true);
+    if (result.isSuccess) {
+      expect(result.value.id).toBe('1');
+      expect(result.value.email).toBe('test@example.com');
+      expect(result.value.name).toBe('Test User');
+    }
   });
 });

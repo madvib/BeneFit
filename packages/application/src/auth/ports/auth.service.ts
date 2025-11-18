@@ -2,7 +2,7 @@ import { Result } from '@bene/core/shared';
 import { LoginInput, LoginOutput } from '../use-cases/login/login.use-case.js';
 import { SignupInput } from '../use-cases/signup/signup.use-case.js';
 import { ResetPasswordInput } from '../use-cases/reset-password/reset-password.use-case.js';
-import { User } from '@bene/core/index.js';
+import { User } from '@bene/core/auth';
 
 /**
  * Repository interface for Auth

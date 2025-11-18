@@ -58,7 +58,9 @@ export async function getUserProfile(): Promise<GetUserProfileResult> {
     const userId = userResult.data.id;
 
     // Use the use case to get user profile
-    const result = await accountUseCases.getUserProfileUseCase.execute(userId);
+    const result = await accountUseCases
+      .getUserProfileUseCase()
+      .then((uc) => uc.execute(userId));
 
     if (result.isSuccess) {
       // Transform the result to match the UI requirements
@@ -136,16 +138,18 @@ export async function updateUserProfile(
     const userId = userResult.data.id;
 
     // Use the use case to update user profile
-    const result = await accountUseCases.updateUserProfileUseCase.execute({
-      userId: userId,
-      firstName: input.firstName,
-      lastName: input.lastName,
-      email: input.email,
-      phone: input.phone,
-      bio: input.bio,
-      aboutMe: input.aboutMe,
-      profilePicture: input.profilePicture,
-    });
+    const result = await accountUseCases.updateUserProfileUseCase().then((uc) =>
+      uc.execute({
+        userId: userId,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        email: input.email,
+        phone: input.phone,
+        bio: input.bio,
+        aboutMe: input.aboutMe,
+        profilePicture: input.profilePicture,
+      }),
+    );
 
     if (result.isSuccess) {
       return {

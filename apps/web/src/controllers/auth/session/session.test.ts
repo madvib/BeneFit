@@ -1,10 +1,82 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getCurrentUser,
   getSession,
   SessionResult,
-  CurrentUserResult,
+  CurrentUserResult
 } from './session';
+
+// Mock the repositories that use Cloudflare context to avoid runtime errors in tests
+vi.mock('@/providers/repositories', () => ({
+  authUserRepository: {},
+  authService: {},
+}));
+
+// Mock the auth use cases
+vi.mock('@/providers/auth-use-cases', () => ({
+  authUseCases: {
+    getCurrentUserUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({
+        isSuccess: true,
+        value: {
+          id: 'user-1',
+          email: 'john.doe@example.com',
+          name: 'John Doe'
+        }
+      })
+    })),
+    getCurrentSessionUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({
+        isSuccess: true,
+        value: {
+          user: {
+            id: 'user-1',
+            email: 'john.doe@example.com',
+            name: 'John Doe'
+          },
+          isAuthenticated: true
+        }
+      })
+    }))
+  }
+}));
+
+// Mock the Next.js server functions
+vi.mock('next/headers', () => ({
+  headers: () => new Headers(),
+  cookies: () => ({
+    getAll: () => [],
+  }),
+}));
+
+// Mock the authUseCases
+vi.mock('@/providers/auth-use-cases', () => ({
+  authUseCases: {
+    getCurrentUserUseCase: () => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({
+        isSuccess: true,
+        value: {
+          id: 'user-1',
+          email: 'john.doe@example.com',
+          name: 'John Doe'
+        }
+      })
+    }),
+    getCurrentSessionUseCase: () => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({
+        isSuccess: true,
+        value: {
+          user: {
+            id: 'user-1',
+            email: 'john.doe@example.com',
+            name: 'John Doe'
+          },
+          isAuthenticated: true
+        }
+      })
+    })
+  }
+}));
 
 describe('Session Controller', () => {
   beforeEach(() => {
@@ -19,8 +91,8 @@ describe('Session Controller', () => {
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
       if (result.data) {
-        expect(result.data.id).toBe('user-1'); // Updated to match our mock data
-        expect(result.data.email).toBe('john.doe@example.com'); // Updated to match our mock data
+        expect(result.data.id).toBe('user-1');
+        expect(result.data.email).toBe('john.doe@example.com');
       }
     });
 
@@ -48,13 +120,22 @@ describe('Session Controller', () => {
     });
 
     it('handles unexpected errors gracefully', async () => {
-      // To test error handling, we'll mock the internal implementation
-      // Since getCurrentUser is synchronous and doesn't throw, this tests the happy path
+      // Get the mocked module and modify its behavior for this test
+      const importedAuthUseCases = await import('@/providers/auth-use-cases');
+
+      // Mock the use case to return an error
+      importedAuthUseCases.authUseCases.getCurrentUserUseCase.mockResolvedValueOnce({
+        execute: vi.fn().mockResolvedValue({
+          isSuccess: false,
+          error: new Error('Failed to get current user')
+        })
+      });
+
       const result: CurrentUserResult = await getCurrentUser();
 
-      // Ensure no errors occurred
-      expect(result.success).toBe(true);
-      expect(result.error).toBeUndefined();
+      // Ensure error case is handled
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
     });
 
     it('consistently returns the same user data across multiple calls', async () => {
@@ -75,9 +156,9 @@ describe('Session Controller', () => {
         expect(result.data.isAuthenticated).toBe(true);
         expect(result.data.user).toBeDefined();
         if (result.data.user) {
-          expect(result.data.user.id).toBe('user-1'); // Updated to match our mock data
-          expect(result.data.user.email).toBe('john.doe@example.com'); // Updated to match our mock data
-          expect(result.data.user.name).toBe('John Doe'); // Updated to match our mock data
+          expect(result.data.user.id).toBe('user-1');
+          expect(result.data.user.email).toBe('john.doe@example.com');
+          expect(result.data.user.name).toBe('John Doe');
         }
       }
     });
@@ -105,11 +186,22 @@ describe('Session Controller', () => {
     });
 
     it('handles unexpected errors gracefully', async () => {
+      // Get the mocked module and modify its behavior for this test
+      const importedAuthUseCases = await import('@/providers/auth-use-cases');
+
+      // Mock the use case to return an error
+      importedAuthUseCases.authUseCases.getCurrentSessionUseCase.mockResolvedValueOnce({
+        execute: vi.fn().mockResolvedValue({
+          isSuccess: false,
+          error: new Error('Failed to get session')
+        })
+      });
+
       const result: SessionResult = await getSession();
 
-      // Ensure no errors occurred
-      expect(result.success).toBe(true);
-      expect(result.error).toBeUndefined();
+      // Ensure error case is handled
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
     });
 
     it('maintains consistency between getCurrentUser and getSession user data', async () => {
@@ -132,18 +224,26 @@ describe('Session Controller', () => {
     });
 
     it('returns null user when session is not authenticated (mock implementation)', async () => {
-      // In our current mock implementation, the user is always authenticated
-      // This tests that the structure is correct even if user is null
+      // Mock a scenario where there's no authenticated user
+      const importedAuthUseCases = await import('@/providers/auth-use-cases');
+
+      importedAuthUseCases.authUseCases.getCurrentSessionUseCase.mockResolvedValueOnce({
+        execute: vi.fn().mockResolvedValue({
+          isSuccess: true,
+          value: {
+            user: null,
+            isAuthenticated: false
+          }
+        })
+      });
+
       const result: SessionResult = await getSession();
 
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
       if (result.data) {
-        // In our mock, user should exist
-        expect(result.data.user).toBeDefined();
-        if (result.data.user) {
-          expect(result.data.user.id).toBe('user-1');
-        }
+        expect(result.data.user).toBeNull();
+        expect(result.data.isAuthenticated).toBe(false);
       }
     });
   });
@@ -181,18 +281,6 @@ describe('Session Controller', () => {
   });
 
   describe('Error handling edge cases', () => {
-    it('does not throw exceptions under normal circumstances', async () => {
-      // These functions are currently synchronous and don't throw
-      // but this verifies they complete successfully
-      expect(async () => {
-        await getCurrentUser();
-      }).not.toThrow();
-
-      expect(async () => {
-        await getSession();
-      }).not.toThrow();
-    });
-
     it('provides consistent response structure', async () => {
       const currentUserResult = await getCurrentUser();
       const sessionResult = await getSession();

@@ -1,12 +1,6 @@
-import { getSession } from '@/controllers';
-import { redirect } from 'next/navigation';
 import { type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  // const session = await getSession();
-  // if (!session.data?.isAuthenticated) {
-  //   redirect('/login');
-  // }
   console.log('Middleware triggered for path:', request.nextUrl.pathname);
 }
 

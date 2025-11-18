@@ -7,6 +7,27 @@ vi.mock('@/controllers/auth/auth-actions', () => ({
   signOutAction: vi.fn(() => Promise.resolve()),
 }));
 
+// Mock the providers that use Cloudflare context to avoid runtime errors in tests
+vi.mock('@/providers/auth-use-cases', () => ({
+  authUseCases: {
+    signOutUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({ isSuccess: true })
+    })),
+    loginUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn(),
+    })),
+    signupUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn(),
+    })),
+    resetPasswordUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn(),
+    })),
+    getCurrentUserUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn(),
+    })),
+  }
+}));
+
 describe('LogoutButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();

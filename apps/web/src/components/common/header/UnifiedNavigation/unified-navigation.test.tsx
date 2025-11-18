@@ -2,6 +2,21 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { UnifiedNavigation } from "./unified-navigation";
 
+// Mock the repositories that use Cloudflare context to avoid runtime errors in tests
+vi.mock("../../../../src/providers/repositories", () => ({
+  authUserRepository: {},
+  authService: {},
+}));
+
+// Mock providers that depend on repositories
+vi.mock("../../../../providers/auth-use-cases", () => ({
+  authUseCases: {
+    getCurrentUserUseCase: vi.fn(() => Promise.resolve({
+      execute: vi.fn().mockResolvedValue({ isSuccess: true, value: { id: '1', email: 'test@example.com', name: 'Test User' } })
+    })),
+  }
+}));
+
 // Mock child components to avoid deep integration issues
 vi.mock("@/components/theme/theme-toggle/theme-toggle", () => ({
   ThemeToggle: vi.fn(() => (

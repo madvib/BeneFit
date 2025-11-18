@@ -5,10 +5,10 @@ import {
 import { authUserRepository } from './repositories.js';
 
 // Instantiate account use cases as constants
-export const getUserProfileUseCase = new GetUserProfileUseCase(authUserRepository);
-export const updateUserProfileUseCase = new UpdateUserProfileUseCase(
-  authUserRepository,
-);
+export const getUserProfileUseCase = async () =>
+  new GetUserProfileUseCase(await authUserRepository());
+export const updateUserProfileUseCase = async () =>
+  new UpdateUserProfileUseCase(await authUserRepository());
 
 // Export all account-related use cases
 export const accountUseCases = {

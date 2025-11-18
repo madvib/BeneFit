@@ -1,9 +1,4 @@
 import {
-  LoginInput,
-  LoginOutput,
-  SignupInput,
-  ResetPasswordInput,
-  IAuthService,
   UserNotFoundError,
   AuthError,
   WeakPasswordError,
@@ -16,10 +11,17 @@ import {
 import { Result } from '@bene/core/shared';
 
 import { createBetterAuth } from './auth.js';
-import { APIError, Auth } from 'better-auth';
+import { APIError, type Auth } from 'better-auth';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
-import { RequestContext } from '@bene/application/auth/ports/auth.service.js';
-import { User } from '@bene/core/index.js';
+import type {
+  IAuthService,
+  LoginInput,
+  LoginOutput,
+  RequestContext,
+  ResetPasswordInput,
+  SignupInput,
+} from '@bene/application/auth';
+import { User } from '@bene/core/auth';
 import { mapToDomainUser } from '../data/mappers/auth-mappers.js';
 
 export class BetterAuthService implements IAuthService {
@@ -65,7 +67,7 @@ export class BetterAuthService implements IAuthService {
       const response = await this.auth.api.signInEmail({
         body: {
           email: input.email.value,
-          password: input.password,
+          password: input.password.value,
         },
       });
 
@@ -90,8 +92,8 @@ export class BetterAuthService implements IAuthService {
       const response = await this.auth.api.signUpEmail({
         body: {
           name: input.name,
-          email: input.email,
-          password: input.password,
+          email: input.email.value,
+          password: input.password.value,
         },
       });
 

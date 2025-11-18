@@ -1,12 +1,11 @@
-import { Result } from '@bene/core/shared';
-import { isValidEmail } from '@bene/utils/validate';
-import { AuthError, WeakPasswordError } from '../../errors/index.js';
+import { EmailAddress, Password, Result } from '@bene/core/shared';
+import { AuthError } from '../../errors/index.js';
 import { IAuthService } from '../../ports/auth.service.js';
 
 export interface SignupInput {
   name: string;
-  email: string;
-  password: string;
+  email: EmailAddress;
+  password: Password;
 }
 
 /**
@@ -39,14 +38,6 @@ export class SignupUseCase {
   private validateInput(input: SignupInput): Result<void> {
     if (!input.email || !input.password) {
       return Result.fail(new AuthError('Email and password are required'));
-    }
-
-    if (!isValidEmail(input.email)) {
-      return Result.fail(new AuthError('Invalid email format'));
-    }
-
-    if (input.password.length < 6) {
-      return Result.fail(new WeakPasswordError());
     }
 
     return Result.ok();

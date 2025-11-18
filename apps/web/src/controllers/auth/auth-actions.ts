@@ -13,7 +13,7 @@ export interface LoginFormState {
 }
 
 export async function loginAction(
-  previous: LoginFormState,
+  _previous: LoginFormState,
   formData: FormData,
 ): Promise<LoginFormState> {
   const email = EmailAddress.create(formData.get('email') as string);
@@ -23,7 +23,7 @@ export async function loginAction(
   const result = await authUseCases.loginUseCase().then((uc) =>
     uc.execute({
       email: email.value,
-      password: password.value.value,
+      password: password.value,
     }),
   );
   if (result.isSuccess) {
@@ -49,7 +49,7 @@ export interface SignupFormState {
 }
 
 export async function signupAction(
-  prev: SignupFormState,
+  _prev: SignupFormState,
   formData: FormData,
 ): Promise<SignupFormState> {
   const email = EmailAddress.create(formData.get('email') as string);
@@ -91,8 +91,8 @@ export async function signupAction(
 
   const result = await authUseCases.signupUseCase().then((uc) =>
     uc.execute({
-      email: email.value.value,
-      password: password.value.value,
+      email: email.value,
+      password: password.value,
       name: fullName,
     }),
   );
@@ -117,7 +117,7 @@ export interface ResetPasswordFormState {
 }
 
 export async function resetPasswordAction(
-  prev: ResetPasswordFormState,
+  _prev: ResetPasswordFormState,
   formData: FormData,
 ): Promise<ResetPasswordFormState> {
   const email = formData.get('email') as string;
@@ -140,8 +140,8 @@ export async function resetPasswordAction(
 }
 
 export async function signOutAction(
-  prev: boolean,
-  formData: FormData,
+  _prev: boolean,
+  _formData: FormData,
 ): Promise<boolean> {
   const requestContext = await getRequestContext();
   const result = await authUseCases
