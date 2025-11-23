@@ -10,7 +10,7 @@ interface StatisticsSectionProps {
 export default function StatisticsSection({ stats }: StatisticsSectionProps) {
   return (
     <Card>
-      <div className="bg-background p-4 sm:p-5 rounded-lg">
+      <div className="p-4 sm:p-5">
         <h3 className="text-lg sm:text-xl font-semibold mb-3">
           Statistics
         </h3>

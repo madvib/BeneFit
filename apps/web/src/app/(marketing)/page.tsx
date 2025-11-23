@@ -7,12 +7,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function LandingPage() {
-  const session = useSession();
+  const { isAuthenticated, isLoading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!session.isLoading && session.isAuthenticated) router.replace('/feed');
-  }, [session.isAuthenticated]);
+    if (!isLoading && isAuthenticated) router.replace('/user/activity-feed');
+  }, [isAuthenticated, isLoading, router]);
 
   const features = [
     {
@@ -34,12 +34,12 @@ export default function LandingPage() {
     },
   ];
 
-  return session.isLoading ? (
+  return isLoading ? (
     <LoadingSpinner />
   ) : (
-    <div className="w-full min-h-screen flex items-center">
+    <div className="flex min-h-screen w-full items-center">
       <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div className="flex flex-col items-center justify-between gap-12 lg:flex-row">
           <HomeHero
             title="Welcome to"
             primaryWord="BeneFit"

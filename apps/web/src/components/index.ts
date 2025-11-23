@@ -1,21 +1,15 @@
-// UI Components
-export { default as Card } from './common/ui-primitives/card/card';
-export { default as InsightCard } from './user/shared/insight-card/insight-card';
-export { default as ButtonGroup } from './common/ui-primitives/buttons/button-group';
-export { default as StatCard } from './user/shared/stat-card/stat-card';
-export { default as EmptyState } from './common/ui-primitives/empty-state';
-export { default as LoadingSpinner } from './common/ui-primitives/loading-spinner/loading-spinner';
-export { default as Alert } from './common/ui-primitives/alert/alert';
-
+export * from './common';
 // Layout Components
 export { default as DashboardLayout } from './user/dashboard/dashboard-layout';
-export { default as PageContainer } from './common/page-container';
+export { default as PageContainer } from './common/ui-primitives/page-container';
 
 // Header Components
-export { default as Header } from './common/header/Header/header';
+export { default as Header } from './common/header/unified-header';
 
 // Account Components
-export { default as AccountDropdown } from './user/account/account-dropdown/account-dropdown';
+export { default as AccountDropdown } from './common/header/navigation/account-dropdown/account-dropdown';
+export { default as InsightCard } from './user/shared/insight-card/insight-card';
+export { default as StatCard } from './user/shared/stat-card/stat-card';
 
 // Navigation Components
 

@@ -5,7 +5,7 @@ import { Modal } from '@/components/common/ui-primitives/modal/modal';
 
 export default function LoginModal() {
   return (
-    <Modal title="Login to BeneFit">
+    <Modal>
       <Suspense fallback={<div>Loading login form...</div>}>
         <LoginForm isModal={true} />
       </Suspense>

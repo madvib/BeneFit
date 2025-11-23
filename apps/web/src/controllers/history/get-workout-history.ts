@@ -3,6 +3,7 @@
 import { getWorkoutHistoryUseCase } from '@/providers/activity-use-cases';
 
 // Define the return types for transformed workout data
+
 export interface WorkoutData {
   id: string;
   date: string; // ISO string

@@ -1,13 +1,14 @@
+import { Button } from '@/components/common';
 import Link from 'next/link';
 
 export default function CallToAction() {
   return (
     <div className="text-center">
-      <Link href="/signup" className="btn btn-primary text-lg px-8 py-4 mr-4">
-        Join Our Community
+      <Link href="/signup">
+        <Button>Join Our Community</Button>
       </Link>
-      <Link href="/contact" className="btn btn-ghost text-lg px-8 py-4">
-        Contact Us
+      <Link href="/contact">
+        <Button variant={'ghost'}>Contact Us</Button>
       </Link>
     </div>
   );

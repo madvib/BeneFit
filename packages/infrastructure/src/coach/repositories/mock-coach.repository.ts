@@ -80,8 +80,7 @@ export class MockCoachRepository implements CoachRepository {
     return chats;
   }
 
-  async getInitialMessages(chatId: string): Promise<Message[]> {
-    console.log(chatId);
+  async getInitialMessages(_chatId: string): Promise<Message[]> {
     const messageData = await this.loadMessageData();
     const messages: Message[] = [];
 

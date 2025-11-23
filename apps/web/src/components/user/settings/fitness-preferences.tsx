@@ -1,51 +1,57 @@
 'use client';
 
+import { Card, Select } from '@/components/common';
+
 type PreferredUnits = 'Metric (kg, km)' | 'Imperial (lbs, miles)';
 type GoalFocus = 'Weight Loss' | 'Muscle Building' | 'General Fitness';
 
 interface FitnessPreferencesProps {
   preferredUnits: PreferredUnits;
   goalFocus: GoalFocus;
-  onPreferredUnitsChange: (value: PreferredUnits) => void;
-  onGoalFocusChange: (value: GoalFocus) => void;
+  onPreferredUnitsChange: (_value: PreferredUnits) => void;
+  onGoalFocusChange: (_value: GoalFocus) => void;
 }
 
-export default function FitnessPreferences({ 
-  preferredUnits, 
+export default function FitnessPreferences({
+  preferredUnits,
   goalFocus,
   onPreferredUnitsChange,
-  onGoalFocusChange
+  onGoalFocusChange,
 }: FitnessPreferencesProps) {
   return (
-    <div className="mb-8">
-      <h3 className="text-2xl font-semibold mb-4">Fitness Preferences</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Card className="mb-8">
+      <h3 className="mb-4 text-2xl font-semibold">Fitness Preferences</h3>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-foreground mb-2">
-            Preferred Units
-          </label>
-          <select 
-            className="w-full p-2 rounded border border-muted bg-background"
+          <label className="text-foreground mb-2 block">Preferred Units</label>
+          <Select
             value={preferredUnits}
-            onChange={(e) => onPreferredUnitsChange(e.target.value as 'Metric (kg, km)' | 'Imperial (lbs, miles)')}
+            onChange={(e) =>
+              onPreferredUnitsChange(
+                e.target.value as 'Metric (kg, km)' | 'Imperial (lbs, miles)',
+              )
+            }
           >
             <option value="Metric (kg, km)">Metric (kg, km)</option>
             <option value="Imperial (lbs, miles)">Imperial (lbs, miles)</option>
-          </select>
+          </Select>
         </div>
         <div>
-          <label className="block text-foreground mb-2">Goal Focus</label>
-          <select 
-            className="w-full p-2 rounded border border-muted bg-background"
+          <label className="text-foreground mb-2 block">Goal Focus</label>
+          <Select
             value={goalFocus}
-            onChange={(e) => onGoalFocusChange(e.target.value as 'Weight Loss' | 'Muscle Building' | 'General Fitness')}
+            onChange={(e) =>
+              onGoalFocusChange(
+                e.target.value as 'Weight Loss' | 'Muscle Building' | 'General Fitness',
+              )
+            }
           >
             <option value="Weight Loss">Weight Loss</option>
             <option value="Muscle Building">Muscle Building</option>
             <option value="General Fitness">General Fitness</option>
-          </select>
+          </Select>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

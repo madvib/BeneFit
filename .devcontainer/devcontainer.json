@@ -9,20 +9,20 @@
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
     "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
-    "PNPM_HOME": "/root/.local/share/pnpm/"
+    "PNPM_HOME": "/home/node/.local/share/pnpm/"
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
   },
   "mounts": [
-    "source=pnpm_home,target=/root/.local/share/pnpm/,type=volume"
+    "source=pnpm_home,target=/home/node/.local/share/pnpm/,type=volume"
   ],
   "postCreateCommand": "pnpm config set store-dir $PNPM_HOME/store && pnpm install", //sudo chown -R node:node $PNPM_HOME && 
   "runArgs": [
     "--env-file",
     ".devcontainer/.env"
   ],
-  "remoteUser": "root",
+  "remoteUser": "node",
   "customizations": {
     "vscode": {
       "extensions": [

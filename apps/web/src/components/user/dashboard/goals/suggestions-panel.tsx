@@ -1,3 +1,4 @@
+import { Card } from '@/components';
 import RecommendationCard from '@/components/user/dashboard/recommendation-card';
 
 interface RecommendationDTO {
@@ -13,8 +14,7 @@ interface SuggestionsPanelProps {
 
 export default function SuggestionsPanel({ recommendations }: SuggestionsPanelProps) {
   return (
-    <div className="bg-secondary p-4 sm:p-6 rounded-lg shadow-md">
-      <h3 className="text-lg sm:text-xl font-bold mb-4">Goal Suggestions</h3>
+    <Card title="Suggestions">
       <div className="space-y-3">
         {recommendations.map((rec) => (
           <RecommendationCard
@@ -25,6 +25,6 @@ export default function SuggestionsPanel({ recommendations }: SuggestionsPanelPr
           />
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPostData } from '@/controllers/blog';
+import { Badge } from '@/components';
 
 interface BlogPostCardProps {
   post: BlogPostData;
@@ -26,9 +27,9 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
       </div>
       <div className="p-6">
         <div className="flex justify-between items-center mb-3">
-          <span className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded-full">
+          <Badge variant="primaryLight">
             {post.category}
-          </span>
+          </Badge>
           <span className="text-sm text-muted-foreground">{post.date}</span>
         </div>
         <h2 className="text-xl font-bold mb-3">{post.title}</h2>

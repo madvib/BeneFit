@@ -1,7 +1,6 @@
 'use client';
 
 import { useActionState, useEffect } from 'react';
-import Button from '@/components/common/ui-primitives/buttons/button';
 import { LogOut } from 'lucide-react';
 import { signOutAction } from '@/controllers/auth/auth-actions';
 import { useRouter } from 'next/navigation';
@@ -27,7 +26,7 @@ export function LogoutButton({
   }, [success]);
   return (
     <form action={action}>
-      <Button
+      <button
         type="submit"
         disabled={isLoading}
         className={`${variant === 'ghost' ? 'btn-ghost' : ''} ${variant === 'default' ? 'w-full' : ''} ${className || ''}`}
@@ -43,7 +42,7 @@ export function LogoutButton({
             Logout
           </span>
         )}
-      </Button>
+      </button>
     </form>
   );
 }

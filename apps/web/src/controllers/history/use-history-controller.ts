@@ -28,7 +28,7 @@ interface UseHistoryControllerResult {
 function filterWorkouts(
   workouts: WorkoutData[],
   searchTerm: string,
-  timeFilter: string
+  timeFilter: string,
 ): WorkoutData[] {
   return workouts.filter((workout) => {
     const matchesSearch =
@@ -73,11 +73,12 @@ export function useHistoryController(): UseHistoryControllerResult {
   const [timeFilter, setTimeFilter] = useState<string>('all');
 
   // Define the filter options
-  const defaultFilterOptions: FilterOption[] = [
-    { value: 'all', label: 'All Time' },
-    { value: 'week', label: 'Last Week' },
-    { value: 'month', label: 'Last Month' },
-    { value: 'quarter', label: 'Last Quarter' },
+  const defaultFilterOptions = [
+    { value: 'all', label: 'All Activity' },
+    { value: 'workout', label: 'Workouts' },
+    { value: 'task', label: 'Tasks' },
+    { value: 'goal', label: 'Goals' },
+    { value: 'alert', label: 'Alerts' },
   ];
 
   // Apply filtering when search term or time filter changes
@@ -92,14 +93,16 @@ export function useHistoryController(): UseHistoryControllerResult {
       try {
         setLoading(true);
         const result = await getWorkoutHistory();
-        
+
         if (result.success) {
           setWorkoutHistory(result.data);
         } else {
           setError(result.error || 'Failed to fetch workout history');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch workout history');
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch workout history',
+        );
         console.error('Error fetching workout history:', err);
       } finally {
         setLoading(false);
@@ -121,7 +124,7 @@ export function useHistoryController(): UseHistoryControllerResult {
   const handleDelete = (id: string) => {
     console.log(`Deleting workout ${id}`);
     // In a real implementation, this would remove the workout from the state and database
-    setWorkoutHistory(prev => prev.filter(workout => workout.id !== id));
+    setWorkoutHistory((prev) => prev.filter((workout) => workout.id !== id));
   };
 
   return {

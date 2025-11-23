@@ -1,6 +1,6 @@
 'use client';
 
-import { Card } from '@/components';
+import { FormSection, FormField, Input } from '@/components';
 
 interface PersonalInfoFormProps {
   firstName?: string;
@@ -12,48 +12,37 @@ interface PersonalInfoFormProps {
 
 export default function PersonalInfoForm({ firstName, lastName, email, phone, onInputChange }: PersonalInfoFormProps) {
   return (
-    <Card>
-      <div className="mb-6">
-        <h3 className="text-2xl font-semibold mb-4">Personal Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-foreground mb-2">First Name</label>
-            <input
-              type="text"
-              className="w-full p-2 rounded border border-muted bg-background"
-              value={firstName || ''}
-              onChange={(e) => onInputChange('firstName', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-foreground mb-2">Last Name</label>
-            <input
-              type="text"
-              className="w-full p-2 rounded border border-muted bg-background"
-              value={lastName || ''}
-              onChange={(e) => onInputChange('lastName', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-foreground mb-2">Email</label>
-            <input
-              type="email"
-              className="w-full p-2 rounded border border-muted bg-background"
-              value={email || ''}
-              onChange={(e) => onInputChange('email', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-foreground mb-2">Phone</label>
-            <input
-              type="tel"
-              className="w-full p-2 rounded border border-muted bg-background"
-              value={phone || ''}
-              onChange={(e) => onInputChange('phone', e.target.value)}
-            />
-          </div>
-        </div>
+    <FormSection title="Personal Information">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField label="First Name">
+          <Input
+            type="text"
+            value={firstName || ''}
+            onChange={(e) => onInputChange('firstName', e.target.value)}
+          />
+        </FormField>
+        <FormField label="Last Name">
+          <Input
+            type="text"
+            value={lastName || ''}
+            onChange={(e) => onInputChange('lastName', e.target.value)}
+          />
+        </FormField>
+        <FormField label="Email">
+          <Input
+            type="email"
+            value={email || ''}
+            onChange={(e) => onInputChange('email', e.target.value)}
+          />
+        </FormField>
+        <FormField label="Phone">
+          <Input
+            type="tel"
+            value={phone || ''}
+            onChange={(e) => onInputChange('phone', e.target.value)}
+          />
+        </FormField>
       </div>
-    </Card>
+    </FormSection>
   );
 }

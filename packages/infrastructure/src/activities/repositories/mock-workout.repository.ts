@@ -1,5 +1,5 @@
 import { WorkoutRepository } from '@bene/application/activities';
-import { Workout } from '@bene/core/activities';
+import { Workout, WorkoutType } from '@bene/core/activities';
 import { Result } from '@bene/core/shared';
 
 // Mock repository for Workout domain entity
@@ -47,7 +47,7 @@ export class MockWorkoutRepository implements WorkoutRepository {
       const entityResult = Workout.create({
         id: dto.id.toString(),
         date: dto.date,
-        type: dto.type,
+        type: dto.type as WorkoutType,
         duration: dto.duration,
         calories: dto.calories,
         distance: dto.distance !== null ? dto.distance : undefined,
@@ -83,7 +83,7 @@ export class MockWorkoutRepository implements WorkoutRepository {
     for (const dto of dtoData) {
       const entityResult = Workout.create({
         date: dto.date,
-        type: dto.type,
+        type: dto.type as WorkoutType,
         duration: dto.duration,
         calories: dto.calories,
         distance: dto.distance !== null ? dto.distance : undefined,

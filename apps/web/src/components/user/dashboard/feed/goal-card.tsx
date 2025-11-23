@@ -1,5 +1,5 @@
-import { Card } from '@/components';
-import ProgressBar from '@/components/common/ui-primitives/progress-bar';
+import ProgressBar from '@/components/common/ui-primitives/progress-bar/progress-bar';
+import { ArrowRight, Target } from 'lucide-react';
 
 interface GoalData {
   id: string;
@@ -17,53 +17,47 @@ interface GoalCardProps {
 }
 
 export default function GoalCard({ goal, onSetNewGoal }: GoalCardProps) {
-  if (!goal) {
-    return (
-      <Card title="Current Goal">
-        <p className="text-muted-foreground italic">No current goal set</p>
-        <button className="mt-4 w-full btn btn-primary" onClick={onSetNewGoal}>
-          Set New Goal
-        </button>
-      </Card>
-    );
-  }
+  if (!goal) return null;
+  const percentage = Math.round((goal.currentValue / goal.targetValue) * 100);
 
   return (
-    <Card title="Current Goal">
-      <div>
-        <h4 className="font-semibold text-lg break-words">{goal.title}</h4>
-        <p className="text-muted-foreground text-sm mb-4 break-words">
-          {goal.description}
-        </p>
-        <div className="mb-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm mb-1">
-            <div className="flex gap-2">
-              <span className="font-medium">
-                {goal.currentValue} {goal.unit}
-              </span>
-              <span className="text-muted-foreground">
-                / {goal.targetValue} {goal.unit}
-              </span>
-            </div>
-          </div>
-          <ProgressBar
-            value={goal.currentValue}
-            max={goal.targetValue}
-            className="mt-1"
-          />
+    <div className="bg-background border-muted flex flex-col overflow-hidden rounded-xl border shadow-sm">
+      <div className="border-muted bg-accent/20 flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center gap-2">
+          <Target size={18} className="text-primary" />
+          <h3 className="text-lg font-semibold tracking-tight">Current Goal</h3>
         </div>
-        <div className="text-sm space-y-1">
-          <p className="text-muted-foreground break-words">
-            Deadline: {new Date(goal.deadline).toLocaleDateString()}
-          </p>
-          <p className="text-muted-foreground break-words">
-            Remaining: {(goal.targetValue - goal.currentValue).toFixed(1)} {goal.unit}
-          </p>
+        <span className="bg-primary/10 text-primary border-primary/20 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase">
+          Active
+        </span>
+      </div>
+      <div className="p-6">
+        <div className="mb-4">
+          <h4 className="text-foreground text-xl font-bold">{goal.title}</h4>
+          <p className="text-muted-foreground mt-1 text-sm">{goal.description}</p>
+        </div>
+        <div className="bg-muted/30 border-muted mb-6 rounded-xl border p-4">
+          <div className="mb-2 flex items-end justify-between">
+            <span className="text-foreground text-2xl font-bold">{percentage}%</span>
+            <span className="text-muted-foreground text-xs font-medium">
+              {goal.currentValue} / {goal.targetValue} {goal.unit}
+            </span>
+          </div>
+          <ProgressBar value={goal.currentValue} max={goal.targetValue} />
+        </div>
+        <div className="border-muted/60 border-t pt-4">
+          <button
+            onClick={onSetNewGoal}
+            className="group text-muted-foreground hover:text-primary flex w-full items-center justify-between text-sm font-medium"
+          >
+            <span>Update Goal</span>
+            <ArrowRight
+              size={14}
+              className="transition-transform group-hover:translate-x-1"
+            />
+          </button>
         </div>
       </div>
-      <button className="mt-4 w-full btn btn-primary" onClick={onSetNewGoal}>
-        Set New Goal
-      </button>
-    </Card>
+    </div>
   );
 }

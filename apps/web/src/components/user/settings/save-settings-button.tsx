@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components';
+
 interface SaveSettingsButtonProps {
   onClick: () => void;
   disabled?: boolean;
@@ -8,13 +10,13 @@ interface SaveSettingsButtonProps {
 export default function SaveSettingsButton({ onClick, disabled = false }: SaveSettingsButtonProps) {
   return (
     <div className="flex justify-end">
-      <button 
-        className="btn btn-primary" 
+      <Button
+        variant="default"
         onClick={onClick}
         disabled={disabled}
       >
         Save Settings
-      </button>
+      </Button>
     </div>
   );
 }

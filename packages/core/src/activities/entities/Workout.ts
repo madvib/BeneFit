@@ -1,8 +1,17 @@
 import { Entity, Result } from '@bene/core/shared';
 
+export type WorkoutType =
+  | 'Running'
+  | 'Weight Training'
+  | 'Cylcing'
+  | 'Swimming'
+  | 'HIIT'
+  | 'Yoga'
+  | 'Rowing';
+
 interface WorkoutProps {
   date: string;
-  type: string;
+  type: WorkoutType;
   duration: string;
   calories: number;
   distance?: string;

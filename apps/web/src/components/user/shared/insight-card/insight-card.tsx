@@ -1,3 +1,5 @@
+import { DataCard } from '@/components';
+
 interface InsightCardProperties {
   title: string;
   value: string | number;
@@ -12,10 +14,12 @@ export default function InsightCard({
   className = "",
 }: InsightCardProperties) {
   return (
-    <div className={`p-4 bg-background rounded-lg ${className}`}>
-      <h4 className="font-medium mb-2">{title}</h4>
-      <div className="text-3xl font-bold text-primary">{value}</div>
-      <p className="text-sm text-muted-foreground">{description}</p>
-    </div>
+    <DataCard
+      title={title}
+      value={value}
+      description={description}
+      className={className}
+      variant="compact"
+    />
   );
 }

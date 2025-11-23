@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AuthError } from '@/components/auth/auth-error/auth-error';
 
+import { LoadingSpinner } from '@/components';
+
 export default function ConfirmEmailPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -43,26 +45,17 @@ export default function ConfirmEmailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="container mx-auto p-8 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-secondary-foreground">
-            Checking confirmation status...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner variant="screen" text="Checking confirmation status..." />;
   }
 
   return (
-    <div className="container mx-auto p-8 flex items-center justify-center min-h-screen">
-      <div className="bg-secondary p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-secondary-foreground">
+    <div className="container mx-auto flex min-h-screen items-center justify-center p-8">
+      <div className="bg-secondary w-full max-w-md rounded-lg p-8 shadow-md">
+        <h2 className="text-secondary-foreground mb-6 text-center text-3xl font-bold">
           Confirm Your Email
         </h2>
 
-        <div className="mb-6 p-4 bg-blue-50/20 rounded-md border border-blue-200">
+        <div className="mb-6 rounded-md border border-blue-200 bg-blue-50/20 p-4">
           <p className="text-secondary-foreground text-center">
             We{"'"}ve sent a confirmation email to{' '}
             <span className="font-semibold">{email}</span>
@@ -70,13 +63,13 @@ export default function ConfirmEmailPage() {
         </div>
 
         <p className="text-secondary-foreground mb-6 text-center">
-          Please check your email and click the confirmation link to activate
-          your account.
+          Please check your email and click the confirmation link to activate your
+          account.
         </p>
 
         {error && <AuthError message={error} />}
         {resendSuccess && !error && (
-          <div className="bg-success/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-success mb-4">
+          <div className="bg-success/15 text-success mb-4 flex items-center gap-x-2 rounded-md p-3 text-sm">
             <p>{message}</p>
           </div>
         )}
@@ -85,12 +78,12 @@ export default function ConfirmEmailPage() {
           <button
             onClick={handleResendEmail}
             disabled={loading}
-            className={`w-full btn ${loading ? 'btn-disabled' : 'btn-primary'}`}
+            className={`btn w-full ${loading ? 'btn-disabled' : 'btn-primary'}`}
           >
             {loading ? 'Sending...' : 'Resend Confirmation Email'}
           </button>
 
-          <div className="text-center mt-4 text-sm text-secondary-foreground">
+          <div className="text-secondary-foreground mt-4 text-center text-sm">
             Already confirmed?{' '}
             <a href="/login" className="text-primary hover:underline">
               Log in

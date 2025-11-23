@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Button from '@/components/common/ui-primitives/buttons/button';
+import { Button } from '@/components';
 
 interface HeroProps {
   title: string;
@@ -15,23 +15,29 @@ interface HeroProps {
   };
 }
 
-export default function HomeHero({ title, primaryWord, subtitle, primaryLink, secondaryLink }: HeroProps) {
+export default function HomeHero({
+  title,
+  primaryWord,
+  subtitle,
+  primaryLink,
+  secondaryLink,
+}: HeroProps) {
   return (
-    <div className="flex-1 max-w-2xl text-center lg:text-left">
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+    <div className="max-w-2xl flex-1 text-center lg:text-left">
+      <h1 className="mb-6 text-4xl leading-tight font-bold sm:text-5xl md:text-6xl">
         {title} <span className="text-primary">{primaryWord}</span>
       </h1>
-      <p className="text-lg md:text-xl mb-8 text-muted-foreground max-w-xl">
+      <p className="text-muted-foreground mb-8 max-w-xl text-lg md:text-xl">
         {subtitle}
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
         <Link href={primaryLink.href}>
-          <Button className="btn-primary text-lg px-8 py-4 w-full sm:w-auto">
+          <Button size="lg" className="w-full sm:w-auto">
             {primaryLink.text}
           </Button>
         </Link>
         <Link href={secondaryLink.href}>
-          <Button className="btn-ghost text-lg px-8 py-4 w-full sm:w-auto border border-secondary">
+          <Button variant="outline" size="lg" className="w-full sm:w-auto">
             {secondaryLink.text}
           </Button>
         </Link>

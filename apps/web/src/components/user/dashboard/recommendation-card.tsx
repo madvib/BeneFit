@@ -1,5 +1,7 @@
 'use client';
 
+import { Badge, Button, Card } from '@/components';
+
 interface RecommendationCardProperties {
   title: string;
   description: string;
@@ -14,19 +16,21 @@ export default function RecommendationCard({
   className = '',
 }: RecommendationCardProperties) {
   return (
-    <div className={`p-4 bg-background rounded-lg border border-muted ${className}`}>
+    <Card className={className}>
       <div className="flex justify-between">
         <h4 className="font-medium">{title}</h4>
-        <span className="text-xs bg-muted px-2 py-1 rounded">{category}</span>
+        <Badge variant="secondary">{category}</Badge>
       </div>
-      <p className="text-sm text-muted-foreground mt-2">{description}</p>
+      <p className="text-muted-foreground mt-2 text-sm">{description}</p>
 
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => console.log(`Learning more about ${title}`)}
-        className="mt-3 text-sm btn btn-ghost"
+        className="mt-3"
       >
         Learn More
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }

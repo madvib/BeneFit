@@ -18,7 +18,7 @@ export async function loginAction(
 ): Promise<LoginFormState> {
   const email = EmailAddress.create(formData.get('email') as string);
   const password = Password.create(formData.get('password') as string);
-  const next = (formData.get('next') as string) || '/feed';
+  const next = (formData.get('next') as string) || '/user/activity-feed';
 
   const result = await authUseCases.loginUseCase().then((uc) =>
     uc.execute({
@@ -137,6 +137,42 @@ export async function resetPasswordAction(
         success: false,
         error: result.error?.message || 'Password reset failed',
       };
+}
+
+export interface UpdatePasswordFormState {
+  success?: boolean;
+  message?: string;
+  error?: string;
+}
+
+export async function updatePasswordAction(
+  _prev: UpdatePasswordFormState,
+  formData: FormData,
+): Promise<UpdatePasswordFormState> {
+  const password = Password.create(formData.get('password') as string);
+  const confirmPassword = Password.create(formData.get('confirmPassword') as string);
+
+  if (password.isFailure) {
+    return {
+      success: false,
+      error: password.error.message,
+    };
+  }
+
+  // Check if passwords match
+  if (!password.value.equals(confirmPassword.value)) {
+    return {
+      success: false,
+      error: 'Passwords do not match',
+    };
+  }
+
+  // In a real implementation, we would update the password here
+  // For now, we'll return success as the original page did
+  return {
+    success: true,
+    message: 'Password updated successfully',
+  };
 }
 
 export async function signOutAction(

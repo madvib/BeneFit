@@ -1,7 +1,7 @@
 'use client';
 
-import ProgressBar from '../../../common/ui-primitives/progress-bar';
-import StatusBadge from '../../../common/ui-primitives/status-badge';
+import ProgressBar from '../../../common/ui-primitives/progress-bar/progress-bar';
+import { Badge, Button } from '@/components';
 
 interface GoalCardProperties {
   title: string;
@@ -31,18 +31,38 @@ export default function GoalCard({
   const progressPercentage = (currentValue / targetValue) * 100;
   const isCompleted = status === 'completed';
 
+  // Map status values to badge variants
+  const getBadgeVariant = (statusValue: string) => {
+    switch (statusValue.toLowerCase()) {
+      case 'completed':
+        return 'success';
+      case 'overdue':
+        return 'error';
+      case 'active':
+        return 'active';
+      case 'in progress':
+        return 'info';
+      default:
+        return 'default';
+    }
+  };
+
   return (
-    <div className="bg-background p-6 rounded-lg shadow-sm border border-muted">
-      <div className="flex justify-between items-start mb-4">
+    <div className="bg-background border-muted rounded-lg border p-6 shadow-sm">
+      <div className="mb-4 flex items-start justify-between">
         <div>
           <h4 className="text-xl font-bold">{title}</h4>
           <p className="text-muted-foreground">{description}</p>
         </div>
-        {status && <StatusBadge status={status} />}
+        {status && (
+          <Badge variant={getBadgeVariant(status)}>
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
+        )}
       </div>
 
       <div className="mb-4">
-        <div className="flex justify-between text-sm mb-2">
+        <div className="mb-2 flex justify-between text-sm">
           <span>
             {currentValue} {unit}
           </span>
@@ -64,19 +84,19 @@ export default function GoalCard({
 
       <div className="mt-4 flex space-x-3">
         {onEdit && (
-          <button onClick={onEdit} className="btn btn-ghost btn-sm">
+          <Button variant="ghost" size="sm" onClick={onEdit}>
             Edit
-          </button>
+          </Button>
         )}
         {onShare && (
-          <button onClick={onShare} className="btn btn-ghost btn-sm">
+          <Button variant="ghost" size="sm" onClick={onShare}>
             Share
-          </button>
+          </Button>
         )}
         {onDelete && (
-          <button onClick={onDelete} className="btn btn-ghost btn-sm text-red-600">
+          <Button variant="ghost" size="sm" className="text-red-600" onClick={onDelete}>
             Delete
-          </button>
+          </Button>
         )}
       </div>
     </div>

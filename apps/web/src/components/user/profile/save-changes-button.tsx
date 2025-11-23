@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components';
+
 interface SaveChangesButtonProps {
   onClick: () => void;
   disabled?: boolean;
@@ -8,13 +10,14 @@ interface SaveChangesButtonProps {
 export default function SaveChangesButton({ onClick, disabled = false }: SaveChangesButtonProps) {
   return (
     <div className="flex justify-end">
-      <button 
-        className="btn btn-primary px-6 py-2 text-base" 
+      <Button
+        variant="default"
+        size="lg"
         onClick={onClick}
         disabled={disabled}
       >
         Save Profile
-      </button>
+      </Button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, ReactNode } from "react";
+import { useState, ReactNode } from 'react';
 
 type Tab = {
   id: string;
@@ -11,16 +11,16 @@ interface TopTabNavigationProperties {
   tabs: Tab[];
   defaultActiveTab?: string;
   children: Record<string, ReactNode>;
-  onTabChange?: (tabId: string) => void;
+  onTabChange?: (_tabId: string) => void;
 }
 
 export default function TopTabNavigation({
   tabs,
-  defaultActiveTab,
   children,
+  defaultActiveTab,
   onTabChange,
 }: TopTabNavigationProperties) {
-  const [activeTab, setActiveTab] = useState(defaultActiveTab || tabs[0].id);
+  const [activeTab, setActiveTab] = useState(defaultActiveTab || tabs[0]!.id);
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
@@ -30,26 +30,27 @@ export default function TopTabNavigation({
   };
 
   return (
-    <div className="w-full">
-      {/* Tab Navigation */}
-      <div className="flex border-b border-border bg-secondary">
-        {tabs.map((tab) => (
+    <div className="space-y-4">
+      <div className="bg-muted/50 flex space-x-1 rounded-lg p-1">
+        {tabs.map((tab: Tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`flex-1 py-3 px-4 text-center font-medium text-sm transition-colors ${
+            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? "text-foreground border-b-2 border-primary"
-                : "text-muted-foreground hover:text-foreground"
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
             }`}
           >
             {tab.label}
           </button>
         ))}
       </div>
-
-      {/* Tab Content */}
-      <div className="py-4">{(activeTab in children) ? children[activeTab as keyof typeof children] : undefined}</div>
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {activeTab in children
+          ? children[activeTab as keyof typeof children]
+          : undefined}
+      </div>
     </div>
   );
 }

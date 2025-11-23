@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   getSavedChats,
   getInitialMessages,
@@ -16,7 +16,7 @@ interface UseCoachControllerResult {
   recommendations: RecommendationData[];
   isLoading: boolean;
   error: string | null;
-  sendMessage: (content: string) => void;
+  sendMessage: (_content: string) => void;
   fetchCoachData: () => Promise<void>;
   handleNewChat: () => void;
 }
@@ -30,7 +30,7 @@ export function useCoachController(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCoachData = async () => {
+  const fetchCoachData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -64,7 +64,7 @@ export function useCoachController(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
   const sendMessage = (content: string) => {
     if (content.trim() === '') return;
@@ -73,7 +73,7 @@ export function useCoachController(
     const userMessage: MessageData = {
       id: Date.now().toString(), // Using timestamp as ID since we're not storing in a real system
       content: content,
-      sender: 'user',
+      role: 'user',
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
@@ -88,7 +88,7 @@ export function useCoachController(
         id: (Date.now() + 1).toString(),
         content:
           'I understand. Based on your activity data and goals, I recommend focusing on proper form first before increasing intensity. Would you like specific exercises?',
-        sender: 'coach',
+        role: 'coach',
         timestamp: new Date().toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
@@ -104,7 +104,7 @@ export function useCoachController(
 
   useEffect(() => {
     fetchCoachData();
-  }, [userId]);
+  }, [fetchCoachData, userId]);
 
   return {
     savedChats,

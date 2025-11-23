@@ -1,4 +1,5 @@
 import { useFormStatus } from 'react-dom';
+import { Button, FormField, Input } from '@/components';
 
 // Submit button component that shows loading state
 export function AuthSubmitButton({
@@ -11,29 +12,24 @@ export function AuthSubmitButton({
   const { pending } = useFormStatus();
 
   return (
-    <button className="w-full btn btn-primary" type="submit" aria-disabled={pending}>
+    <Button className="w-full" type="submit" disabled={pending}>
       {pending ? pendingText : children}
-    </button>
+    </Button>
   );
 }
 
 // Email input field component
 export function EmailInput() {
   return (
-    <div className="mb-4">
-      <label className="block text-secondary-foreground mb-2" htmlFor="email">
-        Email
-      </label>
-      <input
-        className="w-full px-3 py-2 border rounded-md bg-background text-foreground border-muted"
+    <FormField label="Email">
+      <Input
         type="email"
-        id="email"
         name="email"
         placeholder="you@example.com"
         required
         aria-describedby="email-error"
       />
-    </div>
+    </FormField>
   );
 }
 
@@ -46,12 +42,8 @@ export function PasswordInput({
   name?: string;
 }) {
   return (
-    <div className="mb-4">
-      <label className="block text-secondary-foreground mb-2" htmlFor={name}>
-        {label}
-      </label>
-      <input
-        className="w-full px-3 py-2 border rounded-md bg-background text-foreground border-muted"
+    <FormField label={label}>
+      <Input
         type="password"
         id={name}
         name={name}
@@ -59,6 +51,6 @@ export function PasswordInput({
         required
         aria-describedby={`${name}-error`}
       />
-    </div>
+    </FormField>
   );
 }

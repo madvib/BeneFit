@@ -1,6 +1,6 @@
 'use client';
 
-import { Card } from '@/components';
+import { Button, Card } from '@/components';
 import Image from 'next/image';
 
 interface ServiceCardProps {
@@ -13,8 +13,8 @@ interface ServiceCardProps {
     dataType: string[];
     lastSync?: string;
   };
-  onConnect: (id: string) => void;
-  onDisconnect: (id: string) => void;
+  onConnect: (_id: string) => void;
+  onDisconnect: (_id: string) => void;
 }
 
 export default function ServiceCard({
@@ -33,20 +33,20 @@ export default function ServiceCard({
 
   return (
     <Card>
-      <div className="bg-background p-6 rounded-lg shadow-sm border border-muted">
-        <div className="flex items-center mb-4">
-          <div className="bg-white dark:bg-gray-800 p-2 rounded-lg mr-4">
+      <div className="p-6">
+        <div className="mb-4 flex items-center">
+          <div className="mr-4 rounded-lg bg-white p-2 dark:bg-gray-800">
             <Image
               src={service.logo}
               alt={service.name}
               width={40}
               height={40}
-              className="w-10 h-10 object-contain"
+              className="h-10 w-10 object-contain"
             />
           </div>
           <div>
             <h4 className="font-semibold">{service.name}</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {service.lastSync
                 ? `Last sync: ${new Date(service.lastSync).toLocaleDateString()}`
                 : connectionString}
@@ -54,19 +54,19 @@ export default function ServiceCard({
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
+        <p className="text-muted-foreground mb-4 text-sm">{service.description}</p>
 
         <div className="mb-4">
-          <h5 className="text-sm font-medium mb-2">
+          <h5 className="mb-2 text-sm font-medium">
             {service.connected ? 'Data Synced:' : 'Data Available:'}
           </h5>
           <div className="flex flex-wrap gap-2">
             {service.dataType.map((type, index) => (
               <span
                 key={index}
-                className={`text-xs px-2 py-1 rounded ${
+                className={`rounded px-2 py-1 text-xs ${
                   service.connected
-                    ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
@@ -77,16 +77,17 @@ export default function ServiceCard({
         </div>
 
         {service.connected ? (
-          <button
+          <Button
+            variant="ghost"
+            className="w-full text-red-600 hover:text-red-700 dark:hover:text-red-400"
             onClick={handleDisconnect}
-            className="w-full btn btn-ghost text-red-600 hover:text-red-700 dark:hover:text-red-400"
           >
             Disconnect
-          </button>
+          </Button>
         ) : (
-          <button onClick={handleConnect} className="w-full btn btn-primary">
+          <Button variant="default" className="w-full" onClick={handleConnect}>
             Connect
-          </button>
+          </Button>
         )}
       </div>
     </Card>

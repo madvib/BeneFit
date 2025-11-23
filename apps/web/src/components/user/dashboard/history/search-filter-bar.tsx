@@ -1,9 +1,12 @@
+import { Search, X, ChevronDown, Download } from 'lucide-react';
+import { Button, Select } from '@/components';
+
 interface SearchFilterBarProperties {
   searchTerm: string;
-  onSearchChange: (value: string) => void;
+  onSearchChange: (_value: string) => void;
   filterOptions: { value: string; label: string }[];
   selectedFilter: string;
-  onFilterChange: (value: string) => void;
+  onFilterChange: (_value: string) => void;
   onExport?: () => void;
   placeholder?: string;
   showExportButton?: boolean;
@@ -16,71 +19,52 @@ export default function SearchFilterBar({
   selectedFilter,
   onFilterChange,
   onExport,
-  placeholder = "Search...",
+  placeholder = 'Search...',
   showExportButton = true,
 }: SearchFilterBarProperties) {
   return (
-    <div className="flex flex-wrap gap-3 w-full md:w-auto">
-      <div className="relative flex-grow md:flex-grow-0">
+    <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+      {/* Search Input */}
+      <div className="relative grow sm:grow-0">
+        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <input
           type="text"
           placeholder={placeholder}
-          className="w-full md:w-64 px-4 py-2 rounded-lg border border-muted bg-background"
+          className="border-muted bg-background focus:ring-primary/20 w-full rounded-lg border py-2 pr-8 pl-9 text-sm transition-all focus:ring-2 focus:outline-none sm:w-64"
           value={searchTerm}
           onChange={(event) => onSearchChange(event.target.value)}
         />
         {searchTerm && (
           <button
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-            onClick={() => onSearchChange("")}
+            className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
+            onClick={() => onSearchChange('')}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
 
-      <select
-        className="bg-background border border-muted rounded-lg p-2"
-        value={selectedFilter}
-        onChange={(event) => onFilterChange(event.target.value)}
-      >
-        {filterOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      {showExportButton && onExport && (
-        <button
-          className="btn btn-primary flex items-center"
-          onClick={onExport}
+      {/* Filter Dropdown */}
+      <div className="relative">
+        <Select
+          value={selectedFilter}
+          onChange={(event) => onFilterChange(event.target.value)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Export
-        </button>
+          {filterOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+        <ChevronDown className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 h-3 w-3 -translate-y-1/2" />
+      </div>
+
+      {/* Export Button */}
+      {showExportButton && onExport && (
+        <Button onClick={onExport} className="ml-auto sm:ml-0">
+          <Download className="h-4 w-4" />
+          <span className="hidden sm:inline">Export</span>
+        </Button>
       )}
     </div>
   );

@@ -1,38 +1,116 @@
-"use client";
+import { cva, type VariantProps } from 'class-variance-authority';
+import { LucideIcon } from 'lucide-react';
+import { ReactNode, forwardRef } from 'react';
 
-import { ReactNode } from "react";
+const cardVariants = cva('flex flex-col overflow-hidden rounded-xl shadow-sm', {
+  variants: {
+    variant: {
+      default: 'bg-background border border-muted',
+      borderless: 'bg-background',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
-interface CardProperties {
+const cardHeaderVariants = cva('flex items-center justify-between px-6 py-4', {
+  variants: {
+    variant: {
+      default: 'border-muted bg-accent/20 border-b',
+      borderless: 'bg-accent/20',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const cardBodyVariants = cva('flex-1 p-6', {
+  variants: {
+    variant: {
+      default: '',
+      borderless: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+interface CardProps extends VariantProps<typeof cardVariants> {
   title?: string;
-  actions?: ReactNode;
+  icon?: LucideIcon;
+  headerAction?: ReactNode; // e.g. "View All" button
   children: ReactNode;
   className?: string;
-  titleClassName?: string;
+  footer?: ReactNode;
+  image?: string;
+  description?: string;
+  headerClassName?: string;
+  bodyClassName?: string;
+  footerClassName?: string;
 }
 
-export default function Card({
-  title,
-  actions,
-  children,
-  className = "",
-  titleClassName = "",
-}: CardProperties) {
-  return (
-    <div
-      data-testid="card"
-      className={`bg-secondary p-4 sm:p-6 rounded-lg shadow-md ${className}`}
-    >
-      {(title || actions) && (
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          {title && (
-            <h3 className={`text-xl sm:text-2xl font-bold ${titleClassName}`}>
-              {title}
-            </h3>
-          )}
-          {actions && <div className="self-start sm:self-auto">{actions}</div>}
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  (
+    {
+      title,
+      icon: Icon,
+      headerAction,
+      children,
+      className = '',
+      footer,
+      image,
+      description,
+      headerClassName = '',
+      bodyClassName = '',
+      footerClassName = '',
+      variant = 'default',
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <div ref={ref} className={cardVariants({ variant, className })} {...props}>
+        {/* Header with title and optional icon */}
+        {(title || headerAction) && (
+          <div className={`${cardHeaderVariants({ variant })} ${headerClassName}`}>
+            {title && (
+              <div className="flex items-center gap-2">
+                {Icon && <Icon size={18} className="text-primary" />}
+                <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+              </div>
+            )}
+            {headerAction && <div>{headerAction}</div>}
+          </div>
+        )}
+
+        {/* Image section (if provided) */}
+        {image && (
+          <div className="h-48 overflow-hidden">
+            <img src={image} alt={title || ''} className="h-full w-full object-cover" />
+          </div>
+        )}
+
+        {/* Body */}
+        <div className={`${cardBodyVariants({ variant })} ${bodyClassName}`}>
+          {description && <p className="text-muted-foreground mb-4">{description}</p>}
+          {children}
         </div>
-      )}
-      {children}
-    </div>
-  );
-}
+
+        {/* Footer (Optional) */}
+        {footer && (
+          <div
+            className={`mx-6 py-4 ${variant === 'borderless' ? '' : 'border-muted/60 border-t'} ${footerClassName}`}
+          >
+            {footer}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+Card.displayName = 'Card';
+
+export { Card, cardVariants };

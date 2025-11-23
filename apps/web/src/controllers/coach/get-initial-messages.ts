@@ -3,10 +3,10 @@
 import { getInitialMessagesUseCase } from '@/providers/coach-use-cases';
 
 // Define the return types for transformed data
-export interface MessageData {
-  id: string;
+interface MessageData {
+  id: number | string;
   content: string;
-  sender: 'user' | 'coach';
+  role: 'user' | 'coach';
   timestamp: string;
 }
 
@@ -27,7 +27,7 @@ export async function getInitialMessages(
       const transformedData = result.value.map((message) => ({
         id: message.id,
         content: message.content,
-        sender: message.sender,
+        role: message.sender,
         timestamp: message.timestamp,
       }));
 

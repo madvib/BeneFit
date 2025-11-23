@@ -1,9 +1,8 @@
-import { InsightCard } from '@/components';
+import { Card, InsightCard } from '@/components';
 
 export default function InsightsPanel() {
   return (
-    <div className="bg-secondary p-4 sm:p-6 rounded-lg shadow-md">
-      <h3 className="text-lg sm:text-xl font-bold mb-4">Goal Insights</h3>
+    <Card title="Goal Insights">
       <div className="space-y-4">
         <InsightCard
           title="Goal Completion Rate"
@@ -21,6 +20,6 @@ export default function InsightsPanel() {
           description="until next goal deadline"
         />
       </div>
-    </div>
+    </Card>
   );
 }

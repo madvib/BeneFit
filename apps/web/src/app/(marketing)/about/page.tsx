@@ -1,19 +1,20 @@
-import { 
-  AboutHero, 
-  AboutOurStory, 
-  AboutTeamMembers, 
-  AboutBenefits, 
-  AboutCallToAction 
+import { PageContainer } from '@/components';
+import {
+  AboutHero,
+  AboutOurStory,
+  AboutTeamMembers,
+  AboutBenefits,
+  AboutCallToAction,
 } from '@/components/marketing/about';
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto p-8">
+    <PageContainer>
       <AboutHero />
       <AboutOurStory />
       <AboutTeamMembers />
       <AboutBenefits />
       <AboutCallToAction />
-    </div>
+    </PageContainer>
   );
 }

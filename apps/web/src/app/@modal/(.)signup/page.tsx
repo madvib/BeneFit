@@ -5,7 +5,7 @@ import { Modal } from '@/components/common/ui-primitives/modal/modal';
 
 export default function SignupModal() {
   return (
-    <Modal title="Create Account">
+    <Modal>
       <SignupForm isModal={true} />
     </Modal>
   );

@@ -1,3 +1,5 @@
+import { MessageSquare, Plus, Settings } from 'lucide-react';
+
 interface ChatData {
   id: number | string;
   title: string;
@@ -5,58 +7,72 @@ interface ChatData {
   timestamp: string;
   unread: boolean;
 }
-
-interface SavedChatsViewProps {
+interface SavedChatsProps {
+  isOpen: boolean;
+  onClose: () => void;
   chats: ChatData[];
   onNewChat: () => void;
 }
-
-export default function SavedChatsView({ chats, onNewChat }: SavedChatsViewProps) {
+export default function SavedChatsView({
+  isOpen,
+  onClose,
+  chats,
+  onNewChat,
+}: SavedChatsProps) {
   return (
-    <div className="bg-secondary p-6 rounded-lg shadow-md h-full flex flex-col">
-      <h3 className="text-xl font-bold mb-4">Saved Chats</h3>
+    <>
+      {/* Mobile Overlay */}
+      <div
+        className={`fixed inset-0 z-30 bg-black/20 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+        onClick={onClose}
+      />
 
-      <div className="space-y-3 overflow-y-auto flex-grow">
-        {chats.map((chat) => (
-          <div
-            key={chat.id}
-            className={`p-3 rounded-lg cursor-pointer hover:bg-accent ${
-              chat.unread ? 'bg-primary/10 border-l-4 border-primary' : 'bg-background'
-            }`}
+      {/* Sidebar Content */}
+      <aside
+        className={`bg-accent/30 border-muted fixed inset-y-0 left-0 z-40 flex h-full w-[280px] transform flex-col border-r pt-16 transition-transform duration-300 ease-in-out md:static md:transform-none md:pt-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[280px] md:w-[280px] xl:ml-0 xl:w-[280px]'} ${!isOpen && 'md:hidden xl:flex'} `}
+      >
+        {/* New Chat Button */}
+        <div className="p-4">
+          <button
+            onClick={onNewChat}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center gap-2 rounded-lg px-4 py-3 font-medium shadow-sm transition-all"
           >
-            <div className="flex justify-between">
-              <h4 className="font-medium truncate">{chat.title}</h4>
-              {chat.unread && (
-                <span className="bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  !
-                </span>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground truncate mt-1">
-              {chat.lastMessage}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2 text-right">
-              {chat.timestamp}
-            </p>
-          </div>
-        ))}
-      </div>
+            <Plus size={18} />
+            <span>New Chat</span>
+          </button>
+        </div>
 
-      <button className="mt-4 btn btn-primary" onClick={onNewChat}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-2"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-        New Chat
-      </button>
-    </div>
+        {/* Scrollable List */}
+        <div className="no-scrollbar flex-1 overflow-y-auto px-3 pb-4">
+          {chats.map((item, idx) => (
+            <div key={idx} className="mb-6">
+              {/* <h3 className="text-muted-foreground mb-2 px-3 text-xs font-semibold tracking-wider uppercase">
+                {item.category}
+              </h3> */}
+              <div className="space-y-1">
+                <button
+                  key={idx}
+                  className="text-foreground/80 hover:bg-muted hover:text-foreground group flex w-full items-center gap-2 truncate rounded-md px-3 py-2 text-left text-sm transition-colors"
+                >
+                  <MessageSquare
+                    size={14}
+                    className="text-muted-foreground group-hover:text-primary"
+                  />
+                  <span className="truncate">{item.title}</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* User Settings Footer */}
+        <div className="border-muted mt-auto border-t p-4">
+          <button className="text-foreground/80 hover:bg-muted flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors">
+            <Settings size={18} />
+            <span>Settings</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

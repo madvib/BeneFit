@@ -1,3 +1,4 @@
+import { Card, Button } from '@/components';
 import GoalCard from '@/components/user/dashboard/goals/goal-card';
 
 interface GoalsListProps {
@@ -24,15 +25,15 @@ export default function GoalsList({
   onShareGoal,
   onCreateGoal,
 }: GoalsListProps) {
+  const headerAction = () => {
+    return (
+      <Button className="w-full sm:w-auto" onClick={onCreateGoal}>
+        Create Goal
+      </Button>
+    );
+  };
   return (
-    <div className="bg-secondary p-4 sm:p-6 rounded-lg shadow-md">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h3 className="text-xl sm:text-2xl font-bold">Your Goals</h3>
-        <button className="btn btn-primary w-full sm:w-auto" onClick={onCreateGoal}>
-          Create Goal
-        </button>
-      </div>
-
+    <Card title={'Your Goals'} headerAction={headerAction()}>
       <div className="space-y-4 sm:space-y-6">
         {goals.map((goal) => (
           <GoalCard
@@ -50,6 +51,6 @@ export default function GoalsList({
           />
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

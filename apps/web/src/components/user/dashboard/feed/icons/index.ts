@@ -1,1 +1,0 @@
-export { default as ActivityIcon } from './activity-icon';
