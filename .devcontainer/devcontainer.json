@@ -9,7 +9,7 @@
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
     "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
-    "PNPM_HOME": "/home/node/.local/share/pnpm/"
+    "PNPM_HOME": "/home/node/.local/share/pnpm"
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"

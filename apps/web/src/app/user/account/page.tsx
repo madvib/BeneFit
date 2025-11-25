@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingSpinner, PageContainer, ErrorPage, Card } from '@/components';
+import { LoadingSpinner, ErrorPage } from '@/components';
 import Spacer from '@/components/common/ui-primitives/spacer/spacer';
 import { PersonalInfoForm, SecurityForm } from '@/components/user/account';
 import { PageHeader } from '@/components/user/account/shared/page-header';

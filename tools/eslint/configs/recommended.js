@@ -46,7 +46,7 @@ export const recommended = (name, projectDir) => [
       'custom/require-colocated-tests': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'sonarjs/no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-expressions': 'warn',
       '@nx/enforce-module-boundaries': [
         'error',

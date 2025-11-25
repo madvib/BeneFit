@@ -16,7 +16,7 @@ export default function EmailConfirmedPage() {
       setLoading(false);
       setSuccess(true);
       // Redirect after a delay to show success message
-      router.push('/user/activity-feed');
+      router.push('/user/activities');
     }, 3000);
 
     return () => clearTimeout(timer);

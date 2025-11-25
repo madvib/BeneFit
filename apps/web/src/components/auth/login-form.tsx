@@ -13,7 +13,7 @@ import Link from 'next/link';
 // Auth form component that handles errors and loading states
 export function LoginForm({ isModal = false }) {
   const searchParameters = useSearchParams();
-  const next = searchParameters.get('next') || '/user/activity-feed';
+  const next = searchParameters.get('next') || '/user/activities';
   const [state, formAction] = useActionState<LoginFormState, FormData>(loginAction, {
     success: false,
   });

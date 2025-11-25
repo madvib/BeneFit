@@ -1,7 +1,6 @@
 'use client';
 import { Menu, Star, Share2, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { ChatTitle } from './chat-title';
-import HeaderRoot from '../../../../common/header/primitives/header-root';
 import { BeneLogo } from '../../../../common/ui-primitives/logo/logo';
 import {
   HeaderLeft,
@@ -10,6 +9,8 @@ import {
 } from '../../../../common/header/primitives/sections';
 import UserAccountMenu from '@/components/common/header/navigation/account-dropdown/account-dropdown';
 import { useChatUI } from '@/controllers/hooks/use-chat-ui';
+import DashboardNavigation from '../../layout/dashboard-navigation';
+import HeaderRoot from '@/components/common/header/primitives/header-root';
 
 interface ChatHeaderProps {
   title: string;
@@ -33,7 +34,9 @@ export default function ChatHeader({ title }: ChatHeaderProps) {
       </HeaderLeft>
 
       {/* CENTER: Model Selector */}
-      <HeaderCenter>Chat Title</HeaderCenter>
+      <HeaderCenter>
+        <DashboardNavigation />
+      </HeaderCenter>
 
       {/* RIGHT: Tools + Profile + Sidebar Toggle */}
       <HeaderRight>

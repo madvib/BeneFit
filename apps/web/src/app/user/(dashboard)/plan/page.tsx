@@ -1,9 +1,12 @@
 'use client';
 
-import { useIsMobile, usePlanController } from '@/controllers';
-import { LoadingSpinner, TopTabNavigation, ErrorPage } from '@/components';
-import { PlanView, SuggestionsView } from '@/components/user/dashboard/plan';
-import PlanDashboardLayout from '@/components/user/dashboard/plan/plan-dashboard-layout';
+import { usePlanController } from '@/controllers';
+import { LoadingSpinner, ErrorPage } from '@/components';
+import PlanOverview from '@/components/user/dashboard/plan/plan-overview';
+import WeeklySchedule from '@/components/user/dashboard/plan/weekly-schedule';
+import PlanSuggestions from '@/components/user/dashboard/plan/plan-suggestions';
+import QuickActions from '@/components/user/dashboard/plan/quick-actions';
+import ModernDashboardLayout from '@/components/user/dashboard/plan/modern-dashboard-layout';
 
 export default function PlanClient() {
   const {
@@ -16,8 +19,7 @@ export default function PlanClient() {
     handleCreatePlan,
   } = usePlanController();
 
-  // Mobile check for tabs view (< 768px)
-  const isMobile = useIsMobile(768);
+
 
   // --- Loading State ---
   if (isLoading) {
@@ -37,45 +39,40 @@ export default function PlanClient() {
   }
 
   // --- View Components ---
-  const renderPlanView = () => (
-    <PlanView
+  const renderOverview = () => (
+    <PlanOverview
       currentPlan={currentPlan}
-      weeklyWorkouts={weeklyWorkouts}
       onEditPlan={handleEditPlan}
     />
   );
 
-  const renderSuggestionsView = () => (
-    <SuggestionsView
-      planSuggestions={planSuggestions}
+  const renderSchedule = () => (
+    <WeeklySchedule weeklyWorkouts={weeklyWorkouts} onWorkoutClick={function (id: string): void {
+      throw new Error('Function not implemented.');
+    } } />
+  );
+
+  const renderSuggestions = () => (
+    <PlanSuggestions suggestions={planSuggestions} onSelectPlan={function (planId: string): void {
+      throw new Error('Function not implemented.');
+    } } />
+  );
+
+  const renderActions = () => (
+    <QuickActions
       onCreatePlan={handleCreatePlan}
       onSavePlan={() => console.log('Save plan')}
       onExportPlan={() => console.log('Export plan')}
     />
   );
 
-  // --- Mobile Layout (Tabs) ---
-  if (isMobile) {
-    const tabs = [
-      { id: 'current-plan', label: 'Current Plan' },
-      { id: 'suggestions', label: 'Suggestions' },
-    ];
-
-    return (
-      <TopTabNavigation tabs={tabs} defaultActiveTab="current-plan">
-        {{
-          'current-plan': renderPlanView(),
-          suggestions: renderSuggestionsView(),
-        }}
-      </TopTabNavigation>
-    );
-  }
-
-  // --- Desktop Layout (Responsive Grid) ---
+  // --- Layout ---
   return (
-    <PlanDashboardLayout
-      planView={renderPlanView()}
-      suggestionsView={renderSuggestionsView()}
+    <ModernDashboardLayout
+      overview={renderOverview()}
+      schedule={renderSchedule()}
+      suggestions={renderSuggestions()}
+      actions={renderActions()}
     />
   );
 }

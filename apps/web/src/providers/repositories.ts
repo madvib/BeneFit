@@ -1,15 +1,13 @@
 import { AuthUserRepository, BetterAuthService } from '@bene/infrastructure/auth';
 import { CreateDrizzleD1DB as DrizzleD1DBFactory } from '@bene/infrastructure/shared';
 import { cloudflareEnv } from './cloudflare';
+import { cache } from 'react';
 
-let createAuth: DrizzleD1DBFactory;
-
-const authUserDB = async () => {
-  if (!createAuth) {
-    createAuth = new DrizzleD1DBFactory((await cloudflareEnv()).DB_USER_AUTH);
-  }
+const authUserDB = cache(async () => {
+  const env = await cloudflareEnv();
+  const createAuth = new DrizzleD1DBFactory(env.DB_USER_AUTH);
   return createAuth.db;
-};
+});
 
 export const authUserRepository = async () =>
   new AuthUserRepository(await authUserDB());

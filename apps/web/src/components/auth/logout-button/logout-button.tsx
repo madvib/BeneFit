@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { LogOut } from 'lucide-react';
 import { signOutAction } from '@/controllers/auth/auth-actions';
 import { useRouter } from 'next/navigation';
@@ -18,10 +18,14 @@ export function LogoutButton({
   const [success, action, isLoading] = useActionState(signOutAction, false);
   const router = useRouter();
   const session = useSession();
+
+  const onSuccess = useEffectEvent(() => {
+    session.refreshSession();
+    router.replace('/');
+  });
   useEffect(() => {
     if (success) {
-      session.refreshSession();
-      router.replace('/');
+      onSuccess();
     }
   }, [success]);
   return (

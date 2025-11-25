@@ -6,6 +6,7 @@ import { user, session, account, verification } from '../data/schema/schema.js';
 
 const authConfig = {
   baseURL: 'http://localhost:3000',
+  secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
   },

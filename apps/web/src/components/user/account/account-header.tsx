@@ -25,7 +25,7 @@ export default function AccountHeader({
         </div>
 
         <div className="flex items-center gap-4">
-          <Link href="/user/activity-feed" prefetch={false}>
+          <Link href="/user/activities" prefetch={false}>
             <Button variant="outline" size="sm" className="gap-2">
               <ArrowLeft size={16} />
               Back to App

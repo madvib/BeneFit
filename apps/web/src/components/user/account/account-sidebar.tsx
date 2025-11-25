@@ -2,15 +2,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components';
-import {
-  User,
-  Settings,
-  CreditCard,
-  Link as LinkIcon,
-  Shield,
-  Bell,
-} from 'lucide-react';
+
 import { LogoutButton } from '@/components/auth/logout-button/logout-button';
+import { HEADER_CONFIG } from '@/components/common/header/primitives/header-config';
 
 interface AccountSidebarProps {
   className?: string;
@@ -19,44 +13,7 @@ interface AccountSidebarProps {
 const AccountSidebar = ({ className }: AccountSidebarProps) => {
   const pathname = usePathname();
 
-  const navItems = [
-    {
-      title: 'Profile',
-      href: '/user/account/profile',
-      description: 'Manage your profile information',
-      icon: User,
-    },
-    {
-      title: 'Account Settings',
-      href: '/user/account',
-      description: 'Update personal information and security',
-      icon: Shield,
-    },
-    {
-      title: 'Billing & Plans',
-      href: '/user/account/billing',
-      description: 'Manage subscription and payment methods',
-      icon: CreditCard,
-    },
-    {
-      title: 'Notifications',
-      href: '/user/account/notifications',
-      description: 'Manage your notification preferences',
-      icon: Bell,
-    },
-    {
-      title: 'Preferences',
-      href: '/user/account/settings',
-      description: 'Notification, privacy, and fitness settings',
-      icon: Settings,
-    },
-    {
-      title: 'Connections',
-      href: '/user/account/connections',
-      description: 'Manage connected services',
-      icon: LinkIcon,
-    },
-  ];
+
 
   return (
     <div className={`bg-muted/10 flex h-full flex-col ${className || ''}`}>
@@ -66,7 +23,7 @@ const AccountSidebar = ({ className }: AccountSidebarProps) => {
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
-        {navItems.map((item) => {
+        {HEADER_CONFIG.navItems.account.map((item) => {
           const isActive =
             pathname === item.href ||
             (item.href !== '/user/account' && pathname.startsWith(`${item.href}/`));
@@ -83,7 +40,7 @@ const AccountSidebar = ({ className }: AccountSidebarProps) => {
               >
                 <div className="flex items-center gap-3">
                   <item.icon size={18} />
-                  <span className="font-medium">{item.title}</span>
+                  <span className="font-medium">{item.label}</span>
                 </div>
               </Button>
             </Link>

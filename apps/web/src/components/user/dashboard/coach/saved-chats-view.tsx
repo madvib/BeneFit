@@ -29,7 +29,7 @@ export default function SavedChatsView({
 
       {/* Sidebar Content */}
       <aside
-        className={`bg-accent/30 border-muted fixed inset-y-0 left-0 z-40 flex h-full w-[280px] transform flex-col border-r pt-16 transition-transform duration-300 ease-in-out md:static md:transform-none md:pt-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[280px] md:w-[280px] xl:ml-0 xl:w-[280px]'} ${!isOpen && 'md:hidden xl:flex'} `}
+        className={`bg-accent/30 border-muted fixed inset-y-0 left-0 z-40 flex h-full w-[280px] transform flex-col border-r pt-20 transition-transform duration-300 ease-in-out md:static md:transform-none md:pt-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[280px] md:w-[280px] xl:ml-0 xl:w-[280px]'} ${!isOpen && 'md:hidden xl:flex'} `}
       >
         {/* New Chat Button */}
         <div className="p-4">

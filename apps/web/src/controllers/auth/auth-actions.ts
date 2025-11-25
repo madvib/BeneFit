@@ -18,7 +18,7 @@ export async function loginAction(
 ): Promise<LoginFormState> {
   const email = EmailAddress.create(formData.get('email') as string);
   const password = Password.create(formData.get('password') as string);
-  const next = (formData.get('next') as string) || '/user/activity-feed';
+  const next = (formData.get('next') as string) || '/user/activities';
 
   const result = await authUseCases.loginUseCase().then((uc) =>
     uc.execute({

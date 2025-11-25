@@ -11,6 +11,7 @@ import AuthCTA from './navigation/auth-cta';
 import DashboardLink from './navigation/dashboard-link';
 import MobileMenuToggle from './navigation/mobile-menu-toggle';
 import NavigationLinks from './navigation/navigation-links';
+import DashboardNavigation from '@/components/user/dashboard/layout/dashboard-navigation';
 
 export default function UnifiedHeader({
   variant,
@@ -64,11 +65,21 @@ export default function UnifiedHeader({
         <HeaderLeft>
           <div className="flex items-center gap-3 md:gap-6">
             <BeneLogo />
-            <nav className="text-muted-foreground ml-4 hidden items-center gap-8 text-sm font-medium md:flex">
-              <NavigationLinks mobile={false} variant={variant} />
-            </nav>
+            {variant !== 'application' && (
+              <nav className="text-muted-foreground ml-4 hidden items-center gap-8 text-sm font-medium md:flex">
+                <NavigationLinks mobile={false} variant={variant} />
+              </nav>
+            )}
           </div>
         </HeaderLeft>
+
+        {/* Center Navigation for Application Variant */}
+        {variant === 'application' && (
+          <div className="absolute left-1/2 hidden -translate-x-1/2 md:block">
+            <DashboardNavigation />
+          </div>
+        )}
+
         <HeaderRight>
           <div className="flex items-center gap-2 md:gap-4">
             {isAuthenticated ? (

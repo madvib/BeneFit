@@ -1,70 +1,35 @@
 'use client';
 
-import { LoadingSpinner, PageContainer, ErrorPage } from '@/components';
-import { useHistoryController } from '@/controllers/history';
-import { WorkoutList, SearchFilterBar } from '@/components/user/dashboard/history';
-import { Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { History } from 'lucide-react';
+import HistoryModal from '@/components/user/dashboard/history/history-modal';
 
 export default function HistoryPage() {
-  const {
-    filteredWorkouts,
-    loading,
-    error,
-    searchTerm,
-    timeFilter,
-    filterOptions,
-    setSearchTerm,
-    setTimeFilter,
-    onExport,
-    handleEdit,
-    handleDelete,
-  } = useHistoryController();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (loading) {
-    return <LoadingSpinner variant="screen" text="Loading workout history..." />;
-  }
-
-  // --- Error State ---
-  if (error) {
-    return (
-      <ErrorPage
-        title="History Loading Error"
-        message="Unable to load your workout history."
-        error={error}
-        backHref="/"
-      />
-    );
-  }
+  // Auto-open modal for demo purposes
+  useEffect(() => {
+    const timer = setTimeout(() => setIsModalOpen(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <PageContainer>
-      <div className="bg-background border-muted flex h-full flex-col overflow-hidden rounded-xl border shadow-sm">
-        {/* Header with SearchBar */}
-        <div className="border-muted bg-accent/20 flex flex-col gap-4 border-b px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Calendar size={18} className="text-primary" />
-            <h3 className="text-lg font-semibold tracking-tight">History Log</h3>
-          </div>
-
-          <SearchFilterBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            filterOptions={filterOptions}
-            selectedFilter={timeFilter}
-            onFilterChange={setTimeFilter}
-            onExport={onExport}
-            placeholder="Search workouts..."
-            showExportButton={true}
-          />
-        </div>
-
-        <WorkoutList
-          workouts={filteredWorkouts}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          emptyMessage="No workouts found matching your criteria"
-        />
+    <div className="flex h-[calc(100vh-200px)] flex-col items-center justify-center p-6 text-center">
+      <div className="mb-6 rounded-full bg-accent/20 p-6 text-muted-foreground">
+        <History size={48} />
       </div>
-    </PageContainer>
+      <h1 className="mb-2 text-2xl font-bold text-foreground">Workout History</h1>
+      <p className="mb-8 max-w-md text-muted-foreground">
+        View your past workouts, achievements, and progress logs in detail.
+      </p>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="rounded-full bg-primary px-8 py-3 font-bold text-primary-foreground transition-transform hover:scale-105"
+      >
+        Open History
+      </button>
+
+      <HistoryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </div>
   );
 }

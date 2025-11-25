@@ -13,7 +13,7 @@ export default function NavigationLinks({
       case 'marketing':
         return HEADER_CONFIG.navItems.marketing;
       case 'application':
-        return HEADER_CONFIG.navItems.dashboard;
+        return HEADER_CONFIG.navItems.application;
       case 'account':
         return HEADER_CONFIG.navItems.account;
     }

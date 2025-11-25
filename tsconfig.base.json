@@ -8,6 +8,11 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "incremental": true,
+    // "typeRoots": [
+    //   "**/node_modules/@types",
+    //   "types"
+    // ],
     /* */
     "composite": true,
     "declaration": true,
@@ -29,9 +34,6 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "paths": {
-      "@cf-env": [
-        "./apps/web/cloudflare-env.d.ts"
-      ],
       "@bene/core/*": [
         "./packages/core/src/*"
       ],

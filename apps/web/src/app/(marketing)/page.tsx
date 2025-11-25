@@ -11,7 +11,7 @@ export default function LandingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) router.replace('/user/activity-feed');
+    if (!isLoading && isAuthenticated) router.replace('/user/activities');
   }, [isAuthenticated, isLoading, router]);
 
   const features = [

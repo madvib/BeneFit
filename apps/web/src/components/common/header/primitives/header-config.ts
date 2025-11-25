@@ -1,4 +1,18 @@
-// Unified header configuration
+import {
+  LayoutDashboard,
+  Activity,
+  Users,
+  Compass,
+  MessageSquare,
+  User,
+  Settings,
+  CreditCard,
+  Link as LinkIcon,
+  Shield,
+  Bell,
+  UserPlus,
+} from 'lucide-react';
+
 export const HEADER_CONFIG = {
   // Logo configuration
   logo: {
@@ -8,28 +22,108 @@ export const HEADER_CONFIG = {
     height: 60,
   },
   navItems: {
+    auth: [
+      {
+        href: '/login',
+        label: 'Login',
+        description: 'Login to your account',
+        icon: User,
+      },
+      {
+        href: '/signup',
+        label: 'Sign Up',
+        description: 'Sign up to create an account',
+        icon: UserPlus,
+      },
+    ],
     // Marketing navigation links (shown to all users)
     marketing: [
-      { href: '/features', label: 'Features' },
-      { href: '/blog', label: 'Blog' },
-      { href: '/about', label: 'About' },
+      {
+        href: '/features',
+        label: 'Features',
+        description: 'View our features',
+        icon: Activity,
+      },
+      {
+        href: '/blog',
+        label: 'Blog',
+        description: 'Read our blog',
+        icon: MessageSquare,
+      },
+      { href: '/about', label: 'About', description: 'Learn about us', icon: User },
     ],
-
     // Account navigation links (shown to logged-in users)
     account: [
-      { href: '/user/account', label: 'Account' },
-      { href: '/user/account/profile', label: 'Profile' },
-      { href: '/user/account/connections', label: 'Connections' },
-      { href: '/user/account/settings', label: 'Settings' },
+      {
+        label: 'Profile',
+        href: '/user/account/profile',
+        description: 'Manage your profile information',
+        icon: User,
+      },
+      {
+        label: 'Connections',
+        href: '/user/account/connections',
+        description: 'Manage connected services',
+        icon: LinkIcon,
+      },
+      {
+        label: 'Account Settings',
+        href: '/user/account',
+        description: 'Update personal information and security',
+        icon: Shield,
+      },
+      {
+        label: 'Billing & Plans',
+        href: '/user/account/billing',
+        description: 'Manage subscription and payment methods',
+        icon: CreditCard,
+      },
+      {
+        label: 'Notifications',
+        href: '/user/account/notifications',
+        description: 'Manage your notification preferences',
+        icon: Bell,
+      },
+      {
+        label: 'Preferences',
+        href: '/user/account/settings',
+        description: 'Notification, privacy, and fitness settings',
+        icon: Settings,
+      },
     ],
 
     // Dashboard navigation links (shown to logged-in users)
-    dashboard: [
-      { href: '/user/activity-feed', label: 'Activity Feed' },
-      { href: '/user/history', label: 'History' },
-      { href: '/user/goals', label: 'Goals' },
-      { href: '/user/plan', label: 'Plan' },
-      { href: '/user/coach', label: 'Coach' },
+    application: [
+      {
+        label: 'Activity',
+        href: '/user/activities',
+        icon: Activity,
+        description: 'View your activity feed',
+      },
+      {
+        label: 'My Plan',
+        href: '/user/plan',
+        icon: LayoutDashboard,
+        description: 'View your plan',
+      },
+      {
+        label: 'Teams',
+        href: '/user/teams',
+        icon: Users,
+        description: 'View your teams',
+      },
+      {
+        label: 'Explore',
+        href: '/user/explore',
+        icon: Compass,
+        description: 'Explore new activities',
+      },
+      {
+        label: 'Coach',
+        href: '/user/coach',
+        icon: MessageSquare,
+        description: 'Chat with your coach',
+      },
     ],
   },
 };

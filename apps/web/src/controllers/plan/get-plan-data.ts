@@ -11,6 +11,17 @@ export interface PlanData {
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   category: string;
   progress: number;
+  // Added fields to match UI requirements
+  weeklyProgress: number;
+  totalWorkouts: number;
+  currentWeek: number;
+  totalWeeks: number;
+  phase: string;
+  stats: {
+    streak: number;
+    minutes: number;
+    calories: number;
+  };
 }
 
 export interface WeeklyWorkoutPlan {
@@ -50,15 +61,37 @@ export async function getPlanData(): Promise<GetPlanDataResult> {
       // Transform the Plan entities to plain objects for client consumption
       const { currentPlan, weeklyWorkouts, planSuggestions } = result.value;
       
-      const transformedCurrentPlan = currentPlan ? {
-        id: currentPlan.id,
-        name: currentPlan.name,
-        description: currentPlan.description,
-        duration: currentPlan.duration,
-        difficulty: currentPlan.difficulty,
-        category: currentPlan.category,
-        progress: currentPlan.progress,
-      } : null;
+      let transformedCurrentPlan: PlanData | null = null;
+
+      if (currentPlan) {
+        // Calculate weekly progress
+        const totalWeeklyWorkouts = weeklyWorkouts.length;
+        const completedWeeklyWorkouts = weeklyWorkouts.filter(w => w.completed).length;
+        const weeklyProgress = totalWeeklyWorkouts > 0 
+          ? Math.round((completedWeeklyWorkouts / totalWeeklyWorkouts) * 100) 
+          : 0;
+
+        transformedCurrentPlan = {
+          id: currentPlan.id,
+          name: currentPlan.name,
+          description: currentPlan.description,
+          duration: currentPlan.duration,
+          difficulty: currentPlan.difficulty,
+          category: currentPlan.category,
+          progress: currentPlan.progress,
+          // Populate new fields with calculated or mock data
+          weeklyProgress,
+          totalWorkouts: totalWeeklyWorkouts, // Using weekly count for now as total isn't available
+          currentWeek: 1, // Mock value
+          totalWeeks: 4, // Mock value
+          phase: 'Foundation', // Mock value
+          stats: {
+            streak: 3, // Mock value
+            minutes: 120, // Mock value
+            calories: 850, // Mock value
+          },
+        };
+      }
 
       return {
         success: true,

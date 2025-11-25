@@ -1,6 +1,6 @@
 import { PageContainer } from '@/components';
 import UnifiedHeader from '@/components/common/header/unified-header';
-import DashboardLayout from '@/components/user/dashboard/dashboard-layout';
+import DashboardShell from '@/components/user/dashboard/layout/dashboard-shell';
 
 interface UserLayoutProperties {
   children: React.ReactNode;
@@ -8,11 +8,9 @@ interface UserLayoutProperties {
 
 export default function UserLayout({ children }: UserLayoutProperties) {
   return (
-    <PageContainer className="flex min-h-screen flex-col">
+    <PageContainer className="flex h-screen flex-col pt-16">
       <UnifiedHeader variant="application" />
-      <main className="w-full grow">
-        <DashboardLayout>{children}</DashboardLayout>
-      </main>
+      <DashboardShell>{children}</DashboardShell>
     </PageContainer>
   );
 }

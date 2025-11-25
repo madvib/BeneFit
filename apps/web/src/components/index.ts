@@ -1,6 +1,5 @@
 export * from './common';
 // Layout Components
-export { default as DashboardLayout } from './user/dashboard/dashboard-layout';
 export { default as PageContainer } from './common/ui-primitives/page-container';
 
 // Header Components
@@ -21,4 +20,4 @@ export { ThemeProvider } from './theme/theme-provider';
 
 // Other Main Components
 export { default as Footer } from './common/ui-primitives/footer/footer';
-export { default as ActivityFeed } from './user/dashboard/feed/activity-feed';
+export { default as ActivityFeed } from './user/dashboard/activities/activity-feed';
