@@ -2,8 +2,8 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { WorkoutPlan, WorkoutPlanQueries } from '@bene/core/plans';
 import { WorkoutTemplate } from '@bene/core/plans';
-import { GetTodaysWorkoutUseCase } from '../use-cases/get-todays-workout';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
+import { GetTodaysWorkoutUseCase } from './get-todays-workout';
+import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
 
 // Mock repositories and services
 const mockPlanRepository = {

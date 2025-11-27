@@ -1,9 +1,10 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/core/shared';
-import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
-import { ActivatePlanUseCase } from '../use-cases/activate-plan';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { EventBus } from '../../shared/event-bus';
+import { WorkoutPlan } from '@bene/core/plans';
+import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback';
+import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
+import { AIPlanGenerator } from '../../../services/ai-plan-generator';
+import { EventBus } from '../../../shared/event-bus';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -14,26 +15,33 @@ const mockPlanRepository = {
   delete: vi.fn(),
 } as unknown as WorkoutPlanRepository;
 
+const mockAIPlanGenerator = {
+  adjustPlan: vi.fn(),
+} as unknown as AIPlanGenerator;
+
 const mockEventBus = {
   publish: vi.fn(),
 } as unknown as EventBus;
 
-describe('ActivatePlanUseCase', () => {
-  let useCase: ActivatePlanUseCase;
+describe('AdjustPlanBasedOnFeedbackUseCase', () => {
+  let useCase: AdjustPlanBasedOnFeedbackUseCase;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new ActivatePlanUseCase(
+    useCase = new AdjustPlanBasedOnFeedbackUseCase(
       mockPlanRepository,
+      mockAIPlanGenerator,
       mockEventBus
     );
   });
 
-  it('should successfully activate a draft plan', async () => {
+  it('should successfully adjust a plan based on feedback', async () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const feedback = 'Too hard, need more rest days';
+    
+    const originalPlan: WorkoutPlan = {
       id: planId,
       userId,
       title: 'Strength Plan',
@@ -42,40 +50,56 @@ describe('ActivatePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
-      status: 'draft',
+      weeks: [{
+        weekNumber: 1,
+        workouts: [],
+        workoutsCompleted: 0,
+      }],
+      status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     
-    const activatedPlan: WorkoutPlan = {
-      ...draftPlan,
-      status: 'active',
+    const adjustedPlan: WorkoutPlan = {
+      ...originalPlan,
+      title: 'Adjusted Strength Plan',
     };
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(Result.ok(activatedPlan));
+    const recentWorkouts = [
+      {
+        perceivedExertion: 8,
+        enjoyment: 6,
+        difficultyRating: 'too_hard' as const,
+      }
+    ];
+
+    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
+    mockAIPlanGenerator.adjustPlan.mockResolvedValue(Result.ok(adjustedPlan));
 
     // Act
     const result = await useCase.execute({
       userId,
       planId,
+      feedback,
+      recentWorkouts,
     });
 
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.planId).toBe(planId);
-      expect(result.value.status).toBe('active');
+      expect(result.value.adjustmentsMade).toBeDefined();
+      expect(result.value.message).toBe('Your plan has been adjusted based on your feedback');
     }
-    expect(mockPlanRepository.save).toHaveBeenCalledWith(activatedPlan);
+    expect(mockPlanRepository.save).toHaveBeenCalledWith(adjustedPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'PlanActivated',
+        type: 'PlanAdjusted',
         userId,
         planId,
+        feedback,
       })
     );
   });
@@ -84,6 +108,14 @@ describe('ActivatePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
+    const feedback = 'Too hard, need more rest days';
+    const recentWorkouts = [
+      {
+        perceivedExertion: 8,
+        enjoyment: 6,
+        difficultyRating: 'too_hard' as const,
+      }
+    ];
 
     mockPlanRepository.findById.mockResolvedValue(Result.fail(new Error('Plan not found')));
 
@@ -91,6 +123,8 @@ describe('ActivatePlanUseCase', () => {
     const result = await useCase.execute({
       userId,
       planId,
+      feedback,
+      recentWorkouts,
     });
 
     // Assert
@@ -100,12 +134,14 @@ describe('ActivatePlanUseCase', () => {
     }
   });
 
-  it('should fail if user is not authorized to activate the plan', async () => {
+  it('should fail if user is not authorized', async () => {
     // Arrange
     const userId = 'user-123';
     const otherUserId = 'user-789';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const feedback = 'Too hard, need more rest days';
+    
+    const originalPlan: WorkoutPlan = {
       id: planId,
       userId: otherUserId, // Different user
       title: 'Strength Plan',
@@ -114,34 +150,50 @@ describe('ActivatePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
-      status: 'draft',
+      weeks: [{
+        weekNumber: 1,
+        workouts: [],
+        workoutsCompleted: 0,
+      }],
+      status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    
+    const recentWorkouts = [
+      {
+        perceivedExertion: 8,
+        enjoyment: 6,
+        difficultyRating: 'too_hard' as const,
+      }
+    ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
+    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
 
     // Act
     const result = await useCase.execute({
       userId,
       planId,
+      feedback,
+      recentWorkouts,
     });
 
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error.message).toBe('Not authorized to activate this plan');
+      expect(result.error.message).toBe('Not authorized');
     }
   });
 
-  it('should fail if plan activation command fails', async () => {
+  it('should fail if AI plan adjustment fails', async () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const feedback = 'Too hard, need more rest days';
+    
+    const originalPlan: WorkoutPlan = {
       id: planId,
       userId,
       title: 'Strength Plan',
@@ -150,27 +202,41 @@ describe('ActivatePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
-      status: 'draft', // Correct status for activation
+      weeks: [{
+        weekNumber: 1,
+        workouts: [],
+        workoutsCompleted: 0,
+      }],
+      status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    
+    const recentWorkouts = [
+      {
+        perceivedExertion: 8,
+        enjoyment: 6,
+        difficultyRating: 'too_hard' as const,
+      }
+    ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(Result.fail(new Error('Cannot activate')));
+    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
+    mockAIPlanGenerator.adjustPlan.mockResolvedValue(Result.fail(new Error('AI adjustment failed')));
 
     // Act
     const result = await useCase.execute({
       userId,
       planId,
+      feedback,
+      recentWorkouts,
     });
 
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error.message).toBe('Error: Cannot activate');
+      expect(result.error.message).toBe('Failed to adjust plan: Error: AI adjustment failed');
     }
   });
 });

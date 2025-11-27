@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
-import { PausePlanUseCase } from '../use-cases/pause-plan';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { EventBus } from '../../shared/event-bus';
+import { PausePlanUseCase } from './pause-plan';
+import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
+import { EventBus } from '../../../shared/event-bus';
 
 // Mock repositories and services
 const mockPlanRepository = {

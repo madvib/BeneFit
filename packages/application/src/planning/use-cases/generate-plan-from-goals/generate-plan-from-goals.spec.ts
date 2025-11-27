@@ -2,11 +2,11 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/core/shared';
 import { WorkoutPlan } from '@bene/core/plans';
 import { UserProfile } from '@bene/core/profile';
-import { GeneratePlanFromGoalsUseCase } from '../use-cases/generate-plan-from-goals';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
-import { AIPlanGenerator } from '../services/ai-plan-generator';
-import { EventBus } from '../../shared/event-bus';
+import { GeneratePlanFromGoalsUseCase } from './generate-plan-from-goals';
+import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
+import { UserProfileRepository } from '../../../profile/repositories/user-profile-repository';
+import { AIPlanGenerator } from '../../../services/ai-plan-generator';
+import { EventBus } from '../../../shared/event-bus';
 
 // Mock repositories and services
 const mockPlanRepository = {
