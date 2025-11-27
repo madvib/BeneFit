@@ -1,10 +1,15 @@
-import { WorkoutActivity } from "../../../../value-objects/workout-activity/workout-activity.js";
-import { WorkoutGoals } from "../../../../value-objects/workout-goals/workout-goals.js";
+import { WorkoutActivity } from '../../../../value-objects/workout-activity/index.js';
+import { WorkoutGoals } from '../../../../value-objects/workout-goals/index.js';
 
 // --- Type Definitions (Unchanged) ---
 export type WorkoutType = 'running' | 'cycling' | 'strength' | 'rest' | 'custom'; // Abridged for brevity
 export type WorkoutCategory = 'cardio' | 'strength' | 'recovery'; // Abridged
-export type WorkoutStatus = 'scheduled' | 'in_progress' | 'completed' | 'skipped' | 'rescheduled';
+export type WorkoutStatus =
+  | 'scheduled'
+  | 'in_progress'
+  | 'completed'
+  | 'skipped'
+  | 'rescheduled';
 export type WorkoutImportance = 'optional' | 'recommended' | 'key' | 'critical';
 
 export interface WorkoutAlternative {

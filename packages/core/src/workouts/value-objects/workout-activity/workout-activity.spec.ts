@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createWorkoutActivity, createWarmup, createCooldown, createDistanceRun, createIntervalSession, createCircuit } from './workout-activity.factory.js';
-import { isWarmup, isCooldown, isMainActivity, isIntervalBased, isCircuit, requiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from './workout-activity.queries.js';
+import { isWarmup, isCooldown, isMainActivity, isActivityIntervalBased, isCircuit, activityRequiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from './workout-activity.queries.js';
 import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from './workout-activity.commands.js';
 import { createIntervalStructure, createExerciseStructure } from '../activity-structure/activity-structure.factory.js';
 import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
@@ -62,7 +62,7 @@ describe('WorkoutActivity', () => {
         if (result.isSuccess) {
           expect(hasStructure(result.value)).toBe(true);
           expect(hasInstructions(result.value)).toBe(true);
-          expect(requiresEquipment(result.value)).toBe(true);
+          expect(activityRequiresEquipment(result.value)).toBe(true);
           expect(hasAlternatives(result.value)).toBe(true);
           expect(hasVideo(result.value)).toBe(true);
         }
@@ -113,7 +113,7 @@ describe('WorkoutActivity', () => {
 
         expect(result.isSuccess).toBe(true);
         if (result.isSuccess) {
-          expect(isIntervalBased(result.value)).toBe(true);
+          expect(isActivityIntervalBased(result.value)).toBe(true);
           expect(hasStructure(result.value)).toBe(true);
         }
       }
@@ -131,7 +131,7 @@ describe('WorkoutActivity', () => {
         expect(result.isSuccess).toBe(true);
         if (result.isSuccess) {
           expect(isCircuit(result.value)).toBe(true);
-          expect(requiresEquipment(result.value)).toBe(true);
+          expect(activityRequiresEquipment(result.value)).toBe(true);
         }
       }
     });
@@ -181,7 +181,7 @@ describe('WorkoutActivity', () => {
         const result = createIntervalSession('HIIT', structureResult.value, 1);
 
         if (result.isSuccess) {
-          expect(isIntervalBased(result.value)).toBe(true);
+          expect(isActivityIntervalBased(result.value)).toBe(true);
         }
       }
     });
@@ -217,8 +217,8 @@ describe('WorkoutActivity', () => {
       });
 
       if (withEquipmentResult.isSuccess && withoutEquipmentResult.isSuccess) {
-        expect(requiresEquipment(withEquipmentResult.value)).toBe(true);
-        expect(requiresEquipment(withoutEquipmentResult.value)).toBe(false);
+        expect(activityRequiresEquipment(withEquipmentResult.value)).toBe(true);
+        expect(activityRequiresEquipment(withoutEquipmentResult.value)).toBe(false);
       }
     });
 
@@ -660,7 +660,7 @@ describe('WorkoutActivity', () => {
       });
 
       if (result.isSuccess) {
-        expect(requiresEquipment(result.value)).toBe(true);
+        expect(activityRequiresEquipment(result.value)).toBe(true);
         expect(hasAlternatives(result.value)).toBe(true);
         expect(hasInstructions(result.value)).toBe(true);
         expect(hasVideo(result.value)).toBe(true);

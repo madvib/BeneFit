@@ -5,7 +5,7 @@ import {
   DifficultyRating,
   HeartRateData,
   WorkoutPerformance,
-} from './workout-performance.js';
+} from './workout-performance.types.js';
 
 export function createWorkoutPerformance(props: {
   startedAt: Date;

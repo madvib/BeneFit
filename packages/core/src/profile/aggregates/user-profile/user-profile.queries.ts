@@ -1,3 +1,5 @@
+import { UserProfile } from "./user-profile.types.js";
+
 export function isStreakActive(profile: UserProfile): boolean {
   if (!profile.stats.lastWorkoutDate) {
     return false;

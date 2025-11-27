@@ -1,10 +1,8 @@
 import { Guard, Result } from '@shared';
-import {
-  VerificationData,
-} from '../../../../value-objects/workout-verification/workout-verification.js';
+import { VerificationData } from '../../../../value-objects/workout-verification/workout-verification.types.js';
 import { createWorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.factory.js';
-import { Reaction } from '../reaction/reaction.js';
-import { CompletedWorkout } from './completed-workout.js';
+import { Reaction } from '../reaction/reaction.types.js';
+import { CompletedWorkout } from './completed-workout.types.js';
 
 export function addReaction(
   workout: CompletedWorkout,

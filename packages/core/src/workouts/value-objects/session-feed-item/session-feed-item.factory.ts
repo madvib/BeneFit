@@ -1,5 +1,5 @@
-import { Guard, Result } from "@shared";
-import { FeedItemType, SessionFeedItem } from "./session-feed-item.js";
+import { Guard, Result } from '@shared';
+import { FeedItemType, SessionFeedItem } from './session-feed-item.types.js';
 
 export function createFeedItem(props: {
   type: FeedItemType;
@@ -9,21 +9,20 @@ export function createFeedItem(props: {
   metadata?: Record<string, any>;
 }): Result<SessionFeedItem> {
   const guardResult = Guard.combine([
-
     Guard.againstNullOrUndefinedBulk([
       { argument: props.type, argumentName: 'type' },
       { argument: props.userId, argumentName: 'userId' },
       { argument: props.userName, argumentName: 'userName' },
-      { argument: props.content, argumentName: 'content' }
+      { argument: props.content, argumentName: 'content' },
     ]),
 
     Guard.againstEmptyString(props.userId, 'userId'),
     Guard.againstEmptyString(props.userName, 'userName'),
     Guard.againstEmptyString(props.content, 'content'),
     Guard.againstTooLong(props.content, 500, 'content'),
-  ])
+  ]);
   if (guardResult.isFailure) {
-    return Result.fail(guardResult.error)
+    return Result.fail(guardResult.error);
   }
   return Result.ok({
     id: crypto.randomUUID(),
@@ -32,6 +31,6 @@ export function createFeedItem(props: {
     userName: props.userName,
     content: props.content,
     timestamp: new Date(),
-    metadata: props.metadata
+    metadata: props.metadata,
   });
 }

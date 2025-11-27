@@ -1,11 +1,7 @@
 import { Guard, Result } from '@shared';
 import { TrainingConstraints } from '../../../plans/index.js';
-import { ExperienceProfile } from '../../value-objects/experience-profile/experience-profile.js';
-import { FitnessGoals } from '../../value-objects/fitness-goals/fitness-goals.js';
-import { UserPreferences } from '../../value-objects/user-preferences/user-preferences.js';
-import { Achievement } from '../../value-objects/user-stats/user-stats.js';
-import { UserProfile } from './user-profile.js';
-
+import { FitnessGoals, ExperienceProfile, UserPreferences, Achievement } from '../../value-objects/index.js';
+import { UserProfile } from './user-profile.types.js';
 export function updateDisplayName(
   profile: UserProfile,
   displayName: string,

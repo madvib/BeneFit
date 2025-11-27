@@ -1,5 +1,5 @@
-import { Guard, Result } from "@shared";
-import { ParticipantRole, SessionParticipant } from "./session-participant.js";
+import { Guard, Result } from '@shared';
+import { ParticipantRole, SessionParticipant } from './session-participant.types.js';
 
 export function createSessionParticipant(props: {
   userId: string;
@@ -7,19 +7,16 @@ export function createSessionParticipant(props: {
   avatar?: string;
   role: ParticipantRole;
 }): Result<SessionParticipant> {
-  let guardResult = Guard.combine(
-    [
+  const guardResult = Guard.combine([
+    Guard.againstNullOrUndefinedBulk([
+      { argument: props.userId, argumentName: 'userId' },
+      { argument: props.userName, argumentName: 'userName' },
+      { argument: props.role, argumentName: 'role' },
+    ]),
 
-      Guard.againstNullOrUndefinedBulk([
-        { argument: props.userId, argumentName: 'userId' },
-        { argument: props.userName, argumentName: 'userName' },
-        { argument: props.role, argumentName: 'role' }
-      ]),
-
-      Guard.againstEmptyString(props.userId, 'userId'),
-      Guard.againstEmptyString(props.userName, 'userName')
-    ]
-  );
+    Guard.againstEmptyString(props.userId, 'userId'),
+    Guard.againstEmptyString(props.userName, 'userName'),
+  ]);
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
@@ -31,6 +28,6 @@ export function createSessionParticipant(props: {
     role: props.role,
     status: 'active',
     joinedAt: new Date(),
-    completedActivities: 0
+    completedActivities: 0,
   });
 }

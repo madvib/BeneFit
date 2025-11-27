@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createDefaultPreferences, UserPreferences } from './user-preferences.js';
+import { createDefaultPreferences, UserPreferences } from './index.js';
 
 describe('UserPreferences Value Object', () => {
   describe('Factory', () => {

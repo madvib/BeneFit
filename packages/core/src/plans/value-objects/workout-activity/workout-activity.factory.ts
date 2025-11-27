@@ -5,7 +5,7 @@ import {
   isIntervalBased,
   isExerciseBased,
   getTotalDuration,
-} from '../activity-structure/activity-structure.js';
+} from '../activity-structure/index.js';
 import { WorkoutActivity, ActivityType } from './workout-activity.types.js';
 
 export interface WorkoutActivityProps {
@@ -119,7 +119,7 @@ export function createDistanceRun(
   order: number,
 ): Result<WorkoutActivity> {
   return createWorkoutActivity({
-    name: `${distance}m run`,
+    name: `${ distance }m run`,
     type: 'main',
     order,
     distance,

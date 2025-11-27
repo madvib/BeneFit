@@ -1,9 +1,22 @@
 import { describe, it, expect } from 'vitest';
 import { createCompletedWorkout } from './completed-workout.factory.js';
-import { addReaction, removeReaction, makePublic, makePrivate } from './completed-workout.commands.js';
-import { getTotalVolume, getCompletionPercentage, wasWorkoutHard, wasWorkoutEnjoyable, getReactionCount, getReactionsByType, hasUserReacted } from './completed-workout.queries.js';
-import { WorkoutPerformance } from '../../../../value-objects/workout-performance/workout-performance.js';
-import { WorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.js';
+import {
+  addReaction,
+  removeReaction,
+  makePublic,
+  makePrivate,
+} from './completed-workout.commands.js';
+import {
+  getTotalVolume,
+  getCompletionPercentage,
+  wasWorkoutHard,
+  wasWorkoutEnjoyable,
+  getReactionCount,
+  getReactionsByType,
+  hasUserReacted,
+} from './completed-workout.queries.js';
+import { WorkoutPerformance } from '../../../../value-objects/workout-performance/workout-performance.types.js';
+import { WorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.types.js';
 
 describe('CompletedWorkout', () => {
   const validPerformance: WorkoutPerformance = {
@@ -34,7 +47,12 @@ describe('CompletedWorkout', () => {
 
   const validVerification: WorkoutVerification = {
     verified: true,
-    verifications: [{ method: 'gps', data: { latitude: 0, longitude: 0, accuracy: 10, timestamp: new Date() } }],
+    verifications: [
+      {
+        method: 'gps',
+        data: { latitude: 0, longitude: 0, accuracy: 10, timestamp: new Date() },
+      },
+    ],
     sponsorEligible: true,
     verifiedAt: new Date(),
   };
@@ -75,7 +93,11 @@ describe('CompletedWorkout', () => {
       if (workoutResult.isFailure) throw new Error('Failed to create workout');
       const workout = workoutResult.value;
 
-      const reaction = { userId: 'user-456', type: 'fire' as const, createdAt: new Date() };
+      const reaction = {
+        userId: 'user-456',
+        type: 'fire' as const,
+        createdAt: new Date(),
+      };
       const result = addReaction(workout, reaction);
 
       expect(result.isSuccess).toBe(true);
@@ -90,8 +112,16 @@ describe('CompletedWorkout', () => {
       if (workoutResult.isFailure) throw new Error('Failed to create workout');
       let workout = workoutResult.value;
 
-      const reaction1 = { userId: 'user-456', type: 'fire' as const, createdAt: new Date() };
-      const reaction2 = { userId: 'user-456', type: 'heart' as const, createdAt: new Date() };
+      const reaction1 = {
+        userId: 'user-456',
+        type: 'fire' as const,
+        createdAt: new Date(),
+      };
+      const reaction2 = {
+        userId: 'user-456',
+        type: 'heart' as const,
+        createdAt: new Date(),
+      };
 
       const result1 = addReaction(workout, reaction1);
       workout = result1.value;
@@ -110,7 +140,11 @@ describe('CompletedWorkout', () => {
       if (workoutResult.isFailure) throw new Error('Failed to create workout');
       let workout = workoutResult.value;
 
-      const reaction = { userId: 'user-456', type: 'fire' as const, createdAt: new Date() };
+      const reaction = {
+        userId: 'user-456',
+        type: 'fire' as const,
+        createdAt: new Date(),
+      };
       workout = addReaction(workout, reaction).value;
 
       const result = removeReaction(workout, 'user-456');
@@ -180,14 +214,18 @@ describe('CompletedWorkout', () => {
       let workout = workoutResult.value;
 
       workout = addReaction(workout, {
-        userId: 'u1', type: 'fire', createdAt: new Date(),
+        userId: 'u1',
+        type: 'fire',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
       workout = addReaction(workout, {
-        userId: 'u2', type: 'heart', createdAt: new Date(),
+        userId: 'u2',
+        type: 'heart',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
 
       expect(getReactionCount(workout)).toBe(2);
@@ -199,19 +237,25 @@ describe('CompletedWorkout', () => {
       let workout = workoutResult.value;
 
       workout = addReaction(workout, {
-        userId: 'u1', type: 'fire', createdAt: new Date(),
+        userId: 'u1',
+        type: 'fire',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
       workout = addReaction(workout, {
-        userId: 'u2', type: 'fire', createdAt: new Date(),
+        userId: 'u2',
+        type: 'fire',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
       workout = addReaction(workout, {
-        userId: 'u3', type: 'heart', createdAt: new Date(),
+        userId: 'u3',
+        type: 'heart',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
 
       const counts = getReactionsByType(workout);
@@ -226,9 +270,11 @@ describe('CompletedWorkout', () => {
       let workout = workoutResult.value;
 
       workout = addReaction(workout, {
-        userId: 'u1', type: 'fire', createdAt: new Date(),
+        userId: 'u1',
+        type: 'fire',
+        createdAt: new Date(),
         id: '',
-        userName: ''
+        userName: '',
       }).value;
 
       expect(hasUserReacted(workout, 'u1')).toBe(true);

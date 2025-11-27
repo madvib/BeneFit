@@ -1,8 +1,8 @@
 // weekly-schedule.commands.ts
 import { Result } from '@shared';
 import { WeeklySchedule } from './weekly-schedule.types.js';
-import { WorkoutTemplate } from '../workout-template/workout-template.deprecated.js';
-import { ScheduleConflictError, ScheduleModificationError, WorkoutNotFoundError } from '../../../../errors/workout-plan-errors.js';
+import { ScheduleConflictError, WorkoutNotFoundError, ScheduleModificationError } from '../../../../errors/workout-plan-errors.js';
+import { WorkoutTemplate } from '../workout-template/workout-template.types.js';
 
 /**
  * COMMAND: Adds a workout to the schedule.

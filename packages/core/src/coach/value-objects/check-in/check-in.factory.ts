@@ -1,6 +1,5 @@
-import { Result, Guard } from "@shared";
-import { CheckInType, CheckInTrigger, CheckIn } from "./check-in.js";
-
+import { Result, Guard } from '@shared';
+import { CheckInType, CheckInTrigger, CheckIn } from './check-in.types.js';
 
 export function createCheckIn(props: {
   type: CheckInType;
@@ -10,10 +9,12 @@ export function createCheckIn(props: {
   const guardResult = Guard.combine([
     Guard.againstNullOrUndefinedBulk([
       { argument: props.type, argumentName: 'type' },
-      { argument: props.question, argumentName: 'question' }
+      { argument: props.question, argumentName: 'question' },
     ]),
     Guard.againstEmptyString(props.question, 'question'),
-    props.question ? Guard.againstTooLong(props.question, 500, 'question') : Result.ok()
+    props.question
+      ? Guard.againstTooLong(props.question, 500, 'question')
+      : Result.ok(),
   ]);
 
   if (guardResult.isFailure) {
@@ -27,6 +28,6 @@ export function createCheckIn(props: {
     question: props.question,
     actions: [],
     status: 'pending',
-    createdAt: new Date()
+    createdAt: new Date(),
   });
 }

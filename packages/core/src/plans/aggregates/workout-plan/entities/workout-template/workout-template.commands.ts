@@ -1,8 +1,8 @@
 // workout-template.commands.ts
 import { Result, Guard } from '@shared';
 import { WorkoutStateTransitionError, WorkoutModificationError, WorkoutTemplateValidationError } from '../../../../errors/workout-plan-errors.js';
-import { WorkoutActivity } from '../../../../value-objects/workout-activity/workout-activity.js';
-import { WorkoutGoals } from '../../../../value-objects/workout-goals/workout-goals.js';
+import { WorkoutActivity } from '../../../../value-objects/workout-activity/index.js';
+import { WorkoutGoals } from '../../../../value-objects/workout-goals/index.js';
 import { WorkoutAlternative, WorkoutTemplate } from './workout-template.types.js';
 
 

@@ -1,6 +1,8 @@
-import { SessionConfiguration } from "./session-configuration.js";
+import { SessionConfiguration } from './session-configuration.types.js';
 
-export function createDefaultSessionConfig(isMultiplayer: boolean): SessionConfiguration {
+export function createDefaultSessionConfig(
+  isMultiplayer: boolean,
+): SessionConfiguration {
   return {
     isMultiplayer,
     isPublic: false,
@@ -9,6 +11,6 @@ export function createDefaultSessionConfig(isMultiplayer: boolean): SessionConfi
     enableChat: isMultiplayer,
     enableVoiceAnnouncements: true,
     showOtherParticipantsProgress: isMultiplayer,
-    autoAdvanceActivities: false
+    autoAdvanceActivities: false,
   };
 }

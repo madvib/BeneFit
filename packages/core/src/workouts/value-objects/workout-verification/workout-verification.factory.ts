@@ -1,5 +1,5 @@
 import { Guard, Result } from '@shared';
-import { VerificationData, WorkoutVerification } from './workout-verification.js';
+import { VerificationData, WorkoutVerification } from './workout-verification.types.js';
 
 export function createWorkoutVerification(props: {
   verifications: VerificationData[];
@@ -73,7 +73,7 @@ export function createWorkoutVerification(props: {
   );
 
   const verified =
-    props.verifications.length > 0 && props.verifications[0].method !== 'manual';
+    props.verifications.length > 0 && props.verifications[0]?.method !== 'manual';
   const sponsorEligible = hasStrongVerification;
 
   return Result.ok({

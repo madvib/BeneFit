@@ -180,31 +180,27 @@ export function withAdjustedTargetMetrics(goals: PlanGoals, factor: number): Res
     return Result.fail(new GoalsValidationError('Adjustment factor must be between 0 and 1.5', { factor }));
   }
 
-  const newMetrics: TargetMetrics = { ...goals.targetMetrics };
-
-  if (newMetrics.targetDistance !== undefined) {
-    newMetrics.targetDistance = Math.round(newMetrics.targetDistance * factor);
-  }
-
-  if (newMetrics.targetPace !== undefined) {
-    // For pace, lower is better, so multiplying by factor < 1 makes it faster
-    newMetrics.targetPace = Math.round(newMetrics.targetPace / factor);
-  }
-
-  if (newMetrics.targetWeights) {
-    newMetrics.targetWeights = newMetrics.targetWeights.map(weight => ({
-      ...weight,
-      weight: Math.round(weight.weight * factor * 10) / 10, // Round to 1 decimal
-    }));
-  }
-
-  if (newMetrics.totalWorkouts !== undefined) {
-    newMetrics.totalWorkouts = Math.round(newMetrics.totalWorkouts * factor);
-  }
-
-  if (newMetrics.minStreakDays !== undefined) {
-    newMetrics.minStreakDays = Math.round(newMetrics.minStreakDays * factor);
-  }
+  const newMetrics: TargetMetrics = {
+    ...goals.targetMetrics,
+    targetDistance: goals.targetMetrics.targetDistance !== undefined
+      ? Math.round(goals.targetMetrics.targetDistance * factor)
+      : undefined,
+    targetPace: goals.targetMetrics.targetPace !== undefined
+      ? Math.round(goals.targetMetrics.targetPace / factor)
+      : undefined,
+    targetWeights: goals.targetMetrics.targetWeights
+      ? goals.targetMetrics.targetWeights.map(weight => ({
+        ...weight,
+        weight: Math.round(weight.weight * factor * 10) / 10,
+      }))
+      : undefined,
+    totalWorkouts: goals.targetMetrics.totalWorkouts !== undefined
+      ? Math.round(goals.targetMetrics.totalWorkouts * factor)
+      : undefined,
+    minStreakDays: goals.targetMetrics.minStreakDays !== undefined
+      ? Math.round(goals.targetMetrics.minStreakDays * factor)
+      : undefined,
+  };
 
   return Result.ok({
     ...goals,
@@ -221,17 +217,17 @@ export function getFullDescription(goals: PlanGoals): string {
   const parts: string[] = [goals.primary];
 
   if (goals.targetDate) {
-    parts.push(`Target: ${goals.targetDate.toDateString()}`);
+    parts.push(`Target: ${ goals.targetDate.toDateString() }`);
   }
 
   if (goals.targetMetrics.targetDistance) {
-    parts.push(`Distance: ${goals.targetMetrics.targetDistance / 1000}km`);
+    parts.push(`Distance: ${ goals.targetMetrics.targetDistance / 1000 }km`);
   }
 
   if (goals.targetMetrics.targetPace) {
     const minutes = Math.floor(goals.targetMetrics.targetPace / 60);
     const seconds = goals.targetMetrics.targetPace % 60;
-    parts.push(`Pace: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}/km`);
+    parts.push(`Pace: ${ minutes }:${ seconds < 10 ? '0' : '' }${ seconds }/km`);
   }
 
   return parts.join(' | ');
@@ -241,25 +237,25 @@ export function getMetricsSummary(goals: PlanGoals): string {
   const metrics: string[] = [];
 
   if (goals.targetMetrics.targetDistance) {
-    metrics.push(`${goals.targetMetrics.targetDistance / 1000}km`);
+    metrics.push(`${ goals.targetMetrics.targetDistance / 1000 }km`);
   }
 
   if (goals.targetMetrics.targetPace) {
     const minutes = Math.floor(goals.targetMetrics.targetPace / 60);
     const seconds = goals.targetMetrics.targetPace % 60;
-    metrics.push(`${minutes}:${seconds < 10 ? '0' : ''}${seconds}/km pace`);
+    metrics.push(`${ minutes }:${ seconds < 10 ? '0' : '' }${ seconds }/km pace`);
   }
 
   if (goals.targetMetrics.totalWorkouts) {
-    metrics.push(`${goals.targetMetrics.totalWorkouts} workouts`);
+    metrics.push(`${ goals.targetMetrics.totalWorkouts } workouts`);
   }
 
   if (goals.targetMetrics.minStreakDays) {
-    metrics.push(`${goals.targetMetrics.minStreakDays} day streak`);
+    metrics.push(`${ goals.targetMetrics.minStreakDays } day streak`);
   }
 
   if (goals.targetMetrics.targetWeights && goals.targetMetrics.targetWeights.length > 0) {
-    metrics.push(`${goals.targetMetrics.targetWeights.length} strength targets`);
+    metrics.push(`${ goals.targetMetrics.targetWeights.length } strength targets`);
   }
 
   return metrics.length > 0 ? metrics.join(', ') : 'No specific metrics';

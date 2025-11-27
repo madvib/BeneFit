@@ -1,13 +1,19 @@
-import { PlanGoals } from '../../../../value-objects/plan-goals/plan-goals.js';
-import { PlanPosition } from '../../../../value-objects/plan-position/plan-position.js';
-import { ProgressionStrategy } from '../../../../value-objects/progression-strategy/progression-strategy.js';
-import { TrainingConstraints } from '../../../../value-objects/training-constraints/training-constraints.js';
-import { WeeklySchedule } from '../weekly-schedule/weekly-schedule.deprecated.js'; // Use the functional type when ready!
+import {
+  PlanGoals,
+  PlanPosition,
+  ProgressionStrategy,
+  TrainingConstraints,
+} from '../../../../value-objects/index.js';
+import { WeeklySchedule } from '../weekly-schedule/index.js';
 
-export type PlanType = 'event_training' | 'habit_building' | 'strength_program' | 'general_fitness';
+export type PlanType =
+  | 'event_training'
+  | 'habit_building'
+  | 'strength_program'
+  | 'general_fitness';
 export type PlanStatus = 'draft' | 'active' | 'paused' | 'completed' | 'abandoned';
 
-export interface WorkoutPlanData {
+interface WorkoutPlanData {
   id: string; // Aggregate Root ID
   userId: string;
   title: string;

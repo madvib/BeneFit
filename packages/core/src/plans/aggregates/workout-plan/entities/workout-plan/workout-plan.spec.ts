@@ -1,6 +1,8 @@
-import { createPlanGoals } from '../../../../value-objects/plan-goals/plan-goals.js';
-import { createProgressionStrategy } from '../../../../value-objects/progression-strategy/progression-strategy.js';
-import { createTrainingConstraints } from '../../../../value-objects/training-constraints/training-constraints.js';
+import {
+  createPlanGoals,
+  createProgressionStrategy,
+  createTrainingConstraints,
+} from '../../../../value-objects/index.js';
 import { createDraftWorkoutPlan } from './workout-plan.factory.js';
 
 describe('WorkoutPlan Aggregate Root', () => {
@@ -9,11 +11,11 @@ describe('WorkoutPlan Aggregate Root', () => {
     secondary: [],
     targetMetrics: {},
   });
-  
+
   const validProgressionResult = createProgressionStrategy({
     type: 'linear',
   });
-  
+
   const validConstraintsResult = createTrainingConstraints({
     availableDays: ['Monday'],
     availableEquipment: [],
@@ -24,7 +26,7 @@ describe('WorkoutPlan Aggregate Root', () => {
   expect(validGoalsResult.isSuccess).toBe(true);
   expect(validProgressionResult.isSuccess).toBe(true);
   expect(validConstraintsResult.isSuccess).toBe(true);
-  
+
   const validGoals = validGoalsResult.value;
   const validProgression = validProgressionResult.value;
   const validConstraints = validConstraintsResult.value;
@@ -40,7 +42,7 @@ describe('WorkoutPlan Aggregate Root', () => {
     constraints: validConstraints,
     startDate: new Date().toISOString(),
   };
-  
+
   it('should create a valid plan', () => {
     const result = createDraftWorkoutPlan(validProps);
     expect(result.isSuccess).toBe(true);

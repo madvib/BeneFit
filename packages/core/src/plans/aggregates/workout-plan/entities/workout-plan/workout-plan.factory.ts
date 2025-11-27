@@ -1,10 +1,8 @@
 // workout-plan.factory.ts
 import { Result, Guard } from '@shared';
-import { PlanType, WorkoutPlan, WorkoutPlanData } from './workout-plan.types.js';
-import { PlanGoals } from '../../../../value-objects/plan-goals/plan-goals.js';
-import { createPlanPosition } from '../../../../value-objects/plan-position/plan-position.js';
-import { ProgressionStrategy } from '../../../../value-objects/progression-strategy/progression-strategy.js';
-import { TrainingConstraints } from '../../../../value-objects/training-constraints/training-constraints.js';
+import { PlanType, WorkoutPlan } from './workout-plan.types.js';
+import { createPlanPosition, PlanGoals, ProgressionStrategy, TrainingConstraints } from '../../../../index.js';
+
 
 interface CreateDraftParams {
   id: string;
@@ -38,7 +36,7 @@ export function createDraftWorkoutPlan(params: CreateDraftParams): Result<Workou
 
   const now = new Date();
 
-  const data: WorkoutPlanData = {
+  const data: WorkoutPlan = {
     id: params.id,
     userId: params.userId,
     title: params.title,
@@ -61,6 +59,6 @@ export function createDraftWorkoutPlan(params: CreateDraftParams): Result<Workou
 /**
  * FACTORY: Rehydrates the WorkoutPlan from persistence.
  */
-export function workoutPlanFromPersistence(data: WorkoutPlanData): Result<WorkoutPlan> {
+export function workoutPlanFromPersistence(data: WorkoutPlan): Result<WorkoutPlan> {
   return Result.ok(data);
 }

@@ -1,11 +1,14 @@
-import { Result, Guard } from "@shared";
-import { CoachingMessage } from "./coaching-message.js";
-import { CoachAction } from "../coach-action/coach-action.js";
+import { Result, Guard } from '@shared';
+import { CoachingMessage } from './coaching-message.types.js';
+import { CoachAction } from '../index.js';
 
-export function createUserMessage(content: string, checkInId?: string): Result<CoachingMessage> {
+export function createUserMessage(
+  content: string,
+  checkInId?: string,
+): Result<CoachingMessage> {
   const guardResult = Guard.combine([
     Guard.againstEmptyString(content, 'content'),
-    content ? Guard.againstTooLong(content, 2000, 'content') : Result.ok()
+    content ? Guard.againstTooLong(content, 2000, 'content') : Result.ok(),
   ]);
 
   if (guardResult.isFailure) {
@@ -17,7 +20,7 @@ export function createUserMessage(content: string, checkInId?: string): Result<C
     role: 'user',
     content,
     checkInId,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 }
 
@@ -25,12 +28,12 @@ export function createCoachMessage(
   content: string,
   actions?: CoachAction[],
   checkInId?: string,
-  tokens?: number
+  tokens?: number,
 ): Result<CoachingMessage> {
   const guardResult = Guard.combine([
     Guard.againstEmptyString(content, 'content'),
     content ? Guard.againstTooLong(content, 2000, 'content') : Result.ok(),
-    tokens !== undefined ? Guard.againstNegative(tokens, 'tokens') : Result.ok()
+    tokens !== undefined ? Guard.againstNegative(tokens, 'tokens') : Result.ok(),
   ]);
 
   if (guardResult.isFailure) {
@@ -44,7 +47,7 @@ export function createCoachMessage(
     actions,
     checkInId,
     timestamp: new Date(),
-    tokens
+    tokens,
   });
 }
 
@@ -59,6 +62,6 @@ export function createSystemMessage(content: string): Result<CoachingMessage> {
     id: crypto.randomUUID(),
     role: 'system',
     content,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 }

@@ -1,6 +1,6 @@
-import { TrainingConstraints } from '../../../../value-objects/training-constraints/training-constraints.js';
-import { ExperienceLevel } from '../template-rules/template-rules.js';
-import { PlanTemplate } from './plan-template.js';
+import { TrainingConstraints } from '../../../../value-objects/index.js';
+import { ExperienceLevel } from '../template-rules/template-rules.types.js';
+import { PlanTemplate } from './plan-template.types.js';
 
 export interface TemplateCompatibilityResult {
   canUse: boolean;

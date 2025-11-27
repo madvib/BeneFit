@@ -1,16 +1,13 @@
 import { Result, Guard } from '@shared';
 import { ActivityValidationError } from '../../errors/workout-plan-errors.js';
-import { 
-  ActivityStructure, 
-  isIntervalBased as isStructureIntervalBased, 
-  isExerciseBased as isStructureExerciseBased, 
+import {
+  ActivityStructure,
   isEmpty as isStructureEmpty,
   getTotalDuration as getStructureTotalDuration,
   withAdjustedIntensity as withStructureAdjustedIntensity,
-  requiresEquipment as structureRequiresEquipment,
   getDescription as getStructureDescription
-} from '../activity-structure/activity-structure.js';
-import { WorkoutActivity, ActivityType } from './workout-activity.types.js';
+} from '../activity-structure/index.js';
+import { WorkoutActivity } from './workout-activity.types.js';
 
 // Getters (these are just property access, so not needed as separate functions)
 
@@ -356,11 +353,11 @@ export function makeHarder(activity: WorkoutActivity, factor: number = 1.2): Res
 // Display helpers
 export function getShortDescription(activity: WorkoutActivity): string {
   if (activity.distance) {
-    return `${activity.name} - ${activity.distance}m`;
+    return `${ activity.name } - ${ activity.distance }m`;
   }
 
   const duration = getEstimatedDuration(activity);
-  return `${activity.name} - ${duration}min`;
+  return `${ activity.name } - ${ duration }min`;
 }
 
 export function getDetailedDescription(activity: WorkoutActivity): string {
@@ -370,22 +367,22 @@ export function getDetailedDescription(activity: WorkoutActivity): string {
     const details: string[] = [];
 
     if (activity.duration) {
-      details.push(`${activity.duration}min`);
+      details.push(`${ activity.duration }min`);
     }
 
     if (activity.distance) {
-      details.push(`${activity.distance}m`);
+      details.push(`${ activity.distance }m`);
     }
 
     if (activity.pace) {
-      details.push(`@ ${activity.pace}`);
+      details.push(`@ ${ activity.pace }`);
     }
 
-    desc += ` (${details.join(', ')})`;
+    desc += ` (${ details.join(', ') })`;
   }
 
   if (requiresEquipment(activity)) {
-    desc += `\nEquipment: ${activity.equipment!.join(', ')}`;
+    desc += `\nEquipment: ${ activity.equipment!.join(', ') }`;
   }
 
   return desc;
@@ -417,7 +414,7 @@ export function equals(activity: WorkoutActivity, other: WorkoutActivity): boole
     activity.distance === other.distance &&
     activity.pace === other.pace &&
     JSON.stringify(activity.equipment) === JSON.stringify(other.equipment) &&
-    (!activity.structure || !other.structure || 
+    (!activity.structure || !other.structure ||
       equals(activity.structure as any, other.structure as any) || // This might need adjustment
       true) // Placeholder to avoid circular reference issue
   );

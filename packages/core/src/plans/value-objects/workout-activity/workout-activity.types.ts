@@ -1,5 +1,5 @@
 import { ActivityValidationError } from '../../errors/workout-plan-errors.js';
-import { ActivityStructure } from '../activity-structure/activity-structure.js';
+import { ActivityStructure } from '../activity-structure/index.js';
 
 export type ActivityType = 'warmup' | 'main' | 'cooldown' | 'interval' | 'circuit';
 

@@ -1,13 +1,11 @@
 import { Result, Guard } from '@shared';
-import { CheckIn } from '../../value-objects/check-in/check-in.js';
-import { CoachAction } from '../../value-objects/coach-action/coach-action.js';
-import { CoachingContext } from '../../value-objects/coaching-context/coaching-context.js';
-import {
-  createUserMessage,
-  createCoachMessage,
-  createSystemMessage,
-} from '../../value-objects/coaching-message/coaching-message.factory.js';
 import { CoachingConversationData } from './coach-conversation.types.js';
+
+
+import { CheckInError } from '../../errors/index.js';
+import { CheckIn, CoachAction, CoachingContext, createCoachMessage, createSystemMessage, createUserMessage } from '../../value-objects/index.js';
+
+
 
 export function addUserMessage(
   conversation: CoachingConversationData,
@@ -106,12 +104,12 @@ export function respondToCheckIn(
 
   const checkInIndex = conversation.checkIns.findIndex((c) => c.id === checkInId);
   if (checkInIndex < 0) {
-    return Result.fail(`Check-in ${checkInId} not found`);
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
   if (checkIn.status !== 'pending') {
-    return Result.fail('Check-in is not pending');
+    return Result.fail(new CheckInError('Check-in is not pending'));
   }
 
   const now = new Date();
@@ -145,12 +143,12 @@ export function dismissCheckIn(
 
   const checkInIndex = conversation.checkIns.findIndex((c) => c.id === checkInId);
   if (checkInIndex < 0) {
-    return Result.fail(`Check-in ${checkInId} not found`);
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
   if (checkIn.status !== 'pending') {
-    return Result.fail('Check-in is not pending');
+    return Result.fail(new CheckInError('Check-in is not pending'));
   }
 
   const updatedCheckIn: CheckIn = {

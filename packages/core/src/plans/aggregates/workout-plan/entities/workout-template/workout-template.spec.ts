@@ -1,17 +1,31 @@
 import { describe, it, expect } from 'vitest';
-import { createWorkoutGoals, createDurationWorkout, createVolumeWorkout, createDistanceWorkout } from '../../../../value-objects/workout-goals/workout-goals.js';
-import { createWorkoutActivity } from '../../../../value-objects/workout-activity/workout-activity.js';
 import { createWorkoutTemplate } from './workout-template.factory.js';
-import { startWorkout, markComplete, skipWorkout, updateGoals } from './workout-template.commands.js';
+import {
+  startWorkout,
+  markComplete,
+  skipWorkout,
+  updateGoals,
+} from './workout-template.commands.js';
+import {
+  createDistanceWorkout,
+  createDurationWorkout,
+  createVolumeWorkout,
+  createWorkoutActivity,
+  createWorkoutGoals,
+} from '../../../../value-objects/index.js';
 
 describe('WorkoutTemplate', () => {
   describe('create', () => {
     it('should create a workout template with duration goals', () => {
       // Create WorkoutGoals - must check Result before using .value
-      const goalsResult = createDurationWorkout(30, {
-        mustComplete: true,
-        autoVerifiable: false,
-      }, 'moderate');
+      const goalsResult = createDurationWorkout(
+        30,
+        {
+          mustComplete: true,
+          autoVerifiable: false,
+        },
+        'moderate',
+      );
 
       expect(goalsResult.isSuccess).toBe(true);
       const goals = goalsResult.value; // Safe after checking isSuccess
@@ -168,7 +182,8 @@ describe('WorkoutTemplate', () => {
 
     it('should create rest day workout without activities', () => {
       // For rest day, we may not want to specify duration goals, so let's create a minimal duration goal
-      const goalsResult = createDurationWorkout(1, { // Minimal positive duration instead of 0
+      const goalsResult = createDurationWorkout(1, {
+        // Minimal positive duration instead of 0
         mustComplete: false,
         autoVerifiable: true,
       });
@@ -212,7 +227,7 @@ describe('WorkoutTemplate', () => {
         weekNumber: 1,
         dayOfWeek: 1,
         scheduledDate: new Date().toISOString(),
-        title: 'Today\'s Workout',
+        title: "Today's Workout",
         type: 'running',
         category: 'cardio',
         goals: goalsResult.value,
@@ -264,7 +279,9 @@ describe('WorkoutTemplate', () => {
           expect(completeResult.isSuccess).toBe(true);
           if (completeResult.isSuccess) {
             expect(completeResult.value.status).toBe('completed');
-            expect(completeResult.value.completedWorkoutId).toBe('completed-workout-id-123');
+            expect(completeResult.value.completedWorkoutId).toBe(
+              'completed-workout-id-123',
+            );
           }
         }
       }
@@ -304,10 +321,14 @@ describe('WorkoutTemplate', () => {
 
   describe('intensity adjustment', () => {
     it('should reduce workout intensity correctly', () => {
-      const goalsResult = createDurationWorkout(60, {
-        mustComplete: true,
-        autoVerifiable: false,
-      }, 'hard');
+      const goalsResult = createDurationWorkout(
+        60,
+        {
+          mustComplete: true,
+          autoVerifiable: false,
+        },
+        'hard',
+      );
 
       const workoutResult = createWorkoutTemplate({
         id: 'workout-9',
@@ -330,17 +351,23 @@ describe('WorkoutTemplate', () => {
         // Note: The functional approach doesn't have adjustIntensity method in the same way
         // This test may need to be adapted to the new approach
         // For now, we'll create a new goal with reduced duration
-        const adjustedGoalsResult = createDurationWorkout(Math.round((originalDuration || 0) * 0.8), {
-          mustComplete: true,
-          autoVerifiable: false,
-        }, 'moderate');
+        const adjustedGoalsResult = createDurationWorkout(
+          Math.round((originalDuration || 0) * 0.8),
+          {
+            mustComplete: true,
+            autoVerifiable: false,
+          },
+          'moderate',
+        );
 
         expect(adjustedGoalsResult.isSuccess).toBe(true);
         if (adjustedGoalsResult.isSuccess) {
           const updatedWorkoutResult = updateGoals(workout, adjustedGoalsResult.value);
           expect(updatedWorkoutResult.isSuccess).toBe(true);
           if (updatedWorkoutResult.isSuccess) {
-            expect(updatedWorkoutResult.value.goals.duration?.value).toBe(Math.round((originalDuration || 0) * 0.8));
+            expect(updatedWorkoutResult.value.goals.duration?.value).toBe(
+              Math.round((originalDuration || 0) * 0.8),
+            );
           }
         }
       }
@@ -377,7 +404,7 @@ describe('WorkoutTemplate', () => {
       });
 
       // ❌ WRONG: Accessing .value without checking
-      // const goals = goalsResult.value; 
+      // const goals = goalsResult.value;
       // This causes: Type 'undefined' is not assignable to type 'WorkoutGoals'
 
       // ✅ CORRECT: Always check first

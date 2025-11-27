@@ -1,5 +1,5 @@
 import { isCredentialExpired, willExpireSoon } from "../../value-objects/oauth-credentials/oauth-credentials.js";
-import { ConnectedService } from "./connected-service.js";
+import { ConnectedService } from "./index.js";
 
 export function needsCredentialRefresh(service: ConnectedService): boolean {
   return isCredentialExpired(service.credentials) ||

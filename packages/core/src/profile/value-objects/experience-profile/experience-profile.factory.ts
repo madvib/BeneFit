@@ -1,5 +1,5 @@
 import { Guard, Result } from '@shared';
-import { ExperienceLevel, ExperienceProfile } from './experience-profile.types.js';
+import { CurrentCapabilities, ExperienceLevel, ExperienceProfile, TrainingHistory } from './experience-profile.types.js';
 
 export interface CreateExperienceProfileProps {
   level: ExperienceLevel;
@@ -24,7 +24,7 @@ export function createExperienceProfile(props: {
   }
   const guardResult = Guard.combine(guards);
   if (guardResult && guardResult.isFailure) return Result.fail(guardResult.error);
-  
+
   return Result.ok({
     level: props.level,
     history: {

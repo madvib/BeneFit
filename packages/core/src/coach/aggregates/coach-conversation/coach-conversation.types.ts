@@ -1,6 +1,8 @@
-import { CheckIn } from '../../value-objects/check-in/check-in.js';
-import { CoachingContext } from '../../value-objects/coaching-context/coaching-context.js';
-import { CoachingMessage } from '../../value-objects/coaching-message/coaching-message.js';
+import {
+  CoachingContext,
+  CoachingMessage,
+  CheckIn,
+} from '../../value-objects/index.js';
 
 export interface CoachingConversationData {
   id: string;

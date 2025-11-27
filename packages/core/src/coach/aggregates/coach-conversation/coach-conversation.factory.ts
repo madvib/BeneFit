@@ -1,7 +1,9 @@
 import { Result, Guard } from '@shared';
-import { createCoachingContext } from '../../value-objects/coaching-context/coaching-context.factory.js';
-import { CoachingConversationData } from './coach-conversation.types.js';
-import { CoachingContext } from '../../index.js';
+import {
+  CoachingContext,
+  CoachingConversation,
+  createCoachingContext,
+} from '../../index.js';
 
 export interface CreateCoachingConversationParams {
   userId: string;
@@ -11,7 +13,7 @@ export interface CreateCoachingConversationParams {
 
 export function createCoachingConversation(
   params: CreateCoachingConversationParams,
-): Result<CoachingConversationData> {
+): Result<CoachingConversation> {
   const guardResult = Guard.combine([
     Guard.againstEmptyString(params.userId, 'userId'),
     Guard.againstNullOrUndefined(params.userId, 'userId'),
@@ -24,7 +26,7 @@ export function createCoachingConversation(
   const now = new Date();
   const initialContext = params.context || createCoachingContext({}).value;
 
-  const conversation: CoachingConversationData = {
+  const conversation: CoachingConversation = {
     id: crypto.randomUUID(),
     userId: params.userId,
     context: initialContext,

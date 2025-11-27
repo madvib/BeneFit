@@ -1,3 +1,5 @@
+import { UserPreferences } from './user-preferences.types.js';
+
 export * from './user-preferences.types.js';
 export function createDefaultPreferences(): UserPreferences {
   return {

@@ -17,7 +17,7 @@ export interface UserStats {
   joinedAt: Date;
 }
 
-export interface Achievement {
+interface AchievementData {
   id: string;
   type: string; // "first_workout", "10_workouts", "30_day_streak", etc.
   name: string;
@@ -25,3 +25,4 @@ export interface Achievement {
   earnedAt: Date;
   iconUrl?: string;
 }
+export type Achievement = Readonly<AchievementData>;

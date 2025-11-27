@@ -1,5 +1,3 @@
-import { Result } from '@shared';
-
 export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export interface TrainingHistory {

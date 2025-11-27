@@ -1,7 +1,7 @@
 import { Guard, Result } from '@shared';
-import { TemplateRules } from '../template-rules/template-rules.js';
-import { TemplateStructure } from '../template-structure/template-structure.js';
-import { TemplateAuthor, WorkoutPreview, PlanTemplate } from './plan-template.js';
+import { TemplateRules } from '../template-rules/template-rules.types.js';
+import { TemplateStructure } from '../template-structure/template-structure.types.js';
+import { TemplateAuthor, WorkoutPreview, PlanTemplate } from './plan-template.types.js';
 
 export interface CreateTemplateParams {
   name: string;

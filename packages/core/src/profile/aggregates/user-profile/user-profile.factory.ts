@@ -1,10 +1,10 @@
 import { Guard, Result } from '@shared';
 import { TrainingConstraints } from '../../../plans/index.js';
-import { ExperienceProfile } from '../../value-objects/experience-profile/experience-profile.js';
-import { FitnessGoals } from '../../value-objects/fitness-goals/fitness-goals.js';
-import { createDefaultPreferences } from '../../value-objects/user-preferences/user-preferences.js';
-import { createUserStats } from '../../value-objects/user-stats/user-stats.js';
-import { UserProfile } from './user-profile.js';
+import { ExperienceProfile } from '../../value-objects/experience-profile/index.js';
+import { FitnessGoals } from '../../value-objects/fitness-goals/index.js';
+import { createDefaultPreferences } from '../../value-objects/user-preferences/index.js';
+import { createUserStats } from '../../value-objects/user-stats/index.js';
+import { UserProfile } from './user-profile.types.js';
 
 export interface CreateUserProfileParams {
   userId: string;

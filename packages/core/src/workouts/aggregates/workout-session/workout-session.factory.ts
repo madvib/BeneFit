@@ -1,8 +1,8 @@
 import { Guard, Result } from '@shared';
 import { createDefaultSessionConfig } from '../../value-objects/session-configuration/session-configuration.factory.js';
-import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.js';
+import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.types.js';
 import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';
-import { WorkoutSession } from './workout-session.js';
+import { WorkoutSession } from './workout-session.types.js';
 
 export interface CreateWorkoutSessionParams {
   ownerId: string;

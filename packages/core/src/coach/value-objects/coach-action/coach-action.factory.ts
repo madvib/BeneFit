@@ -1,5 +1,5 @@
 import { Result, Guard } from "@shared";
-import { CoachActionType, CoachAction } from "./coach-action.js";
+import { CoachActionType, CoachAction } from "./coach-action.types.js";
 
 export function createCoachAction(props: {
   type: CoachActionType;

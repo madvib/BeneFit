@@ -30,7 +30,7 @@ export interface CoachingPreferences {
   receiveFormTips: boolean;
 }
 
-export interface UserPreferences {
+interface UserPreferencesData {
   // UI
   theme: Theme;
   units: Units;
@@ -49,3 +49,5 @@ export interface UserPreferences {
   autoProgressWeights: boolean;
   useVoiceAnnouncements: boolean;
 }
+
+export type UserPreferences = Readonly<UserPreferencesData>;

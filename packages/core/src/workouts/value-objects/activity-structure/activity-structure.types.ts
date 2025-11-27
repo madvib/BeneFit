@@ -17,10 +17,10 @@ export interface Exercise {
   readonly notes?: string;
 }
 
-export interface ActivityStructureData {
-  readonly intervals?: readonly Interval[];
-  readonly rounds?: number;
-  readonly exercises?: readonly Exercise[];
+interface ActivityStructureData {
+  intervals?: readonly Interval[];
+  rounds?: number;
+  exercises?: readonly Exercise[];
 }
 
 // The core data structure is an immutable interface

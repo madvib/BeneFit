@@ -6,7 +6,7 @@ import {
 } from '../../value-objects/service-metadata/service-metadata.js';
 import { ServicePermissions } from '../../value-objects/service-permissions/service-permission.js';
 import { createInitialSyncStatus } from '../../value-objects/sync-status/sync-status.js';
-import { ServiceType, ConnectedService } from './connected-service.js';
+import { ConnectedService, ServiceType } from './index.js';
 
 export interface CreateConnectedServiceParams {
   userId: string;

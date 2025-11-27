@@ -1,4 +1,4 @@
-export interface ServiceMetadata {
+interface ServiceMetadataData {
   // User's profile in that service
   externalUserId?: string;
   externalUsername?: string;
@@ -13,8 +13,10 @@ export interface ServiceMetadata {
   webhookRegistered: boolean;
   webhookUrl?: string;
 }
-
-export function createServiceMetadata(props: Partial<ServiceMetadata>): ServiceMetadata {
+export type ServiceMetadata = Readonly<ServiceMetadataData>;
+export function createServiceMetadata(
+  props: Partial<ServiceMetadata>,
+): ServiceMetadata {
   return {
     externalUserId: props.externalUserId,
     externalUsername: props.externalUsername,
@@ -23,6 +25,6 @@ export function createServiceMetadata(props: Partial<ServiceMetadata>): ServiceM
     units: props.units,
     supportsWebhooks: props.supportsWebhooks ?? false,
     webhookRegistered: props.webhookRegistered ?? false,
-    webhookUrl: props.webhookUrl
+    webhookUrl: props.webhookUrl,
   };
 }

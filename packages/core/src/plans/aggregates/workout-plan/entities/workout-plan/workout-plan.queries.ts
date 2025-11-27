@@ -1,6 +1,6 @@
 // workout-plan.queries.ts
-import { WorkoutTemplate } from '../workout-template/workout-template.deprecated.js';
-import { WeeklySchedule } from '../weekly-schedule/weekly-schedule.deprecated.js';
+import { WorkoutTemplate } from '../workout-template/index.js';
+import { WeeklySchedule } from '../weekly-schedule/index.js';
 import { WorkoutPlan } from './workout-plan.types.js';
 
 /**
@@ -11,7 +11,7 @@ export function getCurrentWorkout(plan: WorkoutPlan): WorkoutTemplate | undefine
   // Assumes WeeklySchedule has been converted to functional pattern
   // If WeeklySchedule is functional, this would be: 
   // return getWorkoutForDay(currentWeek, plan.currentPosition.day);
-  return currentWeek?.getWorkout(plan.currentPosition.day);
+  return currentWeek?.workouts.find(w => w.dayOfWeek === plan.currentPosition.day);
 }
 
 /**

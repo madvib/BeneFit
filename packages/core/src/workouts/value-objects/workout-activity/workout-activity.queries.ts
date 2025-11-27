@@ -27,7 +27,7 @@ export function isMainActivity(activity: WorkoutActivity): boolean {
 /**
  * QUERY: Check if activity is interval-based.
  */
-export function isIntervalBased(activity: WorkoutActivity): boolean {
+export function isActivityIntervalBased(activity: WorkoutActivity): boolean {
   return activity.type === 'interval';
 }
 
@@ -41,7 +41,7 @@ export function isCircuit(activity: WorkoutActivity): boolean {
 /**
  * QUERY: Check if activity requires equipment.
  */
-export function requiresEquipment(activity: WorkoutActivity): boolean {
+export function activityRequiresEquipment(activity: WorkoutActivity): boolean {
   return activity.equipment !== undefined && activity.equipment.length > 0;
 }
 
@@ -128,7 +128,7 @@ export function getEstimatedCalories(activity: WorkoutActivity, userWeight: numb
     return Math.round((duration * 3 * userWeight) / 60); // 3 METs
   }
 
-  if (isIntervalBased(activity)) {
+  if (isActivityIntervalBased(activity)) {
     return Math.round((duration * 10 * userWeight) / 60); // 10 METs (high intensity)
   }
 
@@ -175,7 +175,7 @@ export function getDetailedDescription(activity: WorkoutActivity): string {
     desc += ` (${ details.join(', ') })`;
   }
 
-  if (requiresEquipment(activity)) {
+  if (activityRequiresEquipment(activity)) {
     desc += `\nEquipment: ${ activity.equipment!.join(', ') }`;
   }
 

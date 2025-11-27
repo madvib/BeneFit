@@ -3,7 +3,7 @@ import { OAuthCredentials } from '../../value-objects/oauth-credentials/oauth-cr
 import { ServiceMetadata } from '../../value-objects/service-metadata/service-metadata.js';
 import { ServicePermissions } from '../../value-objects/service-permissions/service-permission.js';
 import { SyncError } from '../../value-objects/sync-status/sync-status.js';
-import { ConnectedService } from './connected-service.js';
+import { ConnectedService } from './index.js';
 
 export function refreshCredentials(
   service: ConnectedService,

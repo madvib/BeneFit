@@ -1,12 +1,14 @@
-import { Guard, Result } from "@shared";
+import { Guard, Result } from '@shared';
 
-export interface OAuthCredentials {
+interface OAuthCredentialsData {
   accessToken: string; // Should be encrypted at rest
   refreshToken?: string; // Should be encrypted at rest
   expiresAt?: Date;
   scopes: string[];
   tokenType: 'Bearer' | 'OAuth';
 }
+
+export type OAuthCredentials = Readonly<OAuthCredentialsData>;
 
 export function createOAuthCredentials(props: {
   accessToken: string;
@@ -16,21 +18,18 @@ export function createOAuthCredentials(props: {
   tokenType?: 'Bearer' | 'OAuth';
 }): Result<OAuthCredentials> {
   const guards = [
-
     Guard.againstNullOrUndefinedBulk([
       { argument: props.accessToken, argumentName: 'accessToken' },
-      { argument: props.scopes, argumentName: 'scopes' }
+      { argument: props.scopes, argumentName: 'scopes' },
     ]),
 
     Guard.againstEmptyString(props.accessToken, 'accessToken'),
     Guard.isTrue(props.scopes.length > 0, 'scopes array cannot be empty'),
-  ]
+  ];
   if (props.expiresAt) {
     guards.push(
-      Guard.isTrue(
-        props.expiresAt > new Date(),
-        'expiresAt must be in the future'
-      ))
+      Guard.isTrue(props.expiresAt > new Date(), 'expiresAt must be in the future'),
+    );
   }
   const guardResult = Guard.combine(guards);
   if (guardResult.isFailure) {
@@ -42,7 +41,7 @@ export function createOAuthCredentials(props: {
     refreshToken: props.refreshToken,
     expiresAt: props.expiresAt,
     scopes: props.scopes,
-    tokenType: props.tokenType || 'Bearer'
+    tokenType: props.tokenType || 'Bearer',
   });
 }
 
@@ -54,7 +53,10 @@ export function isCredentialExpired(credentials: OAuthCredentials): boolean {
   return credentials.expiresAt <= new Date();
 }
 
-export function willExpireSoon(credentials: OAuthCredentials, minutesThreshold: number = 30): boolean {
+export function willExpireSoon(
+  credentials: OAuthCredentials,
+  minutesThreshold: number = 30,
+): boolean {
   if (!credentials.expiresAt) {
     return false;
   }

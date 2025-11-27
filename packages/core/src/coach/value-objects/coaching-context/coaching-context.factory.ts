@@ -6,8 +6,8 @@ import {
   ExperienceLevel,
   PerformanceTrends,
   CoachingContext,
-} from './coaching-context.js';
-import { FitnessGoals } from '../../../profile/value-objects/fitness-goals/fitness-goals.js';
+} from './coaching-context.types.js';
+import { FitnessGoals } from '../../../profile/index.js';
 
 export function createCoachingContext(props: {
   currentPlan?: CurrentPlanContext;

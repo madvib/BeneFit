@@ -1,18 +1,7 @@
 import { Guard, Result } from '@shared';
-import { SessionState } from 'http2';
-import { createLiveActivityProgress } from '../../value-objects/live-activity-progress/live-activity-progress.factory.js';
-import {
-  LiveActivityProgress,
-  ExerciseProgress,
-} from '../../value-objects/live-activity-progress/live-activity-progress.js';
-import { createFeedItem } from '../../value-objects/session-feed-item/session-feed-item.factory.js';
-import { createSessionParticipant } from '../../value-objects/session-participant/session-participant.factory.js';
-import {
-  ParticipantRole,
-  SessionParticipant,
-} from '../../value-objects/session-participant/session-participant.js';
-import { ActivityPerformance } from '../../value-objects/workout-performance/workout-performance.js';
-import { WorkoutSession } from './workout-session.js';
+
+import { SessionState, WorkoutSession } from './workout-session.types.js';
+import { createSessionParticipant, createLiveActivityProgress, createFeedItem, ParticipantRole, ActivityPerformance, LiveActivityProgress, ExerciseProgress } from '../../value-objects/index.js';
 
 export function startSession(
   session: WorkoutSession,
@@ -91,7 +80,7 @@ export function joinSession(
   }
 
   // Check if already in session
-  const existingParticipant = session.participants.find((p) => p.userId === userId);
+  const existingParticipant = session.participants.find((p: { userId: string }) => p.userId === userId);
   if (existingParticipant) {
     throw new Error('User is already in session');
   }
@@ -126,7 +115,7 @@ export function leaveSession(
 ): Result<WorkoutSession> {
   const guards = [Guard.againstEmptyString(userId, 'userId')];
 
-  const participantIndex = session.participants.findIndex((p) => p.userId === userId);
+  const participantIndex = session.participants.findIndex((p: { userId: string }) => p.userId === userId);
   guards.push(Guard.isTrue(participantIndex >= 0, 'User is not in session'));
 
   const participant = session.participants[participantIndex];
@@ -151,17 +140,18 @@ export function leaveSession(
   const updatedParticipants = [...session.participants];
   updatedParticipants[participantIndex] = updatedParticipant;
 
-  const feedItem = createFeedItem({
+  const feedItemResult = createFeedItem({
     type: 'user_left',
     userId,
     userName: participant.userName,
     content: `${ participant.userName } left the workout`,
   });
+  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
 
   return Result.ok({
     ...session,
     participants: updatedParticipants,
-    activityFeed: [...session.activityFeed, feedItem],
+    activityFeed: [...session.activityFeed, feedItemResult.value],
     updatedAt: new Date(),
   });
 }
@@ -229,14 +219,19 @@ export function completeActivity(
   } else {
     // Move to next activity
     const nextActivity = session.activities[nextActivityIndex];
-    liveProgress = createLiveActivityProgress({
-      activityType: nextActivity.activityType,
+    if (!nextActivity) {
+      return Result.fail(new Error('Next activity not found'));
+    }
+    const liveProgressResult = createLiveActivityProgress({
+      activityType: nextActivity.type,
       activityIndex: nextActivityIndex,
       totalActivities: session.activities.length,
     });
+    if (liveProgressResult.isFailure) return Result.fail(liveProgressResult.error);
+    liveProgress = liveProgressResult.value;
   }
 
-  const feedItem = createFeedItem({
+  const feedItemResult = createFeedItem({
     type: 'activity_completed',
     userId: session.ownerId,
     userName: 'You', // Would need participant context
@@ -245,6 +240,7 @@ export function completeActivity(
       durationMinutes: activityPerformance.durationMinutes,
     },
   });
+  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
 
   return Result.ok({
     ...session,
@@ -252,7 +248,7 @@ export function completeActivity(
     currentActivityIndex: nextActivityIndex,
     liveProgress,
     completedActivities,
-    activityFeed: [...session.activityFeed, feedItem],
+    activityFeed: [...session.activityFeed, feedItemResult.value],
     completedAt: isLastActivity ? new Date() : session.completedAt,
     updatedAt: new Date(),
   });
@@ -269,19 +265,20 @@ export function abandonSession(
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
-  const feedItem = createFeedItem({
+  const feedItemResult = createFeedItem({
     type: 'user_left',
     userId: session.ownerId,
     userName: 'You',
     content: reason || 'Workout ended early',
     metadata: { reason },
   });
+  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
 
   return Result.ok({
     ...session,
     state: 'abandoned',
     liveProgress: undefined,
-    activityFeed: [...session.activityFeed, feedItem],
+    activityFeed: [...session.activityFeed, feedItemResult.value],
     abandonedAt: new Date(),
     updatedAt: new Date(),
   });
@@ -324,16 +321,17 @@ export function addChatMessage(
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
-  const feedItem = createFeedItem({
+  const feedItemResult = createFeedItem({
     type: 'chat_message',
     userId,
     userName,
     content: message,
   });
+  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
 
   return Result.ok({
     ...session,
-    activityFeed: [...session.activityFeed, feedItem],
+    activityFeed: [...session.activityFeed, feedItemResult.value],
     updatedAt: new Date(),
   });
 }
@@ -347,17 +345,18 @@ export function sendEncouragement(
 ): Result<WorkoutSession> {
   const guardResult = Guard.againstEmptyString(message, 'message');
   if (guardResult.isFailure) return Result.fail(guardResult.error);
-  const feedItem = createFeedItem({
+  const feedItemResult = createFeedItem({
     type: 'encouragement',
     userId: fromUserId,
     userName: fromUserName,
     content: message,
     metadata: { toUserId },
   });
+  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
 
   return Result.ok({
     ...session,
-    activityFeed: [...session.activityFeed, feedItem],
+    activityFeed: [...session.activityFeed, feedItemResult.value],
     updatedAt: new Date(),
   });
 }

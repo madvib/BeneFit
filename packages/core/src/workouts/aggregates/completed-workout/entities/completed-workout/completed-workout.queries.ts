@@ -1,5 +1,5 @@
-import { ReactionType } from "../reaction/reaction.js";
-import { CompletedWorkout } from "./completed-workout.js";
+import { ReactionType } from '../reaction/reaction.types.js';
+import { CompletedWorkout } from './completed-workout.types.js';
 
 export function getTotalVolume(workout: CompletedWorkout): number {
   let totalVolume = 0;
@@ -50,14 +50,14 @@ export function getReactionCount(workout: CompletedWorkout): number {
 }
 
 export function getReactionsByType(
-  workout: CompletedWorkout
+  workout: CompletedWorkout,
 ): Record<ReactionType, number> {
   const counts: Record<ReactionType, number> = {
     fire: 0,
     strong: 0,
     clap: 0,
     heart: 0,
-    smile: 0
+    smile: 0,
   };
 
   for (const reaction of workout.reactions) {
@@ -67,9 +67,6 @@ export function getReactionsByType(
   return counts;
 }
 
-export function hasUserReacted(
-  workout: CompletedWorkout,
-  userId: string
-): boolean {
-  return workout.reactions.some(r => r.userId === userId);
+export function hasUserReacted(workout: CompletedWorkout, userId: string): boolean {
+  return workout.reactions.some((r) => r.userId === userId);
 }

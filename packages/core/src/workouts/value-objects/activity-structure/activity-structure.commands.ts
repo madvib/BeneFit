@@ -1,5 +1,5 @@
 // activity-structure.commands.ts
-import { ActivityStructure, Interval, Exercise } from './activity-structure.types.js';
+import { ActivityStructure } from './activity-structure.types.js';
 import { isIntervalBased, isExerciseBased } from './activity-structure.queries.js';
 
 /**

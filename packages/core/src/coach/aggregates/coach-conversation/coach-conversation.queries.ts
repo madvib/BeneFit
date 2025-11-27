@@ -1,7 +1,5 @@
-import { CoachAction } from '../../index.js';
-import { CheckIn } from '../../value-objects/check-in/check-in.js';
-import { CoachingMessage } from '../../value-objects/coaching-message/coaching-message.js';
-import { CoachingConversation } from './coach-conversation.js';
+import { CheckIn, CoachAction, CoachingMessage } from '../../value-objects/index.js';
+import { CoachingConversation } from './index.js';
 
 export function getRecentMessages(
   conversation: CoachingConversation,

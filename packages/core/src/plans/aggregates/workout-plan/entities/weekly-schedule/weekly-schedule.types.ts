@@ -1,6 +1,6 @@
-import { WorkoutTemplate } from '../workout-template/workout-template.deprecated.js';
+import { WorkoutTemplate } from "../workout-template/index.js";
 
-export interface WeeklyScheduleData {
+interface WeeklyScheduleData {
   id: string; // Must be part of the core data now
   weekNumber: number;
   planId: string;

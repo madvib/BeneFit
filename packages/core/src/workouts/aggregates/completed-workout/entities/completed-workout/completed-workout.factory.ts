@@ -1,7 +1,7 @@
-import { Guard, Result } from "@shared";
-import { WorkoutPerformance } from "../../../../value-objects/workout-performance/workout-performance.js";
-import { WorkoutVerification } from "../../../../value-objects/workout-verification/workout-verification.js";
-import { CompletedWorkout } from "./completed-workout.js";
+import { Guard, Result } from '@shared';
+import { WorkoutPerformance } from '../../../../value-objects/workout-performance/workout-performance.types.js';
+import { WorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.types.js';
+import { CompletedWorkout } from './completed-workout.types.js';
 
 export interface CreateCompletedWorkoutParams {
   userId: string;
@@ -22,17 +22,17 @@ export interface CreateCompletedWorkoutParams {
 }
 
 export function createCompletedWorkout(
-  params: CreateCompletedWorkoutParams
+  params: CreateCompletedWorkoutParams,
 ): Result<CompletedWorkout> {
-  let guards = [
+  const guards = [
     Guard.againstNullOrUndefinedBulk([
       { argument: params.userId, argumentName: 'userId' },
       { argument: params.workoutType, argumentName: 'workoutType' },
       { argument: params.performance, argumentName: 'performance' },
-      { argument: params.verification, argumentName: 'verification' }
+      { argument: params.verification, argumentName: 'verification' },
     ]),
     Guard.againstEmptyString(params.userId, 'userId'),
-    Guard.againstEmptyString(params.workoutType, 'workoutType')
+    Guard.againstEmptyString(params.workoutType, 'workoutType'),
   ];
 
   if (params.description) {
@@ -43,7 +43,9 @@ export function createCompletedWorkout(
     guards.push(Guard.againstEmptyString(params.planId, 'planId'));
   }
   if (params.workoutTemplateId) {
-    guards.push(Guard.againstEmptyString(params.workoutTemplateId, 'workoutTemplateId'));
+    guards.push(
+      Guard.againstEmptyString(params.workoutTemplateId, 'workoutTemplateId'),
+    );
   }
   if (params.weekNumber !== undefined) {
     guards.push(Guard.againstNegativeOrZero(params.weekNumber, 'weekNumber'));
@@ -73,7 +75,6 @@ export function createCompletedWorkout(
     isPublic: params.isPublic ?? false,
     multiplayerSessionId: params.multiplayerSessionId,
     createdAt: now,
-    recordedAt: params.performance.completedAt
-  }
-  );
+    recordedAt: params.performance.completedAt,
+  });
 }

@@ -1,5 +1,4 @@
-import { Result } from '@shared';
-import { ActivityStructure, IntensityLevel, Interval, Exercise } from './activity-structure.types.js';
+import { ActivityStructure, IntensityLevel } from './activity-structure.types.js';
 
 // Type checking functions
 export function isIntervalBased(structure: ActivityStructure): boolean {
@@ -227,13 +226,13 @@ export function getDescription(structure: ActivityStructure): string {
   if (isIntervalBased(structure)) {
     const rounds = structure.rounds || 1;
     const intervalCount = structure.intervals!.length;
-    return `${rounds} round${rounds > 1 ? 's' : ''} of ${intervalCount} interval${intervalCount > 1 ? 's' : ''}`;
+    return `${ rounds } round${ rounds > 1 ? 's' : '' } of ${ intervalCount } interval${ intervalCount > 1 ? 's' : '' }`;
   }
 
   if (isExerciseBased(structure)) {
     const rounds = structure.rounds || 1;
     const exerciseCount = structure.exercises!.length;
-    return `${rounds} round${rounds > 1 ? 's' : ''} of ${exerciseCount} exercise${exerciseCount > 1 ? 's' : ''}`;
+    return `${ rounds } round${ rounds > 1 ? 's' : '' } of ${ exerciseCount } exercise${ exerciseCount > 1 ? 's' : '' }`;
   }
 
   return 'No structure defined';
