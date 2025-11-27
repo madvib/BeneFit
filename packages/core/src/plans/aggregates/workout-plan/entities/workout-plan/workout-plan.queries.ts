@@ -9,7 +9,7 @@ import { WorkoutPlan } from './workout-plan.types.js';
 export function getCurrentWorkout(plan: WorkoutPlan): WorkoutTemplate | undefined {
   const currentWeek = plan.weeks.find(w => w.weekNumber === plan.currentPosition.week);
   // Assumes WeeklySchedule has been converted to functional pattern
-  // If WeeklySchedule is functional, this would be: 
+  // If WeeklySchedule is functional, this would be:
   // return getWorkoutForDay(currentWeek, plan.currentPosition.day);
   return currentWeek?.workouts.find(w => w.dayOfWeek === plan.currentPosition.day);
 }
@@ -26,5 +26,43 @@ export function getCurrentWeek(plan: WorkoutPlan): WeeklySchedule | undefined {
  */
 export function isPlanComplete(plan: WorkoutPlan): boolean {
   return plan.status === 'completed';
+}
+
+/**
+ * QUERY: Gets the workout scheduled for a specific date based on plan structure.
+ * This is a simplified approach - in a real implementation, this would map calendar dates
+ * to planned workout positions based on the plan's start date.
+ */
+export function getWorkoutForDate(plan: WorkoutPlan, date: Date): WorkoutTemplate | undefined {
+  // This is a simplified implementation that assumes the plan started recently.
+  // In a real implementation, we would calculate the week/day offset from the plan's start date
+  if (!plan.startDate) {
+    return undefined;
+  }
+
+  // Calculate the number of days since the plan started
+  const planStartDate = new Date(plan.startDate);
+  const timeDiff = date.getTime() - planStartDate.getTime();
+  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+  if (daysDiff < 0) {
+    return undefined; // Date is before plan start
+  }
+
+  // Calculate which week and day this date corresponds to
+  const weekIndex = Math.floor(daysDiff / 7);
+  const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+  if (weekIndex >= plan.weeks.length) {
+    return undefined; // Date is beyond the plan's end
+  }
+
+  const targetWeek = plan.weeks[weekIndex];
+  if (!targetWeek) {
+    return undefined;
+  }
+
+  // Find workout for the specific day of the week
+  return targetWeek.workouts.find(w => w.dayOfWeek === dayOfWeek);
 }
 

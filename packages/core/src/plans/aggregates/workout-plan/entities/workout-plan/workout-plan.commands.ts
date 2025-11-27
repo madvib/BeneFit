@@ -134,6 +134,22 @@ export function completeWorkout(
 }
 
 /**
+ * COMMAND: Transitions the plan status from 'active' to 'paused'.
+ */
+export function pausePlan(plan: WorkoutPlan, reason?: string): Result<WorkoutPlan> {
+  if (plan.status !== 'active') {
+    return Result.fail(new PlanStateError('Can only pause active plans', { currentStatus: plan.status, planId: plan.id }));
+  }
+
+  const updatedPlan: WorkoutPlan = {
+    ...plan,
+    status: 'paused',
+  };
+
+  return Result.ok(touch(updatedPlan));
+}
+
+/**
  * COMMAND: Advances the plan position (day/week).
  */
 export function advanceDay(plan: WorkoutPlan): Result<WorkoutPlan> {

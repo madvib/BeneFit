@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { GetActivityFeedUseCase } from './get-activity-feed.use-case';
+import { GetActivityFeedUseCase } from './get-activity-feed.use-case.js';
 import { WorkoutRepository } from '../../ports/repository/activities.repository.js';
 import { ActivityFeedFetchError } from '../../errors/index.js';
 
@@ -31,7 +31,7 @@ describe('GetActivityFeedUseCase', () => {
       // Arrange
       const mockFeed = [
         { id: '1', title: 'Workout completed', date: new Date() },
-        { id: '2', title: 'Goal reached', date: new Date() }
+        { id: '2', title: 'Goal reached', date: new Date() },
       ];
       mockActivityRepository.getActivityFeed.mockResolvedValue(mockFeed);
 
@@ -48,7 +48,9 @@ describe('GetActivityFeedUseCase', () => {
 
     it('should return failure with ActivityFeedFetchError when repository call fails', async () => {
       // Arrange
-      mockActivityRepository.getActivityFeed.mockRejectedValue(new Error('Database error'));
+      mockActivityRepository.getActivityFeed.mockRejectedValue(
+        new Error('Database error'),
+      );
 
       // Act
       const result = await useCase.execute();
@@ -57,13 +59,15 @@ describe('GetActivityFeedUseCase', () => {
       expect(result.isFailure).toBe(true);
       if (result.isFailure) {
         expect(result.error).toBeInstanceOf(ActivityFeedFetchError);
-        expect(result.error.message).toBe('Failed to fetch activity feed. Please try again later.');
+        expect(result.error.message).toBe(
+          'Failed to fetch activity feed. Please try again later.',
+        );
       }
     });
 
     it('should handle repository returning empty feed', async () => {
       // Arrange
-      const mockFeed: Array<{id: string, title: string, date: Date}> = [];
+      const mockFeed: Array<{ id: string; title: string; date: Date }> = [];
       mockActivityRepository.getActivityFeed.mockResolvedValue(mockFeed);
 
       // Act

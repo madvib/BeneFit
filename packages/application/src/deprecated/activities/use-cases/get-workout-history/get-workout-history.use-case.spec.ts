@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { GetWorkoutHistoryUseCase } from './get-workout-history.use-case';
+import { GetWorkoutHistoryUseCase } from './get-workout-history.use-case.js';
 import { WorkoutRepository } from '../../ports/repository/activities.repository.js';
 import { WorkoutHistoryFetchError } from '../../errors/index.js';
 
@@ -31,7 +31,7 @@ describe('GetWorkoutHistoryUseCase', () => {
       // Arrange
       const mockWorkouts = [
         { id: '1', name: 'Morning Run', date: new Date() },
-        { id: '2', name: 'Evening Workout', date: new Date() }
+        { id: '2', name: 'Evening Workout', date: new Date() },
       ];
       mockWorkoutRepository.getWorkoutHistory.mockResolvedValue(mockWorkouts);
 
@@ -48,7 +48,9 @@ describe('GetWorkoutHistoryUseCase', () => {
 
     it('should return failure with WorkoutHistoryFetchError when repository call fails', async () => {
       // Arrange
-      mockWorkoutRepository.getWorkoutHistory.mockRejectedValue(new Error('Database error'));
+      mockWorkoutRepository.getWorkoutHistory.mockRejectedValue(
+        new Error('Database error'),
+      );
 
       // Act
       const result = await useCase.execute();
@@ -57,13 +59,15 @@ describe('GetWorkoutHistoryUseCase', () => {
       expect(result.isFailure).toBe(true);
       if (result.isFailure) {
         expect(result.error).toBeInstanceOf(WorkoutHistoryFetchError);
-        expect(result.error.message).toBe('Failed to fetch workout history. Please try again later.');
+        expect(result.error.message).toBe(
+          'Failed to fetch workout history. Please try again later.',
+        );
       }
     });
 
     it('should handle repository returning empty workout history', async () => {
       // Arrange
-      const mockWorkouts: Array<{id: string, name: string, date: Date}> = [];
+      const mockWorkouts: Array<{ id: string; name: string; date: Date }> = [];
       mockWorkoutRepository.getWorkoutHistory.mockResolvedValue(mockWorkouts);
 
       // Act
