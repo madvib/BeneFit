@@ -1,5 +1,5 @@
-import { Result } from '../../base-classes/result.js';
-import { ValueObject } from '../../base-classes/value-object.js';
+import { Result } from '../../base-classes/result/result.js';
+import { ValueObject } from '../../base-classes/value-object/value-object.js';
 
 interface PasswordProps {
   value: string;

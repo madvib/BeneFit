@@ -1,13 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "paths": {
+      "@shared": [
+        "./src/shared/index.ts"
+      ],
+    },
+  },
   "references": [
     {
       "path": "../utils"
     },
-    {
-      "path": "./tsconfig.spec.json"
-    }
   ]
 }

@@ -9,7 +9,12 @@
       "node",
       "vitest"
     ],
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@shared": [
+        "./src/shared/index.ts"
+      ],
+    }
   },
   "include": [
     "vitest.config.ts",
