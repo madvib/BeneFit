@@ -10,9 +10,14 @@ import { isWarmup, isCooldown } from './workout-activity.queries.js';
 /**
  * COMMAND: Set duration.
  */
-export function setDuration(activity: WorkoutActivity, duration: number): Result<WorkoutActivity> {
+export function setDuration(
+  activity: WorkoutActivity,
+  duration: number,
+): Result<WorkoutActivity> {
   if (duration <= 0) {
-    return Result.fail(new ActivityValidationError('Duration must be positive', { duration }));
+    return Result.fail(
+      new ActivityValidationError('Duration must be positive', { duration }),
+    );
   }
 
   return Result.ok({
@@ -24,9 +29,14 @@ export function setDuration(activity: WorkoutActivity, duration: number): Result
 /**
  * COMMAND: Set distance.
  */
-export function setDistance(activity: WorkoutActivity, distance: number): Result<WorkoutActivity> {
+export function setDistance(
+  activity: WorkoutActivity,
+  distance: number,
+): Result<WorkoutActivity> {
   if (distance <= 0) {
-    return Result.fail(new ActivityValidationError('Distance must be positive', { distance }));
+    return Result.fail(
+      new ActivityValidationError('Distance must be positive', { distance }),
+    );
   }
 
   return Result.ok({
@@ -38,7 +48,10 @@ export function setDistance(activity: WorkoutActivity, distance: number): Result
 /**
  * COMMAND: Set pace.
  */
-export function setPace(activity: WorkoutActivity, pace: string): Result<WorkoutActivity> {
+export function setPace(
+  activity: WorkoutActivity,
+  pace: string,
+): Result<WorkoutActivity> {
   const guardResult = Guard.againstEmptyString(pace, 'pace');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
@@ -53,7 +66,10 @@ export function setPace(activity: WorkoutActivity, pace: string): Result<Workout
 /**
  * COMMAND: Set structure.
  */
-export function setStructure(activity: WorkoutActivity, structure: ActivityStructure): WorkoutActivity {
+export function setStructure(
+  activity: WorkoutActivity,
+  structure: ActivityStructure,
+): WorkoutActivity {
   return {
     ...activity,
     structure,
@@ -65,7 +81,7 @@ export function setStructure(activity: WorkoutActivity, structure: ActivityStruc
  */
 export function adjustStructure(
   activity: WorkoutActivity,
-  adjustment: (structure: ActivityStructure) => ActivityStructure
+  adjustment: (structure: ActivityStructure) => ActivityStructure,
 ): Result<WorkoutActivity> {
   if (!activity.structure) {
     return Result.fail(new ActivityValidationError('No structure to adjust'));
@@ -83,13 +99,18 @@ export function adjustStructure(
 /**
  * COMMAND: Add instruction.
  */
-export function addInstruction(activity: WorkoutActivity, instruction: string): Result<WorkoutActivity> {
+export function addInstruction(
+  activity: WorkoutActivity,
+  instruction: string,
+): Result<WorkoutActivity> {
   const guardResult = Guard.againstEmptyString(instruction, 'instruction');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
 
-  const instructions = activity.instructions ? [...activity.instructions, instruction] : [instruction];
+  const instructions = activity.instructions
+    ? [...activity.instructions, instruction]
+    : [instruction];
 
   return Result.ok({
     ...activity,
@@ -100,7 +121,10 @@ export function addInstruction(activity: WorkoutActivity, instruction: string): 
 /**
  * COMMAND: Set video URL.
  */
-export function setVideo(activity: WorkoutActivity, videoUrl: string): Result<WorkoutActivity> {
+export function setVideo(
+  activity: WorkoutActivity,
+  videoUrl: string,
+): Result<WorkoutActivity> {
   try {
     new URL(videoUrl);
   } catch {
@@ -116,7 +140,10 @@ export function setVideo(activity: WorkoutActivity, videoUrl: string): Result<Wo
 /**
  * COMMAND: Add alternative exercise.
  */
-export function addAlternative(activity: WorkoutActivity, exercise: string): Result<WorkoutActivity> {
+export function addAlternative(
+  activity: WorkoutActivity,
+  exercise: string,
+): Result<WorkoutActivity> {
   const guardResult = Guard.againstEmptyString(exercise, 'alternative exercise');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
@@ -135,7 +162,10 @@ export function addAlternative(activity: WorkoutActivity, exercise: string): Res
 /**
  * COMMAND: Set order.
  */
-export function setOrder(activity: WorkoutActivity, order: number): Result<WorkoutActivity> {
+export function setOrder(
+  activity: WorkoutActivity,
+  order: number,
+): Result<WorkoutActivity> {
   if (order < 0) {
     return Result.fail(new ActivityValidationError('Order must be >= 0', { order }));
   }
@@ -149,10 +179,15 @@ export function setOrder(activity: WorkoutActivity, order: number): Result<Worko
 /**
  * COMMAND: Adjust activity for fatigue level.
  */
-export function adjustForFatigue(activity: WorkoutActivity, fatigueLevel: number): Result<WorkoutActivity> {
+export function adjustForFatigue(
+  activity: WorkoutActivity,
+  fatigueLevel: number,
+): Result<WorkoutActivity> {
   // fatigueLevel: 0 (fresh) to 1 (exhausted)
   if (fatigueLevel < 0 || fatigueLevel > 1) {
-    return Result.fail(new ActivityValidationError('Fatigue level must be 0-1', { fatigueLevel }));
+    return Result.fail(
+      new ActivityValidationError('Fatigue level must be 0-1', { fatigueLevel }),
+    );
   }
 
   // Don't adjust warmup/cooldown
@@ -175,7 +210,10 @@ export function adjustForFatigue(activity: WorkoutActivity, fatigueLevel: number
   // Adjust structure intensity
   if (activity.structure) {
     const intensityAdjustment = 1 - fatigueLevel * 0.25; // Up to 25% easier
-    const adjustedStructure = adjustStructureIntensity(activity.structure, intensityAdjustment);
+    const adjustedStructure = adjustStructureIntensity(
+      activity.structure,
+      intensityAdjustment,
+    );
     adjusted = {
       ...adjusted,
       structure: adjustedStructure,
@@ -185,7 +223,10 @@ export function adjustForFatigue(activity: WorkoutActivity, fatigueLevel: number
   // Adjust distance
   if (activity.distance) {
     const distanceAdjustment = 1 - fatigueLevel * 0.2; // Up to 20% shorter
-    const newDistance = Math.max(100, Math.round(activity.distance * distanceAdjustment));
+    const newDistance = Math.max(
+      100,
+      Math.round(activity.distance * distanceAdjustment),
+    );
     adjusted = {
       ...adjusted,
       distance: newDistance,
@@ -198,9 +239,14 @@ export function adjustForFatigue(activity: WorkoutActivity, fatigueLevel: number
 /**
  * COMMAND: Make activity easier.
  */
-export function makeEasier(activity: WorkoutActivity, factor: number = 0.8): Result<WorkoutActivity> {
+export function makeEasier(
+  activity: WorkoutActivity,
+  factor: number = 0.8,
+): Result<WorkoutActivity> {
   if (factor <= 0 || factor >= 1) {
-    return Result.fail(new ActivityValidationError('Factor must be between 0 and 1', { factor }));
+    return Result.fail(
+      new ActivityValidationError('Factor must be between 0 and 1', { factor }),
+    );
   }
 
   // Don't adjust warmup/cooldown
@@ -240,7 +286,10 @@ export function makeEasier(activity: WorkoutActivity, factor: number = 0.8): Res
 /**
  * COMMAND: Make activity harder.
  */
-export function makeHarder(activity: WorkoutActivity, factor: number = 1.2): Result<WorkoutActivity> {
+export function makeHarder(
+  activity: WorkoutActivity,
+  factor: number = 1.2,
+): Result<WorkoutActivity> {
   if (factor <= 1) {
     return Result.fail(new ActivityValidationError('Factor must be > 1', { factor }));
   }

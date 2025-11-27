@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { UseCase } from './use-case';
-import { Result } from './result';
+import { Result } from '../result/result.js';
 
 // Create a test implementation to verify the interface
 interface TestInput {

@@ -52,7 +52,9 @@ export function isDarkModePreferred(preferences: UserPreferences): boolean {
 
 function prefersDarkColorScheme(): boolean {
   // This would typically check system preferences in a real app
-  return window?.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // For server-side compatibility, we return false by default
+  // A real implementation would pass this as a parameter or use dependency injection
+  return false;
 }
 
 export function equals(preferences: UserPreferences, other: UserPreferences): boolean {

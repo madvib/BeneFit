@@ -1,4 +1,4 @@
-import { WorkoutActivity } from '../../../../value-objects/workout-activity/index.js';
+import { WorkoutActivity } from '@/workouts/index.js';
 import { WorkoutGoals } from '../../../../value-objects/workout-goals/index.js';
 
 // --- Type Definitions (Unchanged) ---

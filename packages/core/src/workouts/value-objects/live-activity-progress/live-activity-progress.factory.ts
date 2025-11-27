@@ -6,7 +6,7 @@ import {
 } from './live-activity-progress.types.js';
 
 export function createLiveActivityProgress(props: {
-  activityType: 'warmup' | 'main' | 'cooldown';
+  activityType: 'warmup' | 'main' | 'cooldown' | 'interval' | 'circuit';
   activityIndex: number;
   totalActivities: number;
   intervalProgress?: IntervalProgress;

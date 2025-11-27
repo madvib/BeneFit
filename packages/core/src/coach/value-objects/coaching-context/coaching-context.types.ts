@@ -1,4 +1,4 @@
-import { FitnessGoals } from '@profile';
+import { FitnessGoals } from '@/profile/index.js';
 import { TrainingConstraints } from '../../../plans/index.js';
 
 export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';

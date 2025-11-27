@@ -1,5 +1,3 @@
-import { Result } from '@shared';
-
 export type PrimaryFitnessGoal =
   | 'strength' // Get stronger
   | 'hypertrophy' // Build muscle

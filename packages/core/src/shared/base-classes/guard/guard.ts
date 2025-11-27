@@ -8,14 +8,11 @@ export interface IGuardArgument {
 export type GuardArgumentCollection = IGuardArgument[];
 
 export class Guard {
-  public static combine(guardResults: Result<unknown>[]): Result<unknown, Error[]> {
-    const errors: Error[] = [];
+  public static combine(guardResults: Result<unknown>[]): Result<unknown> {
     for (const result of guardResults) {
-      // IMPORTANT, this assumes no other methods throw multiple errors
-      if (result.isFailure) errors.push(result.error as Error);
-    }
-    if (errors.length > 0) {
-      return Result.fail(errors);
+      if (result.isFailure) {
+        return Result.fail(result.error);
+      }
     }
     return Result.ok();
   }

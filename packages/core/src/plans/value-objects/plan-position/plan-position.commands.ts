@@ -136,7 +136,11 @@ export function isWithinWeeks(position: PlanPosition, other: PlanPosition, weeks
 }
 
 export function getDayName(position: PlanPosition): string {
-  return VALID_DAYS[position.day];
+  const dayIndex = position.day;
+  if (dayIndex < 0 || dayIndex > 6) {
+    throw new Error(`Invalid day index: ${dayIndex}. Must be between 0 and 6.`);
+  }
+  return VALID_DAYS[dayIndex]!;
 }
 
 export function isWeekday(position: PlanPosition): boolean {

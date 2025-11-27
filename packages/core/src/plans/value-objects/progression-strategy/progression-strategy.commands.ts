@@ -148,18 +148,30 @@ export function getNextTestWeek(strategy: ProgressionStrategy, fromWeek: number)
 
 // Strategy transformations
 export function convertToConservative(strategy: ProgressionStrategy): ProgressionStrategy {
+  // Calculate deload weeks if they don't exist (deload every 6 weeks)
+  let deloadWeeks = strategy.deloadWeeks;
+  if (!deloadWeeks) {
+    deloadWeeks = [6, 12, 18, 24]; // Default conservative schedule: every 6 weeks
+  }
+
   return {
     ...strategy,
     weeklyIncrease: 0.02, // Conservative 2% weekly increase
-    deloadFrequency: 6, // Deload every 6 weeks
+    deloadWeeks,
   };
 }
 
 export function convertToAggressive(strategy: ProgressionStrategy): ProgressionStrategy {
+  // Calculate deload weeks if they don't exist (deload every 3 weeks)
+  let deloadWeeks = strategy.deloadWeeks;
+  if (!deloadWeeks) {
+    deloadWeeks = [3, 6, 9, 12, 15, 18, 21, 24]; // Default aggressive schedule: every 3 weeks
+  }
+
   return {
     ...strategy,
     weeklyIncrease: 0.08, // Aggressive 8% weekly increase
-    deloadFrequency: 3, // Deload every 3 weeks
+    deloadWeeks,
   };
 }
 

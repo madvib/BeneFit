@@ -10,9 +10,9 @@ import {
   createDistanceWorkout,
   createDurationWorkout,
   createVolumeWorkout,
-  createWorkoutActivity,
   createWorkoutGoals,
 } from '../../../../value-objects/index.js';
+import { createWorkoutActivity } from '@/workouts/index.js';
 
 describe('WorkoutTemplate', () => {
   describe('create', () => {

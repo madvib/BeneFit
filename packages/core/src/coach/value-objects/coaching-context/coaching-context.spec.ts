@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createCoachingContext } from './coaching-context.factory.js';
 import { RecentWorkoutSummary, PerformanceTrends, CurrentPlanContext } from './coaching-context.js';
-import { TrainingConstraints } from '../../../plans/index.js';
+import { createTrainingConstraints } from '../../../plans/value-objects/training-constraints/training-constraints.factory.js';
 
 describe('CoachingContext Value Object', () => {
   const mockRecentWorkouts: RecentWorkoutSummary[] = [
@@ -22,7 +22,7 @@ describe('CoachingContext Value Object', () => {
     targetWeight: 75
   };
 
-  const mockUserConstraints = TrainingConstraints.create({
+  const mockUserConstraints = createTrainingConstraints({
     availableEquipment: ['dumbbells'],
     availableDays: ['Monday', 'Wednesday', 'Friday'],
     maxDuration: 60,

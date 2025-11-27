@@ -5,7 +5,7 @@ export function createReaction(props: {
   userId: string;
   userName: string;
   type: ReactionType;
-}): Result<Reaction, Error[]> {
+}): Result<Reaction> {
   const guards = [
     Guard.againstNullOrUndefinedBulk([
       { argument: props.userId, argumentName: 'userId' },

@@ -2,6 +2,7 @@
 import { WorkoutActivity } from './workout-activity.types.js';
 import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
 import { isEmpty } from '../activity-structure/activity-structure.queries.js';
+import { ActivityStructureQueries } from '../activity-structure/index.js';
 
 /**
  * QUERY: Check if activity is a warmup.
@@ -85,7 +86,10 @@ export function hasVideo(activity: WorkoutActivity): boolean {
  * QUERY: Check if activity has alternatives.
  */
 export function hasAlternatives(activity: WorkoutActivity): boolean {
-  return activity.alternativeExercises !== undefined && activity.alternativeExercises.length > 0;
+  return (
+    activity.alternativeExercises !== undefined &&
+    activity.alternativeExercises.length > 0
+  );
 }
 
 /**
@@ -120,7 +124,10 @@ export function getEstimatedDuration(activity: WorkoutActivity): number {
 /**
  * QUERY: Get estimated calories burned.
  */
-export function getEstimatedCalories(activity: WorkoutActivity, userWeight: number = 70): number {
+export function getEstimatedCalories(
+  activity: WorkoutActivity,
+  userWeight: number = 70,
+): number {
   // Very rough estimates (MET values * time * weight)
   const duration = getEstimatedDuration(activity);
 
@@ -144,11 +151,11 @@ export function getEstimatedCalories(activity: WorkoutActivity, userWeight: numb
  */
 export function getShortDescription(activity: WorkoutActivity): string {
   if (activity.distance) {
-    return `${ activity.name } - ${ activity.distance }m`;
+    return `${activity.name} - ${activity.distance}m`;
   }
 
   const duration = getEstimatedDuration(activity);
-  return `${ activity.name } - ${ duration }min`;
+  return `${activity.name} - ${duration}min`;
 }
 
 /**
@@ -161,22 +168,22 @@ export function getDetailedDescription(activity: WorkoutActivity): string {
     const details: string[] = [];
 
     if (activity.duration) {
-      details.push(`${ activity.duration }min`);
+      details.push(`${activity.duration}min`);
     }
 
     if (activity.distance) {
-      details.push(`${ activity.distance }m`);
+      details.push(`${activity.distance}m`);
     }
 
     if (activity.pace) {
-      details.push(`@ ${ activity.pace }`);
+      details.push(`@ ${activity.pace}`);
     }
 
-    desc += ` (${ details.join(', ') })`;
+    desc += ` (${details.join(', ')})`;
   }
 
   if (activityRequiresEquipment(activity)) {
-    desc += `\nEquipment: ${ activity.equipment!.join(', ') }`;
+    desc += `\nEquipment: ${activity.equipment!.join(', ')}`;
   }
 
   return desc;
@@ -193,8 +200,7 @@ export function getInstructionsList(activity: WorkoutActivity): string[] {
   }
 
   if (activity.structure) {
-    const { getDescription } = require('../activity-structure/activity-structure.queries.js');
-    instructions.push(getDescription(activity.structure));
+    instructions.push(ActivityStructureQueries.getDescription(activity.structure));
   }
 
   return instructions;

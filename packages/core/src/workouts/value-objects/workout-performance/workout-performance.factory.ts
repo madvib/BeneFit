@@ -20,7 +20,7 @@ export function createWorkoutPerformance(props: {
   notes?: string;
   injuries?: string[];
   modifications?: string[];
-}): Result<WorkoutPerformance, Error[]> {
+}): Result<WorkoutPerformance> {
   const durationMs = props.completedAt.getTime() - props.startedAt.getTime();
   const durationMinutes = Math.round(durationMs / 60000);
 

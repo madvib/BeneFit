@@ -1,4 +1,4 @@
-import { ValueObject, Result, Guard } from '@shared';
+import { Result, Guard } from '@shared';
 import { GoalsValidationError } from '../../errors/workout-plan-errors.js';
 import { PlanGoals, TargetMetrics, TargetWeight } from './plan-goals.types.js';
 

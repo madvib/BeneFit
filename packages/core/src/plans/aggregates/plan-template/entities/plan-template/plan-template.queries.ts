@@ -33,11 +33,13 @@ export function canUserCustomizeTemplate(
 
   // Check injuries
   if (template.rules.restrictions?.noInjuries) {
-    const conflictingInjuries = userConstraints.injuries.filter((injury) =>
-      template.rules.restrictions!.noInjuries!.includes(injury),
-    );
-    if (conflictingInjuries.length > 0) {
-      reasons.push(`Not suitable with: ${conflictingInjuries.join(', ')}`);
+    const userInjuries = userConstraints.injuries || [];
+    const conflictingInjuryNames = userInjuries
+      .filter((injury) => template.rules.restrictions!.noInjuries!.includes(injury.bodyPart))
+      .map(injury => injury.bodyPart);
+
+    if (conflictingInjuryNames.length > 0) {
+      reasons.push(`Not suitable with: ${conflictingInjuryNames.join(', ')}`);
     }
   }
 
@@ -53,11 +55,19 @@ export function canUserCustomizeTemplate(
 
   // Check location
   if (template.rules.restrictions?.requiresLocation) {
-    if (
-      !template.rules.restrictions.requiresLocation.includes(
-        userConstraints.preferredLocation,
-      )
-    ) {
+    // Handle the 'mixed' case by allowing it if any of the required locations are available
+    let hasRequiredLocation = false;
+    if (userConstraints.location === 'mixed') {
+      hasRequiredLocation = template.rules.restrictions.requiresLocation.some(reqLocation =>
+        ['home', 'gym', 'outdoor'].includes(reqLocation)
+      );
+    } else {
+      hasRequiredLocation = template.rules.restrictions.requiresLocation.includes(
+        userConstraints.location as 'home' | 'gym' | 'outdoor'
+      );
+    }
+
+    if (!hasRequiredLocation) {
       reasons.push(
         `Requires location: ${template.rules.restrictions.requiresLocation.join(' or ')}`,
       );
@@ -74,7 +84,7 @@ export function canUserCustomizeTemplate(
   // Check session duration
   if (template.rules.restrictions?.minSessionMinutes) {
     if (
-      userConstraints.maxDurationMinutes < template.rules.restrictions.minSessionMinutes
+      userConstraints.maxDuration && userConstraints.maxDuration < template.rules.restrictions.minSessionMinutes
     ) {
       reasons.push(
         `Requires at least ${template.rules.restrictions.minSessionMinutes} minutes per session`,

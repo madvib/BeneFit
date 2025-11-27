@@ -1,13 +1,16 @@
-import { 
+import { describe, it, expect } from 'vitest';
+import {
   createWorkoutGoals,
   createDistanceWorkout,
   createDurationWorkout,
   createVolumeWorkout,
+} from './index.js';
+import {
   hasDistanceGoal,
   hasDurationGoal,
   hasVolumeGoal,
   isCompletionRequired
-} from './workout-goals.js';
+} from './workout-goals.commands.js';
 
 describe('WorkoutGoals', () => {
   describe('create', () => {

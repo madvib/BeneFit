@@ -8,6 +8,8 @@ import {
   WorkoutNotFoundError,
 } from '../../../../errors/workout-plan-errors.js';
 import { WeeklySchedule } from '../weekly-schedule/weekly-schedule.types.js';
+import * as PlanPositionCommands from '../../../../value-objects/plan-position/plan-position.commands.js';
+import { WorkoutTemplate } from '../workout-template/workout-template.types.js';
 
 /** Helper function to update the updatedAt timestamp */
 function touch(plan: WorkoutPlan): WorkoutPlan {
@@ -74,30 +76,54 @@ export function completeWorkout(
   }
 
   // Find the week and workout (Read logic remains the same)
-  const weekIndex = plan.weeks.findIndex(week => week.findWorkout(workoutId));
+  const weekIndex = plan.weeks.findIndex(week =>
+    week.workouts.some(workout => workout.id === workoutId)
+  );
   if (weekIndex === -1) {
     return Result.fail(new WorkoutNotFoundError('Workout not found in plan', { workoutId, planId: plan.id }));
   }
 
   const targetWeek = plan.weeks[weekIndex];
-  const targetWorkout = targetWeek.findWorkout(workoutId)!;
+  if (!targetWeek) {
+    return Result.fail(new WorkoutNotFoundError('Target week not found', { workoutId, planId: plan.id }));
+  }
+
+  const targetWorkoutIndex = targetWeek.workouts.findIndex(workout => workout.id === workoutId);
+  if (targetWorkoutIndex === -1) {
+    return Result.fail(new WorkoutNotFoundError('Workout not found in week', { workoutId, planId: plan.id }));
+  }
+
+  const targetWorkout = targetWeek.workouts[targetWorkoutIndex];
 
   // --- APPLY CHANGES IMMUTABLY ---
 
-  // 1. Mark the workout complete (assumes workout-template has functional commands too)
-  const workoutResult = targetWorkout.markComplete(completedWorkoutId);
-  if (workoutResult.isFailure) return workoutResult;
-  // NOTE: This assumes WorkoutTemplate is still mutable or its functional command returns a Result<WorkoutTemplate>
+  // 1. Mark the workout complete (Update the workout status)
+  const updatedWorkout = {
+    ...targetWorkout,
+    status: 'completed',
+    completedWorkoutId
+  } as WorkoutTemplate;
 
-  // 2. Increment completed count on the *target week* (assumes functional conversion here too)
-  const updatedTargetWeek = targetWeek.incrementCompletedWorkouts(); // Assuming functional update returns new week
+  // 2. Update the workouts array in the target week
+  const updatedWeekWorkouts = [
+    ...targetWeek.workouts.slice(0, targetWorkoutIndex),
+    updatedWorkout,
+    ...targetWeek.workouts.slice(targetWorkoutIndex + 1)
+  ] as WorkoutTemplate[];
 
-  // 3. Create a NEW array of weeks with the updated week
+  // 3. Increment completed count on the *target week*
+  const updatedTargetWeek = {
+    ...targetWeek,
+    workouts: updatedWeekWorkouts,
+    workoutsCompleted: targetWeek.workoutsCompleted + 1
+  } as WeeklySchedule;
+
+  // 4. Create a NEW array of weeks with the updated week
   const newWeeks = [
     ...plan.weeks.slice(0, weekIndex),
     updatedTargetWeek,
     ...plan.weeks.slice(weekIndex + 1),
-  ];
+  ] as WeeklySchedule[];
 
   const updatedPlan: WorkoutPlan = {
     ...plan,
@@ -115,7 +141,7 @@ export function advanceDay(plan: WorkoutPlan): Result<WorkoutPlan> {
     return Result.fail(new PlanStateError('Can only advance active plans', { currentStatus: plan.status, planId: plan.id }));
   }
 
-  const nextPosition = plan.currentPosition.advanceDay(); // Assumes PlanPosition is still a class/VO
+  const nextPosition = PlanPositionCommands.advanceDay(plan.currentPosition);
   const nextWeekExists = plan.weeks.find(w => w.weekNumber === nextPosition.week);
 
   if (!nextWeekExists) {

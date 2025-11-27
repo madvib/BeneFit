@@ -14,27 +14,9 @@
       "@shared": [
         "./src/shared/index.ts"
       ],
-      "@profile": [
-        "./src/profile/index.ts"
+      "@/*": [
+        "./src/*"
       ],
-      "@plans": [
-        "./src/plans/index.ts"
-      ],
-      "@integrations": [
-        "./src/integrations/index.ts"
-      ],
-      "@auth": [
-        "./src/auth/index.ts"
-      ],
-      "@coach": [
-        "./src/coach/index.ts"
-      ],
-      "@blog": [
-        "./src/blog/index.ts"
-      ],
-      "@workouts": [
-        "./src/workouts/index.ts"
-      ]
     }
   },
   "include": [

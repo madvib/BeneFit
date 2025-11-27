@@ -1,5 +1,3 @@
-import { GoalsValidationError } from '../../errors/workout-plan-errors.js';
-
 export interface TargetWeight {
   readonly exercise: string;
   readonly weight: number; // kg or lbs

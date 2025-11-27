@@ -36,7 +36,16 @@ export function getTotalDuration(structure: ActivityStructure): number {
 
   if (isExerciseBased(structure)) {
     const singleRoundDuration = structure.exercises!.reduce((total, exercise) => {
-      const exerciseDuration = exercise.duration ? exercise.duration * exercise.sets : 0;
+      let exerciseDuration = 0;
+      if (exercise.duration) {
+        // For timed exercises
+        exerciseDuration = exercise.duration * exercise.sets;
+      } else if (exercise.reps) {
+        // For rep-based exercises, estimate duration
+        // 2 seconds per rep is a common estimate (adjust as needed)
+        const repsPerSet = typeof exercise.reps === 'number' ? exercise.reps : 10; // Default to 10 if "to failure"
+        exerciseDuration = (repsPerSet * 2) * exercise.sets; // 2 seconds per rep
+      }
       const totalRest = exercise.rest * (exercise.sets - 1);
       return total + exerciseDuration + totalRest;
     }, 0);

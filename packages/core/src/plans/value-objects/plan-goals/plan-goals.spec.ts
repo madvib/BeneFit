@@ -1,8 +1,11 @@
-import { 
-  createPlanGoals, 
+import { describe, it, expect } from 'vitest';
+import {
+  createPlanGoals,
   createEventTraining,
   createStrengthBuilding,
   createHabitBuilding,
+} from './index.js';
+import {
   hasTargetDate,
   hasTargetWeights,
   hasTargetPace,
@@ -17,7 +20,7 @@ import {
   withUpdatedTargetWeight,
   withAdjustedTargetMetrics,
   daysUntilTarget
-} from './plan-goals.js';
+} from './plan-goals.commands.js';
 
 describe('PlanGoals', () => {
   describe('create', () => {

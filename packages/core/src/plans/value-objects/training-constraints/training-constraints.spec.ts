@@ -1,11 +1,14 @@
-import { 
+import { describe, it, expect } from 'vitest';
+import {
   createTrainingConstraints,
+} from './index.js';
+import {
   hasInjuries,
   canExercise,
   hasEquipment,
   isAvailableDay,
   getAvailableDaysCount
-} from './training-constraints.js';
+} from './training-constraints.commands.js';
 import { VALID_DAYS } from '../../constants.js';
 
 describe('TrainingConstraints', () => {

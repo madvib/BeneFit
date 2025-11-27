@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createFitnessGoals, PrimaryFitnessGoal } from './fitness-goals.js';
+import { createFitnessGoals, PrimaryFitnessGoal } from './index.js';
 
 describe('FitnessGoals Value Object', () => {
   describe('Factory', () => {

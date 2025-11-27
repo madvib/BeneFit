@@ -1,4 +1,6 @@
-import { createPlanPosition, advanceDay, daysUntil, isBefore, isAfter, goToNextMonday } from "./plan-position.js";
+import { describe, it, expect } from 'vitest';
+import { createPlanPosition } from "./index.js";
+import { advanceDay, daysUntil, isBefore, isAfter, goToNextMonday } from "./plan-position.commands.js";
 
 describe('PlanPosition', () => {
   it('should advance correctly across week boundary', () => {

@@ -11,11 +11,11 @@ import {
   getDaysSinceLastWorkout,
   getAverageWorkoutDuration,
 } from './user-profile.queries.js';
-import { createExperienceProfile } from '../../value-objects/experience-profile/experience-profile.js';
-import { createFitnessGoals } from '../../value-objects/fitness-goals/fitness-goals.js';
+import { createExperienceProfile } from '../../value-objects/experience-profile/index.js';
+import { createFitnessGoals } from '../../value-objects/fitness-goals/index.js';
 import { createDefaultPreferences } from '../../value-objects/user-preferences/index.js';
 import { createUserStats } from '../../value-objects/user-stats/index.js';
-import { createTrainingConstraints } from '../../../plans/value-objects/training-constraints/training-constraints.js';
+import { createTrainingConstraints } from '../../../plans/value-objects/training-constraints/index.js';
 
 describe('UserProfile Aggregate', () => {
   const validExperienceProfile = createExperienceProfile({

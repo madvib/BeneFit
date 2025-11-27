@@ -1,4 +1,4 @@
-import { Guard, Result } from '@shared';
+import { Guard } from '@shared';
 import { ExperienceLevel, ExperienceProfile, TrainingHistory, CurrentCapabilities } from './experience-profile.types.js';
 
 // Update functions

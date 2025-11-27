@@ -69,7 +69,7 @@ export function getDaysUntilNextAvailable(constraints: TrainingConstraints, from
   // Look forward in the week
   for (let i = 1; i <= 7; i++) {
     const checkIndex = (fromIndex + i) % 7;
-    if (constraints.availableDays.includes(VALID_DAYS[checkIndex])) {
+    if (constraints.availableDays.includes(VALID_DAYS[checkIndex]!)) {
       return i;
     }
   }

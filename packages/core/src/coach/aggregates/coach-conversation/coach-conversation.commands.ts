@@ -108,6 +108,10 @@ export function respondToCheckIn(
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
+  if (!checkIn) {
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
+  }
+
   if (checkIn.status !== 'pending') {
     return Result.fail(new CheckInError('Check-in is not pending'));
   }
@@ -147,6 +151,10 @@ export function dismissCheckIn(
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
+  if (!checkIn) {
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
+  }
+
   if (checkIn.status !== 'pending') {
     return Result.fail(new CheckInError('Check-in is not pending'));
   }

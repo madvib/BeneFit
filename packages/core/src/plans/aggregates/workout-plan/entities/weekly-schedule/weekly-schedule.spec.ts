@@ -6,7 +6,7 @@ import {
   createVolumeWorkout,
 } from '../../../../value-objects/workout-goals/workout-goals.factory.js';
 import { createWorkoutTemplate } from '../workout-template/workout-template.factory.js';
-import { createWorkoutActivity } from '../../../../index.js';
+import { createWorkoutActivity } from '@/workouts/index.js';
 
 describe('WeeklySchedule', () => {
   describe('create', () => {

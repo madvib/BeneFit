@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createExperienceProfile, ExperienceLevel, ExperienceProfile } from './experience-profile.js';
+import { createExperienceProfile, ExperienceLevel, ExperienceProfile } from './index.js';
 
 describe('ExperienceProfile Value Object', () => {
   describe('Factory', () => {

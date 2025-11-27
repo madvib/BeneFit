@@ -6,10 +6,10 @@ import { WorkoutActivity } from '../../value-objects/workout-activity/workout-ac
 
 describe('WorkoutSession', () => {
   const validActivity: WorkoutActivity = {
-    activityType: 'main',
+    type: 'main',
     name: 'Strength Training',
-    description: 'Upper body workout',
-    durationMinutes: 30,
+    order: 1,
+    duration: 30,
   };
 
   const validParams = {

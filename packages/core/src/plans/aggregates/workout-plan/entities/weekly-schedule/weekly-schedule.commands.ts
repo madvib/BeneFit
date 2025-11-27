@@ -36,7 +36,7 @@ export function removeWorkout(schedule: WeeklySchedule, workoutId: string): Resu
 
   const workout = schedule.workouts[index];
 
-  if (workout?.isCompleted()) { // Assuming WorkoutTemplate is still a class/interface with methods
+  if (workout?.status === 'completed') {
     return Result.fail(new ScheduleModificationError('Cannot remove completed workouts', { workoutId, workoutStatus: 'completed' }));
   }
 

@@ -1,12 +1,15 @@
-import { 
+import { describe, it, expect } from 'vitest';
+import {
   createLinearProgression,
   createUndulatingProgression,
   createAdaptiveProgression,
   createConservativeProgression,
   createAggressiveProgression,
+} from './index.js';
+import {
+  isConservative,
   calculateNextWeekLoad,
-  isConservative
-} from './progression-strategy.js';
+} from './progression-strategy.commands.js';
 
 describe('ProgressionStrategy', () => {
   describe('factory methods', () => {

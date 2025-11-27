@@ -1,4 +1,4 @@
-import { CheckIn, CoachAction, CoachingMessage } from '../../value-objects/index.js';
+import { CheckIn, CoachingMessage } from '../../value-objects/index.js';
 import { CoachingConversation } from './index.js';
 
 export function getRecentMessages(
@@ -107,8 +107,8 @@ export function getTotalActionsApplied(conversation: CoachingConversation): numb
 
 export function getActionsByType(
   conversation: CoachingConversation,
-): Record<CoachAction, number> {
-  const counts: Record<CoachAction, number> = {
+): Record<string, number> {
+  const counts: Record<string, number> = {
     adjusted_plan: 0,
     suggested_rest_day: 0,
     encouraged: 0,
@@ -121,14 +121,16 @@ export function getActionsByType(
   for (const message of conversation.messages) {
     if (message.actions) {
       for (const action of message.actions) {
-        counts[action.type]++;
+        const type = action.type;
+        counts[type] = (counts[type] || 0) + 1;
       }
     }
   }
 
   for (const checkIn of conversation.checkIns) {
     for (const action of checkIn.actions) {
-      counts[action.type]++;
+      const type = action.type;
+      counts[type] = (counts[type] || 0) + 1;
     }
   }
 
