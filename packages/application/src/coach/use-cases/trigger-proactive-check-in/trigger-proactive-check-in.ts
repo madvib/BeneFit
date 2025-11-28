@@ -2,9 +2,9 @@ import { Result } from '@bene/core/shared';
 import { UseCase } from '../../shared/use-case';
 import {
   CoachingConversation,
-  createCoachingConversation,
   CoachConversationCommands
 } from '@bene/core/coach';
+import { createCoachingConversation } from '@bene/core/coach/aggregates/coach-conversation/coach-conversation.factory.js';
 import { createCheckIn } from '@bene/core/coach/value-objects/check-in/check-in.factory.js';
 import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
 import { CoachingContextBuilder } from '../services/coaching-context-builder';

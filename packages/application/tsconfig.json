@@ -1,7 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "out-tsc", // Exclude the entire output folder
+    "src/**/*.spec.ts", // Optionally exclude test files from the main build
+    "src/**/*.test.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./out-tsc/dist",
+  },
   "references": [
     {
       "path": "../utils"

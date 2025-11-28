@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/vitest",
     "types": [
@@ -9,15 +9,6 @@
       "node",
       "vitest"
     ],
-    "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "@shared": [
-        "./src/shared/index.ts"
-      ],
-      "@/*": [
-        "./src/*"
-      ],
-    }
   },
   "include": [
     "vitest.config.ts",
@@ -30,7 +21,5 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts",
-    "src/**/*.ts"
   ],
 }
