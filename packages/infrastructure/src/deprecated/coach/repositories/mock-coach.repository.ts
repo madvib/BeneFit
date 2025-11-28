@@ -1,4 +1,3 @@
-import { CoachRepository } from '@bene/application/coach';
 import { Chat, Message } from '@bene/core/coach';
 import { Result } from '@bene/core/shared';
 
