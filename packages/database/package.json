@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate:sqlite",
+    "db:migrate": "drizzle-kit migrate:sqlite",
+    "db:push": "drizzle-kit push:sqlite"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +20,11 @@
     }
   },
   "dependencies": {
+    "drizzle-orm": "^0.30.10",
+    "better-sqlite3": "^9.4.3",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.20.14"
   }
 }

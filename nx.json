@@ -54,7 +54,7 @@
         "tools/nx-plugin/*",
         "packages/application/*",
         "packages/core/*",
-        "packages/db/*"
+        "packages/database/*"
       ],
       "options": {
         "typecheck": {

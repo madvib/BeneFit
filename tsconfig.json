@@ -25,7 +25,7 @@
       "path": "./tools/nx-plugin"
     },
     {
-      "path": "./packages/db"
+      "path": "./packages/database"
     }
   ]
 }

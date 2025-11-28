@@ -9,7 +9,7 @@ export default defineConfig(() => ({
   //  plugins: [ nxViteTsPaths() ],
   // },
   test: {
-    name: 'db',
+    name: 'database',
     watch: false,
     globals: true,
     environment: 'node',
