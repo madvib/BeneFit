@@ -4,7 +4,7 @@ import { CoachingConversation, CheckIn } from '@bene/core/coach';
 import { RespondToCheckInUseCase } from './respond-to-check-in';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository';
 import { AICoachService } from '../../services/ai-coach-service';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -32,7 +32,7 @@ describe('RespondToCheckInUseCase', () => {
     useCase = new RespondToCheckInUseCase(
       mockConversationRepository,
       mockAICoachService,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -54,12 +54,27 @@ describe('RespondToCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -79,11 +94,17 @@ describe('RespondToCheckInUseCase', () => {
 
     const mockAnalysis = {
       analysis: 'User reports feeling great, positive sentiment detected',
-      actions: [{ type: 'maintain_current_plan', details: 'Continue with current routine' }],
+      actions: [
+        { type: 'maintain_current_plan', details: 'Continue with current routine' },
+      ],
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
-    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(Result.ok(mockAnalysis));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(
+      Result.ok(mockAnalysis),
+    );
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -111,7 +132,7 @@ describe('RespondToCheckInUseCase', () => {
         userId,
         checkInId,
         actionsApplied: 1,
-      })
+      }),
     );
   });
 
@@ -121,7 +142,9 @@ describe('RespondToCheckInUseCase', () => {
     const checkInId = 'checkin-456';
     const response = 'I feel great!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Not found')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -146,12 +169,27 @@ describe('RespondToCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -169,7 +207,9 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -203,12 +243,27 @@ describe('RespondToCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -226,7 +281,9 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -260,12 +317,27 @@ describe('RespondToCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -283,8 +355,12 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
-    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(Result.fail(new Error('AI analysis failed')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(
+      Result.fail(new Error('AI analysis failed')),
+    );
 
     // Act
     const result = await useCase.execute({

@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
 import { PausePlanUseCase } from './pause-plan';
 import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -23,10 +23,7 @@ describe('PausePlanUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new PausePlanUseCase(
-      mockPlanRepository,
-      mockEventBus
-    );
+    useCase = new PausePlanUseCase(mockPlanRepository, mockEventBus);
   });
 
   it('should successfully pause an active plan', async () => {
@@ -34,7 +31,7 @@ describe('PausePlanUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
     const reason = 'Going on vacation';
-    
+
     const activePlan: WorkoutPlan = {
       id: planId,
       userId,
@@ -44,18 +41,20 @@ describe('PausePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const pausedPlan: WorkoutPlan = {
       ...activePlan,
       status: 'paused',
@@ -84,7 +83,7 @@ describe('PausePlanUseCase', () => {
         userId,
         planId,
         reason,
-      })
+      }),
     );
   });
 
@@ -92,7 +91,7 @@ describe('PausePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    
+
     const activePlan: WorkoutPlan = {
       id: planId,
       userId,
@@ -102,18 +101,20 @@ describe('PausePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const pausedPlan: WorkoutPlan = {
       ...activePlan,
       status: 'paused',
@@ -141,7 +142,7 @@ describe('PausePlanUseCase', () => {
         userId,
         planId,
         reason: undefined,
-      })
+      }),
     );
   });
 
@@ -150,7 +151,9 @@ describe('PausePlanUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
 
-    mockPlanRepository.findById.mockResolvedValue(Result.fail(new Error('Plan not found')));
+    mockPlanRepository.findById.mockResolvedValue(
+      Result.fail(new Error('Plan not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -170,7 +173,7 @@ describe('PausePlanUseCase', () => {
     const userId = 'user-123';
     const otherUserId = 'user-789';
     const planId = 'plan-456';
-    
+
     const activePlan: WorkoutPlan = {
       id: planId,
       userId: otherUserId, // Different user
@@ -180,11 +183,13 @@ describe('PausePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
@@ -211,7 +216,7 @@ describe('PausePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    
+
     const activePlan: WorkoutPlan = {
       id: planId,
       userId,
@@ -221,11 +226,13 @@ describe('PausePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
@@ -234,7 +241,9 @@ describe('PausePlanUseCase', () => {
     };
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(activePlan));
-    vi.spyOn(WorkoutPlanCommands, 'pausePlan').mockReturnValue(Result.fail(new Error('Cannot pause')));
+    vi.spyOn(WorkoutPlanCommands, 'pausePlan').mockReturnValue(
+      Result.fail(new Error('Cannot pause')),
+    );
 
     // Act
     const result = await useCase.execute({

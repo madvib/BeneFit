@@ -1,15 +1,11 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import {
-  CoachingConversation,
-  CoachConversationCommands
-} from '@bene/core/coach';
+import { Result, UseCase } from '@bene/core/shared';
+import { CoachConversationCommands } from '@bene/core/coach';
 import { createCoachingConversation } from '@bene/core/coach/aggregates/coach-conversation/coach-conversation.factory.js';
 import { createCheckIn } from '@bene/core/coach/value-objects/check-in/check-in.factory.js';
-import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
-import { CoachingContextBuilder } from '../services/coaching-context-builder';
-import { AICoachService } from '../services/ai-coach-service';
-import { EventBus } from '../../shared/event-bus';
+import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { AICoachService } from '../../services/ai-coach-service.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface TriggerProactiveCheckInRequest {
   userId: string;
@@ -22,14 +18,13 @@ export interface TriggerProactiveCheckInResponse {
 }
 
 export class TriggerProactiveCheckInUseCase
-  implements UseCase<TriggerProactiveCheckInRequest, TriggerProactiveCheckInResponse>
-{
+  implements UseCase<TriggerProactiveCheckInRequest, TriggerProactiveCheckInResponse> {
   constructor(
     private conversationRepository: CoachingConversationRepository,
     private contextBuilder: CoachingContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: TriggerProactiveCheckInRequest,
@@ -37,8 +32,7 @@ export class TriggerProactiveCheckInUseCase
     // 1. Build current context
     const contextResult = await this.contextBuilder.buildContext(request.userId);
     if (contextResult.isFailure) {
-      const error = contextResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(contextResult.error);
     }
     const context = contextResult.value;
 
@@ -54,8 +48,7 @@ export class TriggerProactiveCheckInUseCase
       });
 
       if (newConvResult.isFailure) {
-        const error = newConvResult.error;
-        return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+        return Result.fail(newConvResult.error);
       }
 
       await this.conversationRepository.save(newConvResult.value);
@@ -67,7 +60,7 @@ export class TriggerProactiveCheckInUseCase
     // 3. Determine trigger reason
     const trigger = this.determineTrigger(context);
     if (!trigger) {
-      return Result.fail('No check-in needed at this time');
+      return Result.fail(new Error('No check-in needed at this time'));
     }
 
     // 4. Generate check-in question using AI
@@ -77,8 +70,7 @@ export class TriggerProactiveCheckInUseCase
     });
 
     if (questionResult.isFailure) {
-      const error = questionResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(questionResult.error);
     }
 
     // 5. Create check-in - This is a factory function
@@ -89,17 +81,18 @@ export class TriggerProactiveCheckInUseCase
     });
 
     if (checkInResult.isFailure) {
-      const error = checkInResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(checkInResult.error);
     }
 
     const checkIn = checkInResult.value;
 
     // 6. Add to conversation
-    const updatedConvResult = CoachConversationCommands.scheduleCheckIn(conversation, checkIn);
+    const updatedConvResult = CoachConversationCommands.scheduleCheckIn(
+      conversation,
+      checkIn,
+    );
     if (updatedConvResult.isFailure) {
-      const error = updatedConvResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(updatedConvResult.error);
     }
 
     conversation = updatedConvResult.value;
@@ -123,7 +116,7 @@ export class TriggerProactiveCheckInUseCase
     });
   }
 
-  private determineTrigger(context: any): string | null {
+  private determineTrigger(context: any): string | undefined {
     // Low adherence
     if (context.currentPlan && context.currentPlan.adherenceRate < 0.5) {
       return 'low_adherence';
@@ -153,6 +146,6 @@ export class TriggerProactiveCheckInUseCase
       return 'low_adherence';
     }
 
-    return null;
+    return undefined;
   }
 }

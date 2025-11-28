@@ -1,5 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
-import { IAuthService, RequestContext } from '../../ports/auth.service';
+import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 // Output interface
 export interface GetCurrentUserOutput {

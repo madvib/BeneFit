@@ -1,12 +1,8 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import {
-  ConnectedService,
-  ConnectedServiceCommands
-} from '@bene/core/integrations';
-import { ConnectedServiceRepository } from '../repositories/connected-service-repository';
-import { IntegrationClient } from '../services/integration-client';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { ConnectedService, ConnectedServiceCommands } from '@bene/core/integrations';
+import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
+import { IntegrationClient } from '../../services/integration-client.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface SyncServiceDataRequest {
   serviceId: string;
@@ -21,13 +17,12 @@ export interface SyncServiceDataResponse {
 }
 
 export class SyncServiceDataUseCase
-  implements UseCase<SyncServiceDataRequest, SyncServiceDataResponse>
-{
+  implements UseCase<SyncServiceDataRequest, SyncServiceDataResponse> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: SyncServiceDataRequest,
@@ -35,27 +30,27 @@ export class SyncServiceDataUseCase
     // 1. Load service
     const serviceResult = await this.serviceRepository.findById(request.serviceId);
     if (serviceResult.isFailure) {
-      return Result.fail('Service not found');
+      return Result.fail(new Error('Service not found'));
     }
 
     let service = serviceResult.value;
 
     // 2. Check if can sync
     if (!service.isActive || service.isPaused) {
-      return Result.fail('Service is not active');
+      return Result.fail(new Error('Service is not active'));
     }
 
     // 3. Get client
     const client = this.integrationClients.get(service.serviceType);
     if (!client) {
-      return Result.fail(`No client for ${service.serviceType}`);
+      return Result.fail(new Error(`No client for ${ service.serviceType }`));
     }
 
     // 4. Refresh credentials if needed
     if (this.needsRefresh(service)) {
       const refreshResult = await this.refreshServiceCredentials(service, client);
       if (refreshResult.isFailure) {
-        return Result.fail(`Credential refresh failed: ${refreshResult.error}`);
+        return Result.fail(new Error(`Credential refresh failed: ${ refreshResult.error }`));
       }
       service = refreshResult.value;
     }
@@ -63,7 +58,7 @@ export class SyncServiceDataUseCase
     // 5. Start sync
     const startedResult = ConnectedServiceCommands.startSync(service);
     if (startedResult.isFailure) {
-      return Result.fail(startedResult.error as string);
+      return Result.fail(startedResult.error);
     }
     await this.serviceRepository.save(startedResult.value);
 
@@ -77,18 +72,18 @@ export class SyncServiceDataUseCase
       // Record error
       const errorResult = ConnectedServiceCommands.recordSyncError(service, {
         code: 'sync_failed',
-        message: activitiesResult.error as string,
+        message: typeof activitiesResult.error === 'string' ? activitiesResult.error : activitiesResult.error.message,
         occurredAt: new Date(),
         retriesRemaining: 3,
       });
 
       if (errorResult.isFailure) {
-        return Result.fail(errorResult.error as string);
+        return Result.fail(errorResult.error);
       }
 
       await this.serviceRepository.save(errorResult.value);
 
-      return Result.fail(activitiesResult.error as string);
+      return Result.fail(activitiesResult.error);
     }
 
     const activities = activitiesResult.value;
@@ -135,7 +130,7 @@ export class SyncServiceDataUseCase
     client: IntegrationClient,
   ): Promise<Result<ConnectedService>> {
     if (!service.credentials.refreshToken) {
-      return Result.fail('No refresh token available');
+      return Result.fail(new Error('No refresh token available'));
     }
 
     const refreshResult = await client.refreshAccessToken(
@@ -143,14 +138,17 @@ export class SyncServiceDataUseCase
     );
 
     if (refreshResult.isFailure) {
-      return Result.fail(refreshResult.error as string);
+      return Result.fail(refreshResult.error);
     }
 
     const newTokens = refreshResult.value;
-    const updatedServiceResult = ConnectedServiceCommands.refreshCredentials(service, newTokens);
+    const updatedServiceResult = ConnectedServiceCommands.refreshCredentials(
+      service,
+      newTokens,
+    );
 
     if (updatedServiceResult.isFailure) {
-      return Result.fail(updatedServiceResult.error as string);
+      return Result.fail(updatedServiceResult.error);
     }
 
     await this.serviceRepository.save(updatedServiceResult.value);

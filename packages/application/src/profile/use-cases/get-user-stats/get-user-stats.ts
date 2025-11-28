@@ -1,9 +1,8 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  UserProfile 
+import { Result, UseCase } from '@bene/core/shared';
+import {
+  UserProfile
 } from '@bene/core/profile';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 export interface GetUserStatsRequest {
   userId: string;
@@ -36,7 +35,7 @@ export class GetUserStatsUseCase
     // 1. Load profile
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isFailure) {
-      return Result.fail('Profile not found');
+      return Result.fail(new Error('Profile not found'));
     }
 
     const profile = profileResult.value;

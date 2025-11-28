@@ -1,7 +1,6 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { WorkoutPlan, WorkoutPlanQueries } from '@bene/core/plans';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
+import { WorkoutPlanQueries } from '@bene/core/plans/index.js';
+import { Result, UseCase } from '@bene/core/shared';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
 
 export interface GetTodaysWorkoutRequest {
   userId: string;
@@ -24,9 +23,8 @@ export interface GetTodaysWorkoutResponse {
 }
 
 export class GetTodaysWorkoutUseCase
-  implements UseCase<GetTodaysWorkoutRequest, GetTodaysWorkoutResponse>
-{
-  constructor(private planRepository: WorkoutPlanRepository) {}
+  implements UseCase<GetTodaysWorkoutRequest, GetTodaysWorkoutResponse> {
+  constructor(private planRepository: WorkoutPlanRepository) { }
 
   async execute(
     request: GetTodaysWorkoutRequest,
@@ -62,18 +60,22 @@ export class GetTodaysWorkoutUseCase
     }
 
     // 4. Return workout details
+    const activities = todaysWorkout.activities?.map((a) => ({
+      type: (a.type as 'warmup' | 'main' | 'cooldown') || 'main',
+      instructions: Array.isArray(a.instructions) ? a.instructions.join('. ') : '',
+      durationMinutes: a.duration || 10,
+    })) || [];
+
+    const totalDuration = activities.reduce((sum, a) => sum + a.durationMinutes, 0) || 30;
+
     return Result.ok({
       hasWorkout: true,
       workout: {
         workoutId: todaysWorkout.id,
         planId: plan.id,
         type: todaysWorkout.type,
-        durationMinutes: todaysWorkout.duration || 30,
-        activities: todaysWorkout.activities?.map((a) => ({
-          type: (a.type as 'warmup' | 'main' | 'cooldown') || 'main',
-          instructions: a.instructions || '',
-          durationMinutes: a.duration || 10,
-        })) || [],
+        durationMinutes: totalDuration,
+        activities,
       },
     });
   }

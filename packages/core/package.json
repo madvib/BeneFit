@@ -13,7 +13,12 @@
     "./plans": "./src/plans/index.ts",
     "./profile": "./src/profile/index.ts",
     "./shared": "./src/shared/index.ts",
-    "./workouts": "./src/workouts/index.ts"
+    "./workouts": "./src/workouts/index.ts",
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
   },
   "devDependencies": {
     "@bene/utils": "workspace:*"

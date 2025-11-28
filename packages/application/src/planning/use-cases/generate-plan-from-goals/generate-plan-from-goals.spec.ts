@@ -6,7 +6,7 @@ import { GeneratePlanFromGoalsUseCase } from './generate-plan-from-goals';
 import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
 import { UserProfileRepository } from '../../../profile/repositories/user-profile-repository';
 import { AIPlanGenerator } from '../../../services/ai-plan-generator';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -38,7 +38,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
       mockPlanRepository,
       mockProfileRepository,
       mockAIPlanGenerator,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -72,7 +72,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.fail(new Error('No active plan')));
+    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+      Result.fail(new Error('No active plan')),
+    );
     mockAIPlanGenerator.generatePlan.mockResolvedValue(Result.ok(mockPlan));
     mockPlanRepository.save.mockResolvedValue(Result.ok());
 
@@ -95,7 +97,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
         type: 'PlanGenerated',
         userId,
         planId: 'plan-123',
-      })
+      }),
     );
   });
 
@@ -104,7 +106,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     const userId = 'user-123';
     const goals = { goalType: 'strength', target: 'build muscle' };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.fail(new Error('User profile not found')));
+    mockProfileRepository.findById.mockResolvedValue(
+      Result.fail(new Error('User profile not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -161,7 +165,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error.message).toBe('User already has an active plan. Pause or abandon it first.');
+      expect(result.error.message).toBe(
+        'User already has an active plan. Pause or abandon it first.',
+      );
     }
   });
 
@@ -179,8 +185,12 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.fail(new Error('No active plan')));
-    mockAIPlanGenerator.generatePlan.mockResolvedValue(Result.fail(new Error('AI generation failed')));
+    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+      Result.fail(new Error('No active plan')),
+    );
+    mockAIPlanGenerator.generatePlan.mockResolvedValue(
+      Result.fail(new Error('AI generation failed')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -191,7 +201,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error.message).toBe('Failed to generate plan: Error: AI generation failed');
+      expect(result.error.message).toBe(
+        'Failed to generate plan: Error: AI generation failed',
+      );
     }
   });
 
@@ -225,7 +237,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.fail(new Error('No active plan')));
+    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+      Result.fail(new Error('No active plan')),
+    );
     mockAIPlanGenerator.generatePlan.mockResolvedValue(Result.ok(mockPlan));
     mockPlanRepository.save.mockResolvedValue(Result.fail(new Error('Save failed')));
 

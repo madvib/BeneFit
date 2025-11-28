@@ -1,8 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { ConnectedService, ConnectedServiceCommands } from '@bene/core/integrations';
-import { ConnectedServiceRepository } from '../repositories/connected-service-repository';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { ConnectedServiceCommands } from '@bene/core/integrations';
+import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface DisconnectServiceRequest {
   userId: string;
@@ -15,12 +14,11 @@ export interface DisconnectServiceResponse {
 }
 
 export class DisconnectServiceUseCase
-  implements UseCase<DisconnectServiceRequest, DisconnectServiceResponse>
-{
+  implements UseCase<DisconnectServiceRequest, DisconnectServiceResponse> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: DisconnectServiceRequest,
@@ -28,19 +26,19 @@ export class DisconnectServiceUseCase
     // 1. Load service
     const serviceResult = await this.serviceRepository.findById(request.serviceId);
     if (serviceResult.isFailure) {
-      return Result.fail('Service not found');
+      return Result.fail(serviceResult.error);
     }
 
     const service = serviceResult.value;
 
     // 2. Verify ownership
     if (service.userId !== request.userId) {
-      return Result.fail('Not authorized');
+      return Result.fail(new Error('Not authorized'));
     }
 
     // 3. Disconnect
     const disconnectedService = ConnectedServiceCommands.disconnectService(service);
-    const disconnectedResult = Result.ok(disconnectedService); // disconnectService is a pure function, not returning Result
+
 
     // 4. Save
     await this.serviceRepository.save(disconnectedService);

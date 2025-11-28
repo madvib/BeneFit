@@ -5,7 +5,7 @@ import { TriggerProactiveCheckInUseCase } from './trigger-proactive-check-in';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder';
 import { AICoachService } from '../../services/ai-coach-service';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -38,7 +38,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
       mockConversationRepository,
       mockContextBuilder,
       mockAICoachService,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -48,17 +48,28 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'declining' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'declining',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
       currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
     };
-    
+
     const mockConversation: CoachingConversation = {
       id: 'conv-456',
       userId,
@@ -78,8 +89,12 @@ describe('TriggerProactiveCheckInUseCase', () => {
     const mockQuestion = 'How are you feeling about your workout routine?';
 
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(Result.ok(mockQuestion));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+      Result.ok(mockQuestion),
+    );
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -104,20 +119,31 @@ describe('TriggerProactiveCheckInUseCase', () => {
         type: 'ProactiveCheckInTriggered',
         userId,
         trigger: 'enjoyment_declining',
-      })
+      }),
     );
   });
 
   it('should create a new conversation if none exists', async () => {
     // Arrange
     const userId = 'user-123';
-    
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'declining' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'declining',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
@@ -128,8 +154,12 @@ describe('TriggerProactiveCheckInUseCase', () => {
     const mockQuestion = 'How are you feeling about your workout routine?';
 
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Not found')));
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(Result.ok(mockQuestion));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Not found')),
+    );
+    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+      Result.ok(mockQuestion),
+    );
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -146,7 +176,9 @@ describe('TriggerProactiveCheckInUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.fail(new Error('Failed to build context')));
+    mockContextBuilder.buildContext.mockResolvedValue(
+      Result.fail(new Error('Failed to build context')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -163,19 +195,30 @@ describe('TriggerProactiveCheckInUseCase', () => {
   it('should fail if no check-in trigger is found', async () => {
     // Arrange
     const userId = 'user-123';
-    
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'stable',
+      },
       daysIntoCurrentWeek: 2, // Below threshold
       workoutsThisWeek: 2,
       plannedWorkoutsThisWeek: 3,
       energyLevel: 'medium',
     };
-    
+
     const mockConversation: CoachingConversation = {
       id: 'conv-456',
       userId,
@@ -193,7 +236,9 @@ describe('TriggerProactiveCheckInUseCase', () => {
     };
 
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -210,20 +255,31 @@ describe('TriggerProactiveCheckInUseCase', () => {
   it('should fail if AI question generation fails', async () => {
     // Arrange
     const userId = 'user-123';
-    
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'declining' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'declining',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
       currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
     };
-    
+
     const mockConversation: CoachingConversation = {
       id: 'conv-456',
       userId,
@@ -241,8 +297,12 @@ describe('TriggerProactiveCheckInUseCase', () => {
     };
 
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(Result.fail(new Error('AI generation failed')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+      Result.fail(new Error('AI generation failed')),
+    );
 
     // Act
     const result = await useCase.execute({

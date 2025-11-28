@@ -7,6 +7,9 @@
       "path": "./apps/web"
     },
     {
+      "path": "./apps/api"
+    },
+    {
       "path": "./packages/application"
     },
     {
@@ -21,5 +24,8 @@
     {
       "path": "./tools/nx-plugin"
     },
-  ],
+    {
+      "path": "./packages/db"
+    }
+  ]
 }

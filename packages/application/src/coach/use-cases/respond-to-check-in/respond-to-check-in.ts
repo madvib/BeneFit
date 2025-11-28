@@ -1,9 +1,8 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { CoachingConversation, CoachConversationCommands } from '@bene/core/coach';
-import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
-import { AICoachService } from '../services/ai-coach-service';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { CoachConversationCommands } from '@bene/core/coach';
+import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { AICoachService } from '../../services/ai-coach-service.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface RespondToCheckInRequest {
   userId: string;
@@ -21,13 +20,12 @@ export interface RespondToCheckInResponse {
 }
 
 export class RespondToCheckInUseCase
-  implements UseCase<RespondToCheckInRequest, RespondToCheckInResponse>
-{
+  implements UseCase<RespondToCheckInRequest, RespondToCheckInResponse> {
   constructor(
     private conversationRepository: CoachingConversationRepository,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: RespondToCheckInRequest,
@@ -37,18 +35,18 @@ export class RespondToCheckInUseCase
       request.userId,
     );
     if (conversationResult.isFailure) {
-      return Result.fail('Conversation not found');
+      return Result.fail(new Error('Conversation not found'));
     }
     let conversation = conversationResult.value;
 
     // 2. Find check-in
     const checkIn = conversation.checkIns.find((c) => c.id === request.checkInId);
     if (!checkIn) {
-      return Result.fail('Check-in not found');
+      return Result.fail(new Error('Check-in not found'));
     }
 
     if (checkIn.status !== 'pending') {
-      return Result.fail('Check-in already responded to');
+      return Result.fail(new Error('Check-in already responded to'));
     }
 
     // 3. Get AI analysis and actions
@@ -59,8 +57,7 @@ export class RespondToCheckInUseCase
     });
 
     if (analysisResult.isFailure) {
-      const error = analysisResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(analysisResult.error);
     }
 
     const { analysis, actions } = analysisResult.value;
@@ -75,8 +72,7 @@ export class RespondToCheckInUseCase
     );
 
     if (respondedConvResult.isFailure) {
-      const error = respondedConvResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(respondedConvResult.error);
     }
 
     conversation = respondedConvResult.value;
@@ -108,10 +104,13 @@ export class RespondToCheckInUseCase
     });
   }
 
-  private async applyAction(userId: string, action: { type: string; details: string }): Promise<void> {
+  private async applyAction(
+    userId: string,
+    action: { type: string; details: string },
+  ): Promise<void> {
     // Similar to SendMessageToCoachUseCase.applyCoachActions
     await this.eventBus.publish({
-      type: `Coach${action.type.charAt(0).toUpperCase() + action.type.slice(1)}`,
+      type: `Coach${ action.type.charAt(0).toUpperCase() + action.type.slice(1) }`,
       userId,
       details: action.details,
       timestamp: new Date(),

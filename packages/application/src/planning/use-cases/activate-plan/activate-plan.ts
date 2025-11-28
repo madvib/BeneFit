@@ -1,8 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { WorkoutPlan, WorkoutPlanCommands, WorkoutPlanQueries } from '@bene/core/plans';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { EventBus } from '../../shared/event-bus';
+import { EventBus } from '@bene/application/shared/event-bus.js';
+import { WorkoutPlanCommands, WorkoutPlanQueries } from '@bene/core/plans/index.js';
+import { Result, UseCase } from '@bene/core/shared';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
 
 export interface ActivatePlanRequest {
   userId: string;
@@ -22,12 +21,11 @@ export interface ActivatePlanResponse {
 }
 
 export class ActivatePlanUseCase
-  implements UseCase<ActivatePlanRequest, ActivatePlanResponse>
-{
+  implements UseCase<ActivatePlanRequest, ActivatePlanResponse> {
   constructor(
     private planRepository: WorkoutPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(request: ActivatePlanRequest): Promise<Result<ActivatePlanResponse>> {
     // 1. Load plan
@@ -45,7 +43,7 @@ export class ActivatePlanUseCase
     // 3. Activate plan using functional command
     const activatedPlanResult = WorkoutPlanCommands.activatePlan(plan);
     if (activatedPlanResult.isFailure) {
-      return Result.fail(new Error(activatedPlanResult.error as string));
+      return Result.fail(new Error(activatedPlanResult.error));
     }
     const activatedPlan = activatedPlanResult.value;
 
@@ -71,10 +69,10 @@ export class ActivatePlanUseCase
       startDate: startDate,
       todaysWorkout: todaysWorkout
         ? {
-            workoutId: todaysWorkout.id,
-            type: todaysWorkout.type,
-            durationMinutes: todaysWorkout.duration || 30,
-          }
+          workoutId: todaysWorkout.id,
+          type: todaysWorkout.type,
+          durationMinutes: todaysWorkout.duration || 30,
+        }
         : undefined,
     });
   }

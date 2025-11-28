@@ -20,7 +20,7 @@ export interface JoinMultiplayerWorkoutResponse {
   }>;
   currentActivity: {
     type: string;
-    instructions: string;
+    instructions: string[];
   };
 }
 
@@ -93,8 +93,8 @@ export class JoinMultiplayerWorkoutUseCase
         status: p.status,
       })),
       currentActivity: {
-        type: currentActivity.activityType,
-        instructions: currentActivity.instructions,
+        type: currentActivity ? currentActivity.type : 'warmup',
+        instructions: currentActivity && currentActivity.instructions ? [...currentActivity.instructions] : [],
       },
     });
   }

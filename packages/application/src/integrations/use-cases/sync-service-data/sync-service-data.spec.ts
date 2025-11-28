@@ -4,7 +4,7 @@ import { ConnectedService } from '@bene/core/integrations';
 import { SyncServiceDataUseCase } from './sync-service-data';
 import { ConnectedServiceRepository } from '../../repositories/connected-service-repository';
 import { IntegrationClient } from '../../services/integration-client';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -37,7 +37,7 @@ describe('SyncServiceDataUseCase', () => {
     useCase = new SyncServiceDataUseCase(
       mockServiceRepository,
       mockIntegrationClients,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -45,7 +45,7 @@ describe('SyncServiceDataUseCase', () => {
     // Arrange
     const serviceId = 'service-456';
     const userId = 'user-123';
-    
+
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
@@ -88,7 +88,9 @@ describe('SyncServiceDataUseCase', () => {
     ];
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
-    mockIntegrationClient.getActivitiesSince.mockResolvedValue(Result.ok(mockActivities));
+    mockIntegrationClient.getActivitiesSince.mockResolvedValue(
+      Result.ok(mockActivities),
+    );
     mockServiceRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -111,7 +113,7 @@ describe('SyncServiceDataUseCase', () => {
         userId,
         serviceId,
         workoutsSynced: 1,
-      })
+      }),
     );
   });
 
@@ -137,7 +139,7 @@ describe('SyncServiceDataUseCase', () => {
     // Arrange
     const serviceId = 'service-456';
     const userId = 'user-123';
-    
+
     const mockInActiveService: ConnectedService = {
       id: serviceId,
       userId,
@@ -192,7 +194,7 @@ describe('SyncServiceDataUseCase', () => {
     // Arrange
     const serviceId = 'service-456';
     const userId = 'user-123';
-    
+
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
@@ -247,7 +249,7 @@ describe('SyncServiceDataUseCase', () => {
     // Arrange
     const serviceId = 'service-456';
     const userId = 'user-123';
-    
+
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
@@ -285,7 +287,9 @@ describe('SyncServiceDataUseCase', () => {
     };
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
-    mockIntegrationClient.getActivitiesSince.mockResolvedValue(Result.fail('API error'));
+    mockIntegrationClient.getActivitiesSince.mockResolvedValue(
+      Result.fail('API error'),
+    );
     mockServiceRepository.save.mockResolvedValue(Result.ok());
 
     // Act

@@ -1,7 +1,5 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { ConnectedService } from '@bene/core/integrations';
-import { ConnectedServiceRepository } from '../repositories/connected-service-repository';
+import { Result, UseCase } from '@bene/core/shared';
+import { ConnectedServiceRepository } from '../../index.js';
 
 export interface GetConnectedServicesRequest {
   userId: string;
@@ -28,7 +26,7 @@ export class GetConnectedServicesUseCase
   ): Promise<Result<GetConnectedServicesResponse>> {
     const servicesResult = await this.serviceRepository.findByUserId(request.userId);
     if (servicesResult.isFailure) {
-      return Result.fail(servicesResult.error as string);
+      return Result.fail(servicesResult.error);
     }
 
     const services = servicesResult.value;

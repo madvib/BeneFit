@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { ConnectedService, disconnectService } from '@bene/core/integrations';
 import { DisconnectServiceUseCase } from './disconnect-service';
 import { ConnectedServiceRepository } from '../../repositories/connected-service-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -22,17 +22,14 @@ describe('DisconnectServiceUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new DisconnectServiceUseCase(
-      mockServiceRepository,
-      mockEventBus
-    );
+    useCase = new DisconnectServiceUseCase(mockServiceRepository, mockEventBus);
   });
 
   it('should successfully disconnect a service', async () => {
     // Arrange
     const userId = 'user-123';
     const serviceId = 'service-456';
-    
+
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
@@ -90,7 +87,7 @@ describe('DisconnectServiceUseCase', () => {
         userId,
         serviceId,
         serviceType: 'strava',
-      })
+      }),
     );
   });
 
@@ -119,7 +116,7 @@ describe('DisconnectServiceUseCase', () => {
     const userId = 'user-123';
     const otherUserId = 'user-789';
     const serviceId = 'service-456';
-    
+
     const mockService: ConnectedService = {
       id: serviceId,
       userId: otherUserId, // Different user

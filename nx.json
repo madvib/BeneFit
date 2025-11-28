@@ -28,7 +28,8 @@
         "typecheck": {
           "targetName": "typecheck"
         }
-      }
+      },
+      "exclude": ["packages/application/*", "packages/core/*"]
     },
     {
       "plugin": "@nx/storybook/plugin",
@@ -49,7 +50,12 @@
     },
     {
       "plugin": "@nx/js/typescript",
-      "include": ["tools/nx-plugin/*"],
+      "include": [
+        "tools/nx-plugin/*",
+        "packages/application/*",
+        "packages/core/*",
+        "packages/db/*"
+      ],
       "options": {
         "typecheck": {
           "targetName": "typecheck"

@@ -1,5 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
-import { IAuthService, RequestContext } from '../../ports/auth.service';
+import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 // Define the user interface for the session
 export interface SessionUser {

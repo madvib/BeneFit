@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { GenerateWeeklySummaryUseCase } from './generate-weekly-summary';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder';
 import { AICoachService } from '../../services/ai-coach-service';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock services
 const mockContextBuilder = {
@@ -29,20 +29,31 @@ describe('GenerateWeeklySummaryUseCase', () => {
     useCase = new GenerateWeeklySummaryUseCase(
       mockContextBuilder,
       mockAICoachService,
-      mockEventBus
+      mockEventBus,
     );
   });
 
   it('should successfully generate a weekly summary', async () => {
     // Arrange
     const userId = 'user-123';
-    
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'stable',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
@@ -51,7 +62,10 @@ describe('GenerateWeeklySummaryUseCase', () => {
 
     const mockSummary = {
       summary: 'This week you completed 3 out of 4 planned workouts. Good adherence!',
-      highlights: ['Completed 75% of planned workouts', 'Average exertion was appropriate'],
+      highlights: [
+        'Completed 75% of planned workouts',
+        'Average exertion was appropriate',
+      ],
       suggestions: ['Try to maintain this consistency next week'],
     };
 
@@ -79,7 +93,7 @@ describe('GenerateWeeklySummaryUseCase', () => {
         type: 'WeeklySummaryGenerated',
         userId,
         summary: mockSummary.summary,
-      })
+      }),
     );
   });
 
@@ -87,7 +101,9 @@ describe('GenerateWeeklySummaryUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.fail(new Error('Failed to build context')));
+    mockContextBuilder.buildContext.mockResolvedValue(
+      Result.fail(new Error('Failed to build context')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -104,13 +120,24 @@ describe('GenerateWeeklySummaryUseCase', () => {
   it('should fail if AI summary generation fails', async () => {
     // Arrange
     const userId = 'user-123';
-    
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'stable',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
@@ -118,7 +145,9 @@ describe('GenerateWeeklySummaryUseCase', () => {
     };
 
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockAICoachService.generateWeeklySummary.mockResolvedValue(Result.fail(new Error('AI generation failed')));
+    mockAICoachService.generateWeeklySummary.mockResolvedValue(
+      Result.fail(new Error('AI generation failed')),
+    );
 
     // Act
     const result = await useCase.execute({

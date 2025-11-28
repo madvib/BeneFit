@@ -1,14 +1,12 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
+import { Result, UseCase } from '@bene/core/shared';
 import {
-  CoachingConversation,
   createCoachingConversation,
-  CoachConversationCommands
+  CoachConversationCommands,
 } from '@bene/core/coach';
-import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
-import { CoachingContextBuilder } from '../services/coaching-context-builder';
-import { AICoachService } from '../services/ai-coach-service';
-import { EventBus } from '../../shared/event-bus';
+import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { AICoachService } from '../../services/ai-coach-service.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface SendMessageToCoachRequest {
   userId: string;
@@ -27,14 +25,13 @@ export interface SendMessageToCoachResponse {
 }
 
 export class SendMessageToCoachUseCase
-  implements UseCase<SendMessageToCoachRequest, SendMessageToCoachResponse>
-{
+  implements UseCase<SendMessageToCoachRequest, SendMessageToCoachResponse> {
   constructor(
     private conversationRepository: CoachingConversationRepository,
     private contextBuilder: CoachingContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: SendMessageToCoachRequest,
@@ -48,7 +45,7 @@ export class SendMessageToCoachUseCase
       // Create new conversation
       const contextResult = await this.contextBuilder.buildContext(request.userId);
       if (contextResult.isFailure) {
-        return Result.fail('Failed to build coaching context');
+        return Result.fail(new Error('Failed to build coaching context'));
       }
 
       const newConvResult = createCoachingConversation({
@@ -59,8 +56,7 @@ export class SendMessageToCoachUseCase
       });
 
       if (newConvResult.isFailure) {
-        const error = newConvResult.error;
-        return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+        return Result.fail(newConvResult.error);
       }
 
       await this.conversationRepository.save(newConvResult.value);
@@ -77,8 +73,7 @@ export class SendMessageToCoachUseCase
     );
 
     if (withUserMessageResult.isFailure) {
-      const error = withUserMessageResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(withUserMessageResult.error);
     }
 
     let updatedConversation = withUserMessageResult.value;
@@ -91,8 +86,7 @@ export class SendMessageToCoachUseCase
 
     if (aiResponseResult.isFailure) {
       const error = aiResponseResult.error;
-      const errorMessage = typeof error === 'string' ? error : (error as Error).message;
-      return Result.fail(`Coach unavailable: ${errorMessage}`);
+      return Result.fail(new Error(`Coach unavailable: ${ error }`));
     }
 
     const aiResponse = aiResponseResult.value;
@@ -107,8 +101,7 @@ export class SendMessageToCoachUseCase
     );
 
     if (withCoachMessageResult.isFailure) {
-      const error = withCoachMessageResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(withCoachMessageResult.error);
     }
 
     updatedConversation = withCoachMessageResult.value;

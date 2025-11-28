@@ -1,8 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { CoachingConversation, CoachConversationCommands } from '@bene/core/coach';
-import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { CoachConversationCommands } from '@bene/core/coach';
+import { EventBus } from '../../../shared/event-bus.js';
+import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 
 export interface DismissCheckInRequest {
   userId: string;
@@ -15,12 +14,11 @@ export interface DismissCheckInResponse {
 }
 
 export class DismissCheckInUseCase
-  implements UseCase<DismissCheckInRequest, DismissCheckInResponse>
-{
+  implements UseCase<DismissCheckInRequest, DismissCheckInResponse> {
   constructor(
     private conversationRepository: CoachingConversationRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: DismissCheckInRequest,
@@ -29,13 +27,15 @@ export class DismissCheckInUseCase
       request.userId,
     );
     if (conversationResult.isFailure) {
-      return Result.fail('Conversation not found');
+      return Result.fail(new Error('Conversation not found'));
     }
 
-    const dismissedResult = CoachConversationCommands.dismissCheckIn(conversationResult.value, request.checkInId);
+    const dismissedResult = CoachConversationCommands.dismissCheckIn(
+      conversationResult.value,
+      request.checkInId,
+    );
     if (dismissedResult.isFailure) {
-      const error = dismissedResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(dismissedResult.error);
     }
 
     await this.conversationRepository.save(dismissedResult.value);

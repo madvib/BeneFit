@@ -9,11 +9,6 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "incremental": true,
-    // "typeRoots": [
-    //   "**/node_modules/@types",
-    //   "types"
-    // ],
-    /* */
     "composite": true,
     "declaration": true,
     "declarationMap": true,

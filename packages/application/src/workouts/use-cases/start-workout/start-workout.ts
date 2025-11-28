@@ -3,7 +3,6 @@ import { createWorkoutSession, WorkoutSessionCommands } from '@bene/core/workout
 import { WorkoutPlanQueries, WorkoutTemplateCommands } from '@bene/core/plans';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import type { WorkoutPlanRepository } from '../../../planning/repositories/workout-plan-repository.js';
-import type { UserProfileRepository } from '../../../profile/repositories/user-profile-repository.js';
 import type { EventBus } from '../../../shared/event-bus.js';
 
 export interface StartWorkoutRequest {
@@ -30,19 +29,17 @@ export interface StartWorkoutResponse {
   estimatedDurationMinutes: number;
   currentActivity: {
     type: string;
-    instructions: string;
+    instructions: string[];
   };
 }
 
 export class StartWorkoutUseCase
-  implements UseCase<StartWorkoutRequest, StartWorkoutResponse>
-{
+  implements UseCase<StartWorkoutRequest, StartWorkoutResponse> {
   constructor(
     private sessionRepository: WorkoutSessionRepository,
     private planRepository: WorkoutPlanRepository,
-    private profileRepository: UserProfileRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(request: StartWorkoutRequest): Promise<Result<StartWorkoutResponse>> {
     let workoutType: string;
@@ -147,18 +144,28 @@ export class StartWorkoutUseCase
       workoutType: session.workoutType,
       totalActivities: session.activities.length,
       estimatedDurationMinutes: session.activities.reduce(
-        (sum, a) =>
-          sum +
-          (a.structure.type === 'intervals'
-            ? Math.ceil(
-                (a.structure.totalIntervals * a.structure.intervalDurationSeconds) / 60,
-              )
-            : 30),
+        (sum, a) => {
+          // Use duration if available, otherwise estimate based on structure
+          if (a.duration) return sum + a.duration;
+          if (!a.structure) return sum + 30;
+
+          // Calculate based on intervals if present
+          if (a.structure.intervals && a.structure.intervals.length > 0) {
+            const totalIntervalTime = a.structure.intervals.reduce(
+              (total, interval) => total + interval.duration + interval.rest,
+              0
+            );
+            const rounds = a.structure.rounds || 1;
+            return sum + Math.ceil((totalIntervalTime * rounds) / 60);
+          }
+
+          return sum + 30; // Default fallback
+        },
         0,
       ),
       currentActivity: {
-        type: firstActivity.activityType,
-        instructions: firstActivity.instructions,
+        type: firstActivity ? firstActivity.type : 'warmup',
+        instructions: firstActivity && firstActivity.instructions ? [...firstActivity.instructions] : [],
       },
     });
   }

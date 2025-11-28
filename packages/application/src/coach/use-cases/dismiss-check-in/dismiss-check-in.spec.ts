@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { CoachingConversation, CheckIn } from '@bene/core/coach';
 import { DismissCheckInUseCase } from './dismiss-check-in';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -21,10 +21,7 @@ describe('DismissCheckInUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new DismissCheckInUseCase(
-      mockConversationRepository,
-      mockEventBus
-    );
+    useCase = new DismissCheckInUseCase(mockConversationRepository, mockEventBus);
   });
 
   it('should successfully dismiss a check-in', async () => {
@@ -44,12 +41,27 @@ describe('DismissCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -67,7 +79,9 @@ describe('DismissCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -87,7 +101,7 @@ describe('DismissCheckInUseCase', () => {
         type: 'CheckInDismissed',
         userId,
         checkInId,
-      })
+      }),
     );
   });
 
@@ -96,7 +110,9 @@ describe('DismissCheckInUseCase', () => {
     const userId = 'user-123';
     const checkInId = 'checkin-456';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Not found')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -119,12 +135,27 @@ describe('DismissCheckInUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-789',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -142,7 +173,9 @@ describe('DismissCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
 
     // Act
     const result = await useCase.execute({

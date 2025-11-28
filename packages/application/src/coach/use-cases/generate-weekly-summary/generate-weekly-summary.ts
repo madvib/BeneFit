@@ -1,9 +1,9 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { CoachingContext } from '@bene/core/coach';
-import { CoachingContextBuilder } from '../services/coaching-context-builder';
-import { AICoachService } from '../services/ai-coach-service';
-import { EventBus } from '../../shared/event-bus';
+import { EventBus } from '@bene/application/shared/event-bus.js';
+import { Result, UseCase } from '@bene/core/shared';
+import { AICoachService } from '../../services/ai-coach-service.js';
+import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+
+
 
 export interface GenerateWeeklySummaryRequest {
   userId: string;
@@ -16,13 +16,12 @@ export interface GenerateWeeklySummaryResponse {
 }
 
 export class GenerateWeeklySummaryUseCase
-  implements UseCase<GenerateWeeklySummaryRequest, GenerateWeeklySummaryResponse>
-{
+  implements UseCase<GenerateWeeklySummaryRequest, GenerateWeeklySummaryResponse> {
   constructor(
     private contextBuilder: CoachingContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: GenerateWeeklySummaryRequest,
@@ -30,8 +29,7 @@ export class GenerateWeeklySummaryUseCase
     // 1. Build context for the week
     const contextResult = await this.contextBuilder.buildContext(request.userId);
     if (contextResult.isFailure) {
-      const error = contextResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(contextResult.error);
     }
 
     // 2. Generate summary with AI
@@ -40,8 +38,7 @@ export class GenerateWeeklySummaryUseCase
     });
 
     if (summaryResult.isFailure) {
-      const error = summaryResult.error;
-      return Result.fail(typeof error === 'string' ? error : (error as Error).message);
+      return Result.fail(summaryResult.error);
     }
 
     const summary = summaryResult.value;

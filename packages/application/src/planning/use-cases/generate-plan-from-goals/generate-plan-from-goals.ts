@@ -1,12 +1,13 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
-import { PlanGoals, TrainingConstraints } from '@bene/core/plans/value-objects';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
+import { Result, UseCase } from '@bene/core/shared';
 import { UserProfile } from '@bene/core/profile';
-import { AIPlanGenerator, GeneratePlanInput } from '../services/ai-plan-generator';
-import { EventBus } from '../../shared/event-bus';
+import { UserProfileRepository } from '@bene/application/profile/index.js';
+import { EventBus } from '@bene/application/shared/event-bus.js';
+import { PlanGoals } from '@bene/core/plans/index.js';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import {
+  AIPlanGenerator,
+  GeneratePlanInput,
+} from '../../services/ai-plan-generator.js';
 
 export interface GeneratePlanFromGoalsRequest {
   userId: string;
@@ -30,14 +31,13 @@ export interface GeneratePlanFromGoalsResponse {
 }
 
 export class GeneratePlanFromGoalsUseCase
-  implements UseCase<GeneratePlanFromGoalsRequest, GeneratePlanFromGoalsResponse>
-{
+  implements UseCase<GeneratePlanFromGoalsRequest, GeneratePlanFromGoalsResponse> {
   constructor(
     private planRepository: WorkoutPlanRepository,
     private profileRepository: UserProfileRepository,
     private aiGenerator: AIPlanGenerator,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: GeneratePlanFromGoalsRequest,
@@ -54,28 +54,34 @@ export class GeneratePlanFromGoalsUseCase
       request.userId,
     );
     if (activePlanResult.isSuccess) {
-      return Result.fail(new Error('User already has an active plan. Pause or abandon it first.'));
+      return Result.fail(
+        new Error('User already has an active plan. Pause or abandon it first.'),
+      );
     }
 
     // 3. Generate plan using AI
     const planInput: GeneratePlanInput = {
       goals: request.goals,
-      constraints: profile.trainingConstraints || { equipment: [], injuries: [], timeConstraints: [] },
-      experienceLevel: profile.experienceLevel || 'beginner',
+      constraints: profile.trainingConstraints || {
+        equipment: [],
+        injuries: [],
+        timeConstraints: [],
+      },
+      experienceLevel: profile.experienceProfile?.level || 'beginner',
       customInstructions: request.customInstructions,
     };
-    
+
     const planResult = await this.aiGenerator.generatePlan(planInput);
 
     if (planResult.isFailure) {
-      return Result.fail(new Error(`Failed to generate plan: ${planResult.error}`));
+      return Result.fail(new Error(`Failed to generate plan: ${ planResult.error }`));
     }
     const plan = planResult.value;
 
     // 4. Save plan (in draft state)
     const saveResult = await this.planRepository.save(plan);
     if (saveResult.isFailure) {
-      return Result.fail(new Error(`Failed to save plan: ${saveResult.error}`));
+      return Result.fail(new Error(`Failed to save plan: ${ saveResult.error }`));
     }
 
     // 5. Emit event
@@ -97,11 +103,15 @@ export class GeneratePlanFromGoalsUseCase
       workoutsPerWeek: plan.weeks[0]?.workouts.length || 0,
       preview: {
         weekNumber: 1,
-        workouts: firstWeek.workouts.map((w) => ({
-          day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][w.dayOfWeek || 0],
-          type: w.type,
-          summary: `${w.type} workout - ${w.duration} minutes`,
-        })),
+        workouts: firstWeek.workouts.map((w) => {
+          // Calculate duration from activities
+          const duration = w.activities?.reduce((sum, a) => sum + (a.duration || 10), 0) || 30;
+          return {
+            day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][w.dayOfWeek || 0] || 'Unknown',
+            type: w.type,
+            summary: `${ w.type } workout - ${ duration } minutes`,
+          };
+        }),
       },
     });
   }

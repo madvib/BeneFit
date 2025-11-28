@@ -1,11 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  UserProfile, 
-  UserProfileCommands 
-} from '@bene/core/profile';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { UserProfileCommands } from '@bene/core/profile';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface UpdateTrainingConstraintsRequest {
   userId: string;
@@ -19,7 +15,8 @@ export interface UpdateTrainingConstraintsResponse {
 }
 
 export class UpdateTrainingConstraintsUseCase
-  implements UseCase<UpdateTrainingConstraintsRequest, UpdateTrainingConstraintsResponse>
+  implements
+    UseCase<UpdateTrainingConstraintsRequest, UpdateTrainingConstraintsResponse>
 {
   constructor(
     private profileRepository: UserProfileRepository,
@@ -32,15 +29,17 @@ export class UpdateTrainingConstraintsUseCase
     // 1. Load profile
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isFailure) {
-      return Result.fail('Profile not found');
+      return Result.fail(new Error('Profile not found'));
     }
     const profile = profileResult.value;
 
     // 2. Check for significant changes
-    const availableDaysChanged = JSON.stringify(profile.trainingConstraints.availableDays) !==
+    const availableDaysChanged =
+      JSON.stringify(profile.trainingConstraints.availableDays) !==
       JSON.stringify(request.constraints.availableDays);
 
-    const injuriesChanged = JSON.stringify(profile.trainingConstraints.injuries) !==
+    const injuriesChanged =
+      JSON.stringify(profile.trainingConstraints.injuries) !==
       JSON.stringify(request.constraints.injuries);
 
     // 3. Update constraints using command
@@ -49,7 +48,7 @@ export class UpdateTrainingConstraintsUseCase
       request.constraints,
     );
     if (updatedProfileResult.isFailure) {
-      return Result.fail(updatedProfileResult.error as string);
+      return Result.fail(new Error(updatedProfileResult.error as unknown as string));
     }
 
     // 4. Save

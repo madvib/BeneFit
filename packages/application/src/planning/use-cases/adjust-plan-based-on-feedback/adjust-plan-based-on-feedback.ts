@@ -1,9 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { WorkoutPlan } from '@bene/core/plans';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { AIPlanGenerator, AdjustPlanInput } from '../services/ai-plan-generator';
-import { EventBus } from '../../shared/event-bus';
+import { EventBus } from '@bene/application/shared/event-bus.js';
+import { Result, UseCase } from '@bene/core/shared';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { AIPlanGenerator, AdjustPlanInput } from '../../services/ai-plan-generator.js';
 
 export interface AdjustPlanRequest {
   userId: string;
@@ -50,11 +48,13 @@ export class AdjustPlanBasedOnFeedbackUseCase
       feedback: request.feedback,
       recentPerformance: request.recentWorkouts,
     };
-    
+
     const adjustedPlanResult = await this.aiGenerator.adjustPlan(adjustInput);
 
     if (adjustedPlanResult.isFailure) {
-      return Result.fail(new Error(`Failed to adjust plan: ${adjustedPlanResult.error}`));
+      return Result.fail(
+        new Error(`Failed to adjust plan: ${adjustedPlanResult.error}`),
+      );
     }
 
     const adjustedPlan = adjustedPlanResult.value;

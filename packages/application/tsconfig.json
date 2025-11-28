@@ -8,10 +8,10 @@
     "node_modules",
     "out-tsc", // Exclude the entire output folder
     "src/**/*.spec.ts", // Optionally exclude test files from the main build
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
   ],
   "compilerOptions": {
-    "outDir": "./out-tsc/dist",
+    "outDir": "./dist",
   },
   "references": [
     {

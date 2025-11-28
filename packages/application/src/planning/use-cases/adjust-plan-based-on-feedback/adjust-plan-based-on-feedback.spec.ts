@@ -4,7 +4,7 @@ import { WorkoutPlan } from '@bene/core/plans';
 import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback';
 import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
 import { AIPlanGenerator } from '../../../services/ai-plan-generator';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -31,7 +31,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     useCase = new AdjustPlanBasedOnFeedbackUseCase(
       mockPlanRepository,
       mockAIPlanGenerator,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -40,7 +40,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
-    
+
     const originalPlan: WorkoutPlan = {
       id: planId,
       userId,
@@ -50,18 +50,20 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const adjustedPlan: WorkoutPlan = {
       ...originalPlan,
       title: 'Adjusted Strength Plan',
@@ -72,7 +74,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
         perceivedExertion: 8,
         enjoyment: 6,
         difficultyRating: 'too_hard' as const,
-      }
+      },
     ];
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
@@ -91,7 +93,9 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.planId).toBe(planId);
       expect(result.value.adjustmentsMade).toBeDefined();
-      expect(result.value.message).toBe('Your plan has been adjusted based on your feedback');
+      expect(result.value.message).toBe(
+        'Your plan has been adjusted based on your feedback',
+      );
     }
     expect(mockPlanRepository.save).toHaveBeenCalledWith(adjustedPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(
@@ -100,7 +104,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
         userId,
         planId,
         feedback,
-      })
+      }),
     );
   });
 
@@ -114,10 +118,12 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
         perceivedExertion: 8,
         enjoyment: 6,
         difficultyRating: 'too_hard' as const,
-      }
+      },
     ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.fail(new Error('Plan not found')));
+    mockPlanRepository.findById.mockResolvedValue(
+      Result.fail(new Error('Plan not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -140,7 +146,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const otherUserId = 'user-789';
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
-    
+
     const originalPlan: WorkoutPlan = {
       id: planId,
       userId: otherUserId, // Different user
@@ -150,24 +156,26 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const recentWorkouts = [
       {
         perceivedExertion: 8,
         enjoyment: 6,
         difficultyRating: 'too_hard' as const,
-      }
+      },
     ];
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
@@ -192,7 +200,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
-    
+
     const originalPlan: WorkoutPlan = {
       id: planId,
       userId,
@@ -202,28 +210,32 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{
-        weekNumber: 1,
-        workouts: [],
-        workoutsCompleted: 0,
-      }],
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [],
+          workoutsCompleted: 0,
+        },
+      ],
       status: 'active',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const recentWorkouts = [
       {
         perceivedExertion: 8,
         enjoyment: 6,
         difficultyRating: 'too_hard' as const,
-      }
+      },
     ];
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
-    mockAIPlanGenerator.adjustPlan.mockResolvedValue(Result.fail(new Error('AI adjustment failed')));
+    mockAIPlanGenerator.adjustPlan.mockResolvedValue(
+      Result.fail(new Error('AI adjustment failed')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -236,7 +248,9 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error.message).toBe('Failed to adjust plan: Error: AI adjustment failed');
+      expect(result.error.message).toBe(
+        'Failed to adjust plan: Error: AI adjustment failed',
+      );
     }
   });
 });

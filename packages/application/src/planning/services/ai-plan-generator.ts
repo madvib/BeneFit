@@ -1,6 +1,6 @@
 import { Result } from '@bene/core/shared';
 import { WorkoutPlan } from '@bene/core/plans';
-import { PlanGoals, TrainingConstraints } from '@bene/core/plans/value-objects';
+import { PlanGoals, TrainingConstraints } from '@bene/core/plans';
 
 export interface GeneratePlanInput {
   goals: PlanGoals;

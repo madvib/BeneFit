@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { UserProfile } from '@bene/core/profile';
 import { CreateUserProfileUseCase } from './create-user-profile';
 import { UserProfileRepository } from '../../repositories/user-profile-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -20,10 +20,7 @@ describe('CreateUserProfileUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new CreateUserProfileUseCase(
-      mockProfileRepository,
-      mockEventBus
-    );
+    useCase = new CreateUserProfileUseCase(mockProfileRepository, mockEventBus);
   });
 
   it('should successfully create a user profile', async () => {
@@ -64,7 +61,9 @@ describe('CreateUserProfileUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found')); // No existing profile
-    vi.mocked(vi.importActual('@bene/core/profile')).createUserProfile.mockReturnValue(Result.ok(mockProfile)); // Mock factory
+    vi.mocked(vi.importActual('@bene/core/profile')).createUserProfile.mockReturnValue(
+      Result.ok(mockProfile),
+    ); // Mock factory
     mockProfileRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -81,7 +80,7 @@ describe('CreateUserProfileUseCase', () => {
       expect.objectContaining({
         type: 'ProfileCreated',
         userId,
-      })
+      }),
     );
   });
 
@@ -146,7 +145,9 @@ describe('CreateUserProfileUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found'));
-    vi.mocked(vi.importActual('@bene/core/profile')).createUserProfile.mockReturnValue(Result.fail('Creation failed'));
+    vi.mocked(vi.importActual('@bene/core/profile')).createUserProfile.mockReturnValue(
+      Result.fail('Creation failed'),
+    );
 
     // Act
     const result = await useCase.execute(request);

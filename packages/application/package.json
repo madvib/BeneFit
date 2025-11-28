@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "types": "./src/index.ts",
+  "types": "./out-tsc/dist/src/index.d.ts",
+  "main": "./out-tsc/dist/src/index.js",
   "exports": {
     "./shared": "./src/shared/index.ts",
     "./activities": "./src/activities/index.ts",
@@ -13,7 +14,11 @@
     "./connections": "./src/connections/index.ts",
     "./goals": "./src/goals/index.ts",
     "./settings": "./src/settings/index.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./out-tsc/dist/src/index.d.ts",
+      "default": "./out-tsc/dist/src/index.js"
+    }
   },
   "devDependencies": {
     "@bene/core": "workspace:*",

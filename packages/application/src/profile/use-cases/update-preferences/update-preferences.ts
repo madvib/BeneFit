@@ -1,10 +1,6 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  UserProfile, 
-  UserProfileCommands 
-} from '@bene/core/profile';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
+import { Result, UseCase } from '@bene/core/shared';
+import { UserProfileCommands } from '@bene/core/profile';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 export interface UpdatePreferencesRequest {
   userId: string;
@@ -17,9 +13,8 @@ export interface UpdatePreferencesResponse {
 }
 
 export class UpdatePreferencesUseCase
-  implements UseCase<UpdatePreferencesRequest, UpdatePreferencesResponse>
-{
-  constructor(private profileRepository: UserProfileRepository) {}
+  implements UseCase<UpdatePreferencesRequest, UpdatePreferencesResponse> {
+  constructor(private profileRepository: UserProfileRepository) { }
 
   async execute(
     request: UpdatePreferencesRequest,
@@ -27,25 +22,21 @@ export class UpdatePreferencesUseCase
     // 1. Load profile
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isFailure) {
-      return Result.fail('Profile not found');
+      return Result.fail(new Error('Profile not found'));
     }
 
     // 2. Update preferences using command
-    const updatedProfileResult = UserProfileCommands.updatePreferences(
+    const updatedProfile = UserProfileCommands.updatePreferences(
       profileResult.value,
       request.preferences,
     );
 
-    if (updatedProfileResult.isFailure) {
-      return Result.fail(updatedProfileResult.error as string);
-    }
-
     // 3. Save
-    await this.profileRepository.save(updatedProfileResult.value);
+    await this.profileRepository.save(updatedProfile);
 
     return Result.ok({
       userId: request.userId,
-      preferences: updatedProfileResult.value.preferences,
+      preferences: updatedProfile.preferences,
     });
   }
 }

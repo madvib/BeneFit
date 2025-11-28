@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { UserProfile } from '@bene/core/profile';
 import { UpdateFitnessGoalsUseCase } from './update-fitness-goals';
 import { UserProfileRepository } from '../../repositories/user-profile-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -20,17 +20,14 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new UpdateFitnessGoalsUseCase(
-      mockProfileRepository,
-      mockEventBus
-    );
+    useCase = new UpdateFitnessGoalsUseCase(mockProfileRepository, mockEventBus);
   });
 
   it('should successfully update fitness goals', async () => {
     // Arrange
     const userId = 'user-123';
     const newGoals = { primary: 'hypertrophy', secondary: ['endurance'] };
-    
+
     const mockProfile: UserProfile = {
       userId,
       displayName: 'John Doe',
@@ -62,7 +59,9 @@ describe('UpdateFitnessGoalsUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    vi.mocked(vi.importActual('@bene/core/profile')).UserProfileCommands.updateFitnessGoals.mockReturnValue(Result.ok(updatedProfile));
+    vi.mocked(
+      vi.importActual('@bene/core/profile'),
+    ).UserProfileCommands.updateFitnessGoals.mockReturnValue(Result.ok(updatedProfile));
     mockProfileRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -85,7 +84,7 @@ describe('UpdateFitnessGoalsUseCase', () => {
         oldGoals: mockProfile.fitnessGoals,
         newGoals,
         significantChange: true,
-      })
+      }),
     );
   });
 

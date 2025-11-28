@@ -1,4 +1,5 @@
 import { Result, UseCase } from '@bene/core/shared';
+import { WorkoutTemplateCommands } from '@bene/core/plans';
 import type { WorkoutPlanRepository } from '../../../planning/repositories/workout-plan-repository.js';
 import type { EventBus } from '../../../shared/event-bus.js';
 
@@ -34,14 +35,61 @@ export class SkipWorkoutUseCase
       return Result.fail(new Error('Not authorized'));
     }
 
-    // 2. Skip workout
-    const updatedPlanResult = plan.skipWorkout(request.workoutId, request.reason);
-    if (updatedPlanResult.isFailure) {
-      return Result.fail(updatedPlanResult.error);
+    // 2. Find the workout in the plan
+    let workoutFound = false;
+    let updatedPlan = plan;
+
+    for (let weekIndex = 0; weekIndex < plan.weeks.length; weekIndex++) {
+      const week = plan.weeks[weekIndex];
+      if (!week) continue;
+
+      const workoutIndex = week.workouts.findIndex(w => w.id === request.workoutId);
+
+      if (workoutIndex !== -1) {
+        const workout = week.workouts[workoutIndex];
+        if (!workout) continue;
+
+        // Skip the workout using the command
+        const skippedWorkoutResult = WorkoutTemplateCommands.skipWorkout(workout, request.reason);
+        if (skippedWorkoutResult.isFailure) {
+          return Result.fail(skippedWorkoutResult.error);
+        }
+
+        // Update the plan with the skipped workout
+        const updatedWorkouts: any[] = [
+          ...week.workouts.slice(0, workoutIndex),
+          skippedWorkoutResult.value,
+          ...week.workouts.slice(workoutIndex + 1)
+        ];
+
+        const updatedWeek: any = {
+          ...week,
+          workouts: updatedWorkouts
+        };
+
+        const updatedWeeks: any[] = [
+          ...plan.weeks.slice(0, weekIndex),
+          updatedWeek,
+          ...plan.weeks.slice(weekIndex + 1)
+        ];
+
+        updatedPlan = {
+          ...plan,
+          weeks: updatedWeeks as any,
+          updatedAt: new Date()
+        };
+
+        workoutFound = true;
+        break;
+      }
+    }
+
+    if (!workoutFound) {
+      return Result.fail(new Error('Workout not found in plan'));
     }
 
     // 3. Save
-    await this.planRepository.save(updatedPlanResult.value);
+    await this.planRepository.save(updatedPlan);
 
     // 4. Emit event (for AI coach to potentially respond)
     await this.eventBus.publish({

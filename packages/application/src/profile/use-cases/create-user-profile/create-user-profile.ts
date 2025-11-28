@@ -1,12 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  UserProfile, 
-  createUserProfile,
-  UserProfileCommands 
-} from '@bene/core/profile';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { createUserProfile } from '@bene/core/profile';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface CreateUserProfileRequest {
   userId: string;
@@ -40,7 +35,7 @@ export class CreateUserProfileUseCase
     // 1. Check if profile already exists
     const existingResult = await this.profileRepository.findById(request.userId);
     if (existingResult.isSuccess) {
-      return Result.fail('Profile already exists for this user');
+      return Result.fail(new Error('Profile already exists for this user'));
     }
 
     // 2. Create profile using factory
@@ -57,7 +52,7 @@ export class CreateUserProfileUseCase
     });
 
     if (profileResult.isFailure) {
-      return Result.fail(profileResult.error as string);
+      return Result.fail(profileResult.error);
     }
 
     const profile = profileResult.value;
@@ -65,7 +60,7 @@ export class CreateUserProfileUseCase
     // 3. Save to repository
     const saveResult = await this.profileRepository.save(profile);
     if (saveResult.isFailure) {
-      return Result.fail(saveResult.error as string);
+      return Result.fail(saveResult.error);
     }
 
     // 4. Emit event

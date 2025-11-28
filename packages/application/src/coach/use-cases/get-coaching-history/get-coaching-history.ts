@@ -1,7 +1,6 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
+import { Result, UseCase } from '@bene/core/shared';
 import { CoachingConversation } from '@bene/core/coach';
-import { CoachingConversationRepository } from '../repositories/coaching-conversation-repository';
+import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 
 export interface GetCoachingHistoryRequest {
   userId: string;
@@ -32,9 +31,8 @@ export interface GetCoachingHistoryResponse {
 }
 
 export class GetCoachingHistoryUseCase
-  implements UseCase<GetCoachingHistoryRequest, GetCoachingHistoryResponse>
-{
-  constructor(private conversationRepository: CoachingConversationRepository) {}
+  implements UseCase<GetCoachingHistoryRequest, GetCoachingHistoryResponse> {
+  constructor(private conversationRepository: CoachingConversationRepository) { }
 
   async execute(
     request: GetCoachingHistoryRequest,

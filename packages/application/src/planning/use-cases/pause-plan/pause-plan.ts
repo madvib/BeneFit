@@ -1,8 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
-import { WorkoutPlanRepository } from '../repositories/workout-plan-repository';
-import { EventBus } from '../../shared/event-bus';
+import { EventBus } from '@bene/application/shared/event-bus.js';
+import { WorkoutPlanCommands } from '@bene/core/plans/index.js';
+import { Result, UseCase } from '@bene/core/shared';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
 
 export interface PausePlanRequest {
   userId: string;
@@ -20,7 +19,7 @@ export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResp
   constructor(
     private planRepository: WorkoutPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(request: PausePlanRequest): Promise<Result<PausePlanResponse>> {
     const planResult = await this.planRepository.findById(request.planId);
@@ -35,7 +34,7 @@ export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResp
 
     const pausedPlanResult = WorkoutPlanCommands.pausePlan(plan, request.reason);
     if (pausedPlanResult.isFailure) {
-      return Result.fail(new Error(pausedPlanResult.error as string));
+      return Result.fail(pausedPlanResult.error);
     }
 
     const pausedPlan = pausedPlanResult.value;

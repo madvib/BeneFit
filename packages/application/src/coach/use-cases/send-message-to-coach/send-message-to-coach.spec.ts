@@ -5,7 +5,7 @@ import { SendMessageToCoachUseCase } from './send-message-to-coach';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder';
 import { AICoachService } from '../../services/ai-coach-service';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -38,7 +38,7 @@ describe('SendMessageToCoachUseCase', () => {
       mockConversationRepository,
       mockContextBuilder,
       mockAICoachService,
-      mockEventBus
+      mockEventBus,
     );
   });
 
@@ -46,16 +46,31 @@ describe('SendMessageToCoachUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const message = 'I need help with my workout plan';
-    
+
     const mockConversation: CoachingConversation = {
       id: 'conv-456',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -74,12 +89,20 @@ describe('SendMessageToCoachUseCase', () => {
     };
 
     const mockAIResponse = {
-      message: 'I understand you need help with your workout plan. Can you tell me more about your goals?',
-      actions: [{ type: 'schedule_workout', details: 'Schedule a strength workout for tomorrow' }] as CoachAction[],
+      message:
+        'I understand you need help with your workout plan. Can you tell me more about your goals?',
+      actions: [
+        {
+          type: 'schedule_workout',
+          details: 'Schedule a strength workout for tomorrow',
+        },
+      ] as CoachAction[],
       suggestedFollowUps: ['What are your specific goals?'],
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
     mockAICoachService.getResponse.mockResolvedValue(Result.ok(mockAIResponse));
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
@@ -100,14 +123,14 @@ describe('SendMessageToCoachUseCase', () => {
     expect(mockAICoachService.getResponse).toHaveBeenCalledWith(
       expect.objectContaining({
         userMessage: message,
-      })
+      }),
     );
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'CoachMessageSent',
         userId,
         conversationId: 'conv-456',
-      })
+      }),
     );
   });
 
@@ -116,28 +139,42 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'Hello coach!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Not found')));
-    
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Not found')),
+    );
+
     const mockContext = {
       recentWorkouts: [],
-      userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
+      userGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'test',
+        successCriteria: [],
+      },
       userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
       experienceLevel: 'beginner',
-      trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+      trends: {
+        volumeTrend: 'stable',
+        adherenceTrend: 'stable',
+        energyTrend: 'medium',
+        exertionTrend: 'stable',
+        enjoymentTrend: 'stable',
+      },
       daysIntoCurrentWeek: 0,
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
     };
-    
+
     mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    
+
     const mockAIResponse = {
-      message: 'Hi! I\'m your AI coach. I\'m here to help you reach your fitness goals. What brings you here today?',
+      message:
+        "Hi! I'm your AI coach. I'm here to help you reach your fitness goals. What brings you here today?",
       actions: [] as CoachAction[],
       suggestedFollowUps: [],
     };
-    
+
     mockAICoachService.getResponse.mockResolvedValue(Result.ok(mockAIResponse));
     mockConversationRepository.save.mockResolvedValue(Result.ok());
 
@@ -158,8 +195,12 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'Hello coach!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Not found')));
-    mockContextBuilder.buildContext.mockResolvedValue(Result.fail(new Error('Failed to build context')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Not found')),
+    );
+    mockContextBuilder.buildContext.mockResolvedValue(
+      Result.fail(new Error('Failed to build context')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -182,12 +223,27 @@ describe('SendMessageToCoachUseCase', () => {
     const mockConversation: CoachingConversation = {
       id: 'conv-456',
       userId,
-      context: { 
+      context: {
         recentWorkouts: [],
-        userGoals: { primary: 'strength', secondary: [], motivation: 'test', successCriteria: [] },
-        userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
         experienceLevel: 'beginner',
-        trends: { volumeTrend: 'stable', adherenceTrend: 'stable', energyTrend: 'medium', exertionTrend: 'stable', enjoymentTrend: 'stable' },
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
         daysIntoCurrentWeek: 0,
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
@@ -205,8 +261,12 @@ describe('SendMessageToCoachUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(Result.ok(mockConversation));
-    mockAICoachService.getResponse.mockResolvedValue(Result.fail(new Error('AI unavailable')));
+    mockConversationRepository.findByUserId.mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    mockAICoachService.getResponse.mockResolvedValue(
+      Result.fail(new Error('AI unavailable')),
+    );
 
     // Act
     const result = await useCase.execute({

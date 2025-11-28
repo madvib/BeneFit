@@ -3,7 +3,7 @@ import { Result } from '@bene/core/shared';
 import { WorkoutPlan, WorkoutPlanCommands } from '@bene/core/plans';
 import { ActivatePlanUseCase } from './activate-plan';
 import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
-import { EventBus } from '../../../shared/event-bus';
+import { EventBus } from '../../../shared/event-bus.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -23,10 +23,7 @@ describe('ActivatePlanUseCase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new ActivatePlanUseCase(
-      mockPlanRepository,
-      mockEventBus
-    );
+    useCase = new ActivatePlanUseCase(mockPlanRepository, mockEventBus);
   });
 
   it('should successfully activate a draft plan', async () => {
@@ -49,14 +46,16 @@ describe('ActivatePlanUseCase', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     const activatedPlan: WorkoutPlan = {
       ...draftPlan,
       status: 'active',
     };
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(Result.ok(activatedPlan));
+    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(
+      Result.ok(activatedPlan),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -76,7 +75,7 @@ describe('ActivatePlanUseCase', () => {
         type: 'PlanActivated',
         userId,
         planId,
-      })
+      }),
     );
   });
 
@@ -85,7 +84,9 @@ describe('ActivatePlanUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
 
-    mockPlanRepository.findById.mockResolvedValue(Result.fail(new Error('Plan not found')));
+    mockPlanRepository.findById.mockResolvedValue(
+      Result.fail(new Error('Plan not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -159,7 +160,9 @@ describe('ActivatePlanUseCase', () => {
     };
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(Result.fail(new Error('Cannot activate')));
+    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(
+      Result.fail(new Error('Cannot activate')),
+    );
 
     // Act
     const result = await useCase.execute({

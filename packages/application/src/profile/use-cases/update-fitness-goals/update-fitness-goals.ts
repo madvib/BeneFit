@@ -1,11 +1,7 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  UserProfile, 
-  UserProfileCommands 
-} from '@bene/core/profile';
-import { UserProfileRepository } from '../../profile/repositories/user-profile-repository';
-import { EventBus } from '../../shared/event-bus';
+import { Result, UseCase } from '@bene/core/shared';
+import { UserProfileCommands } from '@bene/core/profile';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface UpdateFitnessGoalsRequest {
   userId: string;
@@ -19,12 +15,11 @@ export interface UpdateFitnessGoalsResponse {
 }
 
 export class UpdateFitnessGoalsUseCase
-  implements UseCase<UpdateFitnessGoalsRequest, UpdateFitnessGoalsResponse>
-{
+  implements UseCase<UpdateFitnessGoalsRequest, UpdateFitnessGoalsResponse> {
   constructor(
     private profileRepository: UserProfileRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: UpdateFitnessGoalsRequest,
@@ -32,7 +27,7 @@ export class UpdateFitnessGoalsUseCase
     // 1. Load profile
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isFailure) {
-      return Result.fail('Profile not found');
+      return Result.fail(new Error('Profile not found'));
     }
     const profile = profileResult.value;
 
@@ -40,9 +35,12 @@ export class UpdateFitnessGoalsUseCase
     const primaryGoalChanged = profile.fitnessGoals.primary !== request.goals.primary;
 
     // 3. Update goals using command
-    const updatedProfileResult = UserProfileCommands.updateFitnessGoals(profile, request.goals);
+    const updatedProfileResult = UserProfileCommands.updateFitnessGoals(
+      profile,
+      request.goals,
+    );
     if (updatedProfileResult.isFailure) {
-      return Result.fail(updatedProfileResult.error as string);
+      return Result.fail(updatedProfileResult.error);
     }
     const updatedProfile = updatedProfileResult.value;
 

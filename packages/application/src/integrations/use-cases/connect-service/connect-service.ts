@@ -1,14 +1,13 @@
-import { Result } from '@bene/core/shared';
-import { UseCase } from '../../shared/use-case';
-import { 
-  ConnectedService, 
+import { Result, UseCase } from '@bene/core/shared';
+
+import {
   createConnectedService,
   OAuthCredentials,
-  ServicePermissions 
+  ServicePermissions,
 } from '@bene/core/integrations';
-import { ConnectedServiceRepository } from '../repositories/connected-service-repository';
-import { IntegrationClient } from '../services/integration-client';
-import { EventBus } from '../../shared/event-bus';
+import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
+import { IntegrationClient } from '../../services/integration-client.js';
+import { EventBus } from '../../../shared/event-bus.js';
 
 export interface ConnectServiceRequest {
   userId: string;
@@ -25,13 +24,12 @@ export interface ConnectServiceResponse {
 }
 
 export class ConnectServiceUseCase
-  implements UseCase<ConnectServiceRequest, ConnectServiceResponse>
-{
+  implements UseCase<ConnectServiceRequest, ConnectServiceResponse> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: ConnectServiceRequest,
@@ -39,7 +37,7 @@ export class ConnectServiceUseCase
     // 1. Get appropriate integration client
     const client = this.integrationClients.get(request.serviceType);
     if (!client) {
-      return Result.fail(`Unsupported service type: ${request.serviceType}`);
+      return Result.fail(new Error(`Unsupported service type: ${ request.serviceType }`));
     }
 
     // 2. Exchange authorization code for access token
@@ -49,7 +47,7 @@ export class ConnectServiceUseCase
     );
 
     if (tokenResult.isFailure) {
-      return Result.fail(`OAuth exchange failed: ${tokenResult.error}`);
+      return Result.fail(new Error(`OAuth exchange failed: ${ tokenResult.error }`));
     }
 
     const tokens = tokenResult.value;
@@ -57,7 +55,7 @@ export class ConnectServiceUseCase
     // 3. Get user profile from service
     const profileResult = await client.getUserProfile(tokens.accessToken);
     if (profileResult.isFailure) {
-      return Result.fail(`Failed to get user profile: ${profileResult.error}`);
+      return Result.fail(new Error(`Failed to get user profile: ${ profileResult.error }`));
     }
 
     const externalProfile = profileResult.value;
@@ -87,7 +85,7 @@ export class ConnectServiceUseCase
     });
 
     if (serviceResult.isFailure) {
-      return Result.fail(serviceResult.error as string);
+      return Result.fail(serviceResult.error);
     }
 
     const service = serviceResult.value;
