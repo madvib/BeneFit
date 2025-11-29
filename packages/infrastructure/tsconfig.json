@@ -1,19 +1,33 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.json",
-    "../../types"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.json", "../../types"],
   "references": [
+    {
+      "path": "../database"
+    },
     {
       "path": "../utils"
     },
     {
-      "path": "../core"
+      "path": "../domain/auth"
     },
     {
-      "path": "../application"
+      "path": "../domain/integrations"
+    },
+    {
+      "path": "../domain/fitness-plan"
+    },
+    {
+      "path": "../domain/workouts"
+    },
+    {
+      "path": "../domain/blog"
+    },
+    {
+      "path": "../domain/coach"
+    },
+    {
+      "path": "../domain/shared"
     },
     {
       "path": "./tsconfig.spec.json"

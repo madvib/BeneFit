@@ -1,0 +1,49 @@
+{
+  "name": "@bene/domain-coach",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lib:typecheck": "tsc --project tsconfig.lib.json --noEmit"
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/coach/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/coach/dist",
+          "main": "packages/domain/coach/src/index.ts",
+          "tsConfig": "packages/domain/coach/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "layer:domain",
+      "domain:coach"
+    ],
+    "name": "@bene/domain-coach"
+  },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "@bene/domain-shared": "workspace:*",
+    "@bene/domain-user-profile": "workspace:*",
+    "@bene/domain-fitness-plan": "workspace:*"
+  }
+}

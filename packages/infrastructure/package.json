@@ -9,27 +9,26 @@
     "migration:push": "pnpm drizzle-kit push --config ./src/auth/data/drizzle.config.ts",
     "drizzle:studio": "pnpm drizzle-kit studio --config ./src/auth/data/drizzle.config.ts"
   },
-  "imports": {
-    "#lib/*": "./src/_lib/*"
-  },
   "exports": {
-    "./activities": "./src/activities/index.ts",
     "./auth": "./src/auth/index.ts",
     "./blog": "./src/blog/index.ts",
-    "./coach": "./src/coach/index.ts",
     "./connections": "./src/connections/index.ts",
-    "./goals": "./src/goals/index.ts",
-    "./settings": "./src/settings/index.ts",
-    "./shared": "./src/shared/index.ts"
+    "./shared": "./src/shared/index.ts",
+    "./repositories": "./src/repositories/index.ts",
+    "./services": "./src/services/index.ts"
   },
   "dependencies": {
     "better-auth": "^1.4.1",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.44.7"
-  },
-  "devDependencies": {
-    "@bene/application": "workspace:*",
-    "@bene/core": "workspace:*",
+    "drizzle-orm": "^0.44.7",
+    "@bene/domain-shared": "workspace:*",
+    "@bene/domain-coach": "workspace:*",
+    "@bene/domain-blog": "workspace:*",
+    "@bene/domain-user-profile": "workspace:*",
+    "@bene/domain-workouts": "workspace:*",
+    "@bene/domain-fitness-plan": "workspace:*",
+    "@bene/domain-integrations": "workspace:*",
+    "@bene/domain-auth": "workspace:*",
     "@bene/utils": "workspace:*"
   },
   "nx": {

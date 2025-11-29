@@ -1,4 +1,4 @@
-import { Result } from '@bene/domain';
+import { Result } from '@bene/domain-shared';
 import type { CoachingMessage, CoachingConversation } from '@bene/domain/coaching';
 
 export interface AnthropicAIRequest {
@@ -27,7 +27,7 @@ export class AnthropicAICoachService {
 
   async sendMessage(
     conversation: CoachingConversation,
-    userMessage: string
+    userMessage: string,
   ): Promise<Result<CoachingMessage>> {
     try {
       const request: AnthropicAIRequest = {
@@ -80,7 +80,7 @@ export class AnthropicAICoachService {
 
   private buildMessages(
     conversation: CoachingConversation,
-    userMessage: string
+    userMessage: string,
   ): Array<{ role: 'user' | 'assistant'; content: string }> {
     // Build context from the coaching conversation
     const contextMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
@@ -91,12 +91,10 @@ export class AnthropicAICoachService {
     ];
 
     // Add recent messages from the conversation (limit to last 10 to avoid token limits)
-    const recentMessages = (conversation.messages || [])
-      .slice(-10)
-      .map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content,
-      }));
+    const recentMessages = (conversation.messages || []).slice(-10).map((msg) => ({
+      role: msg.role as 'user' | 'assistant',
+      content: msg.content,
+    }));
 
     contextMessages.push(...recentMessages);
 
@@ -115,15 +113,16 @@ export class AnthropicAICoachService {
     const userProfile = context?.userProfile;
     const currentPlan = context?.currentPlan;
 
-    let prompt = 'You are an expert fitness coach with deep knowledge of exercise science and behavior change. ';
+    let prompt =
+      'You are an expert fitness coach with deep knowledge of exercise science and behavior change. ';
 
     if (userProfile) {
       prompt += `The user is ${userProfile.displayName || 'a user'} who has `;
-      
+
       if (userProfile.experienceProfile?.level) {
         prompt += `fitness experience level: ${userProfile.experienceProfile.level}. `;
       }
-      
+
       if (userProfile.fitnessGoals) {
         prompt += `Their goals are: ${JSON.stringify(userProfile.fitnessGoals)}. `;
       }

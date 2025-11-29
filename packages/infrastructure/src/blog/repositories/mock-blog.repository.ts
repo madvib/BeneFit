@@ -1,6 +1,6 @@
 import { BlogRepository } from '@bene/application/blog';
 import { BlogCategory, BlogPost } from '@bene/core/blog';
-import { Result } from '@bene/core/shared';
+import { Result } from '@bene/domain-shared';
 
 // Define types that match the original JSON data structure (DTOs)
 interface BlogPostDTO {

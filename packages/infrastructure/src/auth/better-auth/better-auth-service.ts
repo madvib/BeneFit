@@ -8,7 +8,7 @@ import {
   InvalidCredentialsError,
   NetworkError,
 } from '@bene/application/auth';
-import { Result } from '@bene/core/shared';
+import { Result } from '@bene/domain-shared';
 
 import { createBetterAuth } from './auth.js';
 import { APIError, type Auth } from 'better-auth';

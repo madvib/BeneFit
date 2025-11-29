@@ -20,7 +20,7 @@
     ],
     /* Strictness */
     "strict": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noEmitOnError": true,
@@ -28,19 +28,5 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "paths": {
-      "@bene/core/*": [
-        "./packages/core/src/*"
-      ],
-      "@bene/application/*": [
-        "./packages/application/src/*"
-      ],
-      "@bene/infrastructure/*": [
-        "./packages/infrastructure/src/*"
-      ],
-      "@bene/utils/*": [
-        "./packages/utils/src/*"
-      ]
-    },
   }
 }

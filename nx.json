@@ -19,8 +19,7 @@
       "plugin": "@nx/js/typescript",
       "include": [
         "packages/infrastructure/*",
-        "packages/core/*",
-        "packages/application/*",
+        "packages/domain/**",
         "packages/utils/*"
       ],
       "options": {
@@ -28,20 +27,9 @@
         "typecheck": {
           "targetName": "typecheck"
         }
-      },
-      "exclude": ["packages/application/*", "packages/core/*"]
-    },
-    {
-      "plugin": "@nx/storybook/plugin",
-      "options": {
-        "serveStorybookTargetName": "storybook",
-        "buildStorybookTargetName": "build-storybook",
-        "testStorybookTargetName": "test-storybook",
-        "staticStorybookTargetName": "static-storybook",
-        "buildDepsTargetName": "build-deps",
-        "watchDepsTargetName": "watch-deps"
       }
     },
+
     {
       "plugin": "@nx/eslint/plugin",
       "options": {
@@ -51,10 +39,18 @@
     {
       "plugin": "@nx/js/typescript",
       "include": [
-        "tools/nx-plugin/*",
-        "packages/application/*",
-        "packages/core/*",
-        "packages/database/*"
+        "apps/api/*",
+        "packages/database/*",
+        "packages/domain/*",
+        "packages/domain/auth/*",
+        "packages/domain/blog/*",
+        "packages/domain/integrations/*",
+        "packages/domain/fitness-plan/*",
+        "packages/domain/workouts/*",
+        "packages/domain/user-profile/*",
+        "packages/domain/shared/*",
+        "packages/domain/coach/*",
+        "tools/nx-plugin/*"
       ],
       "options": {
         "typecheck": {
@@ -76,6 +72,11 @@
       "cache": true
     },
     "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "@nx/js:swc": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"]

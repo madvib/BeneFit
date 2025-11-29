@@ -23,6 +23,7 @@
     ".devcontainer/.env"
   ],
   "remoteUser": "node",
+  "containerUser": "node",
   "customizations": {
     "vscode": {
       "extensions": [

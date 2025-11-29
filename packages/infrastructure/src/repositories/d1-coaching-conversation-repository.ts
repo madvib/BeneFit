@@ -1,6 +1,6 @@
 import { CoachingConversationRepository } from '@bene/application/coach';
 import { CoachingConversation } from '@bene/core/coach';
-import { Result } from '@bene/core/shared';
+import { Result } from '@bene/domain-shared';
 import { eq } from 'drizzle-orm';
 
 export class D1CoachingConversationRepository

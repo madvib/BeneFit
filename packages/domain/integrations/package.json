@@ -1,0 +1,43 @@
+{
+  "name": "@bene/domain-integrations",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/integrations/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/integrations/dist",
+          "main": "packages/domain/integrations/src/index.ts",
+          "tsConfig": "packages/domain/integrations/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "layer:domain",
+      "domain:integrations"
+    ]
+  },
+  "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  }
+}

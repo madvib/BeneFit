@@ -19,6 +19,9 @@
     "auth:migration:apply:local": "wrangler d1 migrations apply DB_USER_AUTH --local"
   },
   "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@bene/infrastructure": "workspace:*",
+    "@bene/utils": "workspace:*",
     "@opennextjs/cloudflare": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "hono": "^4.10.6",
@@ -27,12 +30,6 @@
     "next-themes": "^0.4.6",
     "react": "catalog:",
     "react-dom": "catalog:"
-  },
-  "devDependencies": {
-    "@bene/application": "workspace:*",
-    "@bene/core": "workspace:*",
-    "@bene/infrastructure": "workspace:*",
-    "@bene/utils": "workspace:*"
   },
   "nx": {
     "tags": [

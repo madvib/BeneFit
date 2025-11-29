@@ -1,5 +1,5 @@
 {
-  "name": "database",
+  "name": "@bene/database",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -21,10 +21,6 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.30.10",
-    "better-sqlite3": "^9.4.3",
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "drizzle-kit": "^0.20.14"
+    "better-sqlite3": "^9.4.3"
   }
 }

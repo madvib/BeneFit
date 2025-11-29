@@ -1,1 +1,0 @@
-export * from './repositories/mock-settings.repository.js';

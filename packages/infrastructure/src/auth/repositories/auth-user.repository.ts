@@ -1,5 +1,5 @@
 import { IUserRepository } from '@bene/application/auth';
-import { Result } from '@bene/core/shared';
+import { Result } from '@bene/domain-shared';
 import { User } from '@bene/core/auth';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import { user as userTable } from '../data/schema/schema.js';

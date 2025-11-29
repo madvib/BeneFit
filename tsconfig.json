@@ -7,16 +7,7 @@
       "path": "./apps/web"
     },
     {
-      "path": "./apps/api"
-    },
-    {
-      "path": "./packages/application"
-    },
-    {
       "path": "./packages/infrastructure"
-    },
-    {
-      "path": "./packages/core"
     },
     {
       "path": "./packages/utils"
@@ -26,6 +17,30 @@
     },
     {
       "path": "./packages/database"
+    },
+    {
+      "path": "./packages/domain/blog"
+    },
+    {
+      "path": "./packages/domain/integrations"
+    },
+    {
+      "path": "./packages/domain/fitness-plan"
+    },
+    {
+      "path": "./packages/domain/workouts"
+    },
+    {
+      "path": "./packages/domain/user-profile"
+    },
+    {
+      "path": "./packages/domain/shared"
+    },
+    {
+      "path": "./packages/domain/coach"
+    },
+    {
+      "path": "./packages/domain/auth"
     }
   ]
 }
