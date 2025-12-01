@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Result } from '@bene/domain-shared';
+import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { GetWorkoutHistoryUseCase } from './get-workout-history.js';
 
 describe('GetWorkoutHistoryUseCase', () => {
   let useCase: GetWorkoutHistoryUseCase;
-  let completedWorkoutRepo: any;
+  let completedWorkoutRepo: CompletedWorkoutRepository;
 
   beforeEach(() => {
     completedWorkoutRepo = {

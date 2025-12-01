@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/domain-shared';
+import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { AddWorkoutReactionUseCase } from './add-workout-reaction.js';
 
 describe('AddWorkoutReactionUseCase', () => {
   let useCase: AddWorkoutReactionUseCase;
-  let completedWorkoutRepo: any;
-  let eventBus: any;
+  let completedWorkoutRepo: CompletedWorkoutRepository;
+  let eventBus: EventBus;
 
   beforeEach(() => {
     completedWorkoutRepo = {

@@ -2,9 +2,9 @@ import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
 import {
   GetAllBlogPostsUseCase,
   BlogPostsFetchError,
-} from './get-all-blog-posts.use-case';
+} from './get-all-blog-posts.use-case.js';
 import { BlogRepository } from '../../ports/blog.repository.js';
-import { BlogPost, BlogCategory } from '@bene/core/blog';
+import { BlogPost, BlogCategory } from '../../../core/index.js';
 
 // Create a mock repository interface
 type MockBlogRepository = Mocked<BlogRepository>;
@@ -46,7 +46,6 @@ describe('GetAllBlogPostsUseCase', () => {
         readTime: '5 min read',
         category: techCategoryResult.value,
         image: 'image1.jpg',
-        isActive: true,
       });
       
       const mockBlogPost2Result = BlogPost.create({
@@ -58,7 +57,6 @@ describe('GetAllBlogPostsUseCase', () => {
         readTime: '8 min read',
         category: healthCategoryResult.value,
         image: 'image2.jpg',
-        isActive: true,
       });
       
       if (mockBlogPost1Result.isFailure || mockBlogPost2Result.isFailure) {
@@ -100,7 +98,7 @@ describe('GetAllBlogPostsUseCase', () => {
 
     it('should handle repository returning empty blog posts', async () => {
       // Arrange
-      const mockBlogPosts: any[] = [];
+      const mockBlogPosts: BlogPost[] = [];
       mockBlogRepository.getAllBlogPosts.mockResolvedValue(mockBlogPosts);
 
       // Act

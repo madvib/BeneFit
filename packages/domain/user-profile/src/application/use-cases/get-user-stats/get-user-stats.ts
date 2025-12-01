@@ -45,7 +45,7 @@ export class GetUserStatsUseCase
       currentStreak: profile.stats.currentStreak,
       longestStreak: profile.stats.longestStreak,
       lastWorkoutDate: profile.stats.lastWorkoutDate,
-      achievements: profile.stats.achievements.map((a: any) => ({
+      achievements: (profile.stats.achievements as Array<{ id: string; name: string; earnedAt: Date }>).map((a) => ({
         id: a.id,
         name: a.name,
         earnedAt: a.earnedAt,

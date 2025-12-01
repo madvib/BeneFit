@@ -60,18 +60,18 @@ export class SkipWorkoutUseCase
         }
 
         // Update the plan with the skipped workout
-        const updatedWorkouts: any[] = [
+        const updatedWorkouts = [
           ...week.workouts.slice(0, workoutIndex),
           skippedWorkoutResult.value,
           ...week.workouts.slice(workoutIndex + 1),
         ];
 
-        const updatedWeek: any = {
+        const updatedWeek = {
           ...week,
           workouts: updatedWorkouts,
         };
 
-        const updatedWeeks: any[] = [
+        const updatedWeeks = [
           ...plan.weeks.slice(0, weekIndex),
           updatedWeek,
           ...plan.weeks.slice(weekIndex + 1),
@@ -79,7 +79,7 @@ export class SkipWorkoutUseCase
 
         updatedPlan = {
           ...plan,
-          weeks: updatedWeeks as any,
+          weeks: updatedWeeks,
           updatedAt: new Date(),
         };
 

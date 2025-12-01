@@ -23,7 +23,7 @@ export class BlogPost extends Entity<BlogPostProps> {
   }
 
   static create(
-    props: Omit<BlogPostProps, 'createdAt'> & { id: string },
+    props: Omit<BlogPostProps, 'createdAt' | 'isActive'> & { id: string },
   ): Result<BlogPost> {
     const { id, title, excerpt, date, author, readTime, category, image } = props;
 

@@ -1,10 +1,8 @@
-import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
 import { Result, EventBus } from '@bene/domain-shared';
-import { ConnectedService } from '@core/index.js';
 import { ConnectServiceUseCase } from './connect-service.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
 import { IntegrationClient } from '../../services/integration-client.js';
-import {} from '@bene/domain-shared';
+
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -12,7 +10,12 @@ const mockServiceRepository = {
   findByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as ConnectedServiceRepository;
+} as unknown as {
+  findById: Mock;
+  findByUserId: Mock;
+  save: Mock;
+  delete: Mock;
+};
 
 const mockIntegrationClient = {
   supportsWebhooks: true,
@@ -20,7 +23,13 @@ const mockIntegrationClient = {
   refreshAccessToken: vi.fn(),
   getUserProfile: vi.fn(),
   getActivitiesSince: vi.fn(),
-} as unknown as IntegrationClient;
+} as unknown as {
+  supportsWebhooks: boolean;
+  exchangeAuthCode: Mock;
+  refreshAccessToken: Mock;
+  getUserProfile: Mock;
+  getActivitiesSince: Mock;
+};
 
 const mockIntegrationClients = new Map<string, IntegrationClient>();
 mockIntegrationClients.set('strava', mockIntegrationClient);
@@ -53,7 +62,7 @@ describe('ConnectServiceUseCase', () => {
       refreshToken: 'refresh-token-101',
       expiresAt: new Date(Date.now() + 3600000),
       scopes: ['read', 'write'],
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
     };
 
     const mockProfile = {
@@ -63,41 +72,7 @@ describe('ConnectServiceUseCase', () => {
       units: 'metric' as const,
     };
 
-    const mockService: ConnectedService = {
-      id: 'service-789',
-      userId,
-      serviceType: serviceType as any,
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000),
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: { read: true, write: true },
-      syncStatus: {
-        state: 'never_synced',
-        lastAttemptAt: undefined,
-        lastSuccessAt: undefined,
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 0,
-        workoutsSynced: 0,
-        heartRateDataSynced: 0,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
-      isActive: true,
-      isPaused: false,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-    };
+
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));
     mockIntegrationClient.getUserProfile.mockResolvedValue(Result.ok(mockProfile));
@@ -164,7 +139,7 @@ describe('ConnectServiceUseCase', () => {
     const redirectUri = 'https://example.com/callback';
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(
-      Result.fail('Invalid code'),
+      Result.fail(new Error('Invalid code')),
     );
 
     // Act
@@ -194,12 +169,12 @@ describe('ConnectServiceUseCase', () => {
       refreshToken: 'refresh-token-101',
       expiresAt: new Date(Date.now() + 3600000),
       scopes: ['read', 'write'],
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
     };
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));
     mockIntegrationClient.getUserProfile.mockResolvedValue(
-      Result.fail('Profile request failed'),
+      Result.fail(new Error('Profile request failed')),
     );
 
     // Act

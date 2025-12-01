@@ -4,12 +4,12 @@ import { UserProfileRepository } from '../../repositories/user-profile-repositor
 
 export interface UpdatePreferencesRequest {
   userId: string;
-  preferences: Partial<any>; // Using any since the exact type depends on core implementation
+  preferences: Partial<Record<string, unknown>>; // Using Record since the exact type depends on core implementation
 }
 
 export interface UpdatePreferencesResponse {
   userId: string;
-  preferences: any; // Using any since the exact type depends on core implementation
+  preferences: Record<string, unknown>; // Using Record since the exact type depends on core implementation
 }
 
 export class UpdatePreferencesUseCase

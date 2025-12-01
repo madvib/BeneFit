@@ -1,6 +1,7 @@
 import { Result, Guard } from '@bene/domain-shared';
 import { CoachingMessage } from './coaching-message.types.js';
 import { CoachAction } from '../index.js';
+import { randomUUID } from 'crypto';
 
 export function createUserMessage(
   content: string,
@@ -16,7 +17,7 @@ export function createUserMessage(
   }
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     role: 'user',
     content,
     checkInId,
@@ -41,7 +42,7 @@ export function createCoachMessage(
   }
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     role: 'coach',
     content,
     actions,
@@ -59,7 +60,7 @@ export function createSystemMessage(content: string): Result<CoachingMessage> {
   }
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     role: 'system',
     content,
     timestamp: new Date(),

@@ -72,7 +72,7 @@ export class ActivatePlanUseCase
         ? {
             workoutId: todaysWorkout.id,
             type: todaysWorkout.type,
-            durationMinutes: todaysWorkout.activities.reduce((sum: number, a: any) => sum + (a.duration || 10), 0) || 30,
+            durationMinutes: (todaysWorkout.activities as { duration?: number }[]).reduce((sum: number, a) => sum + (a.duration || 10), 0) || 30,
           }
         : undefined,
     });

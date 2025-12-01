@@ -1,15 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Result } from '@bene/domain-shared';
+import { AuthService } from '../../../services/auth.service.js';
 import { GetCurrentUserUseCase } from './get-current-user.use-case.js';
 
 describe('GetCurrentUserUseCase', () => {
   let useCase: GetCurrentUserUseCase;
-  let mockAuthService: any;
+  let mockAuthService: AuthService;
 
   beforeEach(() => {
     mockAuthService = {
       getCurrentUser: vi.fn(),
-    };
+    } as AuthService;
     useCase = new GetCurrentUserUseCase(mockAuthService);
   });
 
@@ -21,7 +22,7 @@ describe('GetCurrentUserUseCase', () => {
       ),
     );
 
-    const result = await useCase.execute({} as any);
+    const result = await useCase.execute({} as { userId?: string });
 
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
@@ -36,7 +37,7 @@ describe('GetCurrentUserUseCase', () => {
     const mockUser = { id: '1', email: 'test@example.com', name: 'Test User' };
     mockAuthService.getCurrentUser.mockResolvedValue(Result.ok(mockUser));
 
-    const result = await useCase.execute({} as any);
+    const result = await useCase.execute({} as { userId?: string });
 
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {

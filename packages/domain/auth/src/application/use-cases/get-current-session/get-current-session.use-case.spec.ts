@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Result } from '@bene/domain-shared';
+import { AuthService } from '../../../services/auth.service.js';
 import { GetCurrentSessionUseCase } from './get-current-session.use-case.js';
 
 describe('GetCurrentSessionUseCase', () => {
   let useCase: GetCurrentSessionUseCase;
-  let mockAuthService: any;
+  let mockAuthService: AuthService;
 
   beforeEach(() => {
     mockAuthService = {
       getSession: vi.fn(),
       getCurrentUser: vi.fn(),
-    };
+    } as AuthService;
     useCase = new GetCurrentSessionUseCase(mockAuthService);
   });
 
@@ -23,7 +24,7 @@ describe('GetCurrentSessionUseCase', () => {
       Result.ok({ id: '1', email: 'test@example.com', name: 'Test User' }),
     );
 
-    const result = await useCase.execute({} as any);
+    const result = await useCase.execute({} as { userId?: string });
 
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
@@ -42,7 +43,7 @@ describe('GetCurrentSessionUseCase', () => {
       Result.ok({ id: '1', email: 'test@example.com', name: 'Test User' }),
     );
 
-    const result = await useCase.execute({} as any);
+    const result = await useCase.execute({} as { userId?: string });
 
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
@@ -59,7 +60,7 @@ describe('GetCurrentSessionUseCase', () => {
     // Mock the authService to return no session
     mockAuthService.getSession.mockResolvedValue(Result.ok(null));
 
-    const result = await useCase.execute({} as any);
+    const result = await useCase.execute({} as { userId?: string });
 
     // Should return success result with no user and not authenticated
     expect(result.isSuccess).toBe(true);

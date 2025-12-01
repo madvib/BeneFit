@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createWorkoutSession } from './workout-session.factory.js';
 import { startSession, joinSession, pauseSession, resumeSession, completeActivity, abandonSession } from './workout-session.commands.js';
-import { getActiveDuration, getCurrentActivity, getCompletionPercentage, getActiveParticipants, isParticipantInSession, canJoin } from './workout-session.queries.js';
+import { getCurrentActivity, getCompletionPercentage, getActiveParticipants, isParticipantInSession, canJoin } from './workout-session.queries.js';
 import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';
 
 describe('WorkoutSession', () => {

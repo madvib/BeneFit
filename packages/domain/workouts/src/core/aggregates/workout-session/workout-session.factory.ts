@@ -3,6 +3,7 @@ import { createDefaultSessionConfig } from '../../value-objects/session-configur
 import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.types.js';
 import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';
 import { WorkoutSession } from './workout-session.types.js';
+import { randomUUID } from 'crypto';
 
 export interface CreateWorkoutSessionParams {
   ownerId: string;
@@ -42,7 +43,7 @@ export function createWorkoutSession(
   const now = new Date();
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ownerId: params.ownerId,
     planId: params.planId,
     workoutTemplateId: params.workoutTemplateId,

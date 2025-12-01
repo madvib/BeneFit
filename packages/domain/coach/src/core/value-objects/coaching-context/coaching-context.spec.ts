@@ -21,7 +21,7 @@ describe('CoachingContext Value Object', () => {
     },
   ];
 
-  const mockUserGoals: any = {
+  const mockUserGoals = {
     primaryGoal: 'strength',
     targetWeight: 75,
   };
@@ -84,7 +84,8 @@ describe('CoachingContext Value Object', () => {
 
   it('should fail if recentWorkouts is missing', () => {
     const result = createCoachingContext({
-      recentWorkouts: null as any,
+      // @ts-expect-error Testing invalid input
+      recentWorkouts: null,
       userGoals: mockUserGoals,
       userConstraints: mockUserConstraints,
       experienceLevel: 'intermediate',

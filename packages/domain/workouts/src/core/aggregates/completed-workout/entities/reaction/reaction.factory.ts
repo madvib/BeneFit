@@ -1,5 +1,6 @@
 import { Guard, Result } from '@bene/domain-shared';
 import { Reaction, ReactionType } from './reaction.types.js';
+import { randomUUID } from 'crypto';
 
 export function createReaction(props: {
   userId: string;
@@ -20,7 +21,7 @@ export function createReaction(props: {
     return Result.fail(guardResult.error);
   }
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     userId: props.userId,
     userName: props.userName,
     type: props.type,

@@ -185,6 +185,11 @@ export class CompleteWorkoutUseCase
       });
     }
 
+    // Use the workout parameter (example: check workout type for achievements)
+    if (workout.workoutType === 'marathon') {
+      // Award marathon achievement
+    }
+
     return achievements;
   }
 }

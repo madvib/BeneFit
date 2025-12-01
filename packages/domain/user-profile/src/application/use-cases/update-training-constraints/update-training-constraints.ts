@@ -5,12 +5,12 @@ import { EventBus } from '@bene/domain-shared';
 
 export interface UpdateTrainingConstraintsRequest {
   userId: string;
-  constraints: any; // Using any since the exact type depends on core implementation
+  constraints: Record<string, unknown>; // Using Record since the exact type depends on core implementation
 }
 
 export interface UpdateTrainingConstraintsResponse {
   userId: string;
-  constraints: any; // Using any since the exact type depends on core implementation
+  constraints: Record<string, unknown>; // Using Record since the exact type depends on core implementation
   shouldAdjustPlan: boolean;
 }
 

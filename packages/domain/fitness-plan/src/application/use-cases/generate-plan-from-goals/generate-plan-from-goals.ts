@@ -106,7 +106,7 @@ export class GeneratePlanFromGoalsUseCase
         workouts: firstWeek.workouts.map((w) => {
           // Calculate duration from activities
           const duration =
-            w.activities?.reduce((sum: number, a: any) => sum + (a.duration || 10), 0) || 30;
+            (w.activities as { duration?: number }[])?.reduce((sum: number, a) => sum + (a.duration || 10), 0) || 30;
           return {
             day:
               ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][w.dayOfWeek || 0] ||

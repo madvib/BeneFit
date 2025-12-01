@@ -7,6 +7,7 @@ import {
 import { ServicePermissions } from '../../value-objects/service-permissions/service-permission.js';
 import { createInitialSyncStatus } from '../../value-objects/sync-status/sync-status.js';
 import { ConnectedService, ServiceType } from './index.js';
+import { randomUUID } from 'crypto';
 
 export interface CreateConnectedServiceParams {
   userId: string;
@@ -35,7 +36,7 @@ export function createConnectedService(
   const now = new Date();
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     userId: params.userId,
     serviceType: params.serviceType,
     credentials: params.credentials,

@@ -1,13 +1,12 @@
 // EntityMixin.ts
 // Note: This needs to be compiled with a target that supports decorators or mixins (ES6/ES2015 or later).
 
+import { randomUUID } from 'crypto';
 
-type Constructor<T = {}> = new (...args: any[]) => T;
-
-const crypto = globalThis.crypto;
+type Constructor<T = object> = new (...args: unknown[]) => T;
 
 /**
- * Mixin that injects the required Identity (id) and Equality (equals) logic 
+ * Mixin that injects the required Identity (id) and Equality (equals) logic
  * into any class implementing IEntity.
  */
 export function IdentityMixin<T extends Constructor>(Base: T) {
@@ -15,14 +14,14 @@ export function IdentityMixin<T extends Constructor>(Base: T) {
   return class extends Base {
     public readonly _id: string;
 
-    constructor(...args: any[]) {
+    constructor(...args: unknown[]) {
       super(...args);
 
       // Assume the constructor args are (props, id?)
-      const id: string | undefined = args[1];
+      const id: string | undefined = args[1] as string | undefined;
 
       // Inject ID assignment logic
-      this._id = id ? id : crypto.randomUUID();
+      this._id = id ? id : randomUUID();
     }
 
     // Inject ID getter
@@ -31,7 +30,7 @@ export function IdentityMixin<T extends Constructor>(Base: T) {
     }
 
     // Inject Equality logic based on ID
-    public equals(entity?: object | any): boolean {
+    public equals(entity?: object): boolean {
       if (!entity) return false;
       if (this === entity) return true;
 

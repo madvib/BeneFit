@@ -1,5 +1,6 @@
 import { Result, Guard } from '@bene/domain-shared';
 import { CheckInType, CheckInTrigger, CheckIn } from './check-in.types.js';
+import { randomUUID } from 'crypto';
 
 export function createCheckIn(props: {
   type: CheckInType;
@@ -22,7 +23,7 @@ export function createCheckIn(props: {
   }
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     type: props.type,
     triggeredBy: props.triggeredBy,
     question: props.question,

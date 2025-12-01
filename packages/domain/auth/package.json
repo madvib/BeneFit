@@ -14,6 +14,14 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "@bene/domain-shared": "workspace:*",
+    "@bene/utils": "workspace:*"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
   "nx": {
     "sourceRoot": "packages/domain/auth/src",
     "targets": {
@@ -36,10 +44,5 @@
       "domain:auth"
     ],
     "name": "@bene/domain-auth"
-  },
-  "dependencies": {
-    "@swc/helpers": "~0.5.11",
-    "@bene/domain-shared": "workspace:*",
-    "@bene/utils": "workspace:*"
   }
 }

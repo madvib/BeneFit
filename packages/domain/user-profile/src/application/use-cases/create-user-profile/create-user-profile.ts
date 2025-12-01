@@ -6,9 +6,9 @@ export interface CreateUserProfileRequest {
   userId: string;
   displayName: string;
   timezone: string;
-  experienceProfile: any; // Using any since the exact type depends on core implementation
-  fitnessGoals: any; // Using any since the exact type depends on core implementation
-  trainingConstraints: any; // Using any since the exact type depends on core implementation
+  experienceProfile?: unknown; // Using unknown since the exact type depends on core implementation
+  fitnessGoals?: unknown; // Using unknown since the exact type depends on core implementation
+  trainingConstraints?: unknown; // Using unknown since the exact type depends on core implementation
   avatar?: string;
   bio?: string;
   location?: string;

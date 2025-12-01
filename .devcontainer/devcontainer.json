@@ -1,21 +1,20 @@
 {
   "name": "BeneFit NX Monorepo",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
-  "features": {
-    "ghcr.io/devcontainers-extra/features/pnpm:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+  // "image": "benefit-nx-dev:latest",
+  "build": {
+    "dockerfile": "Dockerfile", // Assumes Dockerfile is in the same directory
+    "context": ".." // Context set to the project root (one level up)
   },
   "containerEnv": {
-    "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
-    "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
-    "PNPM_HOME": "/home/node/.local/share/pnpm"
+    "GITHUB_PAT": "${localEnv:GITHUB_PAT}"
   },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
+    "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}",
+    "PNPM_HOME": "/home/node/.local/share/pnpm"
   },
   "mounts": [
-    "source=pnpm_home,target=/home/node/.local/share/pnpm/,type=volume"
+    "source=${localEnv:HOME}/.local/share/pnpm,target=/home/node/.local/share/pnpm/,type=bind"
   ],
   "postCreateCommand": "pnpm config set store-dir $PNPM_HOME/store && pnpm install", //sudo chown -R node:node $PNPM_HOME && 
   "runArgs": [
@@ -27,8 +26,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "esbenp.prettier-vscode",
-        "nrwl.angular-console"
+        "esbenp.prettier-vscode"
       ],
       "settings": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",

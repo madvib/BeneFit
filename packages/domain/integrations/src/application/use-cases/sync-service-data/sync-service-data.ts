@@ -96,7 +96,7 @@ export class SyncServiceDataUseCase
 
     // 7. Map to CompletedWorkouts and save
     // (This would call CompletedWorkoutRepository in real implementation)
-    const workoutsSynced = activities.filter((a: any) => a.type === 'workout').length;
+    const workoutsSynced = (activities as { type: string }[]).filter((a) => a.type === 'workout').length;
     const activitiesSynced = activities.length;
 
     // 8. Record success

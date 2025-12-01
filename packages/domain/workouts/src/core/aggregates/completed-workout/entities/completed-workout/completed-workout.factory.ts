@@ -2,6 +2,7 @@ import { Guard, Result } from '@bene/domain-shared';
 import { WorkoutPerformance } from '../../../../value-objects/workout-performance/workout-performance.types.js';
 import { WorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.types.js';
 import { CompletedWorkout } from './completed-workout.types.js';
+import { randomUUID } from 'crypto';
 
 export interface CreateCompletedWorkoutParams {
   userId: string;
@@ -61,7 +62,7 @@ export function createCompletedWorkout(
   const now = new Date();
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     userId: params.userId,
     planId: params.planId,
     workoutTemplateId: params.workoutTemplateId,

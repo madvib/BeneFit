@@ -22,7 +22,8 @@ describe('LiveActivityProgress', () => {
 
     it('should fail if required properties are missing', () => {
       const result = createLiveActivityProgress({
-        activityType: null as any,
+        // @ts-expect-error Testing invalid input
+        activityType: null,
         activityIndex: 0,
         totalActivities: 3,
       });

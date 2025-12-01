@@ -74,7 +74,7 @@ export class ConnectServiceUseCase
 
     const serviceResult = createConnectedService({
       userId: request.userId,
-      serviceType: request.serviceType as any, // Type assertion since it comes from request
+      serviceType: request.serviceType as 'strava' | 'garmin' | string, // Type assertion since it comes from request
       credentials,
       permissions: tokens.permissions,
       metadata: {

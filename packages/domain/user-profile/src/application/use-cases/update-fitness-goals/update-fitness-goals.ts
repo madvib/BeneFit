@@ -5,12 +5,12 @@ import { EventBus } from '@bene/domain-shared';
 
 export interface UpdateFitnessGoalsRequest {
   userId: string;
-  goals: any; // Using any since the exact type depends on core implementation
+  goals: Record<string, unknown>; // Using Record since the exact type depends on core implementation
 }
 
 export interface UpdateFitnessGoalsResponse {
   userId: string;
-  goals: any; // Using any since the exact type depends on core implementation
+  goals: Record<string, unknown>; // Using Record since the exact type depends on core implementation
   suggestNewPlan: boolean; // Should we suggest regenerating their plan?
 }
 

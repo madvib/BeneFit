@@ -18,7 +18,8 @@ describe('TemplateRules', () => {
 
   it('should fail if minExperienceLevel is invalid', () => {
     const result = createTemplateRules({
-      minExperienceLevel: 'expert' as any, // Invalid experience level
+      // @ts-expect-error Testing invalid input
+      minExperienceLevel: 'expert',
       maxExperienceLevel: 'advanced' as const,
     });
     expect(result.isFailure).toBe(true);

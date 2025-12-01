@@ -1,8 +1,7 @@
-import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
 import { Result } from '@bene/domain-shared';
-import { ConnectedService } from '@core/index.js';
+import { ConnectedService } from '../../../core/index.js';
 import { SyncServiceDataUseCase } from './sync-service-data.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
 import { IntegrationClient } from '../../services/integration-client.js';
 import { EventBus } from '@bene/domain-shared';
 
@@ -12,7 +11,12 @@ const mockServiceRepository = {
   findByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as ConnectedServiceRepository;
+} as unknown as {
+  findById: Mock;
+  findByUserId: Mock;
+  save: Mock;
+  delete: Mock;
+};
 
 const mockIntegrationClient = {
   supportsWebhooks: true,
@@ -20,7 +24,13 @@ const mockIntegrationClient = {
   refreshAccessToken: vi.fn(),
   getUserProfile: vi.fn(),
   getActivitiesSince: vi.fn(),
-} as unknown as IntegrationClient;
+} as unknown as {
+  supportsWebhooks: boolean;
+  exchangeAuthCode: Mock;
+  refreshAccessToken: Mock;
+  getUserProfile: Mock;
+  getActivitiesSince: Mock;
+};
 
 const mockIntegrationClients = new Map<string, IntegrationClient>();
 mockIntegrationClients.set('strava', mockIntegrationClient);
@@ -49,7 +59,7 @@ describe('SyncServiceDataUseCase', () => {
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
-      serviceType: 'strava' as any,
+      serviceType: 'strava' as 'strava' | 'garmin',
       credentials: {
         accessToken: 'access-token-789',
         refreshToken: 'refresh-token-101',
@@ -57,7 +67,7 @@ describe('SyncServiceDataUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -121,7 +131,7 @@ describe('SyncServiceDataUseCase', () => {
     // Arrange
     const serviceId = 'service-456';
 
-    mockServiceRepository.findById.mockResolvedValue(Result.fail('Service not found'));
+    mockServiceRepository.findById.mockResolvedValue(Result.fail(new Error('Service not found')));
 
     // Act
     const result = await useCase.execute({
@@ -143,7 +153,7 @@ describe('SyncServiceDataUseCase', () => {
     const mockInActiveService: ConnectedService = {
       id: serviceId,
       userId,
-      serviceType: 'strava' as any,
+      serviceType: 'strava' as 'strava' | 'garmin',
       credentials: {
         accessToken: 'access-token-789',
         refreshToken: 'refresh-token-101',
@@ -151,7 +161,7 @@ describe('SyncServiceDataUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
       syncStatus: {
         state: 'never_synced',
         lastAttemptAt: undefined,
@@ -198,7 +208,8 @@ describe('SyncServiceDataUseCase', () => {
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
-      serviceType: 'nonexistent-service' as any,
+      // @ts-expect-error Testing invalid service type
+      serviceType: 'nonexistent-service',
       credentials: {
         accessToken: 'access-token-789',
         refreshToken: 'refresh-token-101',
@@ -206,7 +217,7 @@ describe('SyncServiceDataUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -253,7 +264,7 @@ describe('SyncServiceDataUseCase', () => {
     const mockService: ConnectedService = {
       id: serviceId,
       userId,
-      serviceType: 'strava' as any,
+      serviceType: 'strava' as 'strava' | 'garmin',
       credentials: {
         accessToken: 'access-token-789',
         refreshToken: 'refresh-token-101',
@@ -261,7 +272,7 @@ describe('SyncServiceDataUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -288,7 +299,7 @@ describe('SyncServiceDataUseCase', () => {
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
     mockIntegrationClient.getActivitiesSince.mockResolvedValue(
-      Result.fail('API error'),
+      Result.fail(new Error('API error')),
     );
     mockServiceRepository.save.mockResolvedValue(Result.ok());
 

@@ -120,7 +120,15 @@ export class TriggerProactiveCheckInUseCase
     });
   }
 
-  private determineTrigger(context: any): CheckInTrigger | undefined {
+  private determineTrigger(context: {
+    currentPlan?: { adherenceRate: number };
+    reportedInjuries?: string[];
+    trends?: { enjoymentTrend?: string };
+    recentWorkouts?: Array<{ perceivedExertion: number }>;
+    workoutsThisWeek?: number;
+    plannedWorkoutsThisWeek?: number;
+    daysIntoCurrentWeek?: number;
+  }): CheckInTrigger | undefined {
     // Low adherence
     if (context.currentPlan && context.currentPlan.adherenceRate < 0.5) {
       return 'low_adherence';
@@ -139,14 +147,14 @@ export class TriggerProactiveCheckInUseCase
     // High exertion pattern
     const recentHighExertion = context.recentWorkouts
       ?.slice(-3)
-      .filter((w: any) => w.perceivedExertion >= 9);
+      .filter((w) => w.perceivedExertion >= 9);
     if (recentHighExertion && recentHighExertion.length >= 2) {
       return 'high_exertion';
     }
 
     // Behind on workouts
-    const progress = context.workoutsThisWeek / (context.plannedWorkoutsThisWeek || 1);
-    if (context.daysIntoCurrentWeek >= 4 && progress < 0.5) {
+    const progress = (context.workoutsThisWeek || 0) / (context.plannedWorkoutsThisWeek || 1);
+    if (context.daysIntoCurrentWeek && context.daysIntoCurrentWeek >= 4 && progress < 0.5) {
       return 'low_adherence';
     }
 

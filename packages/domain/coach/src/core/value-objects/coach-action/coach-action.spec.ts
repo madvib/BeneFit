@@ -19,7 +19,8 @@ describe('CoachAction Value Object', () => {
 
   it('should fail if type is missing', () => {
     const result = createCoachAction({
-      type: null as any,
+      // @ts-expect-error Testing invalid input
+      type: null,
       details: 'Details',
     });
 
@@ -29,7 +30,8 @@ describe('CoachAction Value Object', () => {
   it('should fail if details is missing', () => {
     const result = createCoachAction({
       type: 'adjusted_plan',
-      details: null as any,
+      // @ts-expect-error Testing invalid input
+      details: null,
     });
 
     expect(result.isFailure).toBe(true);

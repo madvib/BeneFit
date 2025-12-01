@@ -122,7 +122,7 @@ export function withNewLocation(constraints: TrainingConstraints, location: stri
   
   return {
     ...constraints,
-    location: location as any,
+    location: location as 'home' | 'gym' | 'outdoor' | 'mixed',
   };
 }
 

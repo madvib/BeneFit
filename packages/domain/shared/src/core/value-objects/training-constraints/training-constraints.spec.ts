@@ -9,7 +9,6 @@ import {
   isAvailableDay,
   getAvailableDaysCount
 } from './training-constraints.commands.js';
-import { VALID_DAYS } from '../../constants.js';
 
 describe('TrainingConstraints', () => {
   describe('create', () => {

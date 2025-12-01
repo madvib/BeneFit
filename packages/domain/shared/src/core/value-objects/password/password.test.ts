@@ -21,7 +21,8 @@ describe('Password', () => {
   });
 
   it('should fail when password is null', () => {
-    const result = Password.create(null as any);
+    // @ts-expect-error Testing invalid input
+    const result = Password.create(null);
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.errorMessage).toContain('required');
@@ -29,7 +30,8 @@ describe('Password', () => {
   });
 
   it('should fail when password is not a string', () => {
-    const result = Password.create(123 as any);
+    // @ts-expect-error Testing invalid input
+    const result = Password.create(123);
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.errorMessage).toContain('must be a string');

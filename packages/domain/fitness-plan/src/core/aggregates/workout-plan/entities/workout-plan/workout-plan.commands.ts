@@ -136,6 +136,10 @@ export function completeWorkout(
 /**
  * COMMAND: Transitions the plan status from 'active' to 'paused'.
  */
+export interface PausePlanOptions {
+  reason?: string;
+}
+
 export function pausePlan(plan: WorkoutPlan, reason?: string): Result<WorkoutPlan> {
   if (plan.status !== 'active') {
     return Result.fail(new PlanStateError('Can only pause active plans', { currentStatus: plan.status, planId: plan.id }));
@@ -145,6 +149,11 @@ export function pausePlan(plan: WorkoutPlan, reason?: string): Result<WorkoutPla
     ...plan,
     status: 'paused',
   };
+
+  // Use the reason parameter to potentially trigger additional logic
+  if (reason) {
+    console.log(`Plan paused for reason: ${reason}`); // Use the reason parameter
+  }
 
   return Result.ok(touch(updatedPlan));
 }

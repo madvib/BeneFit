@@ -159,5 +159,4 @@ storybook-static
 
 tools/nx-plugin/*
 
-apps/api/
-temp/
+.temp/

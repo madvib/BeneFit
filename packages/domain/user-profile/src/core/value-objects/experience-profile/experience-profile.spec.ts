@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createExperienceProfile, ExperienceLevel, ExperienceProfile } from './index.js';
+import { createExperienceProfile, ExperienceProfile } from './index.js';
 
 describe('ExperienceProfile Value Object', () => {
   describe('Factory', () => {
@@ -75,24 +75,26 @@ describe('ExperienceProfile Value Object', () => {
     });
 
     it('should fail with missing level', () => {
+      // @ts-expect-error Testing invalid input
       const result = createExperienceProfile({
-        level: undefined as any,
+        level: undefined,
         capabilities: {
           canDoFullPushup: false,
           canDoFullPullup: false,
           canRunMile: false,
           canSquatBelowParallel: false,
         },
-      } as any);
+      });
 
       expect(result.isFailure).toBe(true);
     });
 
     it('should fail with missing capabilities', () => {
+      // @ts-expect-error Testing invalid input
       const result = createExperienceProfile({
         level: 'beginner',
-        capabilities: undefined as any,
-      } as any);
+        capabilities: undefined,
+      });
 
       expect(result.isFailure).toBe(true);
     });

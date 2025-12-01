@@ -14,6 +14,13 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
   "nx": {
     "sourceRoot": "packages/domain/blog/src",
     "targets": {
@@ -35,9 +42,5 @@
       "layer:domain",
       "domain:blog"
     ]
-  },
-  "dependencies": {
-    "@bene/domain-shared": "workspace:*",
-    "@swc/helpers": "~0.5.11"
   }
 }

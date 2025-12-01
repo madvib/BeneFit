@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/domain-shared';
+import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
+import { WorkoutPlanRepository } from '@bene/domain/fitness-plan';
+import { UserProfileRepository } from '@bene/domain-user-profile';
 import { StartWorkoutUseCase } from './start-workout.js';
 import * as workoutsDomain from '@core/index.js';
 import * as plansDomain from '@bene/core/plans';
@@ -22,39 +25,31 @@ vi.mock('@bene/core/plans', () => ({
 
 describe('StartWorkoutUseCase', () => {
   let useCase: StartWorkoutUseCase;
-  let sessionRepo: any;
-  let planRepo: any;
-  let profileRepo: any;
-  let eventBus: any;
+  let sessionRepo: WorkoutSessionRepository;
+  let planRepo: WorkoutPlanRepository;
+  let profileRepo: UserProfileRepository;
+  let eventBus: EventBus;
 
   beforeEach(() => {
+    // Creating a partial type to match expected return value
+    const mockSessionResult = {
+      id: 'session-1',
+      activities: [
+        {
+          structure: { type: 'standard' },
+          activityType: 'squat',
+          instructions: 'Do squats',
+        },
+      ],
+      workoutType: 'strength',
+      planId: 'plan-1',
+    };
+
     vi.mocked(workoutsDomain.createWorkoutSession).mockReturnValue(
-      Result.ok({
-        id: 'session-1',
-        activities: [
-          {
-            structure: { type: 'standard' },
-            activityType: 'squat',
-            instructions: 'Do squats',
-          },
-        ],
-        workoutType: 'strength',
-        planId: 'plan-1',
-      } as any),
+      Result.ok(mockSessionResult),
     );
     vi.mocked(workoutsDomain.WorkoutSessionCommands.startSession).mockReturnValue(
-      Result.ok({
-        id: 'session-1',
-        activities: [
-          {
-            structure: { type: 'standard' },
-            activityType: 'squat',
-            instructions: 'Do squats',
-          },
-        ],
-        workoutType: 'strength',
-        planId: 'plan-1',
-      } as any),
+      Result.ok(mockSessionResult),
     );
 
     sessionRepo = {
@@ -149,10 +144,10 @@ describe('StartWorkoutUseCase', () => {
           instructions: 'Run 5k',
         },
       ],
-    } as any);
+    });
 
     vi.mocked(plansDomain.WorkoutTemplateCommands.startWorkout).mockReturnValue(
-      Result.ok({} as any),
+      Result.ok({} as { id: string })
     );
 
     planRepo.findActiveByUserId.mockResolvedValue(Result.ok(mockPlan));

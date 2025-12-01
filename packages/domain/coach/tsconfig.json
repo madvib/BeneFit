@@ -8,12 +8,6 @@
     },
     {
       "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "../fitness-plan"
-    },
-    {
-      "path": "../user-profile"
     }
   ]
 }

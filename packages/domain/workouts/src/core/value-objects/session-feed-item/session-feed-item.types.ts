@@ -14,7 +14,7 @@ interface SessionFeedItemData {
   userName: string;
   content: string;
   timestamp: Date;
-  metadata?: Record<string, any>; // Extra context (e.g., weight lifted, reps done)
+  metadata?: Record<string, unknown>; // Extra context (e.g., weight lifted, reps done)
 }
 
 export type SessionFeedItem = Readonly<SessionFeedItemData>;

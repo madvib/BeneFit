@@ -7,6 +7,7 @@
   "license": "ISC",
   "type": "module",
   "packageManager": "pnpm@10.21.0",
+  "engineStrict": true,
   "engines": {
     "npm": "please-use-pnpm",
     "pnpm": ">= 10.19.0",
@@ -15,10 +16,11 @@
   "scripts": {
     "dev": "nx run-many -t dev",
     "build": "nx run-many -t build",
-    "build:domain": "nx run-many -t build --projects @bene/domain-shared @bene/domain-user-profile @bene/domain-fitness-plan @bene/domain-integrations @bene/domain-workouts @bene/domain-coach",
-    "typecheck:domain": "nx run-many -t typecheck --projects @bene/domain-shared @bene/domain-user-profile @bene/domain-fitness-plan @bene/domain-integrations @bene/domain-workouts @bene/domain-coach",
-    "test": "nx run-many -t test",
-    "lint": "nx run-many -t eslint:lint",
+    "build:domain": "nx run-many -t build --projects @bene/domain-shared @bene/domain-user-profile @bene/domain-fitness-plan @bene/domain-integrations @bene/domain-workouts @bene/domain-coach --verbose",
+    "typecheck:all": "nx run-many -t typecheck",
+    "test:domain": "nx run-many -t test --projects @bene/domain-shared @bene/domain-user-profile @bene/domain-fitness-plan @bene/domain-integrations @bene/domain-workouts @bene/domain-coach --verbose",
+    "lint:all": "nx run-many -t lint",
+    "lint:domain": "nx run-many -t lint --projects @bene/domain-shared @bene/domain-user-profile @bene/domain-fitness-plan @bene/domain-integrations @bene/domain-workouts @bene/domain-coach --verbose",
     "context:build": "tsx tools/scripts/build-context.ts",
     "generate": "nx workspace-generator",
     "g:entity": "nx g @bene/generators:entity",
@@ -27,8 +29,6 @@
     "inspect-eslint": "eslint --inspect-config"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
     "@next/eslint-plugin-next": "^16.0.0",
@@ -66,7 +66,6 @@
     "eslint-plugin-unicorn": "^61.0.2",
     "eslint-plugin-vitest": "^0.5.4",
     "happy-dom": "^20.0.8",
-    "jsdom": "^27.0.1",
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "22.1.3",
     "prettier": "^3.6.2",

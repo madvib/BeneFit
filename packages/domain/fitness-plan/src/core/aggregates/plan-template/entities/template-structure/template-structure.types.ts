@@ -9,7 +9,7 @@ export type TemplateFrequency =
 export interface WorkoutActivityTemplate {
   activityType: 'warmup' | 'main' | 'cooldown';
   template: string; // Template string with {{variables}}
-  variables: Record<string, any>; // Default variable values
+  variables: Record<string, unknown>; // Default variable values
 }
 
 export interface WorkoutDayTemplate {

@@ -14,6 +14,9 @@
       "default": "./dist/index.js"
     }
   },
+  "scripts": {
+    "lint": "eslint ."
+  },
   "nx": {
     "sourceRoot": "packages/domain/integrations/src",
     "targets": {

@@ -6,6 +6,7 @@ import { ActivityStructure } from '../activity-structure/activity-structure.type
 import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
 import { adjustIntensity as adjustStructureIntensity } from '../activity-structure/activity-structure.commands.js';
 import { isWarmup, isCooldown } from './workout-activity.queries.js';
+import { URL } from 'url';
 
 /**
  * COMMAND: Set duration.

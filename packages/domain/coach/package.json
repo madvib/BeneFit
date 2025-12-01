@@ -14,8 +14,15 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "@bene/domain-shared": "workspace:*",
+    "@bene/domain-user-profile": "workspace:*",
+    "@bene/domain-fitness-plan": "workspace:*"
+  },
   "scripts": {
-    "lib:typecheck": "tsc --project tsconfig.lib.json --noEmit"
+    "lib:typecheck": "tsc --project tsconfig.lib.json --noEmit",
+    "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/coach/src",
@@ -39,11 +46,5 @@
       "domain:coach"
     ],
     "name": "@bene/domain-coach"
-  },
-  "dependencies": {
-    "@swc/helpers": "~0.5.11",
-    "@bene/domain-shared": "workspace:*",
-    "@bene/domain-user-profile": "workspace:*",
-    "@bene/domain-fitness-plan": "workspace:*"
   }
 }

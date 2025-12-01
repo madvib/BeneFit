@@ -17,6 +17,7 @@ export const recommended = (name, projectDir) => [
     '**/next-env.d.ts',
     '**/cloudflare-env.d.ts',
     '**/.open-next/**',
+    '**/dist/**',
   ]),
   {
     name,

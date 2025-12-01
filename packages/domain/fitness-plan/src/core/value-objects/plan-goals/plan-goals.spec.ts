@@ -6,7 +6,6 @@ import {
   createHabitBuilding,
 } from './index.js';
 import {
-  hasTargetDate,
   hasTargetWeights,
   hasTargetPace,
   hasTargetDistance,
@@ -16,10 +15,7 @@ import {
   withNewTargetDate,
   withUpdatedPrimaryGoal,
   withAdditionalSecondaryGoal,
-  withUpdatedTargetPace,
-  withUpdatedTargetWeight,
-  withAdjustedTargetMetrics,
-  daysUntilTarget
+  withUpdatedTargetPace
 } from './plan-goals.commands.js';
 
 describe('PlanGoals', () => {

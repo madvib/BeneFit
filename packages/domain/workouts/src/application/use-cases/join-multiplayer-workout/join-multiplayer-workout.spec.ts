@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/domain-shared';
+import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import { JoinMultiplayerWorkoutUseCase } from './join-multiplayer-workout.js';
 import * as workoutsDomain from '@core/index.js';
 
@@ -11,8 +12,8 @@ vi.mock('@core/index.js', () => ({
 
 describe('JoinMultiplayerWorkoutUseCase', () => {
   let useCase: JoinMultiplayerWorkoutUseCase;
-  let sessionRepo: any;
-  let eventBus: any;
+  let sessionRepo: WorkoutSessionRepository;
+  let eventBus: EventBus;
 
   beforeEach(() => {
     sessionRepo = {
@@ -40,7 +41,7 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
       Result.ok({
         ...mockSession,
         participants: [{ userId: 'user-2', userName: 'User 2' }],
-      } as any),
+      }),
     );
 
     const request = {

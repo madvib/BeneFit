@@ -5,7 +5,7 @@
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "build",
-        "testTargetName": "vite:test",
+        "testTargetName": "test",
         "serveTargetName": "serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
@@ -19,7 +19,7 @@
       "plugin": "@nx/js/typescript",
       "include": [
         "packages/infrastructure/*",
-        "packages/domain/**",
+        "packages/domain/*",
         "packages/utils/*"
       ],
       "options": {
@@ -29,27 +29,10 @@
         }
       }
     },
-
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "eslint:lint"
-      }
-    },
     {
       "plugin": "@nx/js/typescript",
       "include": [
-        "apps/api/*",
         "packages/database/*",
-        "packages/domain/*",
-        "packages/domain/auth/*",
-        "packages/domain/blog/*",
-        "packages/domain/integrations/*",
-        "packages/domain/fitness-plan/*",
-        "packages/domain/workouts/*",
-        "packages/domain/user-profile/*",
-        "packages/domain/shared/*",
-        "packages/domain/coach/*",
         "tools/nx-plugin/*"
       ],
       "options": {
@@ -66,6 +49,12 @@
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"],
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "typecheck": {
       "cache": true
     },
     "build": {

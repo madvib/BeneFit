@@ -62,14 +62,14 @@ export class GetTodaysWorkoutUseCase
 
     // 4. Return workout details
     const activities =
-      todaysWorkout.activities?.map((a: any) => ({
+      (todaysWorkout.activities as Array<{ type?: string; instructions: string | string[]; duration?: number }>)?.map((a) => ({
         type: (a.type as 'warmup' | 'main' | 'cooldown') || 'main',
-        instructions: Array.isArray(a.instructions) ? a.instructions.join('. ') : '',
+        instructions: Array.isArray(a.instructions) ? a.instructions.join('. ') : a.instructions || '',
         durationMinutes: a.duration || 10,
       })) || [];
 
     const totalDuration =
-      activities.reduce((sum: number, a: any) => sum + a.durationMinutes, 0) || 30;
+      activities.reduce((sum: number, a: { durationMinutes: number }) => sum + a.durationMinutes, 0) || 30;
 
     return Result.ok({
       hasWorkout: true,

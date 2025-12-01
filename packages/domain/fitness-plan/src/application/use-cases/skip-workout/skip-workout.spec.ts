@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/domain-shared';
+import type { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
 import { SkipWorkoutUseCase } from './skip-workout.js';
 
 describe('SkipWorkoutUseCase', () => {
   let useCase: SkipWorkoutUseCase;
-  let planRepo: any;
-  let eventBus: any;
+  let planRepo: WorkoutPlanRepository;
+  let eventBus: EventBus;
 
   beforeEach(() => {
     planRepo = {

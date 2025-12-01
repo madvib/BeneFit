@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/domain-shared';
+import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
+import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import { WorkoutPlanRepository } from '@bene/domain/fitness-plan';
+import { UserProfileRepository } from '@bene/domain-user-profile';
 import { CompleteWorkoutUseCase } from './complete-workout.js';
 import * as plansDomain from '@bene/core/plans';
 import * as profileDomain from '@core/index.js';
@@ -15,19 +19,16 @@ vi.mock('@core/index.js', () => ({
   UserProfileCommands: {
     recordWorkoutCompleted: vi.fn(),
   },
-}));
-
-vi.mock('@core/index.js', () => ({
   createCompletedWorkout: vi.fn(),
 }));
 
 describe('CompleteWorkoutUseCase', () => {
   let useCase: CompleteWorkoutUseCase;
-  let sessionRepo: any;
-  let completedWorkoutRepo: any;
-  let planRepo: any;
-  let profileRepo: any;
-  let eventBus: any;
+  let sessionRepo: WorkoutSessionRepository;
+  let completedWorkoutRepo: CompletedWorkoutRepository;
+  let planRepo: WorkoutPlanRepository;
+  let profileRepo: UserProfileRepository;
+  let eventBus: EventBus;
 
   beforeEach(() => {
     sessionRepo = {
@@ -75,7 +76,7 @@ describe('CompleteWorkoutUseCase', () => {
     };
     planRepo.findById.mockResolvedValue(Result.ok(mockPlan));
     vi.mocked(plansDomain.WorkoutPlanCommands.completeWorkout).mockReturnValue(
-      Result.ok({ id: 'plan-1' } as any),
+      Result.ok({ id: 'plan-1' }),
     );
 
     const mockProfile = {
@@ -97,11 +98,11 @@ describe('CompleteWorkoutUseCase', () => {
           totalMinutes: 145,
           currentStreak: 2,
         },
-      } as any,
+      },
     );
 
     vi.mocked(workoutsDomain.createCompletedWorkout).mockReturnValue(
-      Result.ok({ id: 'completed-1' } as any),
+      Result.ok({ id: 'completed-1' }),
     );
 
     const request = {
@@ -137,8 +138,8 @@ describe('CompleteWorkoutUseCase', () => {
     const request = {
       userId: 'user-1',
       sessionId: 'session-1',
-      performance: {} as any,
-      verification: {} as any,
+      performance: {} as { durationMinutes: number },
+      verification: {} as { verified: boolean; method: string },
     };
 
     const result = await useCase.execute(request);
@@ -158,8 +159,8 @@ describe('CompleteWorkoutUseCase', () => {
     const request = {
       userId: 'user-1',
       sessionId: 'session-1',
-      performance: {} as any,
-      verification: {} as any,
+      performance: {} as { durationMinutes: number },
+      verification: {} as { verified: boolean; method: string },
     };
 
     const result = await useCase.execute(request);

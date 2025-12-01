@@ -6,8 +6,8 @@ export interface CustomizableParameter {
   type: 'number' | 'boolean' | 'string' | 'select';
   label: string;
   description: string;
-  defaultValue: any;
-  options?: any[]; // For select type
+  defaultValue: number | boolean | string | null;
+  options?: Array<number | boolean | string>; // For select type
   validation?: {
     min?: number;
     max?: number;

@@ -28,5 +28,5 @@ export interface IntegrationClient {
     }>
   >;
 
-  getActivitiesSince(accessToken: string, since: Date): Promise<Result<Array<any>>>;
+  getActivitiesSince(accessToken: string, since: Date): Promise<Result<Array<unknown>>>;
 }

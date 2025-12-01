@@ -29,5 +29,5 @@ export interface ExperienceProfile {
 
 export interface ExperienceProfileValidation {
   isValid: boolean;
-  errors: any[];
+  errors: string[];
 }

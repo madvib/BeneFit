@@ -7,6 +7,7 @@ import {
 } from '../../index.js';
 import type { TrainingConstraints } from '@bene/domain-shared';
 import type { FitnessGoals } from '@bene/domain-user-profile';
+import { randomUUID } from 'crypto';
 export interface CreateCoachingConversationParams {
   userId: string;
   context?: CoachingContext;
@@ -50,7 +51,7 @@ export function createCoachingConversation(
   }
 
   const conversation: CoachingConversation = {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     userId: params.userId,
     context: initialContext,
     messages: initialMessages,

@@ -6,24 +6,18 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "paths": {
-      "@core/*": [
-        "./src/core/*"
-      ]
+      "@core/*": ["./src/core/*"]
     }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../shared/tsconfig.lib.json"
+      "path": "../workouts/tsconfig.lib.json"
     },
     {
-      "path": "../workouts/tsconfig.lib.json"
+      "path": "../shared/tsconfig.lib.json"
     }
   ],
   "exclude": [

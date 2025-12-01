@@ -81,8 +81,8 @@ describe('ValueObject', () => {
       const vo1 = new TestValueObject(props);
       const vo2 = new AnotherTestValueObject({ data: 'something' });
 
-      expect(vo1.equals(vo2)).toBe(false);
-      expect(vo2.equals(vo1)).toBe(false);
+      expect(vo1.equals(vo2 as never)).toBe(false);
+      expect(vo2.equals(vo1 as never)).toBe(false);
     });
 
     it('should handle nested objects correctly', () => {

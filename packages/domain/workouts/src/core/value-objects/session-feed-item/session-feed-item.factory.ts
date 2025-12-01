@@ -1,12 +1,13 @@
 import { Guard, Result } from '@bene/domain-shared';
 import { FeedItemType, SessionFeedItem } from './session-feed-item.types.js';
+import { randomUUID } from 'crypto';
 
 export function createFeedItem(props: {
   type: FeedItemType;
   userId: string;
   userName: string;
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }): Result<SessionFeedItem> {
   const guardResult = Guard.combine([
     Guard.againstNullOrUndefinedBulk([
@@ -25,7 +26,7 @@ export function createFeedItem(props: {
     return Result.fail(guardResult.error);
   }
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     type: props.type,
     userId: props.userId,
     userName: props.userName,

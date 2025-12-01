@@ -2,6 +2,7 @@ import { Result, UseCase } from '@bene/domain-shared';
 import { CompletedWorkoutCommands } from '@core/index.js';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import type { EventBus } from '@bene/domain-shared';
+import { randomUUID } from 'crypto';
 
 export interface AddWorkoutReactionRequest {
   userId: string;
@@ -42,7 +43,7 @@ export class AddWorkoutReactionUseCase
 
     // 3. Add reaction
     const reaction = {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       userId: request.userId,
       userName: request.userName,
       type: request.reactionType,

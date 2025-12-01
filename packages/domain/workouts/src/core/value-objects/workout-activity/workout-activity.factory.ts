@@ -8,6 +8,7 @@ import {
   isExerciseBased,
 } from '../activity-structure/activity-structure.queries.js';
 import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
+import { URL } from 'url';
 
 /**
  * FACTORY: Creates a new WorkoutActivity instance with validation.

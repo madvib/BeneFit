@@ -1,7 +1,4 @@
-// For modern Node.js environments (v14.17+), crypto.randomUUID is global.
-// If using older Node or strict environments, you might need: 
-// import { randomUUID } from 'crypto'; 
-const crypto = globalThis.crypto; 
+import { randomUUID } from 'crypto';
 
 // IEntity.ts
 export interface IEntity<T> {
@@ -25,8 +22,8 @@ export abstract class Entity<T> {
   constructor(props: T, id?: string) {
     // 1. UUID Assignment on Creation:
     // If ID is provided, use it (hydration). If not, generate a new UUID (creation).
-    this._id = id ? id : crypto.randomUUID();
-    
+    this._id = id ? id : randomUUID();
+
     this.props = props;
   }
 

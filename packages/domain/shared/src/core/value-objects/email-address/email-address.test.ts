@@ -21,7 +21,8 @@ describe('EmailAddress', () => {
   });
 
   it('should fail when email is null', () => {
-    const result = EmailAddress.create(null as any);
+    // @ts-expect-error Testing invalid input
+    const result = EmailAddress.create(null);
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.errorMessage).toContain('required');
@@ -29,7 +30,8 @@ describe('EmailAddress', () => {
   });
 
   it('should fail when email is not a string', () => {
-    const result = EmailAddress.create(123 as any);
+    // @ts-expect-error Testing invalid input
+    const result = EmailAddress.create(123);
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.errorMessage).toContain('must be a string');

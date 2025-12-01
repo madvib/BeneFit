@@ -1,8 +1,7 @@
-import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
 import { Result } from '@bene/domain-shared';
-import { ConnectedService } from '@core/index.js';
+import { ConnectedService } from '../../../core/index.js';
 import { GetConnectedServicesUseCase } from './get-connected-services.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -10,7 +9,12 @@ const mockServiceRepository = {
   findByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as ConnectedServiceRepository;
+} as unknown as {
+  findById: Mock;
+  findByUserId: Mock;
+  save: Mock;
+  delete: Mock;
+};
 
 describe('GetConnectedServicesUseCase', () => {
   let useCase: GetConnectedServicesUseCase;
@@ -27,7 +31,7 @@ describe('GetConnectedServicesUseCase', () => {
     const mockService: ConnectedService = {
       id: 'service-456',
       userId,
-      serviceType: 'strava' as any,
+      serviceType: 'strava' as 'strava' | 'garmin',
       credentials: {
         accessToken: 'access-token-789',
         refreshToken: 'refresh-token-101',
@@ -35,7 +39,7 @@ describe('GetConnectedServicesUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { read: true, write: true },
+      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -73,12 +77,14 @@ describe('GetConnectedServicesUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.services).toHaveLength(1);
       const service = result.value.services[0];
-      expect(service.id).toBe('service-456');
-      expect(service.serviceType).toBe('strava');
-      expect(service.isActive).toBe(true);
-      expect(service.isPaused).toBe(false);
-      expect(service.syncStatus).toBe('synced');
-      expect(service.lastSyncAt).toBeDefined();
+      if (service) {
+        expect(service.id).toBe('service-456');
+        expect(service.serviceType).toBe('strava');
+        expect(service.isActive).toBe(true);
+        expect(service.isPaused).toBe(false);
+        expect(service.syncStatus).toBe('synced');
+        expect(service.lastSyncAt).toBeDefined();
+      }
     }
   });
 
@@ -104,7 +110,7 @@ describe('GetConnectedServicesUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockServiceRepository.findByUserId.mockResolvedValue(Result.fail('Database error'));
+    mockServiceRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Database error')));
 
     // Act
     const result = await useCase.execute({

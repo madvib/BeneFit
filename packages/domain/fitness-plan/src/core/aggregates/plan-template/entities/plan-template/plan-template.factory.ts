@@ -2,6 +2,7 @@ import { Guard, Result } from '@bene/domain-shared';
 import { TemplateRules } from '../template-rules/template-rules.types.js';
 import { TemplateStructure } from '../template-structure/template-structure.types.js';
 import { TemplateAuthor, WorkoutPreview, PlanTemplate } from './plan-template.types.js';
+import { randomUUID } from 'crypto';
 
 export interface CreateTemplateParams {
   name: string;
@@ -37,7 +38,7 @@ export function createPlanTemplate(params: CreateTemplateParams): Result<PlanTem
   const version = params.version ?? 1; // Default to 1 if not provided
 
   return Result.ok({
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     name: params.name,
     description: params.description,
     author: params.author,

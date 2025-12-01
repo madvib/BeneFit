@@ -8,7 +8,7 @@ describe('BlogPost', () => {
     it('should create valid blogpost', () => {
       const categoryResult = BlogCategory.create('Technology');
       if (categoryResult.isFailure) {
-        throw new Error(`Failed to create category: ${categoryresult.errorMessage}`);
+        throw new Error(`Failed to create category: ${categoryResult.errorMessage}`);
       }
       
       const result = BlogPost.create({
@@ -32,7 +32,7 @@ describe('BlogPost', () => {
     it('should fail with invalid data', () => {
       const categoryResult = BlogCategory.create('Technology');
       if (categoryResult.isFailure) {
-        throw new Error(`Failed to create category: ${categoryresult.errorMessage}`);
+        throw new Error(`Failed to create category: ${categoryResult.errorMessage}`);
       }
       
       const result = BlogPost.create({
@@ -54,7 +54,7 @@ describe('BlogPost', () => {
     it('should deactivate blogpost', () => {
       const categoryResult = BlogCategory.create('Technology');
       if (categoryResult.isFailure) {
-        throw new Error(`Failed to create category: ${categoryresult.errorMessage}`);
+        throw new Error(`Failed to create category: ${categoryResult.errorMessage}`);
       }
       
       const blogpost = BlogPost.create({
