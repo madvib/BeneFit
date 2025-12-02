@@ -14,14 +14,31 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11"
+  },
   "scripts": {
     "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/shared/src",
     "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/shared/dist",
+          "main": "packages/domain/shared/src/index.ts",
+          "tsConfig": "packages/domain/shared/tsconfig.lib.json"
+        }
+      },
       "build": {
         "executor": "@nx/js:swc",
+        "dependsOn": [
+          "build-types"
+        ],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -38,8 +55,5 @@
       "layer:domain",
       "domain:shared"
     ]
-  },
-  "dependencies": {
-    "@swc/helpers": "~0.5.11"
   }
 }

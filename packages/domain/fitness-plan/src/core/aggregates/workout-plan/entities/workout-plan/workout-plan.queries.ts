@@ -66,3 +66,50 @@ export function getWorkoutForDate(plan: WorkoutPlan, date: Date): WorkoutTemplat
   return targetWeek.workouts.find(w => w.dayOfWeek === dayOfWeek);
 }
 
+/**
+ * QUERY: Gets upcoming workouts for the specified number of days.
+ */
+export function getUpcomingWorkouts(plan: WorkoutPlan, days: number = 7): WorkoutTemplate[] {
+  if (!plan.startDate || days <= 0) {
+    return [];
+  }
+
+  const startDate = new Date(plan.startDate);
+  const upcomingWorkouts: WorkoutTemplate[] = [];
+
+  // Iterate through the next 'days' days
+  for (let i = 0; i < days; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+
+    // Calculate day offset from plan start
+    const timeDiff = date.getTime() - startDate.getTime();
+    const daysSinceStart = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+    if (daysSinceStart < 0) {
+      continue; // Skip dates before plan started
+    }
+
+    // Calculate which week and day this date corresponds to
+    const weekIndex = Math.floor(daysSinceStart / 7);
+    const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    if (weekIndex >= plan.weeks.length) {
+      continue; // Skip dates beyond the plan's end
+    }
+
+    const targetWeek = plan.weeks[weekIndex];
+    if (!targetWeek) {
+      continue;
+    }
+
+    // Find workout for the specific day of the week
+    const workout = targetWeek.workouts.find(w => w.dayOfWeek === dayOfWeek);
+    if (workout) {
+      upcomingWorkouts.push(workout);
+    }
+  }
+
+  return upcomingWorkouts;
+}
+

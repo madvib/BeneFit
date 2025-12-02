@@ -40,14 +40,16 @@ export class SkipWorkoutUseCase
     let workoutFound = false;
     let updatedPlan = plan;
 
-    for (let weekIndex = 0; weekIndex < plan.weeks.length; weekIndex++) {
-      const week = plan.weeks[weekIndex];
+    const weeks = plan.weeks || [];
+    for (let weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
+      const week = weeks[weekIndex];
       if (!week) continue;
 
-      const workoutIndex = week.workouts.findIndex((w) => w.id === request.workoutId);
+      const workouts = week.workouts || [];
+      const workoutIndex = workouts.findIndex((w) => w.id === request.workoutId);
 
       if (workoutIndex !== -1) {
-        const workout = week.workouts[workoutIndex];
+        const workout = workouts[workoutIndex];
         if (!workout) continue;
 
         // Skip the workout using the command
@@ -61,9 +63,9 @@ export class SkipWorkoutUseCase
 
         // Update the plan with the skipped workout
         const updatedWorkouts = [
-          ...week.workouts.slice(0, workoutIndex),
+          ...workouts.slice(0, workoutIndex),
           skippedWorkoutResult.value,
-          ...week.workouts.slice(workoutIndex + 1),
+          ...workouts.slice(workoutIndex + 1),
         ];
 
         const updatedWeek = {
@@ -72,9 +74,9 @@ export class SkipWorkoutUseCase
         };
 
         const updatedWeeks = [
-          ...plan.weeks.slice(0, weekIndex),
+          ...weeks.slice(0, weekIndex),
           updatedWeek,
-          ...plan.weeks.slice(weekIndex + 1),
+          ...weeks.slice(weekIndex + 1),
         ];
 
         updatedPlan = {

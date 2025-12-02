@@ -97,7 +97,8 @@ describe('ActivatePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Plan not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Plan not found');
     }
   });
 
@@ -134,7 +135,8 @@ describe('ActivatePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Not authorized to activate this plan');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Not authorized to activate this plan');
     }
   });
 
@@ -173,7 +175,8 @@ describe('ActivatePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Error: Cannot activate');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Cannot activate');
     }
   });
 });

@@ -1,16 +1,15 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase, EventBus, TrainingConstraints } from '@bene/domain-shared';
 import { UserProfileCommands } from '@core/index.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
-import { EventBus } from '@bene/domain-shared';
 
 export interface UpdateTrainingConstraintsRequest {
   userId: string;
-  constraints: Record<string, unknown>; // Using Record since the exact type depends on core implementation
+  constraints: TrainingConstraints;
 }
 
 export interface UpdateTrainingConstraintsResponse {
   userId: string;
-  constraints: Record<string, unknown>; // Using Record since the exact type depends on core implementation
+  constraints: TrainingConstraints;
   shouldAdjustPlan: boolean;
 }
 

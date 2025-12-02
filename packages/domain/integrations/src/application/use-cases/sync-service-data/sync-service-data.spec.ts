@@ -141,7 +141,8 @@ describe('SyncServiceDataUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Service not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Service not found');
     }
   });
 
@@ -196,7 +197,8 @@ describe('SyncServiceDataUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Service is not active');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Service is not active');
     }
   });
 
@@ -252,7 +254,8 @@ describe('SyncServiceDataUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('No client for nonexistent-service');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('No client for nonexistent-service');
     }
   });
 
@@ -311,7 +314,8 @@ describe('SyncServiceDataUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('API error');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('API error');
     }
   });
 });

@@ -3,7 +3,7 @@ import { Result } from '@bene/domain-shared';
 import { WorkoutPlan, WorkoutPlanQueries } from '@core/index.js';
 import { WorkoutTemplate } from '@core/index.js';
 import { GetTodaysWorkoutUseCase } from './get-todays-workout.js';
-import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
+import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -28,14 +28,13 @@ describe('GetTodaysWorkoutUseCase', () => {
     const mockWorkout: WorkoutTemplate = {
       id: 'workout-456',
       type: 'strength',
-      duration: 45,
       dayOfWeek: 1, // Monday
       status: 'scheduled',
       activities: [
         {
           type: 'main',
           instructions: 'Do 3 sets of 10 reps',
-          duration: 30,
+          duration: 45,
         },
       ],
       createdAt: new Date(),
@@ -56,6 +55,12 @@ describe('GetTodaysWorkoutUseCase', () => {
           weekNumber: 1,
           workouts: [mockWorkout],
           workoutsCompleted: 0,
+          id: '',
+          planId: '',
+          startDate: '',
+          endDate: '',
+          focus: '',
+          targetWorkouts: 0,
         },
       ],
       status: 'active',
@@ -120,6 +125,12 @@ describe('GetTodaysWorkoutUseCase', () => {
           weekNumber: 1,
           workouts: [],
           workoutsCompleted: 0,
+          id: '',
+          planId: '',
+          startDate: '',
+          endDate: '',
+          focus: '',
+          targetWorkouts: 0,
         },
       ],
       status: 'active',
@@ -149,14 +160,13 @@ describe('GetTodaysWorkoutUseCase', () => {
     const mockWorkout: WorkoutTemplate = {
       id: 'workout-456',
       type: 'strength',
-      duration: 45,
       dayOfWeek: 1, // Monday
       status: 'completed',
       activities: [
         {
           type: 'main',
           instructions: 'Do 3 sets of 10 reps',
-          duration: 30,
+          duration: 45,
         },
       ],
       createdAt: new Date(),
@@ -177,6 +187,12 @@ describe('GetTodaysWorkoutUseCase', () => {
           weekNumber: 1,
           workouts: [mockWorkout],
           workoutsCompleted: 0,
+          id: '',
+          planId: '',
+          startDate: '',
+          endDate: '',
+          focus: '',
+          targetWorkouts: 0,
         },
       ],
       status: 'active',

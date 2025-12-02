@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/domain-shared';
 import { WorkoutPlan, WorkoutPlanCommands } from '@core/index.js';
 import { PausePlanUseCase } from './pause-plan.js';
-import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
+import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
 import { EventBus } from '@bene/domain-shared';
 
 // Mock repositories and services
@@ -164,7 +164,8 @@ describe('PausePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Plan not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Plan not found');
     }
   });
 
@@ -208,7 +209,8 @@ describe('PausePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Not authorized');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Not authorized');
     }
   });
 
@@ -254,7 +256,8 @@ describe('PausePlanUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('Error: Cannot pause');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Cannot pause');
     }
   });
 });

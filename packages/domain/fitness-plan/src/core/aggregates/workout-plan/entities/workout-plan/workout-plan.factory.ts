@@ -1,7 +1,8 @@
 // workout-plan.factory.ts
 import { Result, Guard } from '@bene/domain-shared';
 import { PlanType, WorkoutPlan } from './workout-plan.types.js';
-import { createPlanPosition, PlanGoals, ProgressionStrategy, TrainingConstraints } from '../../../../index.js';
+import { createPlanPosition } from '../../../../value-objects/plan-position/index.js';
+import { PlanGoals, ProgressionStrategy, TrainingConstraints } from '../../../../index.js';
 
 
 interface CreateDraftParams {

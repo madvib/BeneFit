@@ -21,11 +21,37 @@ describe('SkipWorkoutUseCase', () => {
   });
 
   it('should skip a workout successfully', async () => {
+    const mockWorkout = {
+      id: 'workout-1',
+      type: 'strength',
+      dayOfWeek: 1,
+      status: 'scheduled',
+      activities: [],
+    };
+
     const mockPlan = {
       id: 'plan-1',
       userId: 'user-1',
-      skipWorkout: vi.fn().mockReturnValue(Result.ok({ id: 'plan-1' })),
+      weeks: [
+        {
+          weekNumber: 1,
+          workouts: [mockWorkout],
+          workoutsCompleted: 0,
+        },
+      ],
+      currentPosition: { week: 1, day: 1 },
+      title: 'Strength Plan',
+      description: 'A plan for building strength',
+      planType: 'strength_program',
+      goals: { goalType: 'strength', target: 'build muscle' },
+      progression: { strategy: 'linear' },
+      constraints: { equipment: [], injuries: [], timeConstraints: [] },
+      status: 'active',
+      startDate: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
+
     planRepo.findById.mockResolvedValue(Result.ok(mockPlan));
 
     const request = {
@@ -38,11 +64,13 @@ describe('SkipWorkoutUseCase', () => {
     const result = await useCase.execute(request);
 
     expect(result.isSuccess).toBe(true);
-    expect(mockPlan.skipWorkout).toHaveBeenCalledWith('workout-1', 'Sick');
     expect(planRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'WorkoutSkipped',
+        userId: 'user-1',
+        workoutId: 'workout-1',
+        reason: 'Sick',
       }),
     );
   });

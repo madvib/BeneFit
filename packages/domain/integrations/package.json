@@ -14,14 +14,32 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
   "scripts": {
     "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/integrations/src",
     "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/integrations/dist",
+          "main": "packages/domain/integrations/src/index.ts",
+          "tsConfig": "packages/domain/integrations/tsconfig.lib.json"
+        }
+      },
       "build": {
         "executor": "@nx/js:swc",
+        "dependsOn": [
+          "build-types"
+        ],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -38,9 +56,5 @@
       "layer:domain",
       "domain:integrations"
     ]
-  },
-  "dependencies": {
-    "@bene/domain-shared": "workspace:*",
-    "@swc/helpers": "~0.5.11"
   }
 }

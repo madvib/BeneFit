@@ -3,7 +3,7 @@
 
 import { randomUUID } from 'crypto';
 
-type Constructor<T = object> = new (...args: unknown[]) => T;
+type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
  * Mixin that injects the required Identity (id) and Equality (equals) logic
@@ -14,7 +14,7 @@ export function IdentityMixin<T extends Constructor>(Base: T) {
   return class extends Base {
     public readonly _id: string;
 
-    constructor(...args: unknown[]) {
+    constructor(...args: any[]) {
       super(...args);
 
       // Assume the constructor args are (props, id?)

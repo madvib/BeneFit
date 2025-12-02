@@ -127,7 +127,8 @@ describe('ConnectServiceUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('Unsupported service type');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('Unsupported service type');
     }
   });
 
@@ -153,7 +154,8 @@ describe('ConnectServiceUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('OAuth exchange failed');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('OAuth exchange failed');
     }
   });
 
@@ -188,7 +190,8 @@ describe('ConnectServiceUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('Failed to get user profile');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('Failed to get user profile');
     }
   });
 });

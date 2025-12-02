@@ -14,14 +14,32 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
   "scripts": {
     "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/user-profile/src",
     "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/user-profile/dist",
+          "main": "packages/domain/user-profile/src/index.ts",
+          "tsConfig": "packages/domain/user-profile/tsconfig.lib.json"
+        }
+      },
       "build": {
         "executor": "@nx/js:swc",
+        "dependsOn": [
+          "build-types"
+        ],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -38,9 +56,5 @@
       "layer:domain",
       "domain:user-profile"
     ]
-  },
-  "dependencies": {
-    "@bene/domain-shared": "workspace:*",
-    "@swc/helpers": "~0.5.11"
   }
 }

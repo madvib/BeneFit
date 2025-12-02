@@ -14,14 +14,34 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@bene/domain-shared": "workspace:*",
+    "@bene/domain-user-profile": "workspace:*",
+    "@bene/domain-workouts": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
   "scripts": {
     "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/fitness-plan/src",
     "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/fitness-plan/dist",
+          "main": "packages/domain/fitness-plan/src/index.ts",
+          "tsConfig": "packages/domain/fitness-plan/tsconfig.lib.json"
+        }
+      },
       "build": {
         "executor": "@nx/js:swc",
+        "dependsOn": [
+          "build-types"
+        ],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -38,11 +58,5 @@
       "layer:domain",
       "domain:fitness-plan"
     ]
-  },
-  "dependencies": {
-    "@bene/domain-shared": "workspace:*",
-    "@bene/domain-user-profile": "workspace:*",
-    "@bene/domain-workouts": "workspace:*",
-    "@swc/helpers": "~0.5.11"
   }
 }

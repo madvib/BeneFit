@@ -14,14 +14,29 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "@bene/domain-shared": "workspace:*",
+    "@bene/domain-user-profile": "workspace:*"
+  },
   "scripts": {
     "lint": "eslint ."
   },
   "nx": {
     "sourceRoot": "packages/domain/workouts/src",
     "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": ["{options.outputPath}"],
+        "options": {
+          "outputPath": "packages/domain/workouts/dist",
+          "main": "packages/domain/workouts/src/index.ts",
+          "tsConfig": "packages/domain/workouts/tsconfig.lib.json"
+        }
+      },
       "build": {
         "executor": "@nx/js:swc",
+        "dependsOn": ["build-types"],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -38,10 +53,5 @@
       "layer:domain",
       "domain:workouts"
     ]
-  },
-  "dependencies": {
-    "@swc/helpers": "~0.5.11",
-    "@bene/domain-shared": "workspace:*",
-    "@bene/domain-user-profile": "workspace:*"
   }
 }

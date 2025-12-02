@@ -43,6 +43,7 @@ describe('GetProfileUseCase', () => {
       location: 'New York',
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastActiveAt: new Date(),
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
@@ -66,7 +67,7 @@ describe('GetProfileUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockProfileRepository.findById.mockResolvedValue(Result.fail('Profile not found'));
+    mockProfileRepository.findById.mockResolvedValue(Result.fail(new Error('Profile not found')));
 
     // Act
     const result = await useCase.execute({ userId });
@@ -74,7 +75,8 @@ describe('GetProfileUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Profile not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Profile not found');
     }
   });
 });

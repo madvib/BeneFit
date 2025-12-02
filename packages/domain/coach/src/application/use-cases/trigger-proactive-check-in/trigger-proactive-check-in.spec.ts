@@ -188,7 +188,8 @@ describe('TriggerProactiveCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Failed to build context');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Failed to build context');
     }
   });
 
@@ -248,7 +249,8 @@ describe('TriggerProactiveCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('No check-in needed at this time');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('No check-in needed at this time');
     }
   });
 
@@ -312,7 +314,8 @@ describe('TriggerProactiveCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('AI generation failed');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('AI generation failed');
     }
   });
 });

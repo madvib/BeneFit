@@ -1,17 +1,17 @@
 import { Result, UseCase } from '@bene/domain-shared';
 
+import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
+import { IntegrationClient } from '../../services/integration-client.js';
+import { EventBus } from '@bene/domain-shared';
 import {
   createConnectedService,
   OAuthCredentials,
   ServicePermissions,
 } from '@core/index.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
-import { IntegrationClient } from '../../services/integration-client.js';
-import { EventBus } from '@bene/domain-shared';
 
 export interface ConnectServiceRequest {
   userId: string;
-  serviceType: string; // 'strava', 'garmin', etc.
+  serviceType: 'strava' | 'garmin';
   authorizationCode: string;
   redirectUri: string;
 }
@@ -74,7 +74,7 @@ export class ConnectServiceUseCase
 
     const serviceResult = createConnectedService({
       userId: request.userId,
-      serviceType: request.serviceType as 'strava' | 'garmin' | string, // Type assertion since it comes from request
+      serviceType: request.serviceType,
       credentials,
       permissions: tokens.permissions,
       metadata: {

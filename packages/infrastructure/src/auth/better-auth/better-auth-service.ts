@@ -7,7 +7,7 @@ import {
   SessionExpiredError,
   InvalidCredentialsError,
   NetworkError,
-} from '@bene/application/auth';
+} from '@bene/domain-auth';
 import { Result } from '@bene/domain-shared';
 
 import { createBetterAuth } from './auth.js';

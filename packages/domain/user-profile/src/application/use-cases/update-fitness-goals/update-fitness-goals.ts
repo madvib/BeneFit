@@ -1,16 +1,16 @@
 import { Result, UseCase } from '@bene/domain-shared';
-import { UserProfileCommands } from '@core/index.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { EventBus } from '@bene/domain-shared';
+import { FitnessGoals, UserProfileCommands } from '@core/index.js';
 
 export interface UpdateFitnessGoalsRequest {
   userId: string;
-  goals: Record<string, unknown>; // Using Record since the exact type depends on core implementation
+  goals: FitnessGoals;
 }
 
 export interface UpdateFitnessGoalsResponse {
   userId: string;
-  goals: Record<string, unknown>; // Using Record since the exact type depends on core implementation
+  goals: FitnessGoals;
   suggestNewPlan: boolean; // Should we suggest regenerating their plan?
 }
 

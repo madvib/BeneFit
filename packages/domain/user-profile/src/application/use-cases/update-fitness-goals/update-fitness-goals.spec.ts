@@ -4,6 +4,7 @@ import { UserProfile } from '@core/index.js';
 import { UpdateFitnessGoalsUseCase } from './update-fitness-goals.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { EventBus } from '@bene/domain-shared';
+import { UserProfileCommands } from '@core/index.js';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -14,6 +15,17 @@ const mockProfileRepository = {
 const mockEventBus = {
   publish: vi.fn(),
 } as unknown as EventBus;
+
+vi.mock('@core/index.js', async () => {
+  const actual = await vi.importActual('@core/index.js');
+  return {
+    ...actual,
+    UserProfileCommands: {
+      ...actual.UserProfileCommands,
+      updateFitnessGoals: vi.fn(),
+    },
+  };
+});
 
 describe('UpdateFitnessGoalsUseCase', () => {
   let useCase: UpdateFitnessGoalsUseCase;
@@ -50,18 +62,18 @@ describe('UpdateFitnessGoalsUseCase', () => {
       location: undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastActiveAt: new Date(),
     };
 
     const updatedProfile: UserProfile = {
       ...mockProfile,
       fitnessGoals: newGoals,
       updatedAt: new Date(),
+      lastActiveAt: new Date(),
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    vi.mocked(
-      vi.importActual('@core/index.js'),
-    ).UserProfileCommands.updateFitnessGoals.mockReturnValue(Result.ok(updatedProfile));
+    vi.mocked(UserProfileCommands.updateFitnessGoals).mockReturnValue(Result.ok(updatedProfile));
     mockProfileRepository.save.mockResolvedValue(Result.ok());
 
     // Act
@@ -93,7 +105,7 @@ describe('UpdateFitnessGoalsUseCase', () => {
     const userId = 'user-123';
     const newGoals = { primary: 'hypertrophy', secondary: [] };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found'));
+    mockProfileRepository.findById.mockResolvedValue(Result.fail(new Error('Profile not found')));
 
     // Act
     const result = await useCase.execute({
@@ -104,7 +116,8 @@ describe('UpdateFitnessGoalsUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Profile not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Profile not found');
     }
   });
 });

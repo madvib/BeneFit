@@ -112,7 +112,8 @@ describe('GenerateWeeklySummaryUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Failed to build context');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Failed to build context');
     }
   });
 
@@ -156,7 +157,8 @@ describe('GenerateWeeklySummaryUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('AI generation failed');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('AI generation failed');
     }
   });
 });

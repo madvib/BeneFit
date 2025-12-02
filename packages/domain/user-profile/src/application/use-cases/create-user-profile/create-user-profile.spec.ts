@@ -4,6 +4,7 @@ import { UserProfile } from '@core/index.js';
 import { CreateUserProfileUseCase } from './create-user-profile.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { EventBus } from '@bene/domain-shared';
+import { createUserProfile } from '@core/aggregates/user-profile/user-profile.factory.js';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -14,6 +15,14 @@ const mockProfileRepository = {
 const mockEventBus = {
   publish: vi.fn(),
 } as unknown as EventBus;
+
+vi.mock('@core/aggregates/user-profile/user-profile.factory.js', async () => {
+  const actual = await vi.importActual('@core/aggregates/user-profile/user-profile.factory.js');
+  return {
+    ...actual,
+    createUserProfile: vi.fn(),
+  };
+});
 
 describe('CreateUserProfileUseCase', () => {
   let useCase: CreateUserProfileUseCase;
@@ -83,10 +92,11 @@ describe('CreateUserProfileUseCase', () => {
       location: undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastActiveAt: new Date(),
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found')); // No existing profile
-    vi.mocked(vi.importActual('@core/index.js')).createUserProfile.mockReturnValue(
+    vi.mocked(createUserProfile).mockReturnValue(
       Result.ok(mockProfile),
     ); // Mock factory
     mockProfileRepository.save.mockResolvedValue(Result.ok());
@@ -168,6 +178,7 @@ describe('CreateUserProfileUseCase', () => {
       location: undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
+      lastActiveAt: new Date(),
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.ok(existingProfile));
@@ -178,7 +189,8 @@ describe('CreateUserProfileUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Profile already exists for this user');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Profile already exists for this user');
     }
   });
 
@@ -195,8 +207,8 @@ describe('CreateUserProfileUseCase', () => {
     };
 
     mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found'));
-    vi.mocked(vi.importActual('@core/index.js')).createUserProfile.mockReturnValue(
-      Result.fail('Creation failed'),
+    vi.mocked(createUserProfile).mockReturnValue(
+      Result.fail(new Error('Creation failed')),
     );
 
     // Act
@@ -205,7 +217,8 @@ describe('CreateUserProfileUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Creation failed');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Creation failed');
     }
   });
 });

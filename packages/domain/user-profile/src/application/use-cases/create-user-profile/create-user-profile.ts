@@ -1,14 +1,15 @@
-import { Result, UseCase, EventBus } from '@bene/domain-shared';
-import { createUserProfile } from '@core/index.js';
+import { Result, UseCase, EventBus, TrainingConstraints } from '@bene/domain-shared';
+import { createUserProfile } from '../../../core/aggregates/user-profile/user-profile.factory.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { ExperienceProfile, FitnessGoals } from '@core/index.js';
 
 export interface CreateUserProfileRequest {
   userId: string;
   displayName: string;
   timezone: string;
-  experienceProfile?: unknown; // Using unknown since the exact type depends on core implementation
-  fitnessGoals?: unknown; // Using unknown since the exact type depends on core implementation
-  trainingConstraints?: unknown; // Using unknown since the exact type depends on core implementation
+  experienceProfile: ExperienceProfile;
+  fitnessGoals: FitnessGoals;
+  trainingConstraints: TrainingConstraints;
   avatar?: string;
   bio?: string;
   location?: string;

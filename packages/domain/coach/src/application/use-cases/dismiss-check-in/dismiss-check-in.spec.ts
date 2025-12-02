@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { EventBus, Result } from '@bene/domain-shared';
 import { CoachingConversation, CheckIn } from '@core/index.js';
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
@@ -65,6 +65,7 @@ describe('DismissCheckInUseCase', () => {
         workoutsThisWeek: 0,
         plannedWorkoutsThisWeek: 0,
         energyLevel: 'medium',
+        reportedInjuries: [],
       },
       messages: [],
       checkIns: [mockCheckIn],
@@ -109,7 +110,7 @@ describe('DismissCheckInUseCase', () => {
     const userId = 'user-123';
     const checkInId = 'checkin-456';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    (mockConversationRepository.findByUserId as Mock).mockResolvedValue(
       Result.fail(new Error('Not found')),
     );
 
@@ -122,7 +123,8 @@ describe('DismissCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Conversation not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Conversation not found');
     }
   });
 
@@ -185,7 +187,8 @@ describe('DismissCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('Check-in');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('Check-in');
     }
   });
 });

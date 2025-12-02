@@ -1,5 +1,9 @@
 import { Result, UseCase } from '@bene/domain-shared';
-import { createWorkoutSession, WorkoutSessionCommands } from '@core/index.js';
+import {
+  createWorkoutSession,
+  WorkoutActivity,
+  WorkoutSessionCommands,
+} from '@core/index.js';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import type { EventBus } from '@bene/domain-shared';
 
@@ -13,7 +17,7 @@ export interface StartWorkoutRequest {
 
   // Option 2: Custom workout
   workoutType?: string;
-  activities?: unknown[]; // WorkoutActivity[]
+  activities?: WorkoutActivity[];
 
   // Multiplayer options
   isMultiplayer?: boolean;
@@ -41,71 +45,24 @@ export class StartWorkoutUseCase
   ) {}
 
   async execute(request: StartWorkoutRequest): Promise<Result<StartWorkoutResponse>> {
-    // let workoutType: string;
-    // let activities: any[];
-    let planId: string | undefined;
-    let workoutTemplateId: string | undefined;
-
-    // // 1. Determine workout source
-    // if (request.fromPlan) {
-    //   // Get from active plan
-    //   const planResult = await this.planRepository.findActiveByUserId(request.userId);
-    //   if (planResult.isFailure) {
-    //     return Result.fail(new Error('No active plan found'));
-    //   }
-
-    //   const plan = planResult.value;
-    //   const todaysWorkout = WorkoutPlanQueries.getCurrentWorkout(plan);
-
-    //   if (!todaysWorkout) {
-    //     return Result.fail(new Error('No workout scheduled for today'));
-    //   }
-
-    //   if (todaysWorkout.status === 'completed') {
-    //     return Result.fail(new Error("Today's workout already completed"));
-    //   }
-
-    //   if (todaysWorkout.status === 'in_progress') {
-    //     return Result.fail(new Error('Workout already in progress'));
-    //   }
-
-    //   workoutType = todaysWorkout.type;
-    //   activities = todaysWorkout.activities;
-    //   planId = plan.id;
-    //   workoutTemplateId = todaysWorkout.id;
-
-    //   // Mark workout as started in plan
-    //   const startedWorkoutResult = WorkoutTemplateCommands.startWorkout(todaysWorkout);
-    //   if (startedWorkoutResult.isFailure) {
-    //     return Result.fail(startedWorkoutResult.error);
-    //   }
-    //   // Note: We would need to update the plan with the started workout
-    //   // This requires updating the week's workouts array
-    //   // For now, we'll skip this step as it requires more complex plan manipulation
-    // } else {
-    //   // Custom workout
-    //   if (!request.workoutType || !request.activities) {
-    //     return Result.fail(
-    //       new Error('Must provide workoutType and activities for custom workout'),
-    //     );
-    //   }
-    //   workoutType = request.workoutType;
-    //   activities = request.activities;
-    // }
+    // 1. Validate custom workout request
+    if (!request.workoutType || !request.activities) {
+      return Result.fail(
+        new Error('Must provide workoutType and activities for custom workout'),
+      );
+    }
 
     // 2. Create session
     const sessionResult = createWorkoutSession({
       ownerId: request.userId,
-      // workoutType,
-      // activities,
-      planId,
-      workoutTemplateId,
+      workoutType: request.workoutType,
+      activities: request.activities || [],
+      planId: undefined,
+      workoutTemplateId: undefined,
       isMultiplayer: request.isMultiplayer,
       configuration: {
         isPublic: request.isPublic,
       },
-      workoutType: '',
-      activities: []
     });
 
     if (sessionResult.isFailure) {

@@ -5,9 +5,12 @@ import {
   type WorkoutVerification,
   type CompletedWorkout,
 } from '@core/index.js';
-import { UserProfileCommands,UserProfileRepository } from '@bene/domain-user-profile';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import {
+  UserProfileCommands,
+  type UserProfileRepository,
+} from '@bene/domain-user-profile';
 import type { EventBus } from '@bene/domain-shared';
 
 export interface CompleteWorkoutRequest {

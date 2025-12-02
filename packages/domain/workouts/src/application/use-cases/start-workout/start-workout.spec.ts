@@ -1,11 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Result, EventBus } from '@bene/domain-shared';
 import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
-import { WorkoutPlanRepository } from '@bene/domain/fitness-plan';
-import { UserProfileRepository } from '@bene/domain-user-profile';
 import { StartWorkoutUseCase } from './start-workout.js';
 import * as workoutsDomain from '@core/index.js';
-import * as plansDomain from '@bene/core/plans';
 
 vi.mock('@core/index.js', () => ({
   createWorkoutSession: vi.fn(),
@@ -14,20 +11,9 @@ vi.mock('@core/index.js', () => ({
   },
 }));
 
-vi.mock('@bene/core/plans', () => ({
-  WorkoutPlanQueries: {
-    getCurrentWorkout: vi.fn(),
-  },
-  WorkoutTemplateCommands: {
-    startWorkout: vi.fn(),
-  },
-}));
-
 describe('StartWorkoutUseCase', () => {
   let useCase: StartWorkoutUseCase;
   let sessionRepo: WorkoutSessionRepository;
-  let planRepo: WorkoutPlanRepository;
-  let profileRepo: UserProfileRepository;
   let eventBus: EventBus;
 
   beforeEach(() => {
@@ -55,16 +41,11 @@ describe('StartWorkoutUseCase', () => {
     sessionRepo = {
       save: vi.fn().mockResolvedValue(Result.ok()),
     };
-    planRepo = {
-      findActiveByUserId: vi.fn(),
-      save: vi.fn().mockResolvedValue(Result.ok()),
-    };
-    profileRepo = {};
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
     };
 
-    useCase = new StartWorkoutUseCase(sessionRepo, planRepo, profileRepo, eventBus);
+    useCase = new StartWorkoutUseCase(sessionRepo, eventBus);
   });
 
   it('should start a custom workout successfully', async () => {
@@ -103,80 +84,5 @@ describe('StartWorkoutUseCase', () => {
 
     expect(result.isFailure).toBe(true);
     expect((result.error as Error).message).toContain('Must provide workoutType');
-  });
-
-  it('should start a workout from a plan', async () => {
-    const mockPlan = {
-      id: 'plan-1',
-      userId: 'user-1',
-      weeks: [
-        {
-          weekNumber: 1,
-          workouts: [
-            {
-              id: 'template-1',
-              dayOfWeek: 1,
-              type: 'cardio',
-              status: 'scheduled',
-              activities: [
-                {
-                  structure: { type: 'distance' },
-                  activityType: 'run',
-                  instructions: 'Run 5k',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      currentPosition: { week: 1, day: 1 },
-    };
-
-    vi.mocked(plansDomain.WorkoutPlanQueries.getCurrentWorkout).mockReturnValue({
-      id: 'template-1',
-      dayOfWeek: 1,
-      type: 'cardio',
-      status: 'scheduled',
-      activities: [
-        {
-          structure: { type: 'distance' },
-          activityType: 'run',
-          instructions: 'Run 5k',
-        },
-      ],
-    });
-
-    vi.mocked(plansDomain.WorkoutTemplateCommands.startWorkout).mockReturnValue(
-      Result.ok({} as { id: string })
-    );
-
-    planRepo.findActiveByUserId.mockResolvedValue(Result.ok(mockPlan));
-
-    const request = {
-      userId: 'user-1',
-      userName: 'User 1',
-      fromPlan: true,
-    };
-
-    const result = await useCase.execute(request);
-
-    expect(result.isSuccess).toBe(true);
-    expect(planRepo.findActiveByUserId).toHaveBeenCalledWith('user-1');
-    expect(sessionRepo.save).toHaveBeenCalled();
-  });
-
-  it('should fail if no active plan found', async () => {
-    planRepo.findActiveByUserId.mockResolvedValue(Result.fail('No plan'));
-
-    const request = {
-      userId: 'user-1',
-      userName: 'User 1',
-      fromPlan: true,
-    };
-
-    const result = await useCase.execute(request);
-
-    expect(result.isFailure).toBe(true);
-    expect((result.error as Error).message).toBe('No active plan found');
   });
 });

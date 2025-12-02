@@ -21,6 +21,9 @@
       "path": "../domain/workouts"
     },
     {
+      "path": "../domain/user-profile"
+    },
+    {
       "path": "../domain/blog"
     },
     {

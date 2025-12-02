@@ -111,7 +111,8 @@ describe('DisconnectServiceUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Service not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Service not found');
     }
   });
 
@@ -168,7 +169,8 @@ describe('DisconnectServiceUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Not authorized');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Not authorized');
     }
   });
 });

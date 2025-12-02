@@ -120,7 +120,8 @@ describe('GetConnectedServicesUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Database error');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Database error');
     }
   });
 });

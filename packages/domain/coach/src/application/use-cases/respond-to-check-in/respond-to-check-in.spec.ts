@@ -143,7 +143,7 @@ describe('RespondToCheckInUseCase', () => {
     const response = 'I feel great!';
 
     mockConversationRepository.findByUserId.mockResolvedValue(
-      Result.fail(new Error('Not found')),
+      Result.fail(new Error('Conversation not found')),
     );
 
     // Act
@@ -156,7 +156,8 @@ describe('RespondToCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Conversation not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Conversation not found');
     }
   });
 
@@ -221,7 +222,8 @@ describe('RespondToCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Check-in not found');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Check-in not found');
     }
   });
 
@@ -295,7 +297,8 @@ describe('RespondToCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Check-in already responded to');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Check-in already responded to');
     }
   });
 
@@ -372,7 +375,8 @@ describe('RespondToCheckInUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('AI analysis failed');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('AI analysis failed');
     }
   });
 });

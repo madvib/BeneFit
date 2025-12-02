@@ -199,7 +199,7 @@ describe('SendMessageToCoachUseCase', () => {
       Result.fail(new Error('Not found')),
     );
     mockContextBuilder.buildContext.mockResolvedValue(
-      Result.fail(new Error('Failed to build context')),
+      Result.fail(new Error('Failed to build coaching context')),
     );
 
     // Act
@@ -211,7 +211,8 @@ describe('SendMessageToCoachUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toBe('Failed to build coaching context');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Failed to build coaching context');
     }
   });
 
@@ -277,7 +278,8 @@ describe('SendMessageToCoachUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.error).toContain('Coach unavailable');
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('AI unavailable');
     }
   });
 });

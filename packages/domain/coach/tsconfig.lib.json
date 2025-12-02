@@ -17,6 +17,9 @@
       "path": "../fitness-plan/tsconfig.lib.json"
     },
     {
+      "path": "../user-profile/tsconfig.lib.json"
+    },
+    {
       "path": "../shared/tsconfig.lib.json"
     }
   ],

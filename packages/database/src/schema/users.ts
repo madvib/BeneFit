@@ -1,7 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 import { userProfiles } from './profiles.js';
-import { achievements } from './social.js';
 import { workoutPlansMetadata } from './plans.js';
 import { completedWorkouts } from './workouts.js';
 import { workoutReactions } from './workouts.js';
@@ -14,7 +13,9 @@ import { teamMembers } from './social.js';
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   email: text('email').notNull().unique(),
-  emailVerified: integer('email_verified', { mode: 'boolean' }).notNull().default(false),
+  emailVerified: integer('email_verified', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 });
@@ -24,7 +25,6 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     fields: [users.id],
     references: [userProfiles.userId],
   }),
-  achievements: many(achievements),
   plans: many(workoutPlansMetadata),
   workouts: many(completedWorkouts),
   reactions: many(workoutReactions),

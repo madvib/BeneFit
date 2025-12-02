@@ -55,10 +55,16 @@
       "cache": true
     },
     "typecheck": {
-      "cache": true
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "build-types": {
+      "cache": true,
+      "dependsOn": ["^build-types"]
     },
     "build": {
-      "cache": true
+      "cache": true,
+      "dependsOn": ["build-types", "^build"]
     },
     "@nx/js:tsc": {
       "cache": true,

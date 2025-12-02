@@ -12,7 +12,7 @@ import {
   createVolumeWorkout,
   createWorkoutGoals,
 } from '../../../../value-objects/index.js';
-import { createWorkoutActivity } from '@/workouts/index.js';
+import { createWorkoutActivity } from '@bene/domain-workouts';
 
 describe('WorkoutTemplate', () => {
   describe('create', () => {
