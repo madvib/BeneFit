@@ -2,7 +2,11 @@ import { Result } from '@bene/domain';
 import type { CoachingContext, UserProfile } from '@bene/domain/coaching';
 import type { WorkoutPlan } from '@bene/domain/planning';
 import type { CompletedWorkout } from '@bene/domain/workouts';
-import type { UserProfileRepository, CompletedWorkoutRepository, WorkoutPlanRepository } from '@bene/application';
+import type {
+  UserProfileRepository,
+  CompletedWorkoutRepository,
+  WorkoutPlanRepository,
+} from '@bene/application';
 
 export class CoachingContextBuilder {
   constructor(
@@ -22,11 +26,18 @@ export class CoachingContextBuilder {
 
       // Fetch the current active plan
       const activePlanResult = await this.workoutPlanRepo.findActiveByUserId(userId);
-      const currentPlan = activePlanResult.isSuccess ? activePlanResult.value : undefined;
+      const currentPlan = activePlanResult.isSuccess
+        ? activePlanResult.value
+        : undefined;
 
       // Fetch recent workouts (last 30 days)
-      const recentWorkoutsResult = await this.completedWorkoutRepo.findRecentByUserId(userId, 30);
-      const recentWorkouts = recentWorkoutsResult.isSuccess ? recentWorkoutsResult.value : [];
+      const recentWorkoutsResult = await this.completedWorkoutRepo.findRecentByUserId(
+        userId,
+        30,
+      );
+      const recentWorkouts = recentWorkoutsResult.isSuccess
+        ? recentWorkoutsResult.value
+        : [];
 
       // Calculate workout statistics
       const workoutStats = this.calculateWorkoutStats(recentWorkouts);
@@ -51,7 +62,8 @@ export class CoachingContextBuilder {
     }
   }
 
-  private calculateWorkoutStats(recentWorkouts: CompletedWorkout[]): any { // In a real implementation, this would have a proper type
+  private calculateWorkoutStats(recentWorkouts: CompletedWorkout[]): any {
+    // In a real implementation, this would have a proper type
     if (recentWorkouts.length === 0) {
       return {
         totalWorkouts: 0,
@@ -76,7 +88,7 @@ export class CoachingContextBuilder {
 
     // Determine favorite workout types
     const typeCounts: { [key: string]: number } = {};
-    recentWorkouts.forEach(workout => {
+    recentWorkouts.forEach((workout) => {
       const type = workout.workoutType;
       typeCounts[type] = (typeCounts[type] || 0) + 1;
     });
@@ -98,26 +110,29 @@ export class CoachingContextBuilder {
   private getDaysSpan(recentWorkouts: CompletedWorkout[]): number {
     if (recentWorkouts.length < 2) return recentWorkouts.length > 0 ? 1 : 0;
 
-    const sortedWorkouts = [...recentWorkouts].sort((a, b) => 
-      new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime()
+    const sortedWorkouts = [...recentWorkouts].sort(
+      (a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime(),
     );
 
     const lastWorkoutDate = sortedWorkouts[0].recordedAt;
     const firstWorkoutDate = sortedWorkouts[sortedWorkouts.length - 1].recordedAt;
 
-    const timeDiff = new Date(lastWorkoutDate).getTime() - new Date(firstWorkoutDate).getTime();
+    const timeDiff =
+      new Date(lastWorkoutDate).getTime() - new Date(firstWorkoutDate).getTime();
     return Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert to days
   }
 
-  private getUpcomingWorkouts(currentPlan?: WorkoutPlan): any[] { // In a real implementation, this would have a proper type
+  private getUpcomingWorkouts(currentPlan?: WorkoutPlan): any[] {
+    // In a real implementation, this would have a proper type
     // This would typically access the UserAgent DO for full plan structure
     // For now, return empty array as placeholder
-    return currentPlan?.structure ? 
-      this.extractUpcomingFromStructure(currentPlan.structure) : 
-      [];
+    return currentPlan?.structure
+      ? this.extractUpcomingFromStructure(currentPlan.structure)
+      : [];
   }
 
-  private extractUpcomingFromStructure(planStructure: any): any[] { // In a real implementation, this would have a proper type
+  private extractUpcomingFromStructure(planStructure: any): any[] {
+    // In a real implementation, this would have a proper type
     // Extract upcoming workouts from the plan structure
     // This is a simplified implementation - real one would parse the actual structure
     return [];
