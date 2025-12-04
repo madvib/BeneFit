@@ -3,7 +3,7 @@
 import { authUseCases } from '@/providers/auth-use-cases';
 import { revalidatePath } from 'next/cache';
 import { getRequestContext } from './get-request-context';
-import { EmailAddress, Password } from '@bene/domain-shared';
+import { EmailAddress, Password } from '@bene/shared-domain';
 
 export interface LoginFormState {
   success?: boolean;

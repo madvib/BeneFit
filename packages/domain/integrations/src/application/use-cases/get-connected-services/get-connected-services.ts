@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import { ConnectedServiceRepository } from '../../index.js';
 
 export interface GetConnectedServicesRequest {

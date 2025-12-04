@@ -1,5 +1,5 @@
 {
-  "name": "@bene/domain-integrations",
+  "name": "@bene/integrations-domain",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     }
   },
   "dependencies": {
-    "@bene/domain-shared": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
     "@swc/helpers": "~0.5.11"
   },
   "scripts": {
@@ -53,8 +53,10 @@
       }
     },
     "tags": [
-      "layer:domain",
-      "domain:integrations"
+      "type:domain",
+      "scope:integrations",
+      "layer:core",
+      "layer:application"
     ]
   }
 }

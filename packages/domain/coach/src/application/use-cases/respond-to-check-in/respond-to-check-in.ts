@@ -1,8 +1,8 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 
 export interface RespondToCheckInRequest {
   userId: string;

@@ -1,7 +1,7 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import { ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 
 export interface DisconnectServiceRequest {
   userId: string;

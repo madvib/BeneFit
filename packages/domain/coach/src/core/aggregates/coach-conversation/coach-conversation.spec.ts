@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createCoachingConversation } from './coach-conversation.factory.js';
 import { CoachingContext } from '../../value-objects/coaching-context/coaching-context.types.js';
-import { createTrainingConstraints } from '@bene/domain-shared';
+import { createTrainingConstraints } from '@bene/training-core';
 
 describe('CoachConversation Aggregate', () => {
   const mockContext: CoachingContext = {

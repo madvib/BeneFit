@@ -6,7 +6,7 @@ export default defineConfig(() => ({
   cacheDir: '../../../node_modules/.vite/packages/domain/integrations',
   plugins: [nxViteTsPaths()],
   test: {
-    name: '@bene/domain-integrations',
+    name: '@bene/integrations-domain',
     watch: false,
     globals: true,
     environment: 'node',

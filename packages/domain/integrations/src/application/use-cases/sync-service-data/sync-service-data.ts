@@ -1,8 +1,8 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
 import { IntegrationClient } from '../../services/integration-client.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 
 export interface SyncServiceDataRequest {
   serviceId: string;
@@ -96,7 +96,9 @@ export class SyncServiceDataUseCase
 
     // 7. Map to CompletedWorkouts and save
     // (This would call CompletedWorkoutRepository in real implementation)
-    const workoutsSynced = (activities as { type: string }[]).filter((a) => a.type === 'workout').length;
+    const workoutsSynced = (activities as { type: string }[]).filter(
+      (a) => a.type === 'workout',
+    ).length;
     const activitiesSynced = activities.length;
 
     // 8. Record success

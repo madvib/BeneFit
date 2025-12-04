@@ -1,8 +1,8 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 
 import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
 import { IntegrationClient } from '../../services/integration-client.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 import {
   createConnectedService,
   OAuthCredentials,

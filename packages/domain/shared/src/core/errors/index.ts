@@ -1,2 +1,1 @@
-export * from './DomainError.js';
-export * from './constraints-validation-error.js';
+export * from './domain_error.js';

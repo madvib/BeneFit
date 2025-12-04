@@ -1,6 +1,5 @@
 // Export all parts of the Coaching Context value object
 export type {
-  ExperienceLevel,
   CurrentPlanContext,
   RecentWorkoutSummary,
   PerformanceTrends,

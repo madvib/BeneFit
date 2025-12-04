@@ -1,4 +1,4 @@
-import { Result, UseCase, EventBus } from '@bene/domain-shared';
+import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
 

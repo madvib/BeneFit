@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/domain-shared';
+import { Result, Guard } from '@bene/shared-domain';
 import { CheckInType, CheckInTrigger, CheckIn } from './check-in.types.js';
 import { randomUUID } from 'crypto';
 

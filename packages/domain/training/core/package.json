@@ -1,0 +1,61 @@
+{
+  "name": "@bene/training-core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/training/core/src",
+    "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/training/core/dist",
+          "main": "packages/domain/training/core/src/index.ts",
+          "tsConfig": "packages/domain/training/core/tsconfig.lib.json"
+        }
+      },
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "dependsOn": [
+          "build-types"
+        ],
+        "options": {
+          "outputPath": "packages/domain/training/core/dist",
+          "main": "packages/domain/training/core/src/index.ts",
+          "tsConfig": "packages/domain/training/core/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "type:domain",
+      "scope:training",
+      "layer:core"
+    ]
+  }
+}

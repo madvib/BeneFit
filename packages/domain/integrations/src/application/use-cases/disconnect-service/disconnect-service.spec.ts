@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result } from '@bene/shared-domain';
 import { ConnectedService } from '../../../core/index.js';
 import { DisconnectServiceUseCase } from './disconnect-service.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -45,7 +45,14 @@ describe('DisconnectServiceUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
+      permissions: {
+        readWorkouts: true,
+        writeWorkouts: true,
+        readHeartRate: true,
+        readSleep: true,
+        readNutrition: true,
+        readBodyMetrics: true,
+      },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -100,7 +107,9 @@ describe('DisconnectServiceUseCase', () => {
     const userId = 'user-123';
     const serviceId = 'service-456';
 
-    mockServiceRepository.findById.mockResolvedValue(Result.fail(new Error('Service not found')));
+    mockServiceRepository.findById.mockResolvedValue(
+      Result.fail(new Error('Service not found')),
+    );
 
     // Act
     const result = await useCase.execute({
@@ -133,7 +142,14 @@ describe('DisconnectServiceUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
+      permissions: {
+        readWorkouts: true,
+        writeWorkouts: true,
+        readHeartRate: true,
+        readSleep: true,
+        readNutrition: true,
+        readBodyMetrics: true,
+      },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { createCoachingContext } from './coaching-context.factory.js';
+import { createTrainingConstraints } from '@bene/training-core';
 import {
   RecentWorkoutSummary,
   PerformanceTrends,
   CurrentPlanContext,
-} from './coaching-context.js';
-import { createTrainingConstraints } from '@bene/domain-shared';
+} from './coaching-context.types.js';
 
 describe('CoachingContext Value Object', () => {
   const mockRecentWorkouts: RecentWorkoutSummary[] = [

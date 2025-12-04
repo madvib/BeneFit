@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result } from '@bene/domain-shared';
+import { Result } from '@bene/shared-domain';
 import { ConnectedService } from '../../../core/index.js';
 import { GetConnectedServicesUseCase } from './get-connected-services.js';
 
@@ -39,7 +39,14 @@ describe('GetConnectedServicesUseCase', () => {
         scopes: ['read', 'write'],
         tokenType: 'Bearer',
       },
-      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
+      permissions: {
+        readWorkouts: true,
+        writeWorkouts: true,
+        readHeartRate: true,
+        readSleep: true,
+        readNutrition: true,
+        readBodyMetrics: true,
+      },
       syncStatus: {
         state: 'synced',
         lastAttemptAt: new Date(),
@@ -110,7 +117,9 @@ describe('GetConnectedServicesUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockServiceRepository.findByUserId.mockResolvedValue(Result.fail(new Error('Database error')));
+    mockServiceRepository.findByUserId.mockResolvedValue(
+      Result.fail(new Error('Database error')),
+    );
 
     // Act
     const result = await useCase.execute({

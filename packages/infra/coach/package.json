@@ -1,0 +1,45 @@
+{
+  "name": "@bene/coach-infra",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@bene/coach-domain": "workspace:*",
+    "@bene/persistence": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
+  "nx": {
+    "sourceRoot": "packages/infra/coach/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/infra/coach/dist",
+          "main": "packages/infra/coach/src/index.ts",
+          "tsConfig": "packages/infra/coach/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "type:infrastructure",
+      "scope:coach",
+      "layer:infrastructure"
+    ]
+  }
+}

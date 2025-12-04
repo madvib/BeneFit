@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result, EventBus } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/shared-domain';
 import { GenerateWeeklySummaryUseCase } from './generate-weekly-summary.js';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';

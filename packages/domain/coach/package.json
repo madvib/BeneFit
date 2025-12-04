@@ -1,5 +1,5 @@
 {
-  "name": "@bene/domain-coach",
+  "name": "@bene/coach-domain",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -16,9 +16,8 @@
   },
   "dependencies": {
     "@swc/helpers": "~0.5.11",
-    "@bene/domain-shared": "workspace:*",
-    "@bene/domain-user-profile": "workspace:*",
-    "@bene/domain-fitness-plan": "workspace:*"
+    "@bene/shared-domain": "workspace:*",
+    "@bene/training-core": "workspace:*"
   },
   "scripts": {
     "lib:typecheck": "tsc --project tsconfig.lib.json --noEmit",
@@ -29,7 +28,9 @@
     "targets": {
       "build-types": {
         "executor": "@nx/js:tsc",
-        "outputs": ["{options.outputPath}"],
+        "outputs": [
+          "{options.outputPath}"
+        ],
         "options": {
           "outputPath": "packages/domain/coach/dist",
           "main": "packages/domain/coach/src/index.ts",
@@ -38,7 +39,9 @@
       },
       "build": {
         "executor": "@nx/js:swc",
-        "dependsOn": ["build-types"],
+        "dependsOn": [
+          "build-types"
+        ],
         "outputs": [
           "{options.outputPath}"
         ],
@@ -52,9 +55,10 @@
       }
     },
     "tags": [
-      "layer:domain",
-      "domain:coach"
-    ],
-    "name": "@bene/domain-coach"
+      "type:domain",
+      "scope:coach",
+      "layer:core",
+      "layer:application"
+    ]
   }
 }

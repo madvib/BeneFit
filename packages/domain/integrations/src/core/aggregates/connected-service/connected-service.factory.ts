@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/domain-shared';
+import { Guard, Result } from '@bene/shared-domain';
 import { OAuthCredentials } from '../../value-objects/oauth-credentials/oauth-credentials.js';
 import {
   ServiceMetadata,

@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/domain-shared';
+import { Guard, Result } from '@bene/shared-domain';
 
 interface OAuthCredentialsData {
   accessToken: string; // Should be encrypted at rest

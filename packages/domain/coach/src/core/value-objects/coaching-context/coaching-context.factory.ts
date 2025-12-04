@@ -1,20 +1,22 @@
-import { Guard, Result } from '@bene/domain-shared';
-import { TrainingConstraints } from "@bene/domain-shared";
+import { Guard, Result } from '@bene/shared-domain';
 import {
   CurrentPlanContext,
   RecentWorkoutSummary,
-  ExperienceLevel,
   PerformanceTrends,
   CoachingContext,
 } from './coaching-context.types.js';
-import type { FitnessGoals } from '@bene/domain-user-profile';
+import type {
+  FitnessGoals,
+  TrainingConstraints,
+  UserExperienceLevel,
+} from '@bene/training-core';
 
 export function createCoachingContext(props: {
   currentPlan?: CurrentPlanContext;
   recentWorkouts: RecentWorkoutSummary[];
   userGoals: FitnessGoals;
   userConstraints: TrainingConstraints;
-  experienceLevel: ExperienceLevel;
+  experienceLevel: UserExperienceLevel;
   trends: PerformanceTrends;
   daysIntoCurrentWeek: number;
   workoutsThisWeek: number;

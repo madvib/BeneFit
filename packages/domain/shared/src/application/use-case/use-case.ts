@@ -1,6 +1,6 @@
 // Example Base Class (Optional)
 
-import { Result } from "@core/index.js";
+import { Result } from '../../core/index.js';
 
 export interface UseCase<TInput, TOutput> {
   execute(input: TInput): Promise<Result<TOutput>>;

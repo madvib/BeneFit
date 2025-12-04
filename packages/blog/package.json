@@ -1,0 +1,62 @@
+{
+  "name": "@bene/blog",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/blog/src",
+    "targets": {
+      "build-types": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/blog/dist",
+          "main": "packages/blog/src/index.ts",
+          "tsConfig": "packages/blog/tsconfig.lib.json"
+        }
+      },
+      "build": {
+        "executor": "@nx/js:swc",
+        "dependsOn": [
+          "build-types"
+        ],
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/blog/dist",
+          "main": "packages/blog/src/index.ts",
+          "tsConfig": "packages/blog/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "type:feature",
+      "scope:blog",
+      "slice:vertical",
+      "boundary:isolated"
+    ]
+  }
+}

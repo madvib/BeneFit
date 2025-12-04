@@ -6,7 +6,7 @@ export default defineConfig(() => ({
   cacheDir: '../../../node_modules/.vite/packages/domain/shared',
   plugins: [nxViteTsPaths()],
   test: {
-    name: '@bene/domain-shared',
+    name: '@bene/shared-domain',
     watch: false,
     globals: true,
     environment: 'node',

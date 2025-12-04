@@ -1,12 +1,12 @@
-import { Result, Guard } from '@bene/domain-shared';
+import { Result, Guard } from '@bene/shared-domain';
 import {
   CoachingContext,
   CoachingConversation,
   CoachingMessage,
-  createCoachingContext, createCoachMessage
+  createCoachingContext,
+  createCoachMessage,
 } from '../../index.js';
-import type { TrainingConstraints } from '@bene/domain-shared';
-import type { FitnessGoals } from '@bene/domain-user-profile';
+import type { FitnessGoals, TrainingConstraints } from '@bene/training-core';
 import { randomUUID } from 'crypto';
 export interface CreateCoachingConversationParams {
   userId: string;

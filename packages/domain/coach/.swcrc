@@ -12,7 +12,13 @@
     },
     "keepClassNames": true,
     "externalHelpers": true,
-    "loose": true
+    "loose": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": [
+        "./src/core/*"
+      ]
+    }
   },
   "module": {
     "type": "es6"

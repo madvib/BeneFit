@@ -17,11 +17,7 @@
     },
     {
       "plugin": "@nx/js/typescript",
-      "include": [
-        "packages/infrastructure/*",
-        "packages/domain/*",
-        "packages/utils/*"
-      ],
+      "include": ["packages/infrastructure/*", "packages/domain/*", "packages/utils/*"],
       "options": {
         "build": false,
         "typecheck": {
@@ -32,8 +28,18 @@
     {
       "plugin": "@nx/js/typescript",
       "include": [
-        "packages/database/*",
-        "tools/nx-plugin/*"
+        "packages/domain/coach/*",
+        "packages/domain/integrations/*",
+        "packages/domain/shared/*",
+        "packages/domain/training/application/*",
+        "packages/domain/training/core*",
+        "tools/nx-plugin/*",
+        "packages/infra/persistence/*",
+        "packages/infra/training/*",
+        "packages/infra/integrations/*",
+        "packages/infra/coach/*",
+        "packages/auth/*",
+        "packages/blog/*"
       ],
       "options": {
         "typecheck": {
@@ -43,6 +49,13 @@
           "targetName": "build",
           "configName": "tsconfig.lib.json"
         }
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "vitest:test",
+        "ciTargetName": "test-ci"
       }
     }
   ],

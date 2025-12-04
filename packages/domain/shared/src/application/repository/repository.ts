@@ -1,4 +1,4 @@
-import { Entity, Result } from '@core/base-classes/index.js';
+import { Entity, Result } from '../../core/index.js';
 
 /**
  * Base repository interface

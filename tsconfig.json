@@ -7,40 +7,43 @@
       "path": "./apps/web"
     },
     {
-      "path": "./packages/infrastructure"
-    },
-    {
       "path": "./packages/utils"
     },
     {
       "path": "./tools/nx-plugin"
     },
     {
-      "path": "./packages/database"
-    },
-    {
-      "path": "./packages/domain/blog"
-    },
-    {
       "path": "./packages/domain/integrations"
-    },
-    {
-      "path": "./packages/domain/fitness-plan"
-    },
-    {
-      "path": "./packages/domain/workouts"
-    },
-    {
-      "path": "./packages/domain/user-profile"
     },
     {
       "path": "./packages/domain/shared"
     },
     {
+      "path": "./packages/domain/training/application"
+    },
+    {
+      "path": "./packages/domain/training/core"
+    },
+    {
       "path": "./packages/domain/coach"
     },
     {
-      "path": "./packages/domain/auth"
-    }
+      "path": "./packages/infra/persistence"
+    },
+    {
+      "path": "./packages/infra/training"
+    },
+    {
+      "path": "./packages/infra/integrations"
+    },
+    {
+      "path": "./packages/infra/coach"
+    },
+    {
+      "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/blog"
+    },
   ]
 }

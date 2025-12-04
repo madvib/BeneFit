@@ -1,7 +1,8 @@
-import type { FitnessGoals } from '@bene/domain-user-profile';
-import { TrainingConstraints } from '@bene/domain-shared';
-
-export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
+import type {
+  FitnessGoals,
+  TrainingConstraints,
+  UserExperienceLevel,
+} from '@bene/training-core';
 
 export interface CurrentPlanContext {
   planId: string;
@@ -43,7 +44,7 @@ interface CoachingContextData {
   // User profile (at time of conversation)
   userGoals: FitnessGoals;
   userConstraints: TrainingConstraints;
-  experienceLevel: ExperienceLevel;
+  experienceLevel: UserExperienceLevel;
 
   // Performance trends
   trends: PerformanceTrends;

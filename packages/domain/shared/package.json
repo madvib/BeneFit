@@ -1,5 +1,5 @@
 {
-  "name": "@bene/domain-shared",
+  "name": "@bene/shared-domain",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -52,8 +52,10 @@
       }
     },
     "tags": [
-      "layer:domain",
-      "domain:shared"
+      "type:domain",
+      "scope:shared",
+      "layer:core",
+      "layer:application"
     ]
   }
 }

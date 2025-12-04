@@ -1,0 +1,46 @@
+{
+  "name": "@bene/training-infra",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@bene/training-core": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/persistence": "workspace:*",
+    "@swc/helpers": "~0.5.11"
+  },
+  "nx": {
+    "sourceRoot": "packages/infra/training/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/infra/training/dist",
+          "main": "packages/infra/training/src/index.ts",
+          "tsConfig": "packages/infra/training/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
+    },
+    "tags": [
+      "type:infrastructure",
+      "scope:training",
+      "layer:infrastructure"
+    ]
+  }
+}

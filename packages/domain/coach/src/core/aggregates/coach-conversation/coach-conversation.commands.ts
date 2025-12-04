@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/domain-shared';
+import { Result, Guard } from '@bene/shared-domain';
 import { CoachingConversationData } from './coach-conversation.types.js';
 
 import { CheckInError } from '../../errors/index.js';

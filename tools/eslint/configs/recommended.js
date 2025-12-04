@@ -61,7 +61,7 @@ export const recommended = (name, projectDir) => [
             },
             {
               sourceTag: 'layer:application',
-              onlyDependOnLibsWithTags: ['layer:core', 'layer:shared'],
+              onlyDependOnLibsWithTags: ['layer:core', 'scope:shared'],
             },
             {
               sourceTag: 'layer:infrastructure',
@@ -77,8 +77,61 @@ export const recommended = (name, projectDir) => [
                 'layer:application',
                 'layer:core',
                 'layer:infrastructure',
-                'layer:shared',
+                'scope:shared',
+                'scope:persistence',
               ],
+            },
+            {
+              sourceTag: 'scope:training',
+              onlyDependOnLibsWithTags: [
+                'scope:training',
+                'scope:shared',
+                'scope:persistence',
+              ],
+            },
+
+            {
+              sourceTag: 'scope:coach',
+              onlyDependOnLibsWithTags: [
+                'scope:coach',
+                'scope:training',
+                'scope:shared',
+                'scope:persistence',
+              ],
+            },
+            {
+              sourceTag: 'scope:integrations',
+              onlyDependOnLibsWithTags: [
+                'scope:integrations',
+                'scope:training',
+                'scope:shared',
+                'scope:persistence',
+              ],
+            },
+            {
+              sourceTag: 'scope:auth',
+              onlyDependOnLibsWithTags: ['scope:auth', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:blog',
+              onlyDependOnLibsWithTags: ['scope:blog', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:persistence',
+              onlyDependOnLibsWithTags: ['scope:persistence', 'scope:shared'],
+            },
+
+            {
+              sourceTag: 'slice:vertical',
+              onlyDependOnLibsWithTags: ['slice:vertical', 'scope:shared'],
+            },
+            {
+              sourceTag: 'type:app',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+            {
+              sourceTag: 'type:test',
+              onlyDependOnLibsWithTags: ['*'],
             },
           ],
         },

@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
-import { EventBus, Result } from '@bene/domain-shared';
+import { EventBus, Result } from '@bene/shared-domain';
 import { CoachingConversation, CheckIn } from '@core/index.js';
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';

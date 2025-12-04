@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import { CoachingConversation } from '@core/index.js';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 

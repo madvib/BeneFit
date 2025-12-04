@@ -1,4 +1,4 @@
-import { Result } from '@bene/domain-shared';
+import { Result } from '@bene/shared-domain';
 import { OAuthCredentials, ServicePermissions } from '@core/index.js';
 
 export interface IntegrationClient {

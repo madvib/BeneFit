@@ -2,7 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "jsx": "react-jsx",
     "allowJs": true,
     "incremental": true,
@@ -15,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -28,9 +34,6 @@
   "references": [
     {
       "path": "../../packages/utils"
-    },
-    {
-      "path": "../../packages/infrastructure"
     },
     {
       "path": "../../packages/domain/shared"

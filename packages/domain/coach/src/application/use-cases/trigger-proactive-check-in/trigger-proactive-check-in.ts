@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/domain-shared';
+import { Result, UseCase } from '@bene/shared-domain';
 import {
   CoachConversationCommands,
   createCoachingConversation,
@@ -8,7 +8,7 @@ import {
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
-import { EventBus } from '@bene/domain-shared';
+import { EventBus } from '@bene/shared-domain';
 
 export interface TriggerProactiveCheckInRequest {
   userId: string;
@@ -153,8 +153,13 @@ export class TriggerProactiveCheckInUseCase
     }
 
     // Behind on workouts
-    const progress = (context.workoutsThisWeek || 0) / (context.plannedWorkoutsThisWeek || 1);
-    if (context.daysIntoCurrentWeek && context.daysIntoCurrentWeek >= 4 && progress < 0.5) {
+    const progress =
+      (context.workoutsThisWeek || 0) / (context.plannedWorkoutsThisWeek || 1);
+    if (
+      context.daysIntoCurrentWeek &&
+      context.daysIntoCurrentWeek >= 4 &&
+      progress < 0.5
+    ) {
       return 'low_adherence';
     }
 

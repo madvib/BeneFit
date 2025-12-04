@@ -1,8 +1,7 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result, EventBus } from '@bene/domain-shared';
+import { Result, EventBus } from '@bene/shared-domain';
 import { ConnectServiceUseCase } from './connect-service.js';
 import { IntegrationClient } from '../../services/integration-client.js';
-
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -62,7 +61,14 @@ describe('ConnectServiceUseCase', () => {
       refreshToken: 'refresh-token-101',
       expiresAt: new Date(Date.now() + 3600000),
       scopes: ['read', 'write'],
-      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
+      permissions: {
+        readWorkouts: true,
+        writeWorkouts: true,
+        readHeartRate: true,
+        readSleep: true,
+        readNutrition: true,
+        readBodyMetrics: true,
+      },
     };
 
     const mockProfile = {
@@ -71,8 +77,6 @@ describe('ConnectServiceUseCase', () => {
       profileUrl: 'https://strava.com/athlete/123',
       units: 'metric' as const,
     };
-
-
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));
     mockIntegrationClient.getUserProfile.mockResolvedValue(Result.ok(mockProfile));
@@ -171,7 +175,14 @@ describe('ConnectServiceUseCase', () => {
       refreshToken: 'refresh-token-101',
       expiresAt: new Date(Date.now() + 3600000),
       scopes: ['read', 'write'],
-      permissions: { readWorkouts: true, writeWorkouts: true, readHeartRate: true, readSleep: true, readNutrition: true, readBodyMetrics: true },
+      permissions: {
+        readWorkouts: true,
+        writeWorkouts: true,
+        readHeartRate: true,
+        readSleep: true,
+        readNutrition: true,
+        readBodyMetrics: true,
+      },
     };
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));

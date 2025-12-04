@@ -1,4 +1,4 @@
-import { Result, UseCase, EventBus } from '@bene/domain-shared';
+import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
 
