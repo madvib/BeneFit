@@ -25,35 +25,6 @@
   },
   "nx": {
     "sourceRoot": "packages/domain/coach/src",
-    "targets": {
-      "build-types": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/domain/coach/dist",
-          "main": "packages/domain/coach/src/index.ts",
-          "tsConfig": "packages/domain/coach/tsconfig.lib.json"
-        }
-      },
-      "build": {
-        "executor": "@nx/js:swc",
-        "dependsOn": [
-          "build-types"
-        ],
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/domain/coach/dist",
-          "main": "packages/domain/coach/src/index.ts",
-          "tsConfig": "packages/domain/coach/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:domain",
       "scope:coach",

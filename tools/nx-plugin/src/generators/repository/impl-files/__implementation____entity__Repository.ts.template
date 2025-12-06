@@ -1,0 +1,75 @@
+import { Result } from '@bene/core/shared';
+import { <%= entity %> } from '@bene//core/<%= feature %>';
+import { I<%= entity %>Repository } from '@bene//application/<%= feature %>/ports';
+import { PrismaClient } from '@prisma/client';
+
+/**
+ * <%= implementation %> implementation of <%= entity %> repository
+ */
+export class <%= implementation %><%= entity %>Repository implements I<%= entity %>Repository {
+  constructor(private prisma: PrismaClient) {}
+
+  async findById(id: string): Promise<Result<<%= entity %>>> {
+    try {
+      const record = await this.prisma.<%= entityFileName %>.findUnique({
+        where: { id },
+      });
+
+      if (!record) {
+        return Result.fail(new Error('<%= entity %> not found'));
+      }
+
+      return this.toDomain(record);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
+  }
+
+  async save(entity: <%= entity %>): Promise<Result<void>> {
+    try {
+      const data = this.toPersistence(entity);
+
+      await this.prisma.<%= entityFileName %>.upsert({
+        where: { id: entity.id },
+        create: data,
+        update: data,
+      });
+
+      return Result.ok(undefined);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
+  }
+
+  async delete(id: string): Promise<Result<void>> {
+    try {
+      await this.prisma.<%= entityFileName %>.delete({ where: { id } });
+      return Result.ok(undefined);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
+  }
+
+  async exists(id: string): Promise<Result<boolean>> {
+    try {
+      const count = await this.prisma.<%= entityFileName %>.count({ where: { id } });
+      return Result.ok(count > 0);
+    } catch (error) {
+      return Result.fail(error as Error);
+    }
+  }
+
+  private toDomain(record: any): Result<<%= entity %>> {
+    return <%= entity %>.create({
+      id: record.id,
+      // TODO: Map database fields to domain entity
+    });
+  }
+
+  private toPersistence(entity: <%= entity %>): any {
+    return {
+      id: entity.id,
+      // TODO: Map domain entity to database fields
+    };
+  }
+}

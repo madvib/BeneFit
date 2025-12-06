@@ -1,0 +1,62 @@
+import { Entity, Result } from '@bene/core/shared';
+
+interface <%= className %>Props {
+<%= propsInterface %>
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+/**
+ * <%= className %> entity
+ */
+export class <%= className %> extends Entity<<%= className %>Props> {
+  private constructor(props: <%= className %>Props, id: string) {
+    super(props, id);
+  }
+
+  static create(
+    props: <%= factoryProps %>
+  ): Result<<%= className %>> {
+    const { id, ...rest } = props;
+
+    // TODO: Add validation
+    
+    return Result.ok(
+      new <%= className %>(
+        {
+          ...rest,
+          isActive: true,
+          createdAt: new Date(),
+        },
+        id
+      )
+    );
+  }
+
+  // Getters
+<%= getters %>
+
+  get isActive(): boolean {
+    return this.props.isActive;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  // Business logic methods
+  deactivate(): void {
+    (this.props as any).isActive = false;
+    this.touch();
+  }
+
+  activate(): void {
+    (this.props as any).isActive = true;
+    this.touch();
+  }
+
+  private touch(): void {
+    (this.props as any).updatedAt = new Date();
+  }
+}

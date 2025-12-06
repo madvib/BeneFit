@@ -1,0 +1,41 @@
+import { Result } from '@bene/core/shared';
+import { UseCase } from '@bene/application/shared';
+import { <%= className %>Input, <%= className %>Output } from './dto';
+
+/**
+ * <%= className %>
+ * 
+ * TODO: Add description
+ */
+export class <%= className %> implements UseCase<<%= className %>Input, <%= className %>Output> {
+  constructor(
+    // TODO: Inject dependencies (repositories, services)
+  ) {}
+
+  async execute(input: <%= className %>Input): Promise<Result<<%= className %>Output>> {
+    // 1. Validate input
+    const validationResult = this.validateInput(input);
+    if (validationResult.isFailure) {
+      return Result.fail(validationResult.error);
+    }
+
+    // 2. Fetch entities (via ports)
+    // TODO: Implement
+
+    // 3. Execute domain logic
+    // TODO: Implement
+
+    // 4. Persist changes (via ports)
+    // TODO: Implement
+
+    // 5. Return output
+    return Result.ok({
+      // TODO: Map to output DTO
+    });
+  }
+
+  private validateInput(input: <%= className %>Input): Result<void> {
+    // TODO: Implement validation
+    return Result.ok(undefined);
+  }
+}

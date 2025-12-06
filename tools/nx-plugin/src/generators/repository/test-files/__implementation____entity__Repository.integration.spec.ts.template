@@ -1,0 +1,49 @@
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { <%= implementation %><%= entity %>Repository } from './<%= implementation %><%= entity %>Repository';
+import { <%= entity %> } from '@bene/core/<%= feature %>';
+import { PrismaClient } from '@prisma/client';
+
+describe('<%= implementation %><%= entity %>Repository (Integration)', () => {
+  let prisma: PrismaClient;
+  let repository: <%= implementation %><%= entity %>Repository;
+
+  beforeAll(async () => {
+    prisma = new PrismaClient({
+      datasources: { db: { url: process.env.TEST_DATABASE_URL } },
+    });
+    repository = new <%= implementation %><%= entity %>Repository(prisma);
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  beforeEach(async () => {
+    // Clean database
+    await prisma.<%= entityFileName %>.deleteMany();
+  });
+
+  it('should save and retrieve <%= entity.toLowerCase() %>', async () => {
+    // Create entity
+    const <%= entityFileName %> = <%= entity %>.create({
+      id: 'test-123',
+      // TODO: Add test properties
+    }).value;
+
+    // Save
+    const saveResult = await repository.save(<%= entityFileName %>);
+    expect(saveResult.isSuccess).toBe(true);
+
+    // Retrieve
+    const findResult = await repository.findById('test-123');
+    expect(findResult.isSuccess).toBe(true);
+    expect(findResult.value.id).toBe('test-123');
+  });
+
+  it('should return error when not found', async () => {
+    const result = await repository.findById('nonexistent');
+    
+    expect(result.isFailure).toBe(true);
+    expect(result.error.message).toContain('not found');
+  });
+});

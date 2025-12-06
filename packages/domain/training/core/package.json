@@ -23,35 +23,6 @@
   },
   "nx": {
     "sourceRoot": "packages/domain/training/core/src",
-    "targets": {
-      "build-types": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/domain/training/core/dist",
-          "main": "packages/domain/training/core/src/index.ts",
-          "tsConfig": "packages/domain/training/core/tsconfig.lib.json"
-        }
-      },
-      "build": {
-        "executor": "@nx/js:swc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "dependsOn": [
-          "build-types"
-        ],
-        "options": {
-          "outputPath": "packages/domain/training/core/dist",
-          "main": "packages/domain/training/core/src/index.ts",
-          "tsConfig": "packages/domain/training/core/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:domain",
       "scope:training",

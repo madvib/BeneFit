@@ -157,6 +157,4 @@ vitest.config.*.timestamp*
 
 storybook-static
 
-tools/nx-plugin/*
-
 .temp/
