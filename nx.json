@@ -39,7 +39,8 @@
         "packages/infra/integrations/*",
         "packages/infra/coach/*",
         "packages/auth/*",
-        "packages/blog/*"
+        "packages/blog/*",
+        "packages/infra/shared/*"
       ],
       "options": {
         "typecheck": {
