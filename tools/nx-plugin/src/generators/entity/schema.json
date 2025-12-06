@@ -1,0 +1,28 @@
+{
+  "cli": "nx",
+  "id": "entity",
+  "title": "Generate Domain Entity",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Entity name (PascalCase)",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What is the entity name?"
+    },
+    "feature": {
+      "type": "string",
+      "description": "Feature name (kebab-case)",
+      "x-prompt": "What feature does this belong to?"
+    },
+    "properties": {
+      "type": "string",
+      "description": "Comma-separated properties (name:type)",
+      "x-prompt": "Entity properties (e.g., email:string,age:number)?"
+    }
+  },
+  "required": ["name", "feature"]
+}

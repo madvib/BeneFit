@@ -58,6 +58,14 @@
         "testTargetName": "vitest:test",
         "ciTargetName": "test-ci"
       }
+    },
+    {
+      "plugin": "@bene/nx-plugin/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "buildTypesTargetName": "build-types",
+        "inferNpmScripts": true
+      }
     }
   ],
   "targetDefaults": {

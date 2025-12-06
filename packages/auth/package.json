@@ -30,35 +30,6 @@
   },
   "nx": {
     "sourceRoot": "packages/domain/auth/src",
-    "targets": {
-      "build-types": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/auth/dist",
-          "main": "packages/auth/src/index.ts",
-          "tsConfig": "packages/auth/tsconfig.lib.json"
-        }
-      },
-      "build": {
-        "executor": "@nx/js:swc",
-        "dependsOn": [
-          "build-types"
-        ],
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/auth/dist",
-          "main": "packages/auth/src/index.ts",
-          "tsConfig": "packages/auth/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:feature",
       "scope:auth",

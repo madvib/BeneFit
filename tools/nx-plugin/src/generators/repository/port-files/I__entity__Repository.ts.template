@@ -1,0 +1,12 @@
+import { Result } from '@bene/core/shared';
+import { <%= entity %> } from '@bene/core/<%= feature %>';
+
+/**
+ * Repository interface for <%= entity %>
+ */
+export interface I<%= entity %>Repository {
+  findById(id: string): Promise<Result<<%= entity %>>>;
+  save(entity: <%= entity %>): Promise<Result<void>>;
+  delete(id: string): Promise<Result<void>>;
+  exists(id: string): Promise<Result<boolean>>;
+}

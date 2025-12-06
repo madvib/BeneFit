@@ -1,0 +1,23 @@
+{
+  "cli": "nx",
+  "id": "use-case",
+  "title": "Generate Use Case",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Use case name (e.g., LoginUser, CreateOrder)",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What is the use case name?"
+    },
+    "feature": {
+      "type": "string",
+      "description": "Feature name (kebab-case)",
+      "x-prompt": "What feature does this belong to?"
+    }
+  },
+  "required": ["name", "feature"]
+}
