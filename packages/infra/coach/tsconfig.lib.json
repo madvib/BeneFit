@@ -7,16 +7,28 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": true,
     "importHelpers": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "references": [
-    "../../domain/coach/tsconfig.lib.json",
-    "../persistence/tsconfig.lib.json"
+    {
+      "path": "../shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/training/application/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/training/core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../persistence/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/coach/tsconfig.lib.json"
+    }
   ],
   "exclude": [
     "vite.config.ts",

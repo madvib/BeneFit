@@ -1,7 +1,7 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import type { EventBus } from '@bene/shared-domain';
 import { WorkoutTemplateCommands } from '@bene/training-core';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 export interface SkipWorkoutRequest {
   userId: string;
@@ -20,7 +20,7 @@ export class SkipWorkoutUseCase
   implements UseCase<SkipWorkoutRequest, SkipWorkoutResponse>
 {
   constructor(
-    private planRepository: WorkoutPlanRepository,
+    private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
   ) {}
 

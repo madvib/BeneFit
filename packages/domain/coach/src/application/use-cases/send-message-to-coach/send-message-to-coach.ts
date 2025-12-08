@@ -1,7 +1,7 @@
 import { Result, UseCase, EventBus } from '@bene/shared-domain';
-import { createCoachingConversation, CoachConversationCommands } from '@core/index.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
-import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachContextBuilder } from '../../services/coach-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 
 export interface SendMessageToCoachRequest {
@@ -24,8 +24,8 @@ export class SendMessageToCoachUseCase
   implements UseCase<SendMessageToCoachRequest, SendMessageToCoachResponse>
 {
   constructor(
-    private conversationRepository: CoachingConversationRepository,
-    private contextBuilder: CoachingContextBuilder,
+    private conversationRepository: CoachConversationRepository,
+    private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
   ) {}
@@ -45,7 +45,7 @@ export class SendMessageToCoachUseCase
         return Result.fail(new Error('Failed to build coaching context'));
       }
 
-      const newConvResult = createCoachingConversation({
+      const newConvResult = createCoachConversation({
         userId: request.userId,
         context: contextResult.value,
         initialMessage:

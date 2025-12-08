@@ -1,13 +1,13 @@
 import { Result, UseCase } from '@bene/shared-domain';
-import { CoachingConversation } from '@core/index.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachConversation } from '@core/index.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
 
-export interface GetCoachingHistoryRequest {
+export interface GetCoachHistoryRequest {
   userId: string;
   limit?: number;
 }
 
-export interface GetCoachingHistoryResponse {
+export interface GetCoachHistoryResponse {
   messages: Array<{
     id: string;
     role: 'user' | 'coach' | 'system';
@@ -30,14 +30,14 @@ export interface GetCoachingHistoryResponse {
   };
 }
 
-export class GetCoachingHistoryUseCase
-  implements UseCase<GetCoachingHistoryRequest, GetCoachingHistoryResponse>
+export class GetCoachHistoryUseCase
+  implements UseCase<GetCoachHistoryRequest, GetCoachHistoryResponse>
 {
-  constructor(private conversationRepository: CoachingConversationRepository) {}
+  constructor(private conversationRepository: CoachConversationRepository) {}
 
   async execute(
-    request: GetCoachingHistoryRequest,
-  ): Promise<Result<GetCoachingHistoryResponse>> {
+    request: GetCoachHistoryRequest,
+  ): Promise<Result<GetCoachHistoryResponse>> {
     const conversationResult = await this.conversationRepository.findByUserId(
       request.userId,
     );
@@ -75,7 +75,7 @@ export class GetCoachingHistoryUseCase
     });
   }
 
-  private countActionsApplied(conversation: CoachingConversation): number {
+  private countActionsApplied(conversation: CoachConversation): number {
     let count = 0;
     for (const message of conversation.messages) {
       if (message.actions) {

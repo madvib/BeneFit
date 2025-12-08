@@ -1,6 +1,6 @@
 import { EventBus } from '@bene/shared-domain';
 import { Result, UseCase } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { AIPlanGenerator, AdjustPlanInput } from '../../services/ai-plan-generator.js';
 
 export interface AdjustPlanRequest {
@@ -24,7 +24,7 @@ export class AdjustPlanBasedOnFeedbackUseCase
   implements UseCase<AdjustPlanRequest, AdjustPlanResponse>
 {
   constructor(
-    private planRepository: WorkoutPlanRepository,
+    private planRepository: FitnessPlanRepository,
     private aiGenerator: AIPlanGenerator,
     private eventBus: EventBus,
   ) {}

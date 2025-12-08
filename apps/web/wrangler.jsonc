@@ -3,7 +3,7 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "bene-fit",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
@@ -23,7 +23,7 @@
       "binding": "DB_USER_AUTH",
       "database_name": "db-user-auth",
       "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
-      "migrations_dir": "../../packages/infrastructure/src/auth/data/migrations/",
+      "migrations_dir": "../../packages/auth/src/data/migrations/"
     }
   ] /**
    * Smart Placement

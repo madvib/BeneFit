@@ -1,5 +1,5 @@
 import { Result } from '@bene/shared-domain';
-import { WorkoutPlan } from '@bene/training-core';
+import { FitnessPlan } from '@bene/training-core';
 import { PlanGoals, TrainingConstraints } from '@bene/training-core';
 
 export interface GeneratePlanInput {
@@ -10,7 +10,7 @@ export interface GeneratePlanInput {
 }
 
 export interface AdjustPlanInput {
-  currentPlan: WorkoutPlan;
+  currentPlan: FitnessPlan;
   feedback: string;
   recentPerformance: Array<{
     perceivedExertion: number;
@@ -20,6 +20,6 @@ export interface AdjustPlanInput {
 }
 
 export interface AIPlanGenerator {
-  generatePlan(input: GeneratePlanInput): Promise<Result<WorkoutPlan>>;
-  adjustPlan(input: AdjustPlanInput): Promise<Result<WorkoutPlan>>;
+  generatePlan(input: GeneratePlanInput): Promise<Result<FitnessPlan>>;
+  adjustPlan(input: AdjustPlanInput): Promise<Result<FitnessPlan>>;
 }

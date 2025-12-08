@@ -1,6 +1,6 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import { CoachConversationCommands } from '@core/index.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
 
@@ -23,7 +23,7 @@ export class RespondToCheckInUseCase
   implements UseCase<RespondToCheckInRequest, RespondToCheckInResponse>
 {
   constructor(
-    private conversationRepository: CoachingConversationRepository,
+    private conversationRepository: CoachConversationRepository,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
   ) {}

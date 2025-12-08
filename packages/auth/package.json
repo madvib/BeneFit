@@ -25,8 +25,7 @@
     "auth:schema": "pnpm dlx @better-auth/cli generate --config src/infra/services/auth.ts --output src/data/schema/schema.ts",
     "db:generate": "drizzle-kit generate --config=src/data/drizzle.config.ts",
     "db:migrate": "wrangler d1 migrations apply benefit-auth-db",
-    "db:studio": "drizzle-kit studio --config=src/data/drizzle.config.ts",
-    "lint": "eslint ."
+    "db:studio": "drizzle-kit studio --config=src/data/drizzle.config.ts"
   },
   "nx": {
     "sourceRoot": "packages/domain/auth/src",

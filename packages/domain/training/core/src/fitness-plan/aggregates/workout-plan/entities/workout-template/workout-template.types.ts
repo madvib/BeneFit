@@ -1,8 +1,7 @@
 import { WorkoutGoals } from '@/fitness-plan/value-objects/index.js';
-import { WorkoutActivity } from '@/workouts/index.js';
+import { WorkoutActivity, WorkoutType } from '@/workouts/index.js';
 
 // --- Type Definitions (Unchanged) ---
-export type WorkoutType = 'running' | 'cycling' | 'strength' | 'rest' | 'custom'; // Abridged for brevity
 export type WorkoutCategory = 'cardio' | 'strength' | 'recovery'; // Abridged
 export type WorkoutStatus =
   | 'scheduled'

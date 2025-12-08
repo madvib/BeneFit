@@ -1,1 +1,1 @@
-export { createNodes, createNodesV2 } from './plugin';
+export { createNodes, createNodesV2 } from './plugins/swc_inference';

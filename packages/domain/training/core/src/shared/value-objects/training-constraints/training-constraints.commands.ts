@@ -180,7 +180,7 @@ export function withoutInjury(
 
   return {
     ...constraints,
-    injuries: newInjuries.length > 0 ? newInjuries : undefined,
+    injuries: newInjuries.length > 0 ? newInjuries : [],
   };
 }
 

@@ -1,7 +1,8 @@
 import { EventBus } from '@bene/shared-domain';
+
 import { Result, UseCase } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
-import { WorkoutPlanCommands, WorkoutPlanQueries } from '@bene/training-core';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { FitnessPlanCommands, FitnessPlanQueries } from '@bene/training-core';
 
 export interface ActivatePlanRequest {
   userId: string;
@@ -24,7 +25,7 @@ export class ActivatePlanUseCase
   implements UseCase<ActivatePlanRequest, ActivatePlanResponse>
 {
   constructor(
-    private planRepository: WorkoutPlanRepository,
+    private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
   ) {}
 
@@ -42,7 +43,7 @@ export class ActivatePlanUseCase
     }
 
     // 3. Activate plan using functional command
-    const activatedPlanResult = WorkoutPlanCommands.activatePlan(plan);
+    const activatedPlanResult = FitnessPlanCommands.activatePlan(plan);
     if (activatedPlanResult.isFailure) {
       return Result.fail(new Error(activatedPlanResult.errorMessage));
     }
@@ -62,7 +63,7 @@ export class ActivatePlanUseCase
     });
 
     // 6. Get today's workout if available using functional query
-    const todaysWorkout = WorkoutPlanQueries.getCurrentWorkout(activatedPlan);
+    const todaysWorkout = FitnessPlanQueries.getCurrentWorkout(activatedPlan);
 
     return Result.ok({
       planId: activatedPlan.id,

@@ -1,15 +1,15 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { EventBus, Result } from '@bene/shared-domain';
-import { CoachingConversation, CheckIn } from '@core/index.js';
+import { CoachConversation, CheckIn } from '@core/index.js';
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachingConversationRepository;
+} as unknown as CoachConversationRepository;
 
 const mockEventBus = {
   publish: vi.fn(),
@@ -37,7 +37,7 @@ describe('DismissCheckInUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     } as CheckIn;
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {
@@ -133,7 +133,7 @@ describe('DismissCheckInUseCase', () => {
     const userId = 'user-123';
     const checkInId = 'checkin-456';
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {

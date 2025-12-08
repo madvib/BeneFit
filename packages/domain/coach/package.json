@@ -19,10 +19,6 @@
     "@bene/shared-domain": "workspace:*",
     "@bene/training-core": "workspace:*"
   },
-  "scripts": {
-    "lib:typecheck": "tsc --project tsconfig.lib.json --noEmit",
-    "lint": "eslint ."
-  },
   "nx": {
     "sourceRoot": "packages/domain/coach/src",
     "tags": [

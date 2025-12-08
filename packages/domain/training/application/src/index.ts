@@ -38,7 +38,8 @@ export type {
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 
 // Repository
-export type { WorkoutPlanRepository } from './repositories/workout-plan-repository.js';
+export type { FitnessPlanRepository } from './repositories/fitness-plan-repository.js';
+export type { PlanTemplateRepository } from './repositories/plan-template-repository.js';
 
 // Services
 export type {

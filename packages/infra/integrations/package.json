@@ -15,27 +15,15 @@
     }
   },
   "dependencies": {
+    "@bene/shared-domain": "workspace:*",
     "@bene/integrations-domain": "workspace:*",
     "@bene/persistence": "workspace:*",
-    "@swc/helpers": "~0.5.11"
+    "@bene/shared-infra": "workspace:*",
+    "@swc/helpers": "~0.5.11",
+    "drizzle-orm": "catalog:"
   },
   "nx": {
     "sourceRoot": "packages/infra/integrations/src",
-    "targets": {
-      "build": {
-        "executor": "@nx/js:swc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/infra/integrations/dist",
-          "main": "packages/infra/integrations/src/index.ts",
-          "tsConfig": "packages/infra/integrations/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:infrastructure",
       "scope:integrations",

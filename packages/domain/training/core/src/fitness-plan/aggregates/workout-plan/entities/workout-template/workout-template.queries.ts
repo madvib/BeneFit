@@ -1,5 +1,6 @@
 // workout-template.queries.ts
-import { WorkoutTemplate, WorkoutStatus, WorkoutType } from './workout-template.types.js';
+import { WorkoutType } from '@/workouts/index.js';
+import { WorkoutTemplate, WorkoutStatus } from './workout-template.types.js';
 
 /**
  * QUERY: Checks if the workout is currently in a completed state.

@@ -18,9 +18,6 @@
     "@bene/shared-domain": "workspace:*",
     "@swc/helpers": "~0.5.11"
   },
-  "scripts": {
-    "lint": "eslint ."
-  },
   "nx": {
     "sourceRoot": "packages/domain/blog/src",
     "tags": [

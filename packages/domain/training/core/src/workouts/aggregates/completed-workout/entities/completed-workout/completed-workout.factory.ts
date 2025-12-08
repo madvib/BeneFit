@@ -1,12 +1,15 @@
 import { Guard, Result } from '@bene/shared-domain';
-import { WorkoutPerformance } from '../../../../value-objects/workout-performance/workout-performance.types.js';
-import { WorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.types.js';
 import { CompletedWorkout } from './completed-workout.types.js';
 import { randomUUID } from 'crypto';
+import {
+  WorkoutPerformance,
+  WorkoutType,
+  WorkoutVerification,
+} from '@/workouts/value-objects/index.js';
 
 export interface CreateCompletedWorkoutParams {
   userId: string;
-  workoutType: string;
+  workoutType: WorkoutType;
   description?: string;
   performance: WorkoutPerformance;
   verification: WorkoutVerification;

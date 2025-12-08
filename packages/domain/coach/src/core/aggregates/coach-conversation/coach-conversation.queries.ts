@@ -1,33 +1,33 @@
-import { CheckIn, CoachingMessage } from '../../value-objects/index.js';
-import { CoachingConversation } from './index.js';
+import { CheckIn, CoachMsg } from '../../value-objects/index.js';
+import { CoachConversation } from './index.js';
 
 export function getRecentMessages(
-  conversation: CoachingConversation,
+  conversation: CoachConversation,
   count: number = 10,
-): CoachingMessage[] {
+): CoachMsg[] {
   return conversation.messages.slice(-count);
 }
 
-export function getPendingCheckIns(conversation: CoachingConversation): CheckIn[] {
+export function getPendingCheckIns(conversation: CoachConversation): CheckIn[] {
   return conversation.checkIns.filter((c) => c.status === 'pending');
 }
 
 export function getCheckInById(
-  conversation: CoachingConversation,
+  conversation: CoachConversation,
   checkInId: string,
 ): CheckIn | undefined {
   return conversation.checkIns.find((c) => c.id === checkInId);
 }
 
 export function hasRecentActivity(
-  conversation: CoachingConversation,
+  conversation: CoachConversation,
   hoursThreshold: number = 24,
 ): boolean {
   const threshold = Date.now() - hoursThreshold * 60 * 60 * 1000;
   return conversation.lastMessageAt.getTime() > threshold;
 }
 
-export function shouldSendCheckIn(conversation: CoachingConversation): boolean {
+export function shouldSendCheckIn(conversation: CoachConversation): boolean {
   if (conversation.pendingCheckIns > 0) {
     return false;
   }
@@ -38,7 +38,7 @@ export function shouldSendCheckIn(conversation: CoachingConversation): boolean {
     return true;
   }
 
-  if (context.reportedInjuries.length > 0) {
+  if (context.reportedInjuries && context.reportedInjuries.length > 0) {
     return true;
   }
 
@@ -61,7 +61,7 @@ export function shouldSendCheckIn(conversation: CoachingConversation): boolean {
   return false;
 }
 
-export function getConversationSummary(conversation: CoachingConversation): {
+export function getConversationSummary(conversation: CoachConversation): {
   messageCount: number;
   userMessageCount: number;
   coachMessageCount: number;
@@ -89,7 +89,7 @@ export function getConversationSummary(conversation: CoachingConversation): {
   };
 }
 
-export function getTotalActionsApplied(conversation: CoachingConversation): number {
+export function getTotalActionsApplied(conversation: CoachConversation): number {
   let total = 0;
 
   for (const message of conversation.messages) {
@@ -106,7 +106,7 @@ export function getTotalActionsApplied(conversation: CoachingConversation): numb
 }
 
 export function getActionsByType(
-  conversation: CoachingConversation,
+  conversation: CoachConversation,
 ): Record<string, number> {
   const counts: Record<string, number> = {
     adjusted_plan: 0,

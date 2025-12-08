@@ -1,6 +1,6 @@
 import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { AICoachService } from '../../services/ai-coach-service.js';
-import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { CoachContextBuilder } from '../../services/coach-context-builder.js';
 
 export interface GenerateWeeklySummaryRequest {
   userId: string;
@@ -16,7 +16,7 @@ export class GenerateWeeklySummaryUseCase
   implements UseCase<GenerateWeeklySummaryRequest, GenerateWeeklySummaryResponse>
 {
   constructor(
-    private contextBuilder: CoachingContextBuilder,
+    private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
   ) {}

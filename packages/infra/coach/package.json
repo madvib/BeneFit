@@ -17,25 +17,15 @@
   "dependencies": {
     "@bene/coach-domain": "workspace:*",
     "@bene/persistence": "workspace:*",
-    "@swc/helpers": "~0.5.11"
+    "@bene/shared-domain": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/shared-infra": "workspace:*",
+    "@swc/helpers": "~0.5.11",
+    "drizzle-orm": "catalog:"
   },
   "nx": {
     "sourceRoot": "packages/infra/coach/src",
-    "targets": {
-      "build": {
-        "executor": "@nx/js:swc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/infra/coach/dist",
-          "main": "packages/infra/coach/src/index.ts",
-          "tsConfig": "packages/infra/coach/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:infrastructure",
       "scope:coach",

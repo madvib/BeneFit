@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    drizzle-orm:
+      specifier: 0.45.0
+      version: 0.45.0
     react:
       specifier: ^19.2.0
       version: 19.2.0
@@ -21,6 +24,9 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
     devDependencies:
+      '@bene/nx-plugin':
+        specifier: workspace:*
+        version: link:tools/nx-plugin
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.1
@@ -103,8 +109,11 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(vitest@4.0.15)
       drizzle-kit:
-        specifier: ^0.31.6
-        version: 0.31.6
+        specifier: ^0.31.8
+        version: 0.31.8
+      drizzle-seed:
+        specifier: 0.3.1
+        version: 0.3.1(drizzle-orm@0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8))
       eslint:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.6.1)
@@ -162,6 +171,9 @@ importers:
       vite:
         specifier: ^7.0.0
         version: 7.1.12(@types/node@24.9.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+      vite-tsconfig-paths:
+        specifier: 5.1.4
+        version: 5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       vitest:
         specifier: ^4.0.0
         version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.9.1)(@vitest/ui@3.2.4)(happy-dom@20.0.8)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
@@ -217,8 +229,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(next@16.0.3(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sass@1.93.2))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       drizzle-orm:
-        specifier: ^0.44.7
-        version: 0.44.7(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
 
   packages/blog:
     dependencies:
@@ -285,9 +297,51 @@ importers:
       '@bene/persistence':
         specifier: workspace:*
         version: link:../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../shared
+      '@bene/training-application':
+        specifier: workspace:*
+        version: link:../../domain/training/application
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../domain/training/core
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
+
+  packages/infra/coach/dist:
+    dependencies:
+      '@bene/coach-domain':
+        specifier: workspace:*
+        version: link:../../../domain/coach
+      '@bene/persistence':
+        specifier: workspace:*
+        version: link:../../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../../shared
+      '@bene/training-application':
+        specifier: workspace:*
+        version: link:../../../domain/training/application
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../../domain/training/core
+      '@swc/helpers':
+        specifier: ~0.5.11
+        version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
 
   packages/infra/integrations:
     dependencies:
@@ -297,9 +351,39 @@ importers:
       '@bene/persistence':
         specifier: workspace:*
         version: link:../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../shared
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
+
+  packages/infra/integrations/dist:
+    dependencies:
+      '@bene/integrations-domain':
+        specifier: workspace:*
+        version: link:../../../domain/integrations
+      '@bene/persistence':
+        specifier: workspace:*
+        version: link:../../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../../shared
+      '@swc/helpers':
+        specifier: ~0.5.11
+        version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
 
   packages/infra/persistence:
     dependencies:
@@ -310,14 +394,32 @@ importers:
         specifier: ^9.4.3
         version: 9.6.0
       drizzle-orm:
-        specifier: ^0.30.10
-        version: 0.30.10(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(@types/react@19.2.2)(better-sqlite3@9.6.0)(kysely@0.28.8)(react@19.2.0)
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
+
+  packages/infra/shared:
+    dependencies:
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../domain/shared
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../domain/training/core
+      '@swc/helpers':
+        specifier: ~0.5.11
+        version: 0.5.17
 
   packages/infra/training:
     dependencies:
       '@bene/persistence':
         specifier: workspace:*
         version: link:../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../shared
       '@bene/training-application':
         specifier: workspace:*
         version: link:../../domain/training/application
@@ -327,6 +429,33 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
+
+  packages/infra/training/dist:
+    dependencies:
+      '@bene/persistence':
+        specifier: workspace:*
+        version: link:../../persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../../shared
+      '@bene/training-application':
+        specifier: workspace:*
+        version: link:../../../domain/training/application
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../../domain/training/core
+      '@swc/helpers':
+        specifier: ~0.5.11
+        version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
 
   packages/utils: {}
 
@@ -335,9 +464,6 @@ importers:
       '@nx/devkit':
         specifier: ^22.1.3
         version: 22.1.3(nx@22.1.3(@swc-node/register@1.11.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.3(@swc/helpers@0.5.17)))
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
 
 packages:
 
@@ -5718,92 +5844,12 @@ packages:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.31.6:
-    resolution: {integrity: sha512-/B4e/4pwnx25QwD5xXgdpo1S+077a2VZdosXbItE/oNmUgQwZydGDz9qJYmnQl/b+5IX0rLfwRhrPnroGtrg8Q==}
+  drizzle-kit@0.31.8:
+    resolution: {integrity: sha512-O9EC/miwdnRDY10qRxM8P3Pg8hXe3LyU4ZipReKOgTwn4OqANmftj8XJz1UPUAS6NMHf0E2htjsbQujUTkncCg==}
     hasBin: true
 
-  drizzle-orm@0.30.10:
-    resolution: {integrity: sha512-IRy/QmMWw9lAQHpwbUh1b8fcn27S/a9zMIzqea1WNOxK9/4EB8gIo+FZWLiPXzl2n9ixGSv8BhsLZiOppWEwBw==}
-    peerDependencies:
-      '@aws-sdk/client-rds-data': '>=3'
-      '@cloudflare/workers-types': '>=3'
-      '@electric-sql/pglite': '>=0.1.1'
-      '@libsql/client': '*'
-      '@neondatabase/serverless': '>=0.1'
-      '@op-engineering/op-sqlite': '>=2'
-      '@opentelemetry/api': ^1.4.1
-      '@planetscale/database': '>=1'
-      '@types/better-sqlite3': '*'
-      '@types/pg': '*'
-      '@types/react': '>=18'
-      '@types/sql.js': '*'
-      '@vercel/postgres': '>=0.8.0'
-      '@xata.io/client': '*'
-      better-sqlite3: '>=7'
-      bun-types: '*'
-      expo-sqlite: '>=13.2.0'
-      knex: '*'
-      kysely: '*'
-      mysql2: '>=2'
-      pg: '>=8'
-      postgres: '>=3'
-      react: '>=18'
-      sql.js: '>=1'
-      sqlite3: '>=5'
-    peerDependenciesMeta:
-      '@aws-sdk/client-rds-data':
-        optional: true
-      '@cloudflare/workers-types':
-        optional: true
-      '@electric-sql/pglite':
-        optional: true
-      '@libsql/client':
-        optional: true
-      '@neondatabase/serverless':
-        optional: true
-      '@op-engineering/op-sqlite':
-        optional: true
-      '@opentelemetry/api':
-        optional: true
-      '@planetscale/database':
-        optional: true
-      '@types/better-sqlite3':
-        optional: true
-      '@types/pg':
-        optional: true
-      '@types/react':
-        optional: true
-      '@types/sql.js':
-        optional: true
-      '@vercel/postgres':
-        optional: true
-      '@xata.io/client':
-        optional: true
-      better-sqlite3:
-        optional: true
-      bun-types:
-        optional: true
-      expo-sqlite:
-        optional: true
-      knex:
-        optional: true
-      kysely:
-        optional: true
-      mysql2:
-        optional: true
-      pg:
-        optional: true
-      postgres:
-        optional: true
-      react:
-        optional: true
-      sql.js:
-        optional: true
-      sqlite3:
-        optional: true
-
-  drizzle-orm@0.44.7:
-    resolution: {integrity: sha512-quIpnYznjU9lHshEOAYLoZ9s3jweleHlZIAWR/jX9gAWNg/JhQ1wj0KGRf7/Zm+obRrYd9GjPVJg790QY9N5AQ==}
+  drizzle-orm@0.45.0:
+    resolution: {integrity: sha512-lyd9VRk3SXKRjV/gQckQzmJgkoYMvVG3A2JAV0vh3L+Lwk+v9+rK5Gj0H22y+ZBmxsrRBgJ5/RbQCN7DWd1dtQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -5892,6 +5938,14 @@ packages:
       sql.js:
         optional: true
       sqlite3:
+        optional: true
+
+  drizzle-seed@0.3.1:
+    resolution: {integrity: sha512-F/0lgvfOAsqlYoHM/QAGut4xXIOXoE5VoAdv2FIl7DpGYVXlAzKuJO+IphkKUFK3Dz+rFlOsQLnMNrvoQ0cx7g==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.4'
+    peerDependenciesMeta:
+      drizzle-orm:
         optional: true
 
   dunder-proto@1.0.1:
@@ -6690,6 +6744,9 @@ packages:
   globby@12.2.0:
     resolution: {integrity: sha512-wiSuFQLZ+urS9x2gGPl1H5drc5twabmm4m2gTR27XDFyjUHJUNsS8o/2aKyIF6IoBaR630atdher0XJ5g6OMmA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -8777,6 +8834,9 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
+
   pure-rand@7.0.1:
     resolution: {integrity: sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==}
 
@@ -9800,6 +9860,16 @@ packages:
   ts-tqdm@0.8.6:
     resolution: {integrity: sha512-3X3M1PZcHtgQbnwizL+xU8CAgbYbeLHrrDwL9xxcZZrV5J+e7loJm1XrXozHjSkl44J0Zg0SgA8rXbh83kCkcQ==}
 
+  tsconfck@3.1.6:
+    resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   tsconfig-paths-webpack-plugin@4.2.0:
     resolution: {integrity: sha512-zbem3rfRS8BgeNK50Zz5SIQgXzLafiHjOwUAvk/38/o1jHn/V5QAgVUcz884or7WYcPaH3N2CIfUc2u0ul7UcA==}
     engines: {node: '>=10.13.0'}
@@ -9989,6 +10059,14 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vite-tsconfig-paths@5.1.4:
+    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   vite@7.1.12:
     resolution: {integrity: sha512-ZWyE8YXEXqJrrSLvYgrRP7p62OziLW7xI5HYGWFzOvupfAlrLvURSzv/FyGyy0eidogEM3ujU+kUG1zuHgb6Ug==}
@@ -17111,7 +17189,7 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  drizzle-kit@0.31.6:
+  drizzle-kit@0.31.8:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
@@ -17120,23 +17198,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.30.10(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(@types/react@19.2.2)(better-sqlite3@9.6.0)(kysely@0.28.8)(react@19.2.0):
+  drizzle-orm@0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20251121.0
       '@libsql/client': 0.15.15
       '@opentelemetry/api': 1.9.0
-      '@types/react': 19.2.2
       better-sqlite3: 9.6.0
       kysely: 0.28.8
-      react: 19.2.0
 
-  drizzle-orm@0.44.7(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8):
+  drizzle-seed@0.3.1(drizzle-orm@0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)):
+    dependencies:
+      pure-rand: 6.1.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20251121.0
-      '@libsql/client': 0.15.15
-      '@opentelemetry/api': 1.9.0
-      better-sqlite3: 9.6.0
-      kysely: 0.28.8
+      drizzle-orm: 0.45.0(@cloudflare/workers-types@4.20251121.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@9.6.0)(kysely@0.28.8)
 
   dunder-proto@1.0.1:
     dependencies:
@@ -18279,6 +18353,8 @@ snapshots:
       ignore: 5.3.2
       merge2: 1.4.1
       slash: 4.0.0
+
+  globrex@0.1.2: {}
 
   gopd@1.2.0: {}
 
@@ -20486,6 +20562,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pure-rand@6.1.0: {}
+
   pure-rand@7.0.1: {}
 
   qs@6.13.0:
@@ -21669,6 +21747,10 @@ snapshots:
 
   ts-tqdm@0.8.6: {}
 
+  tsconfck@3.1.6(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
+
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
       chalk: 4.1.2
@@ -21880,6 +21962,17 @@ snapshots:
   varint@6.0.0: {}
 
   vary@1.1.2: {}
+
+  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)):
+    dependencies:
+      debug: 4.4.3
+      globrex: 0.1.2
+      tsconfck: 3.1.6(typescript@5.9.3)
+    optionalDependencies:
+      vite: 7.1.12(@types/node@24.9.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
     dependencies:

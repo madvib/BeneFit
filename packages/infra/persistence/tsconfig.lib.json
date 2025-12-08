@@ -12,7 +12,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../types",
+    "../../../types/cloudflare-env.d.ts"
   ],
   "references": [],
   "exclude": [

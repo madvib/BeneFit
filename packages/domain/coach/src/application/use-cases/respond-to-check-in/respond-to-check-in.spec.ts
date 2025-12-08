@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { CoachingConversation, CheckIn } from '@core/index.js';
+import {  CoachConversation, CheckIn } from '@core/index.js';
 import { RespondToCheckInUseCase } from './respond-to-check-in.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
 
@@ -11,7 +11,7 @@ const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachingConversationRepository;
+} as unknown as CoachConversationRepository;
 
 const mockAICoachService = {
   getResponse: vi.fn(),
@@ -51,7 +51,7 @@ describe('RespondToCheckInUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     } as CheckIn;
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {
@@ -167,7 +167,7 @@ describe('RespondToCheckInUseCase', () => {
     const checkInId = 'checkin-456';
     const response = 'I feel great!';
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {
@@ -242,7 +242,7 @@ describe('RespondToCheckInUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     } as CheckIn;
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {
@@ -317,7 +317,7 @@ describe('RespondToCheckInUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     } as CheckIn;
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {

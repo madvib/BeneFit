@@ -1,47 +1,47 @@
 // Common errors for Coach module
-export class CoachingError extends Error {
+export class CoachError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CoachingError';
+    this.name = 'CoachError';
   }
 }
 
-export class CommunicationError extends CoachingError {
+export class CommunicationError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'CommunicationError';
   }
 }
 
-export class AnalysisError extends CoachingError {
+export class AnalysisError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'AnalysisError';
   }
 }
 
-export class ValidationError extends CoachingError {
+export class ValidationError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'ValidationError';
   }
 }
 
-export class ContextUpdateError extends CoachingError {
+export class ContextUpdateError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'ContextUpdateError';
   }
 }
 
-export class MessageProcessingError extends CoachingError {
+export class MessageProcessingError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'MessageProcessingError';
   }
 }
 
-export class CheckInError extends CoachingError {
+export class CheckInError extends CoachError {
   constructor(message: string) {
     super(message);
     this.name = 'CheckInError';

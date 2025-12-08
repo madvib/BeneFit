@@ -40,7 +40,7 @@ export class StartWorkoutUseCase
 {
   constructor(
     private sessionRepository: WorkoutSessionRepository,
-    // private planRepository: WorkoutPlanRepository,
+    // private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
   ) {}
 

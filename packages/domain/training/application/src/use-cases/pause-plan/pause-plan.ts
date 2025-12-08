@@ -1,7 +1,7 @@
 import { EventBus } from '@bene/shared-domain';
 import { Result, UseCase } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
-import { WorkoutPlanCommands } from '@bene/training-core';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { FitnessPlanCommands } from '@bene/training-core';
 
 export interface PausePlanRequest {
   userId: string;
@@ -17,7 +17,7 @@ export interface PausePlanResponse {
 
 export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResponse> {
   constructor(
-    private planRepository: WorkoutPlanRepository,
+    private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
   ) {}
 
@@ -32,7 +32,7 @@ export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResp
       return Result.fail(new Error('Not authorized'));
     }
 
-    const pausedPlanResult = WorkoutPlanCommands.pausePlan(plan, request.reason);
+    const pausedPlanResult = FitnessPlanCommands.pausePlan(plan, request.reason);
     if (pausedPlanResult.isFailure) {
       return Result.fail(pausedPlanResult.error);
     }

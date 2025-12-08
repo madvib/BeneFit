@@ -45,5 +45,8 @@
     {
       "path": "./packages/blog"
     },
+    {
+      "path": "./packages/infra/shared"
+    }
   ]
 }

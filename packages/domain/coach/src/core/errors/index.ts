@@ -1,2 +1,9 @@
-// Coach module errors
-export * from './coach-errors.js';
+export {
+  CoachError,
+  CommunicationError,
+  AnalysisError,
+  ValidationError,
+  ContextUpdateError,
+  MessageProcessingError,
+  CheckInError,
+} from './common-errors.js';

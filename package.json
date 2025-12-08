@@ -19,6 +19,7 @@
     "lint": "nx run-many -t lint",
     "typecheck": "nx run-many -t typecheck",
     "build:domain": "nx run-many -t build --projects=tag:type:domain",
+    "build:infra": "nx run-many -t build --projects=tag:type:infrastructure",
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
     "nx:affected": "nx affected -t lint test build",
@@ -30,6 +31,7 @@
     "inspect-eslint": "eslint --inspect-config"
   },
   "devDependencies": {
+    "@bene/nx-plugin": "workspace:*",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
     "@next/eslint-plugin-next": "^16.0.0",
@@ -57,7 +59,8 @@
     "@vitejs/plugin-react": "^5.0.4",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/ui": "^3.0.0",
-    "drizzle-kit": "^0.31.6",
+    "drizzle-kit": "^0.31.8",
+    "drizzle-seed": "0.3.1",
     "eslint": "^9.38.0",
     "eslint-config-next": "16.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -77,6 +80,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
     "vite": "^7.0.0",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "^4.0.0",
     "wrangler": "^4.50.0"
   },

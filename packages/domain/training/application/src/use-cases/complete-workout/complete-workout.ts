@@ -6,6 +6,7 @@ import {
   type WorkoutVerification,
   type CompletedWorkout,
   UserProfileCommands,
+  WorkoutType,
 } from '@bene/training-core';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
@@ -69,7 +70,7 @@ export class CompleteWorkoutUseCase
     // 2. Create CompletedWorkout
     const completedWorkoutResult = createCompletedWorkout({
       userId: request.userId,
-      workoutType: session.workoutType,
+      workoutType: session.workoutType as WorkoutType,
       performance: request.performance,
       verification: request.verification,
       planId: session.planId,

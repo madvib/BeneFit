@@ -22,7 +22,7 @@ export interface PrivacySettings {
   shareProgress: boolean;
 }
 
-export interface CoachingPreferences {
+export interface CoachPreferences {
   checkInFrequency: CheckInFrequency;
   tone: CoachTone;
   proactiveAdvice: boolean;
@@ -42,7 +42,7 @@ interface UserPreferencesData {
   privacy: PrivacySettings;
 
   // AI Coach
-  coaching: CoachingPreferences;
+  coaching: CoachPreferences;
 
   // Display
   showRestTimers: boolean;

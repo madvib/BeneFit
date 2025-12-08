@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { CoachingConversation } from '@core/index.js';
+import { CoachConversation } from '@core/index.js';
 import { TriggerProactiveCheckInUseCase } from './trigger-proactive-check-in.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
-import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachContextBuilder } from '../../services/coach-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
 
@@ -12,11 +12,11 @@ const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachingConversationRepository;
+} as unknown as CoachConversationRepository;
 
 const mockContextBuilder = {
   buildContext: vi.fn(),
-} as unknown as CoachingContextBuilder;
+} as unknown as CoachContextBuilder;
 
 const mockAICoachService = {
   getResponse: vi.fn(),
@@ -70,7 +70,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
       currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
     };
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-456',
       userId,
       context: mockContext,
@@ -220,7 +220,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
       energyLevel: 'medium',
     };
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-456',
       userId,
       context: mockContext,
@@ -282,7 +282,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
       currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
     };
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-456',
       userId,
       context: mockContext,

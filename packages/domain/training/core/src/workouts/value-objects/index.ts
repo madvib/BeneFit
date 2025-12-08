@@ -7,3 +7,4 @@ export * from './session-participant/index.js';
 export * from './workout-activity/index.js';
 export * from './workout-performance/index.js';
 export * from './workout-verification/index.js';
+export * from './workout-type/index.js';

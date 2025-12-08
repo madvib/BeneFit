@@ -1,14 +1,10 @@
-import {
-  CoachingContext,
-  CoachingMessage,
-  CheckIn,
-} from '../../value-objects/index.js';
+import { CoachContext, CoachMsg, CheckIn } from '../../value-objects/index.js';
 
-export interface CoachingConversationData {
+export interface CoachConversationData {
   id: string;
   userId: string;
-  context: CoachingContext;
-  messages: CoachingMessage[];
+  context: CoachContext;
+  messages: CoachMsg[];
   checkIns: CheckIn[];
   totalMessages: number;
   totalUserMessages: number;
@@ -20,4 +16,4 @@ export interface CoachingConversationData {
   lastContextUpdateAt: Date;
 }
 
-export type CoachingConversation = Readonly<CoachingConversationData>;
+export type CoachConversation = Readonly<CoachConversationData>;

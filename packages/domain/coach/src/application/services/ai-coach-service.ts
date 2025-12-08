@@ -1,10 +1,5 @@
 import { Result } from '@bene/shared-domain';
-import {
-  CoachingConversation,
-  CoachingContext,
-  CheckIn,
-  CoachAction,
-} from '@core/index.js';
+import { CoachConversation, CoachContext, CheckIn, CoachAction } from '@core/index.js';
 
 export interface AICoachResponse {
   message: string;
@@ -15,19 +10,19 @@ export interface AICoachResponse {
 
 export interface AICoachService {
   getResponse(input: {
-    conversation: CoachingConversation;
+    conversation: CoachConversation;
     userMessage: string;
   }): Promise<Result<AICoachResponse>>;
 
   generateCheckInQuestion(input: {
-    context: CoachingContext;
+    context: CoachContext;
     trigger: string;
   }): Promise<Result<string>>;
 
   analyzeCheckInResponse(input: {
     checkIn: CheckIn;
     userResponse: string;
-    context: CoachingContext;
+    context: CoachContext;
   }): Promise<
     Result<{
       analysis: string;
@@ -35,7 +30,7 @@ export interface AICoachService {
     }>
   >;
 
-  generateWeeklySummary(input: { context: CoachingContext }): Promise<
+  generateWeeklySummary(input: { context: CoachContext }): Promise<
     Result<{
       summary: string;
       highlights: string[];

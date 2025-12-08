@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { WorkoutPlan, WorkoutPlanCommands } from '@bene/training-core';
+import { FitnessPlan, FitnessPlanCommands } from '@bene/training-core';
 import { ActivatePlanUseCase } from './activate-plan.js';
-import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
 import { EventBus } from '@bene/shared-domain';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -12,7 +12,7 @@ const mockPlanRepository = {
   findActiveByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as WorkoutPlanRepository;
+} as unknown as FitnessPlanRepository;
 
 const mockEventBus = {
   publish: vi.fn(),
@@ -30,7 +30,7 @@ describe('ActivatePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const draftPlan: FitnessPlan = {
       id: planId,
       userId,
       title: 'Strength Plan',
@@ -47,13 +47,13 @@ describe('ActivatePlanUseCase', () => {
       updatedAt: new Date(),
     };
 
-    const activatedPlan: WorkoutPlan = {
+    const activatedPlan: FitnessPlan = {
       ...draftPlan,
       status: 'active',
     };
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(
+    vi.spyOn(FitnessPlanCommands, 'activatePlan').mockReturnValue(
       Result.ok(activatedPlan),
     );
 
@@ -107,7 +107,7 @@ describe('ActivatePlanUseCase', () => {
     const userId = 'user-123';
     const otherUserId = 'user-789';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const draftPlan: FitnessPlan = {
       id: planId,
       userId: otherUserId, // Different user
       title: 'Strength Plan',
@@ -116,7 +116,7 @@ describe('ActivatePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
+      weeks: [{ weekNumber: 1, Fitnesss: [], FitnesssCompleted: 0 }],
       status: 'draft',
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
@@ -146,7 +146,7 @@ describe('ActivatePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: WorkoutPlan = {
+    const draftPlan: FitnessPlan = {
       id: planId,
       userId,
       title: 'Strength Plan',
@@ -155,7 +155,7 @@ describe('ActivatePlanUseCase', () => {
       goals: { goalType: 'strength', target: 'build muscle' },
       progression: { strategy: 'linear' },
       constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
+      weeks: [{ weekNumber: 1, Fitnesss: [], FitnesssCompleted: 0 }],
       status: 'draft', // Correct status for activation
       currentPosition: { week: 1, day: 0 },
       startDate: new Date().toISOString(),
@@ -164,7 +164,7 @@ describe('ActivatePlanUseCase', () => {
     };
 
     mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
-    vi.spyOn(WorkoutPlanCommands, 'activatePlan').mockReturnValue(
+    vi.spyOn(FitnessPlanCommands, 'activatePlan').mockReturnValue(
       Result.fail(new Error('Cannot activate')),
     );
 

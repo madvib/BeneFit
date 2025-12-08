@@ -31,15 +31,15 @@ export type {
   GenerateWeeklySummaryResponse,
 } from './use-cases/generate-weekly-summary/generate-weekly-summary.js';
 
-export { GetCoachingHistoryUseCase } from './use-cases/get-coaching-history/get-coaching-history.js';
+export { GetCoachHistoryUseCase } from './use-cases/get-coaching-history/get-coaching-history.js';
 export type {
-  GetCoachingHistoryRequest,
-  GetCoachingHistoryResponse,
+  GetCoachHistoryRequest,
+  GetCoachHistoryResponse,
 } from './use-cases/get-coaching-history/get-coaching-history.js';
 
 // Repository
-export type { CoachingConversationRepository } from './repositories/coaching-conversation-repository.js';
+export type { CoachConversationRepository } from './repositories/coach-conversation-repository.js';
 
 // Services
 export type { AICoachService, AICoachResponse } from './services/ai-coach-service.js';
-export type { CoachingContextBuilder } from './services/coaching-context-builder.js';
+export type { CoachContextBuilder } from './services/coach-context-builder.js';

@@ -1,4 +1,8 @@
-import { WorkoutPerformance, WorkoutVerification } from '../../../../value-objects/index.js';
+import {
+  WorkoutPerformance,
+  WorkoutVerification,
+  WorkoutType,
+} from '@/workouts/value-objects/index.js';
 import { Reaction } from '../reaction/reaction.types.js';
 
 interface CompletedWorkoutData {
@@ -12,7 +16,7 @@ interface CompletedWorkoutData {
   dayNumber?: number;
 
   // Workout details
-  workoutType: string; // "Upper Body Strength", "5K Run", etc.
+  workoutType: WorkoutType; // "Upper Body Strength", "5K Run", etc.
   description?: string;
 
   // Performance data

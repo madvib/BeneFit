@@ -1,6 +1,6 @@
 import { Result, UseCase } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
-import { WorkoutPlanQueries } from '@bene/training-core';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { FitnessPlanQueries } from '@bene/training-core';
 
 export interface GetTodaysWorkoutRequest {
   userId: string;
@@ -25,7 +25,7 @@ export interface GetTodaysWorkoutResponse {
 export class GetTodaysWorkoutUseCase
   implements UseCase<GetTodaysWorkoutRequest, GetTodaysWorkoutResponse>
 {
-  constructor(private planRepository: WorkoutPlanRepository) {}
+  constructor(private planRepository: FitnessPlanRepository) {}
 
   async execute(
     request: GetTodaysWorkoutRequest,
@@ -43,7 +43,7 @@ export class GetTodaysWorkoutUseCase
     const plan = planResult.value;
 
     // 2. Get today's workout using functional query
-    const todaysWorkout = WorkoutPlanQueries.getCurrentWorkout(plan);
+    const todaysWorkout = FitnessPlanQueries.getCurrentWorkout(plan);
 
     if (!todaysWorkout) {
       return Result.ok({

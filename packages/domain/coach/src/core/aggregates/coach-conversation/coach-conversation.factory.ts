@@ -1,22 +1,22 @@
 import { Result, Guard } from '@bene/shared-domain';
 import {
-  CoachingContext,
-  CoachingConversation,
-  CoachingMessage,
-  createCoachingContext,
+  CoachContext,
+  CoachConversation,
+  CoachMsg,
+  createCoachContext,
   createCoachMessage,
 } from '../../index.js';
 import type { FitnessGoals, TrainingConstraints } from '@bene/training-core';
 import { randomUUID } from 'crypto';
-export interface CreateCoachingConversationParams {
+export interface CreateCoachConversationParams {
   userId: string;
-  context?: CoachingContext;
+  context?: CoachContext;
   initialMessage?: string;
 }
 
-export function createCoachingConversation(
-  params: CreateCoachingConversationParams,
-): Result<CoachingConversation> {
+export function createCoachConversation(
+  params: CreateCoachConversationParams,
+): Result<CoachConversation> {
   const guardResult = Guard.combine([
     Guard.againstEmptyString(params.userId, 'userId'),
     Guard.againstNullOrUndefined(params.userId, 'userId'),
@@ -32,10 +32,10 @@ export function createCoachingConversation(
   }
 
   const now = new Date();
-  const initialContext = params.context || createDefaultCoachingContext().value;
+  const initialContext = params.context || createDefaultCoachContext().value;
 
   // Create initial message if provided
-  let initialMessages: CoachingMessage[] = [];
+  let initialMessages: CoachMsg[] = [];
   let initialTotalCoachMessages = 0;
   if (params.initialMessage) {
     const messageResult = createCoachMessage(
@@ -50,7 +50,7 @@ export function createCoachingConversation(
     }
   }
 
-  const conversation: CoachingConversation = {
+  const conversation: CoachConversation = {
     id: randomUUID(),
     userId: params.userId,
     context: initialContext,
@@ -69,7 +69,7 @@ export function createCoachingConversation(
   return Result.ok(conversation);
 }
 
-function createDefaultCoachingContext() {
+function createDefaultCoachContext() {
   // Create default fitness goals
   const defaultGoals: FitnessGoals = {
     primary: 'strength',
@@ -97,7 +97,7 @@ function createDefaultCoachingContext() {
   // Create default recent workouts
   const defaultRecentWorkouts: [] = [];
 
-  return createCoachingContext({
+  return createCoachContext({
     recentWorkouts: defaultRecentWorkouts,
     userGoals: defaultGoals,
     userConstraints: defaultConstraints,

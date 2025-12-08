@@ -6,14 +6,26 @@
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts"
+  "include": ["src/**/*.ts", "../../../types/cloudflare-env.d.ts"],
+  "references": [
+    {
+      "path": "../shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../persistence/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/training/application/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/training/core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../domain/shared/tsconfig.lib.json"
+    }
   ],
-  "references": [],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",

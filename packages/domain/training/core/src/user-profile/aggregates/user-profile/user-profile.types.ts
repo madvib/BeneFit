@@ -19,7 +19,7 @@ export interface UserProfileData {
   // Fitness profile
   experienceProfile: ExperienceProfile;
   fitnessGoals: FitnessGoals;
-  trainingConstraints: TrainingConstraints; // From planning module
+  trainingConstraints: TrainingConstraints;
 
   // App preferences
   preferences: UserPreferences;

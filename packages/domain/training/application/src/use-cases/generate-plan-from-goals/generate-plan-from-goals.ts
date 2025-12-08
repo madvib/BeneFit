@@ -1,6 +1,6 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import type { EventBus } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import {
   AIPlanGenerator,
   GeneratePlanInput,
@@ -33,7 +33,7 @@ export class GeneratePlanFromGoalsUseCase
   implements UseCase<GeneratePlanFromGoalsRequest, GeneratePlanFromGoalsResponse>
 {
   constructor(
-    private planRepository: WorkoutPlanRepository,
+    private planRepository: FitnessPlanRepository,
     private profileRepository: UserProfileRepository,
     private aiGenerator: AIPlanGenerator,
     private eventBus: EventBus,

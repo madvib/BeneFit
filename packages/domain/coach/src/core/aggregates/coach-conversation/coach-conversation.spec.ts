@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { createCoachingConversation } from './coach-conversation.factory.js';
-import { CoachingContext } from '../../value-objects/coaching-context/coaching-context.types.js';
+import { createCoachConversation } from './coach-conversation.factory.js';
+import { CoachContext } from '../../value-objects/coach-context/coach-context.types.js';
 import { createTrainingConstraints } from '@bene/training-core';
 
 describe('CoachConversation Aggregate', () => {
-  const mockContext: CoachingContext = {
+  const mockContext: CoachContext = {
     recentWorkouts: [],
     userGoals: { primaryGoal: 'strength', targetWeight: 75 } as unknown,
     userConstraints: createTrainingConstraints({
@@ -29,7 +29,7 @@ describe('CoachConversation Aggregate', () => {
   };
 
   it('should create a valid coaching conversation', () => {
-    const result = createCoachingConversation({
+    const result = createCoachConversation({
       userId: 'user-123',
       context: mockContext,
       initialMessage: 'Welcome!',
@@ -48,7 +48,7 @@ describe('CoachConversation Aggregate', () => {
   });
 
   it('should create a conversation without initial message', () => {
-    const result = createCoachingConversation({
+    const result = createCoachConversation({
       userId: 'user-123',
       context: mockContext,
     });
@@ -60,7 +60,7 @@ describe('CoachConversation Aggregate', () => {
   });
 
   it('should fail if userId is missing', () => {
-    const result = createCoachingConversation({
+    const result = createCoachConversation({
       userId: null as never,
       context: mockContext,
     });
@@ -69,7 +69,7 @@ describe('CoachConversation Aggregate', () => {
   });
 
   it('should fail if userId is empty', () => {
-    const result = createCoachingConversation({
+    const result = createCoachConversation({
       userId: '',
       context: mockContext,
     });
@@ -78,7 +78,7 @@ describe('CoachConversation Aggregate', () => {
   });
 
   it('should fail if context is missing', () => {
-    const result = createCoachingConversation({
+    const result = createCoachConversation({
       userId: 'user-123',
       context: null as never,
     });

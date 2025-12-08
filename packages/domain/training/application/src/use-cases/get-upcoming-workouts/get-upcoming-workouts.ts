@@ -1,6 +1,6 @@
-import { WorkoutPlanQueries } from '@bene/training-core';
+import { FitnessPlanQueries } from '@bene/training-core';
 import { Result, UseCase } from '@bene/shared-domain';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 export interface GetUpcomingWorkoutsRequest {
   userId: string;
@@ -20,7 +20,7 @@ export interface GetUpcomingWorkoutsResponse {
 export class GetUpcomingWorkoutsUseCase
   implements UseCase<GetUpcomingWorkoutsRequest, GetUpcomingWorkoutsResponse>
 {
-  constructor(private planRepository: WorkoutPlanRepository) {}
+  constructor(private planRepository: FitnessPlanRepository) {}
 
   async execute(
     request: GetUpcomingWorkoutsRequest,
@@ -35,7 +35,7 @@ export class GetUpcomingWorkoutsUseCase
     const plan = planResult.value;
 
     // 2. Get upcoming workouts
-    const upcomingWorkouts = WorkoutPlanQueries.getUpcomingWorkouts(
+    const upcomingWorkouts = FitnessPlanQueries.getUpcomingWorkouts(
       plan,
       request.days || 7,
     );

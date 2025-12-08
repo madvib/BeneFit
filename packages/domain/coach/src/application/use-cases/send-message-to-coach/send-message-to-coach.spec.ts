@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { CoachingConversation, CoachAction } from '@core/index.js';
+import { CoachConversation, CoachAction } from '@core/index.js';
 import { SendMessageToCoachUseCase } from './send-message-to-coach.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
-import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachContextBuilder } from '../../services/coach-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
 
@@ -12,11 +12,11 @@ const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachingConversationRepository;
+} as unknown as CoachConversationRepository;
 
 const mockContextBuilder = {
   buildContext: vi.fn(),
-} as unknown as CoachingContextBuilder;
+} as unknown as CoachContextBuilder;
 
 const mockAICoachService = {
   getResponse: vi.fn(),
@@ -47,7 +47,7 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'I need help with my workout plan';
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-456',
       userId,
       context: {
@@ -221,7 +221,7 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'Hello coach!';
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-456',
       userId,
       context: {

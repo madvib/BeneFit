@@ -14,9 +14,6 @@
       "default": "./dist/index.js"
     }
   },
-  "scripts": {
-    "lint": "eslint ."
-  },
   "dependencies": {
     "@bene/shared-domain": "workspace:*",
     "@swc/helpers": "~0.5.11"

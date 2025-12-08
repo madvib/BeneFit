@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
 import { WorkoutPlan, WorkoutPlanCommands } from '@bene/training-core';
 import { PausePlanUseCase } from './pause-plan.js';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { EventBus } from '@bene/shared-domain';
 
 // Mock repositories and services
@@ -12,7 +12,7 @@ const mockPlanRepository = {
   findActiveByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as WorkoutPlanRepository;
+} as unknown as FitnessPlanRepository;
 
 const mockEventBus = {
   publish: vi.fn(),

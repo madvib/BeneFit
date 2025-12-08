@@ -1,34 +1,34 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { CoachingConversation, CoachingMessage } from '@core/index.js';
-import { GetCoachingHistoryUseCase } from './get-coaching-history.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
+import { CoachConversation, CoachMsg } from '@core/index.js';
+import { GetCoachHistoryUseCase } from './get-coaching-history.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachingConversationRepository;
+} as unknown as CoachConversationRepository;
 
-describe('GetCoachingHistoryUseCase', () => {
-  let useCase: GetCoachingHistoryUseCase;
+describe('GetCoachHistoryUseCase', () => {
+  let useCase: GetCoachHistoryUseCase;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCase = new GetCoachingHistoryUseCase(mockConversationRepository);
+    useCase = new GetCoachHistoryUseCase(mockConversationRepository);
   });
 
   it('should successfully retrieve coaching history', async () => {
     // Arrange
     const userId = 'user-123';
 
-    const mockMessage: CoachingMessage = {
+    const mockMessage: CoachMsg = {
       id: 'msg-123',
       role: 'user',
       content: 'Hello coach!',
       timestamp: new Date(),
-    } as CoachingMessage;
+    } as CoachMsg;
 
     const mockCheckIn = {
       id: 'checkin-456',
@@ -39,7 +39,7 @@ describe('GetCoachingHistoryUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     };
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {
@@ -106,14 +106,14 @@ describe('GetCoachingHistoryUseCase', () => {
     const limit = 5;
 
     // Create multiple messages
-    const messages: CoachingMessage[] = [];
+    const messages: CoachMsg[] = [];
     for (let i = 0; i < 10; i++) {
       messages.push({
         id: `msg-${i}`,
         role: i % 2 === 0 ? 'user' : 'coach',
         content: `Message ${i}`,
         timestamp: new Date(),
-      } as CoachingMessage);
+      } as CoachMsg);
     }
 
     const mockCheckIn = {
@@ -125,7 +125,7 @@ describe('GetCoachingHistoryUseCase', () => {
       triggeredBy: 'enjoyment_declining',
     };
 
-    const mockConversation: CoachingConversation = {
+    const mockConversation: CoachConversation = {
       id: 'conv-789',
       userId,
       context: {

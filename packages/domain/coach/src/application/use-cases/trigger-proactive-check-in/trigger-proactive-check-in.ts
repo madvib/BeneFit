@@ -1,14 +1,15 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import {
   CoachConversationCommands,
-  createCoachingConversation,
+  createCoachConversation,
   createCheckIn,
   CheckInTrigger,
 } from '@core/index.js';
-import { CoachingConversationRepository } from '../../repositories/coaching-conversation-repository.js';
-import { CoachingContextBuilder } from '../../services/coaching-context-builder.js';
+import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachContextBuilder } from '../../services/coach-context-builder.js';
 import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
+import { Injury } from '@bene/training-core';
 
 export interface TriggerProactiveCheckInRequest {
   userId: string;
@@ -24,8 +25,8 @@ export class TriggerProactiveCheckInUseCase
   implements UseCase<TriggerProactiveCheckInRequest, TriggerProactiveCheckInResponse>
 {
   constructor(
-    private conversationRepository: CoachingConversationRepository,
-    private contextBuilder: CoachingContextBuilder,
+    private conversationRepository: CoachConversationRepository,
+    private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
   ) {}
@@ -46,7 +47,7 @@ export class TriggerProactiveCheckInUseCase
     );
 
     if (conversationResult.isFailure) {
-      const newConvResult = createCoachingConversation({
+      const newConvResult = createCoachConversation({
         userId: request.userId,
         context,
       });
@@ -122,7 +123,7 @@ export class TriggerProactiveCheckInUseCase
 
   private determineTrigger(context: {
     currentPlan?: { adherenceRate: number };
-    reportedInjuries?: string[];
+    reportedInjuries?: Injury[];
     trends?: { enjoymentTrend?: string };
     recentWorkouts?: Array<{ perceivedExertion: number }>;
     workoutsThisWeek?: number;

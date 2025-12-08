@@ -3,7 +3,7 @@ import { Result } from '@bene/shared-domain';
 import { WorkoutPlan, WorkoutPlanQueries } from '@bene/training-core';
 import { WorkoutTemplate } from '@bene/training-core';
 import { GetUpcomingWorkoutsUseCase } from './get-upcoming-workouts.js';
-import { WorkoutPlanRepository } from '../../repositories/workout-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -12,7 +12,7 @@ const mockPlanRepository = {
   findActiveByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as WorkoutPlanRepository;
+} as unknown as FitnessPlanRepository;
 
 describe('GetUpcomingWorkoutsUseCase', () => {
   let useCase: GetUpcomingWorkoutsUseCase;

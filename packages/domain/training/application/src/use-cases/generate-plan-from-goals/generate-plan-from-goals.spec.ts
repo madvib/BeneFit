@@ -1,12 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
-import { WorkoutPlan } from '@bene/training-core';
+import { FitnessPlan } from '@bene/training-core';
 import { UserProfile } from '@bene/training-core';
 import { GeneratePlanFromGoalsUseCase } from './generate-plan-from-goals.js';
-import { WorkoutPlanRepository } from '../../../repositories/workout-plan-repository';
-import { UserProfileRepository } from '../../../profile/repositories/user-profile-repository';
-import { AIPlanGenerator } from '../../../services/ai-plan-generator';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { AIPlanGenerator } from '../../services/ai-plan-generator.js';
 import { EventBus } from '@bene/shared-domain';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -15,7 +15,7 @@ const mockPlanRepository = {
   findActiveByUserId: vi.fn(),
   save: vi.fn(),
   delete: vi.fn(),
-} as unknown as WorkoutPlanRepository;
+} as unknown as FitnessPlanRepository;
 
 const mockProfileRepository = {
   findById: vi.fn(),
@@ -54,7 +54,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const mockPlan: WorkoutPlan = {
+    const mockPlan: FitnessPlan = {
       id: 'plan-123',
       userId,
       title: 'Strength Plan',
@@ -127,7 +127,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const goals = { goalType: 'strength', target: 'build muscle' };
-    const mockActivePlan: WorkoutPlan = {
+    const mockActivePlan: FitnessPlan = {
       id: 'active-plan-456',
       userId,
       title: 'Active Plan',
@@ -219,7 +219,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const mockPlan: WorkoutPlan = {
+    const mockPlan: FitnessPlan = {
       id: 'plan-123',
       userId,
       title: 'Strength Plan',

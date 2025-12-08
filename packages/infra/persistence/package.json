@@ -16,26 +16,31 @@
   },
   "dependencies": {
     "@swc/helpers": "~0.5.11",
-    "drizzle-orm": "^0.30.10",
-    "better-sqlite3": "^9.4.3"
+    "better-sqlite3": "^9.4.3",
+    "drizzle-orm": "catalog:"
+  },
+  "scripts": {
+    "db:generate:activity_stream": "drizzle-kit generate --config=src/d1/activity_stream/drizzle.config.ts",
+    "db:migrate:activity_stream": "wrangler d1 migrations apply {TODO}",
+    "db:studio:activity_stream": "drizzle-kit studio --config=src/d1/activity_stream/drizzle.config.ts",
+    "db:generate:discovery_index": "drizzle-kit generate --config=src/d1/discovery_index/drizzle.config.ts",
+    "db:migrate:discovery_index": "wrangler d1 migrations apply {TODO}",
+    "db:studio:discovery_index": "drizzle-kit studio --config=src/d1/discovery_index/drizzle.config.ts",
+    "db:generate:static_content": "drizzle-kit generate --config=src/d1/static_content/drizzle.config.ts",
+    "db:migrate:static_content": "wrangler d1 migrations apply {TODO}",
+    "db:studio:static_content": "drizzle-kit studio --config=src/d1/static_content/drizzle.config.ts",
+    "db:generate:team": "drizzle-kit generate --config=src/durable_object_sqlite/team/drizzle.config.ts",
+    "db:migrate:team": "wrangler d1 migrations apply {TODO}",
+    "db:studio:team": "drizzle-kit studio --config=src/durable_object_sqlite/team/drizzle.config.ts",
+    "db:generate:user": "drizzle-kit generate --config=src/durable_object_sqlite/user/drizzle.config.ts",
+    "db:migrate:user": "wrangler d1 migrations apply {TODO}",
+    "db:studio:user": "drizzle-kit studio --config=src/durable_object_sqlite/user/drizzle.config.ts",
+    "db:generate:workout_session": "drizzle-kit generate --config=src/durable_object_sqlite/workout_session/drizzle.config.ts",
+    "db:migrate:workout_session": "wrangler d1 migrations apply {TODO}",
+    "db:studio:workout_session": "drizzle-kit studio --config=src/durable_object_sqlite/workout_session/drizzle.config.ts"
   },
   "nx": {
     "sourceRoot": "packages/infra/persistence/src",
-    "targets": {
-      "build": {
-        "executor": "@nx/js:swc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "packages/infra/persistence/dist",
-          "main": "packages/infra/persistence/src/index.ts",
-          "tsConfig": "packages/infra/persistence/tsconfig.lib.json",
-          "skipTypeCheck": true,
-          "stripLeadingPaths": true
-        }
-      }
-    },
     "tags": [
       "type:infrastructure",
       "scope:persistence",

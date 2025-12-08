@@ -17,9 +17,6 @@
   "dependencies": {
     "@swc/helpers": "~0.5.11"
   },
-  "scripts": {
-    "lint": "eslint ."
-  },
   "nx": {
     "sourceRoot": "packages/domain/shared/src",
     "tags": [
