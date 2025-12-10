@@ -57,30 +57,30 @@ export const planTemplates = sqliteTable(
     // Preview (small, display-only)
     previewWorkouts: text('preview_workouts', { mode: 'json' }), // WorkoutPreview[]
 
-    createdAt: integer('created_at', { mode: 'timestamp' })
+    createdAt: integer('created_at', { mode: 'number' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' })
+    updatedAt: integer('updated_at', { mode: 'number' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    publishedAt: integer('published_at', { mode: 'timestamp' }),
+    publishedAt: integer('published_at', { mode: 'number' }),
   },
-  (table) => ({
+  (table) => [
     // Indexes for common filters
-    experienceIdx: index('plan_templates_experience_idx').on(
+    index('plan_templates_experience_idx').on(
       table.minExperienceLevel,
       table.maxExperienceLevel,
     ),
-    durationIdx: index('plan_templates_duration_idx').on(
+    index('plan_templates_duration_idx').on(
       table.durationWeeksMin,
       table.durationWeeksMax,
     ),
-    publicFeaturedIdx: index('plan_templates_public_featured_idx').on(
+    index('plan_templates_public_featured_idx').on(
       table.isPublic,
       table.isFeatured,
     ),
-    ratingIdx: index('plan_templates_rating_idx').on(table.ratingAverage),
-  }),
+    index('plan_templates_rating_idx').on(table.ratingAverage),
+  ],
 );
 
 export type PlanTemplate = typeof planTemplates.$inferSelect;

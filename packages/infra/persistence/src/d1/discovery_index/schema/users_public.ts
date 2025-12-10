@@ -6,10 +6,10 @@ export const usersPublic = sqliteTable('users_public', {
   name: text('name').notNull(),
   avatarUrl: text('avatar_url'),
   lastActive: text('last_active'), // Optional for presence/sorting
-}, (users) => ({
-  handleIndex: uniqueIndex('handle_idx').on(users.handle),
-  nameIndex: uniqueIndex('name_idx').on(users.name),
-}));
+}, (users) => [
+  uniqueIndex('handle_idx').on(users.handle),
+  uniqueIndex('name_idx').on(users.name),
+]);
 
 export type UserPublic = typeof usersPublic.$inferSelect;
 export type NewUserPublic = typeof usersPublic.$inferInsert;

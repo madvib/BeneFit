@@ -7,12 +7,13 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": true,
     "types": [
-      "node"
+      "node",
+      "../../../types/cloudflare-env.d.ts"
     ]
   },
   "include": [
     "src/**/*.ts",
-    "../../../types/cloudflare-env.d.ts"
+    "src/**/*.js"
   ],
   "references": [],
   "exclude": [

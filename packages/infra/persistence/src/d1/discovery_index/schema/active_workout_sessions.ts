@@ -7,16 +7,16 @@ export const activeWorkoutSessions = sqliteTable(
     id: text('id').primaryKey(),
     createdByUserId: text('created_by_user_id').notNull(),
     workoutId: text('workout_id').notNull(),
-    sessionStartedAt: integer('session_started_at', { mode: 'timestamp' }).notNull(),
+    sessionStartedAt: integer('session_started_at', { mode: 'number' }).notNull(),
     participantCount: integer('participant_count').default(1),
     status: text('status', { enum: ['active', 'completed'] }).default('active'),
     doSessionId: text('do_session_id').notNull(), // Reference to WorkoutSessionAgent DO
-    createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
   },
-  (table) => ({
-    createdByUserIdx: index('active_workout_sessions_created_by_user_idx').on(table.createdByUserId),
-  })
+  (table) => [
+    index('active_workout_sessions_created_by_user_idx').on(table.createdByUserId),
+  ]
 );
 
 export type ActiveWorkoutSession = typeof activeWorkoutSessions.$inferSelect;

@@ -43,9 +43,9 @@ export type { PlanTemplateRepository } from './repositories/plan-template-reposi
 
 // Services
 export type {
+  AdjustPlanInput,
   AIPlanGenerator,
   GeneratePlanInput,
-  AdjustPlanInput,
 } from './services/ai-plan-generator.js';
 
 // Profile module exports
@@ -87,13 +87,18 @@ export type {
   GetProfileResponse,
 } from './use-cases/get-profile/get-profile.js';
 
-// Repository
-export type { UserProfileRepository } from './repositories/user-profile-repository.js';
+export { SkipWorkoutUseCase } from './use-cases/skip-workout/skip-workout.js';
+export type {
+  SkipWorkoutRequest,
+  SkipWorkoutResponse,
+} from './use-cases/skip-workout/skip-workout.js';
 
-export * from './repositories/workout-session-repository.js';
+// Repository
 export * from './repositories/completed-workout-repository.js';
-export * from './use-cases/start-workout/start-workout.js';
-export * from './use-cases/complete-workout/complete-workout.js';
-export * from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
+export type { UserProfileRepository } from './repositories/user-profile-repository.js';
+export * from './repositories/workout-session-repository.js';
 export * from './use-cases/add-workout-reaction/add-workout-reaction.js';
+export * from './use-cases/complete-workout/complete-workout.js';
 export * from './use-cases/get-workout-history/get-workout-history.js';
+export * from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
+export * from './use-cases/start-workout/start-workout.js';

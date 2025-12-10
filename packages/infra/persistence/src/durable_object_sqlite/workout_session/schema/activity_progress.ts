@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { participants } from './participants.js';
+import { participants } from './participants.ts';
 
 export const activityProgress = sqliteTable(
   'activity_progress',
@@ -15,8 +15,8 @@ export const activityProgress = sqliteTable(
     status: text('status', {
       enum: ['not_started', 'in_progress', 'completed'],
     }).default('not_started'),
-    startedAt: integer('started_at', { mode: 'timestamp' }),
-    completedAt: integer('completed_at', { mode: 'timestamp' }),
+    startedAt: integer('started_at', { mode: 'number' }),
+    completedAt: integer('completed_at', { mode: 'number' }),
 
     // Live metrics
     currentSet: integer('current_set'),
@@ -25,14 +25,14 @@ export const activityProgress = sqliteTable(
     currentDistanceMeters: integer('current_distance_meters'),
     currentHeartRate: integer('current_heart_rate'),
 
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
   },
-  (table) => ({
-    participantIdOrderIdx: index('activity_progress_participant_id_order_idx').on(
+  (table) => [
+    index('activity_progress_participant_id_order_idx').on(
       table.participantId,
       table.orderIndex,
     ),
-  }),
+  ],
 );
 
 export const activityProgressRelations = relations(activityProgress, ({ one }) => ({

@@ -1,6 +1,6 @@
 import { sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
-import { planTemplates } from './plan_templates.js';
+import { planTemplates } from './plan_templates.ts';
 
 export const templateTags = sqliteTable(
   'template_tags',
@@ -9,10 +9,10 @@ export const templateTags = sqliteTable(
     templateId: text('template_id').references(() => planTemplates.id),
     tag: text('tag').notNull(),
   },
-  (table) => ({
-    templateIdIdx: index('template_tags_template_id_idx').on(table.templateId),
-    tagIdx: index('template_tags_tag_idx').on(table.tag),
-  })
+  (table) => [
+    index('template_tags_template_id_idx').on(table.templateId),
+    index('template_tags_tag_idx').on(table.tag),
+  ]
 );
 
 export const templateTagsRelations = relations(templateTags, ({ one }) => ({

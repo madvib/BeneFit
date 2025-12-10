@@ -1,0 +1,16 @@
+{
+  "name": "durable-object-starter",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@bene/training-application": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
+    "agents": "0.2.30"
+  }
+}
