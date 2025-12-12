@@ -9,7 +9,8 @@ export const team = sqliteTable('team', {
   isPublic: integer('is_public', { mode: 'boolean' }).default(false),
   // Denormalized counter cache of the current chat message ID/count for history tracking
   latestChatMessageId: integer('latest_chat_message_id').default(0),
-  lastUpdated: integer('last_updated', { mode: 'number' }).default(sql`(unixepoch())`),
+  lastUpdated: integer('last_updated', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
 });
 
 export type Team = typeof team.$inferSelect;

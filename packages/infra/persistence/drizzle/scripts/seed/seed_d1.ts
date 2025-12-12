@@ -1,7 +1,7 @@
 // Import co-located seed functions
-import { seedActivityStream } from '../src/d1/activity_stream/seed.js';
-import { seedDiscoveryIndex } from '../src/d1/discovery_index/seed.js';
-import { seedStaticContent } from '../src/d1/static_content/seed.js';
+import { seedActivityStream } from './seed_activity_stream.js';
+import { seedDiscoveryIndex } from './seed_discovery_index.js';
+import { seedStaticContent } from './seed_static_content.js';
 import dotenv from 'dotenv';
 
 async function run() {

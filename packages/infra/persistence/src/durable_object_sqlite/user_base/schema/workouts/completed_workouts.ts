@@ -21,9 +21,9 @@ export const completedWorkouts = sqliteTable(
     description: text('description'),
 
     // Timing
-    completedAt: integer('completed_at', { mode: 'number' }).notNull(),
-    recordedAt: integer('recorded_at', { mode: 'number' }).notNull(), // When actually completed
-    durationSeconds: integer('duration_seconds').notNull(),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }).notNull(),
+    recordedAt: integer('recorded_at', { mode: 'timestamp_ms' }).notNull(), // When actually completed
+    durationSeconds: integer('duration_ms').notNull(),
 
     // Subjective feedback
     notes: text('notes'),
@@ -55,7 +55,7 @@ export const completedWorkouts = sqliteTable(
     // LEGACY FIELDS (from workouts.ts) - Consider adding if needed:
     // reactionCount: integer('reaction_count').default(0) - Denormalized reaction count
 
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
   },
   (table) => [
     index('completed_workouts_user_id_idx').on(table.userId),

@@ -8,12 +8,10 @@ import { dirname } from 'node:path';
 
 export interface BenePluginOptions {
   buildTargetName?: string;
-  buildTypesTargetName?: string;
 }
 
 const DEFAULT_OPTIONS: Required<BenePluginOptions> = {
   buildTargetName: 'build',
-  buildTypesTargetName: 'generate-types',
 };
 
 /**
@@ -91,16 +89,21 @@ function inferBuildTargets(
 ): Record<string, TargetConfiguration> {
   const targets: Record<string, TargetConfiguration> = {};
 
-  // build-types target
-  targets[options.buildTypesTargetName] = {
-    executor: '@nx/js:tsc',
-    dependsOn: [`^${options.buildTargetName}`],
-  };
-
-  // build target
   targets[options.buildTargetName] = {
     executor: '@nx/js:swc',
-    dependsOn: [options.buildTypesTargetName, `^${options.buildTargetName}`],
+    inputs: ['default', '^default'],
+    outputs: ['{options.outputPath}'],
+    dependsOn: [`^${options.buildTargetName}`],
+    options: {
+      outputPath: '{projectRoot}/dist',
+      tsConfig: '{projectRoot}/tsconfig.lib.json',
+      main: '{projectRoot}/src/index.ts',
+      swcrc: '{projectRoot}/.swcrc',
+      skipTypeCheck: false,
+      stripLeadingPaths: true,
+      clean: false,
+    },
+    cache: true,
   };
 
   return targets;

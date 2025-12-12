@@ -1,9 +1,11 @@
-import { D1Helper } from "@nerdfolio/drizzle-d1-helpers";
-import { usersPublic, NewUserPublic } from "./schema/users_public.js";
-import { teamsPublic, NewTeamPublic } from "./schema/teams_public.js";
-import { teamRosters, NewTeamRoster } from "./schema/team_rosters.js";
-import { activeWorkoutSessions, NewActiveWorkoutSession } from "./schema/active_workout_sessions.js";
-import { drizzle } from "drizzle-orm/d1";
+import { usersPublic, NewUserPublic } from '../../../src/d1/discovery_index/schema/users_public.js';
+import { teamsPublic, NewTeamPublic } from '../../../src/d1/discovery_index/schema/teams_public.js';
+import { teamRosters, NewTeamRoster } from '../../../src/d1/discovery_index/schema/team_rosters.js';
+import {
+  activeWorkoutSessions,
+  NewActiveWorkoutSession,
+} from '../../../src/d1/discovery_index/schema/active_workout_sessions.js';
+import { useLocalD1 } from '../../helpers/get-d1-helper.ts';
 
 const now = Math.floor(Date.now() / 1000);
 
@@ -41,8 +43,8 @@ const teams: NewTeamPublic[] = [
     isPublic: true,
     inviteCode: 'RUN123',
     memberCount: 5,
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date(now * 1000),
+    updatedAt: new Date(now * 1000),
   },
   {
     id: 'team_002',
@@ -52,8 +54,8 @@ const teams: NewTeamPublic[] = [
     isPublic: true,
     inviteCode: 'LIFT99',
     memberCount: 12,
-    createdAt: now + 1000,
-    updatedAt: now + 1000,
+    createdAt: new Date((now + 1000) * 1000),
+    updatedAt: new Date((now + 1000) * 1000),
   },
 ];
 
@@ -70,23 +72,23 @@ const sessions: NewActiveWorkoutSession[] = [
     id: 'session_001',
     createdByUserId: 'user_001',
     workoutId: 'workout_001',
-    sessionStartedAt: now - 3600, // 1 hour ago
+    sessionStartedAt: new Date((now - 3600) * 1000), // 1 hour ago
     participantCount: 3,
     status: 'active',
     doSessionId: 'do_session_001',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date(now * 1000),
+    updatedAt: new Date(now * 1000),
   },
   {
     id: 'session_002',
     createdByUserId: 'user_002',
     workoutId: 'workout_002',
-    sessionStartedAt: now - 1800, // 30 minutes ago
+    sessionStartedAt: new Date((now - 1800) * 1000), // 30 minutes ago
     participantCount: 2,
     status: 'active',
     doSessionId: 'do_session_002',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date(now * 1000),
+    updatedAt: new Date(now * 1000),
   },
 ];
 
@@ -96,15 +98,9 @@ const sessions: NewActiveWorkoutSession[] = [
 export async function seedDiscoveryIndex() {
   console.log('🌱 Seeding Discovery Index database with Drizzle ORM...');
 
-  // Use D1Helper to get the database binding
-  const d1Helper = D1Helper.get('DB_DISCOVERY_INDEX');
-
   try {
     // Execute the seeding logic using the D1 binding
-    await d1Helper.useLocalD1(async ({$client: rawD1}) => {
-      // Initialize the type-safe Drizzle client
-      const db = drizzle(rawD1);
-
+    await useLocalD1('DB_DISCOVERY_INDEX', async (db) => {
       console.log('  - Clearing existing data...');
       // Use Drizzle ORM for clear operations
       await db.delete(activeWorkoutSessions);
@@ -114,19 +110,19 @@ export async function seedDiscoveryIndex() {
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${users.length} users...`);
+      console.log(`  - Inserting ${ users.length } users...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(usersPublic).values(users);
 
-      console.log(`  - Inserting ${teams.length} teams...`);
+      console.log(`  - Inserting ${ teams.length } teams...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(teamsPublic).values(teams);
 
-      console.log(`  - Inserting ${rosters.length} team rosters...`);
+      console.log(`  - Inserting ${ rosters.length } team rosters...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(teamRosters).values(rosters);
 
-      console.log(`  - Inserting ${sessions.length} active workout sessions...`);
+      console.log(`  - Inserting ${ sessions.length } active workout sessions...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activeWorkoutSessions).values(sessions);
     });
@@ -139,7 +135,7 @@ export async function seedDiscoveryIndex() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${ process.argv[1] }`) {
   seedDiscoveryIndex().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

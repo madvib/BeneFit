@@ -1,4 +1,5 @@
 import { Agent } from 'agents';
+import { initializeUserBaseDB } from '@bene/persistence';
 /** A Durable Object's behavior is defined in an exported Javascript class */
 export class UserBase extends Agent {
   /**
@@ -10,8 +11,12 @@ export class UserBase extends Agent {
    */
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
+    // Initialize database with migrations
+    ctx.blockConcurrencyWhile(async () => {
+      
+      await initializeUserBaseDB(ctx.storage, {});
+    })
   }
-
   /**
    * The Durable Object exposes an RPC method sayHello which will be invoked when a Durable
    *  Object instance receives a request from a Worker via the same method invocation on the stub
@@ -20,6 +25,6 @@ export class UserBase extends Agent {
    * @returns The greeting to be sent back to the Worker
    */
   async sayHello(name: string): Promise<string> {
-    return `Hello, ${name}!`;
-  }
+    return `Hello, ${ name }!`;  }
+
 }

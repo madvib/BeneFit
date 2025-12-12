@@ -5,10 +5,14 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "emitDeclarationOnly": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src/**/*.ts", "../../../types/cloudflare-env.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "../../../types/cloudflare-runtime.d.ts"
+  ],
   "references": [
     {
       "path": "../shared/tsconfig.lib.json"

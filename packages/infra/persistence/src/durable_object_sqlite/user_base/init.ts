@@ -1,14 +1,16 @@
 import { migrate } from 'drizzle-orm/durable-sqlite/migrator';
 import { createDOClient } from '../../client.js';
 import { seedUserBase } from './seed.js';
-import migrations from './migrations/migrations.js';
+import migrations from './migrations/migrations';
 
 /**
  * Initializes the User Base database by running migrations and optionally seeding in local development.
  * @param storage - The DurableObjectStorage instance to initialize
  * @param shouldSeed - Whether to seed the database (defaults to true in local development)
  */
-export async function initializeUserBaseDB(storage: DurableObjectStorage,   env: { NODE_ENV?: string }
+export async function initializeUserBaseDB(
+  storage: DurableObjectStorage,
+  env: { NODE_ENV?: string },
 ) {
   const shouldSeed = process.env.NODE_ENV !== 'production';
   console.log('🚀 Initializing User Base database...');

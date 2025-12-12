@@ -1,8 +1,8 @@
 import { index, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { teamsPublic } from "./teams_public.ts";
-import { usersPublic } from "./users_public.ts";
+import { teamsPublic } from "./teams_public";
+import { usersPublic } from "./users_public";
 
-// /social-graph-d1/schema/team_rosters.ts
+// /social-graph-d1/schema/team_rosters
 export const teamRosters = sqliteTable('team_rosters', {
   teamId: text('team_id').notNull().references(() => teamsPublic.id),
   userId: text('user_id').notNull().references(() => usersPublic.id),

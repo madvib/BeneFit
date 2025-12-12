@@ -1,7 +1,7 @@
 import { migrate } from 'drizzle-orm/durable-sqlite/migrator';
 import { createDOClient } from '../../client.js';
 import { seedWorkoutSession } from './seed.js';
-import migrations from './migrations/migrations.js';
+import migrations from './migrations/migrations';
 /**
  * Initializes the Workout Session database by running migrations and optionally seeding in local development.
  * @param storage - The DurableObjectStorage instance to initialize
@@ -9,9 +9,9 @@ import migrations from './migrations/migrations.js';
  */
 export async function initializeWorkoutSessionDB(
   storage: DurableObjectStorage,
-  env: { NODE_ENV?: string }
+  env: { NODE_ENV?: string },
 ) {
-    const shouldSeed = process.env.NODE_ENV !== 'production';
+  const shouldSeed = process.env.NODE_ENV !== 'production';
   console.log('🚀 Initializing Workout Session database...');
   // Create the Drizzle client using the provided storage
   const db = createDOClient(storage);

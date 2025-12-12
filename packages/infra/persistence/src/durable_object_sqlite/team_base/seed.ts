@@ -4,7 +4,7 @@ import { teamMembers, NewTeamMember } from './schema/team_members.js';
 import { teamChallenges, NewTeamChallenge } from './schema/team_challenges.js';
 import { chatMessages, NewChatMessage } from './schema/chat_messages.js';
 
-const now = Math.floor(Date.now() / 1000);
+const now = Date.now()
 
 // Use your schema types for type safety
 const teams: NewTeam[] = [
@@ -13,22 +13,22 @@ const teams: NewTeam[] = [
     name: 'Morning Runners',
     isPublic: true,
     latestChatMessageId: 5,
-    lastUpdated: now,
+    lastUpdated: new Date(now * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 'team_002',
     name: 'Powerlifters Unite',
     isPublic: true,
     latestChatMessageId: 3,
-    lastUpdated: now + 100,
+    lastUpdated: new Date((now + 100) * 1000), // Convert Unix timestamp to Date
   },
 ];
 
 const members: NewTeamMember[] = [
-  { teamId: 'team_001', userId: 'user_001', role: 'member', joinedAt: now - 86400 }, // 1 day ago
-  { teamId: 'team_001', userId: 'user_002', role: 'admin', joinedAt: now - 172800 }, // 2 days ago
-  { teamId: 'team_002', userId: 'user_001', role: 'owner', joinedAt: now - 3600 }, // 1 hour ago
-  { teamId: 'team_002', userId: 'user_003', role: 'member', joinedAt: now - 7200 }, // 2 hours ago
+  { teamId: 'team_001', userId: 'user_001', role: 'member', joinedAt: new Date(now  - 86400) }, // 1 day ago
+  { teamId: 'team_001', userId: 'user_002', role: 'admin', joinedAt: new Date(now - 172800) }, // 2 days ago
+  { teamId: 'team_002', userId: 'user_001', role: 'owner', joinedAt: new Date(now - 3600) }, // 1 hour ago
+  { teamId: 'team_002', userId: 'user_003', role: 'member', joinedAt: new Date(now - 7200) }, // 2 hours ago
 ];
 
 const challenges: NewTeamChallenge[] = [
@@ -38,8 +38,8 @@ const challenges: NewTeamChallenge[] = [
     name: '30-Day Running Challenge',
     description: 'Complete at least 10 runs in 30 days',
     challengeType: 'workout_count',
-    startDate: now + 86400, // Start tomorrow
-    endDate: now + 86400 + 30 * 86400, // 30 days from tomorrow
+    startDate: new Date((now + 86400) * 1000), // Start tomorrow, convert Unix timestamp to Date
+    endDate: new Date((now + 86400 + 30 * 86400) * 1000), // 30 days from tomorrow, convert Unix timestamp to Date
     status: 'active',
   },
   {
@@ -48,8 +48,8 @@ const challenges: NewTeamChallenge[] = [
     name: 'Strength Milestone Challenge',
     description: 'Achieve a new personal record in any lift',
     challengeType: 'total_volume',
-    startDate: now + 86400, // Start tomorrow
-    endDate: now + 86400 + 45 * 86400, // 45 days from tomorrow
+    startDate: new Date((now + 86400) * 1000), // Start tomorrow, convert Unix timestamp to Date
+    endDate: new Date((now + 86400 + 45 * 86400) * 1000), // 45 days from tomorrow, convert Unix timestamp to Date
     status: 'active',
   },
 ];
@@ -59,31 +59,31 @@ const messages: NewChatMessage[] = [
     id: 1,
     userId: 'user_002',
     content: 'Hey team! Ready for the morning run?',
-    createdAt: now - 3600,
+    createdAt: new Date((now - 3600) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 2,
     userId: 'user_001',
     content: 'Absolutely! See you at 6am.',
-    createdAt: now - 3500,
+    createdAt: new Date((now - 3500) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 3,
     userId: 'user_003',
     content: 'Count me in for the lifting session later',
-    createdAt: now - 1800,
+    createdAt: new Date((now - 1800) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 4,
     userId: 'user_001',
     content: "Great! Don't forget to hydrate",
-    createdAt: now - 1700,
+    createdAt: new Date((now - 1700) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 5,
     userId: 'user_002',
     content: 'Thanks for the reminder!',
-    createdAt: now - 1600,
+    createdAt: new Date((now - 1600) * 1000), // Convert Unix timestamp to Date
   },
 ];
 

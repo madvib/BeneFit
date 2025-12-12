@@ -1,6 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
 
-const base_dir = "./src/durable_object_sqlite/team_base"
+const base_dir = './src/durable_object_sqlite/team_base';
 
 export default defineConfig({
   out: `${base_dir}/migrations`,

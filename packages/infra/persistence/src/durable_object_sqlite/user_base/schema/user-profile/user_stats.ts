@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { profile } from './profile.ts';
+import { profile } from './profile';
 
 export const userStats = sqliteTable(
   'user_stats',
@@ -13,7 +13,7 @@ export const userStats = sqliteTable(
     // streaks
     currentStreakDays: integer('current_streak_days').default(0).notNull(),
     longestStreakDays: integer('longest_streak_days').default(0).notNull(),
-    lastWorkoutDate: integer('last_workout_date', { mode: 'number' }),
+    lastWorkoutDate: integer('last_workout_date', { mode: 'timestamp' }),
 
     // metrics
     totalWorkoutsCompleted: integer('total_workouts_completed').default(0).notNull(),
@@ -22,7 +22,8 @@ export const userStats = sqliteTable(
     totalDistanceMeters: integer('total_distance_meters').default(0).notNull(),
     totalCaloriesBurned: integer('total_calories_burned').default(0).notNull(),
 
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index('user_stats_total_workouts_idx').on(

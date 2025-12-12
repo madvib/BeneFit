@@ -165,3 +165,7 @@ tmp
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+
+dist
+dist-types

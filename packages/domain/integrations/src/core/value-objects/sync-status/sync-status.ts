@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared-domain';
 
 export type SyncState =
   | 'never_synced' // Initial state

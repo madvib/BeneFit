@@ -1,13 +1,3 @@
-import {
-  UserNotFoundError,
-  AuthError,
-  WeakPasswordError,
-  UserNotConfirmedError,
-  EmailExistsError,
-  SessionExpiredError,
-  InvalidCredentialsError,
-  NetworkError,
-} from '@bene/domain-auth';
 import { Result } from '@bene/shared-domain';
 
 import { createBetterAuth } from './auth.js';
@@ -20,9 +10,19 @@ import type {
   RequestContext,
   ResetPasswordInput,
   SignupInput,
-} from '@bene/application/auth';
-import { User } from '@bene/core/auth';
-import { mapToDomainUser } from '../data/mappers/auth-mappers.js';
+} from '../../application/index.js';
+import { User } from '@core/index.js';
+import { mapToDomainUser } from '../mappers/auth-mappers.js';
+import {
+  AuthError,
+  WeakPasswordError,
+  UserNotFoundError,
+  UserNotConfirmedError,
+  EmailExistsError,
+  SessionExpiredError,
+  InvalidCredentialsError,
+  NetworkError,
+} from '../../application/index.js';
 
 export class BetterAuthService implements IAuthService {
   private auth: Auth;

@@ -1,10 +1,10 @@
-import { checkIns } from './check_ins.ts';
-import { coachingConversation } from './coaching_conversation.ts';
-import { coachingMessages, coachingMessagesRelations } from './coaching_messages.ts';
+import { checkIns } from './check_ins';
+import { coachingConversation } from './coaching_conversation';
+import { coachingMessages, coachingMessagesRelations } from './coaching_messages';
 
-export * from './check_ins.ts';
-export * from './coaching_conversation.ts';
-export * from './coaching_messages.ts';
+export * from './check_ins';
+export * from './coaching_conversation';
+export * from './coaching_messages';
 
 export const coachSchema = {
   checkIns,

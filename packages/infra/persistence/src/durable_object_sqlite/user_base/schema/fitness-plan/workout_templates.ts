@@ -33,8 +33,10 @@ export const workoutTemplates = sqliteTable(
     userNotes: text('user_notes'),
     coachNotes: text('coach_notes'),
 
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index('workout_templates_plan_id_idx').on(table.planId),

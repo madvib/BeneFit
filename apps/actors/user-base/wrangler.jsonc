@@ -3,21 +3,18 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "durable-object-starter",
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
+  "name": "user-base-script",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-05",
-  "migrations": [
-    {
-      "new_sqlite_classes": ["UserBase"],
-      "tag": "v1",
-    },
+  "compatibility_flags": [
+    "nodejs_compat"
   ],
   "rules": [
     {
       "type": "Text",
       "globs": [
-        "../../packages/infra/persistence/durable_object_sqlite/user_base/**/*.sql",
+        "**/*.sql",
       ],
       "fallthrough": true,
     },
@@ -30,6 +27,14 @@
       },
     ],
   },
+  "migrations": [
+    {
+      "new_sqlite_classes": [
+        "UserBase"
+      ],
+      "tag": "v1",
+    },
+  ],
   "observability": {
     "enabled": true,
   },

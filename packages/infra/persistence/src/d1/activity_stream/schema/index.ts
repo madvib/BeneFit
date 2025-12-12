@@ -1,8 +1,8 @@
-import { activityFeed } from './activity_feed.ts';
-import { activityReactions } from './activity_reactions.ts';
+import { activityFeed } from './activity_feed';
+import { activityReactions } from './activity_reactions';
 
-export * from './activity_feed.ts';
-export * from './activity_reactions.ts';
+export * from './activity_feed';
+export * from './activity_reactions';
 
 export const activity_stream_schema = {
   ...activityFeed,

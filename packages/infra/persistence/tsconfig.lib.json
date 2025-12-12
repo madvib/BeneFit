@@ -5,15 +5,18 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "emitDeclarationOnly": true,
+    "resolveJsonModule": false,
+    "moduleResolution": "bundler",
+    "module": "esnext",
     "types": [
       "node",
-      "../../../types/cloudflare-env.d.ts"
     ]
   },
   "include": [
+    "../../../types/cloudflare-runtime.d.ts",
     "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/migrations/**/*.json",
+    "src/**/migrations/**/*.js"
   ],
   "references": [],
   "exclude": [

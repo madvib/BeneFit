@@ -1,9 +1,9 @@
-import { IUserRepository } from '@bene/application/auth';
 import { Result } from '@bene/shared-domain';
-import { User } from '@bene/core/auth';
+import { User } from '@core/index.js';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
-import { user as userTable } from '../data/schema/schema.js';
+import { user as userTable } from '../../data/schema/schema.js';
 import { eq } from 'drizzle-orm';
+import { IUserRepository } from '../../application/index.js';
 
 export class AuthUserRepository implements IUserRepository {
   private db: DrizzleD1Database;

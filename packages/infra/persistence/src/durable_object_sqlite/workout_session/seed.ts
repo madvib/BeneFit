@@ -21,9 +21,9 @@ const sessions: NewSessionMetadata[] = [
     ],
     configurationJson: { privacy: 'private', capacity: 10 },
     status: 'in_progress',
-    startedAt: now - 3600, // Started 1 hour ago
-    createdAt: now - 3600,
-    updatedAt: now,
+    startedAt: new Date((now - 3600) * 1000), // Started 1 hour ago
+    createdAt: new Date((now - 3600) * 1000),
+    updatedAt: new Date(now * 1000),
   },
   {
     id: 'session_002',
@@ -39,9 +39,9 @@ const sessions: NewSessionMetadata[] = [
     ],
     configurationJson: { privacy: 'public', capacity: 20 },
     status: 'in_progress',
-    startedAt: now - 1800, // Started 30 minutes ago
-    createdAt: now - 1800,
-    updatedAt: now,
+    startedAt: new Date((now - 1800) * 1000), // Started 30 minutes ago
+    createdAt: new Date((now - 1800) * 1000),
+    updatedAt: new Date(now * 1000),
   },
 ];
 
@@ -51,8 +51,8 @@ const participantsData: NewParticipant[] = [
     userId: 'user_001',
     displayName: 'Mike Tyson',
     avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-    joinedAt: now - 3600,
-    lastHeartbeatAt: now - 60, // Last heartbeat 1 minute ago
+    joinedAt: new Date((now - 3600) * 1000),
+    lastHeartbeatAt: new Date((now - 60) * 1000), // Last heartbeat 1 minute ago
     status: 'active',
   },
   {
@@ -60,8 +60,8 @@ const participantsData: NewParticipant[] = [
     userId: 'user_002',
     displayName: 'Jane Doe',
     avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-    joinedAt: now - 3500,
-    lastHeartbeatAt: now - 120, // Last heartbeat 2 minutes ago
+    joinedAt: new Date((now - 3500) * 1000),
+    lastHeartbeatAt: new Date((now - 120) * 1000), // Last heartbeat 2 minutes ago
     status: 'active',
   },
   {
@@ -69,8 +69,8 @@ const participantsData: NewParticipant[] = [
     userId: 'user_003',
     displayName: 'Dave Smith',
     avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dave',
-    joinedAt: now - 1800,
-    lastHeartbeatAt: now - 30, // Last heartbeat 30 seconds ago
+    joinedAt: new Date((now - 1800) * 1000),
+    lastHeartbeatAt: new Date((now - 30) * 1000), // Last heartbeat 30 seconds ago
     status: 'active',
   },
 ];
@@ -86,8 +86,8 @@ const progress: NewActivityProgress[] = [
     currentRep: 5,
     currentWeight: 100,
     status: 'in_progress',
-    startedAt: now - 1800,
-    updatedAt: now - 60,
+    startedAt: new Date((now - 1800) * 1000),
+    updatedAt: new Date((now - 60) * 1000),
   },
   {
     id: 'ap_002',
@@ -98,8 +98,8 @@ const progress: NewActivityProgress[] = [
     currentDistanceMeters: 800,
     currentHeartRate: 155,
     status: 'in_progress',
-    startedAt: now - 1200,
-    updatedAt: now - 120,
+    startedAt: new Date((now - 1200) * 1000),
+    updatedAt: new Date((now - 120) * 1000),
   },
   {
     id: 'ap_003',
@@ -111,8 +111,8 @@ const progress: NewActivityProgress[] = [
     currentRep: 5,
     currentWeight: 95,
     status: 'in_progress',
-    startedAt: now - 1500,
-    updatedAt: now - 90,
+    startedAt: new Date((now - 1500) * 1000),
+    updatedAt: new Date((now - 90) * 1000),
   },
 ];
 
@@ -121,31 +121,31 @@ const chat: NewSessionChat[] = [
     id: 'chat_001',
     participantId: 'part_001',
     message: 'Hey everyone! Ready to crush this leg day?',
-    createdAt: now - 3500,
+    createdAt: new Date((now - 3500) * 1000),
   },
   {
     id: 'chat_002',
     participantId: 'part_002',
     message: 'Absolutely! I brought my pre-workout!',
-    createdAt: now - 3400,
+    createdAt: new Date((now - 3400) * 1000),
   },
   {
     id: 'chat_003',
     participantId: 'part_003',
     message: 'Where are we meeting?',
-    createdAt: now - 1800,
+    createdAt: new Date((now - 1800) * 1000),
   },
   {
     id: 'chat_004',
     participantId: 'part_001',
     message: "In the squat rack area, we'll start with warm-up sets",
-    createdAt: now - 1750,
+    createdAt: new Date((now - 1750) * 1000),
   },
   {
     id: 'chat_005',
     participantId: 'part_003',
     message: 'Sounds good, on my way now',
-    createdAt: now - 1700,
+    createdAt: new Date((now - 1700) * 1000),
   },
 ];
 

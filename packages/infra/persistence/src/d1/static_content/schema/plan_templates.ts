@@ -57,13 +57,13 @@ export const planTemplates = sqliteTable(
     // Preview (small, display-only)
     previewWorkouts: text('preview_workouts', { mode: 'json' }), // WorkoutPreview[]
 
-    createdAt: integer('created_at', { mode: 'number' })
+    createdAt: integer('created_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: integer('updated_at', { mode: 'number' })
+    updatedAt: integer('updated_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
-    publishedAt: integer('published_at', { mode: 'number' }),
+    publishedAt: integer('published_at', { mode: 'timestamp' }),
   },
   (table) => [
     // Indexes for common filters

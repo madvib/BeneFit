@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { coachingConversation } from './coaching_conversation.ts';
+import { coachingConversation } from './coaching_conversation';
 
 export const coachingMessages = sqliteTable(
   'coaching_messages',
@@ -12,7 +12,8 @@ export const coachingMessages = sqliteTable(
     role: text('role', { enum: ['user', 'assistant'] }).notNull(),
     content: text('content').notNull(),
     contextJson: text('context_json', { mode: 'json' }), // nullable - relevant workout data
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index(

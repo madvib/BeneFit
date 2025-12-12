@@ -23,9 +23,10 @@ export const checkIns = sqliteTable(
     status: text('status').notNull(), // 'pending' | 'responded' | 'dismissed'
     
     // Timestamps
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    respondedAt: integer('responded_at', { mode: 'number' }),
-    dismissedAt: integer('dismissed_at', { mode: 'number' }),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+    respondedAt: integer('responded_at', { mode: 'timestamp' }),
+    dismissedAt: integer('dismissed_at', { mode: 'timestamp' }),
   },
   (table) => [
     index('check_ins_conversation_id_idx').on(table.conversationId),

@@ -7,8 +7,8 @@ export const weeklySchedules = sqliteTable(
     id: text('id').primaryKey(),
     planId: text('plan_id').notNull(),
     weekNumber: integer('week_number').notNull(),
-    startDate: integer('start_date', { mode: 'number' }).notNull(),
-    endDate: integer('end_date', { mode: 'number' }).notNull(),
+    startDate: integer('start_date', { mode: 'timestamp' }).notNull(),
+    endDate: integer('end_date', { mode: 'timestamp' }).notNull(),
     focus: text('focus'),
     targetWorkouts: integer('target_workouts').notNull(),
     workoutsCompleted: integer('workouts_completed').default(0),
@@ -17,8 +17,10 @@ export const weeklySchedules = sqliteTable(
     // Full workout structure for this week
     workoutsJson: text('workouts_json', { mode: 'json' }).notNull(), // WorkoutTemplate[]
 
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index('weekly_schedules_plan_id_idx').on(table.planId),

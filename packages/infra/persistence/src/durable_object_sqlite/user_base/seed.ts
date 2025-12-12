@@ -22,10 +22,7 @@ import {
   coachingConversation,
   NewCoachConversation,
 } from './schema/coach/coaching_conversation.js';
-import {
-  coachingMessages,
-  NewCoachMsg,
-} from './schema/coach/coaching_messages.js';
+import { coachingMessages, NewCoachMsg } from './schema/coach/coaching_messages.js';
 import { checkIns, NewCheckIn } from './schema/coach/check_ins.js';
 import {
   connectedServices,
@@ -59,8 +56,8 @@ const profilesData: NewProfile[] = [
     bio: 'Professional boxer turned fitness enthusiast',
     location: 'New York, NY',
     timezone: 'America/New_York',
-    createdAt: now - 86400,
-    updatedAt: now,
+    createdAt: new Date((now - 86400) * 1000),
+    updatedAt: new Date(now * 1000),
   },
   {
     userId: 'user_002',
@@ -69,8 +66,8 @@ const profilesData: NewProfile[] = [
     bio: 'Marathon runner and coach',
     location: 'San Francisco, CA',
     timezone: 'America/Los_Angeles',
-    createdAt: now - 172800,
-    updatedAt: now,
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date(now * 1000),
   },
   {
     userId: 'user_003',
@@ -79,8 +76,8 @@ const profilesData: NewProfile[] = [
     bio: 'Powerlifter and gym enthusiast',
     location: 'Austin, TX',
     timezone: 'America/Chicago',
-    createdAt: now - 259200,
-    updatedAt: now,
+    createdAt: new Date((now - 259200) * 1000),
+    updatedAt: new Date(now * 1000),
   },
 ];
 
@@ -95,7 +92,7 @@ const userStatsData: NewUserStats[] = [
     totalVolumeKg: 12500,
     totalDistanceMeters: 0,
     totalCaloriesBurned: 0,
-    updatedAt: now,
+    updatedAt: new Date(now * 1000),
   },
   {
     userId: 'user_002',
@@ -107,7 +104,7 @@ const userStatsData: NewUserStats[] = [
     totalVolumeKg: 0,
     totalDistanceMeters: 420000, // 420km
     totalCaloriesBurned: 0,
-    updatedAt: now,
+    updatedAt: new Date(now * 1000),
   },
   {
     userId: 'user_003',
@@ -119,7 +116,7 @@ const userStatsData: NewUserStats[] = [
     totalVolumeKg: 18700,
     totalDistanceMeters: 0,
     totalCaloriesBurned: 0,
-    updatedAt: now,
+    updatedAt: new Date(now * 1000),
   },
 ];
 
@@ -130,7 +127,7 @@ const achievementsData: NewAchievement[] = [
     name: 'First Workout',
     description: 'Completed your first workout',
     achievementType: 'first_workout',
-    earnedAt: now - 86400,
+    earnedAt: new Date((now - 86400) * 1000),
     metadataJson: { progress: { current: 1, target: 1 } },
   },
   {
@@ -139,7 +136,7 @@ const achievementsData: NewAchievement[] = [
     name: 'Week Streak',
     description: 'Worked out for 7 consecutive days',
     achievementType: 'streak_7',
-    earnedAt: now - 43200,
+    earnedAt: new Date((now - 43200) * 1000),
     metadataJson: { progress: { current: 7, target: 7 } },
   },
   {
@@ -148,7 +145,7 @@ const achievementsData: NewAchievement[] = [
     name: 'Marathon Master',
     description: 'Completed a marathon',
     achievementType: 'pr_distance',
-    earnedAt: now - 172800,
+    earnedAt: new Date((now - 172800) * 1000),
     metadataJson: { progress: { current: 42195, target: 42195 }, distance: 42195 },
   },
   {
@@ -157,7 +154,7 @@ const achievementsData: NewAchievement[] = [
     name: 'Heavy Lifter',
     description: 'Lifted 1000kg total in a workout',
     achievementType: 'pr_strength',
-    earnedAt: now - 259200,
+    earnedAt: new Date((now - 259200) * 1000),
     metadataJson: { progress: { current: 1000, target: 1000 }, volume: 1000 },
   },
 ];
@@ -170,8 +167,8 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
     planId: 'plan_001',
     workoutTemplateId: 'wt_001',
     workoutType: 'strength',
-    completedAt: now - 1800,
-    recordedAt: now - 1800,
+    completedAt: new Date((now - 1800) * 1000),
+    recordedAt: new Date((now - 1800) * 1000),
     durationSeconds: 1800,
     notes: 'Leg Day Destruction',
     totalVolume: 2450,
@@ -183,7 +180,7 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
       rpeAverage: 8.5,
       exertionScore: 7.8,
     },
-    createdAt: now - 1800,
+    createdAt: new Date((now - 1800) * 1000),
   },
   {
     id: 'cw_002',
@@ -192,8 +189,8 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
     planId: 'plan_002',
     workoutTemplateId: 'wt_002',
     workoutType: 'cardio',
-    completedAt: now - 3600,
-    recordedAt: now - 3600,
+    completedAt: new Date((now - 3600) * 1000),
+    recordedAt: new Date((now - 3600) * 1000),
     durationSeconds: 3600,
     notes: 'Morning Run',
     totalVolume: 0,
@@ -205,7 +202,7 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
       rpeAverage: 7.0,
       exertionScore: 6.5,
     },
-    createdAt: now - 3600,
+    createdAt: new Date((now - 3600) * 1000),
   },
 ];
 
@@ -219,7 +216,7 @@ const workoutActivitiesData: NewWorkoutActivity[] = [
     orderIndex: 0,
     setsJson: [{ reps: 5, weight: 100, rpe: 9, restSeconds: 180 }],
     notes: 'Working up to 110kg PR next week',
-    completedAt: now - 3500,
+    completedAt: new Date((now - 3500) * 1000),
   },
   {
     id: 'wa_002',
@@ -230,7 +227,7 @@ const workoutActivitiesData: NewWorkoutActivity[] = [
     orderIndex: 1,
     setsJson: [{ reps: 6, weight: 80, rpe: 8, restSeconds: 180 }],
     notes: 'Good form, felt strong',
-    completedAt: now - 3000,
+    completedAt: new Date((now - 3000) * 1000),
   },
   {
     id: 'wa_003',
@@ -243,7 +240,7 @@ const workoutActivitiesData: NewWorkoutActivity[] = [
     distanceMeters: 10000,
     heartRateAvg: 155,
     notes: 'Steady pace, felt great',
-    completedAt: now - 7000,
+    completedAt: new Date((now - 7000) * 1000),
   },
 ];
 
@@ -253,26 +250,26 @@ const workoutMetadataData: NewWorkoutMetadata[] = [
     userId: 'user_001',
     teamId: null,
     workoutType: 'strength',
-    completedAt: now - 1800,
+    completedAt: new Date((now - 1800) * 1000),
     durationSeconds: 1800,
     distanceMeters: 0,
     totalVolume: 2450,
-    personalRecords: ["squat_1rm_225"],
+    personalRecords: ['squat_1rm_225'],
     feelingRating: 4,
-    createdAt: now - 1800,
+    createdAt: new Date((now - 1800) * 1000),
   },
   {
     id: 'wm_002',
     userId: 'user_002',
     teamId: 'team_001',
     workoutType: 'cardio',
-    completedAt: now - 3600,
+    completedAt: new Date((now - 3600) * 1000),
     durationSeconds: 3600,
     distanceMeters: 10000,
     totalVolume: 0,
-    personalRecords: ["10k_best_time"],
+    personalRecords: ['10k_best_time'],
     feelingRating: 5,
-    createdAt: now - 3600,
+    createdAt: new Date((now - 3600) * 1000),
   },
 ];
 
@@ -283,7 +280,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
     userId: 'user_002',
     userName: 'Jane Doe',
     reactionType: 'fire',
-    createdAt: now - 1700,
+    createdAt: new Date((now - 1700) * 1000),
   },
   {
     id: 'wr_002',
@@ -291,7 +288,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
     userId: 'user_003',
     userName: 'Dave Smith',
     reactionType: 'strong',
-    createdAt: now - 3500,
+    createdAt: new Date((now - 3500) * 1000),
   },
 ];
 
@@ -307,8 +304,8 @@ const coachingConversationsData: NewCoachConversation[] = [
     totalMessages: 5,
     totalUserMessages: 3,
     totalCoachMessages: 2,
-    lastMessageAt: now - 1800,
-    startedAt: now - 7200,
+    lastMessageAt: new Date((now - 1800) * 1000),
+    startedAt: new Date((now - 7200) * 1000),
   },
   {
     id: 'conv_002',
@@ -321,8 +318,8 @@ const coachingConversationsData: NewCoachConversation[] = [
     totalMessages: 3,
     totalUserMessages: 2,
     totalCoachMessages: 1,
-    lastMessageAt: now - 3600,
-    startedAt: now - 14400,
+    lastMessageAt: new Date((now - 3600) * 1000),
+    startedAt: new Date((now - 14400) * 1000),
   },
 ];
 
@@ -332,7 +329,7 @@ const coachingMessagesData: NewCoachMsg[] = [
     conversationId: 'conv_001',
     role: 'user',
     content: 'How can I safely increase the weight on my squats?',
-    createdAt: now - 7000,
+    createdAt: new Date((now - 7000) * 1000),
   },
   {
     id: 'cm_002',
@@ -340,14 +337,14 @@ const coachingMessagesData: NewCoachMsg[] = [
     role: 'assistant',
     content:
       'Based on your form, I recommend increasing by 2.5kg increments and focusing on the eccentric phase.',
-    createdAt: now - 6800,
+    createdAt: new Date((now - 6800) * 1000),
   },
   {
     id: 'cm_003',
     conversationId: 'conv_002',
     role: 'user',
     content: 'I feel like my endurance could be better. Any tips?',
-    createdAt: now - 14000,
+    createdAt: new Date((now - 14000) * 1000),
   },
 ];
 
@@ -360,8 +357,8 @@ const checkInsData: NewCheckIn[] = [
     question: "Noticed you've been consistent with your training. How are you feeling?",
     userResponse: 'Feeling strong and motivated!',
     status: 'responded',
-    createdAt: now - 3600,
-    respondedAt: now - 3500,
+    createdAt: new Date((now - 3600) * 1000),
+    respondedAt: new Date((now - 3500) * 1000),
   },
   {
     id: 'ci_002',
@@ -371,7 +368,7 @@ const checkInsData: NewCheckIn[] = [
     question: 'Weekly check-in: How did your training go this week?',
     userResponse: null,
     status: 'pending',
-    createdAt: now - 10800,
+    createdAt: new Date((now - 10800) * 1000),
     respondedAt: null,
   },
 ];
@@ -384,9 +381,9 @@ const connectedServicesData: NewConnectedService[] = [
     accessTokenEncrypted: 'encrypted_fake_token',
     refreshTokenEncrypted: 'encrypted_fake_refresh',
     serviceUserId: 'strava_user_001',
-    lastSyncAt: now - 7200,
-    createdAt: now - 86400,
-    updatedAt: now - 7200,
+    lastSyncAt: new Date((now - 7200) * 1000),
+    createdAt: new Date((now - 86400) * 1000),
+    updatedAt: new Date((now - 7200) * 1000),
   },
   {
     id: 'cs_002',
@@ -395,9 +392,9 @@ const connectedServicesData: NewConnectedService[] = [
     accessTokenEncrypted: 'encrypted_fake_token2',
     refreshTokenEncrypted: 'encrypted_fake_refresh2',
     serviceUserId: 'garmin_user_002',
-    lastSyncAt: now - 3600,
-    createdAt: now - 172800,
-    updatedAt: now - 3600,
+    lastSyncAt: new Date((now - 3600) * 1000),
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date((now - 3600) * 1000),
   },
 ];
 
@@ -406,21 +403,21 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
     id: 'isl_001',
     userId: 'user_001',
     serviceType: 'strava',
-    syncStartedAt: now - 7200,
-    syncCompletedAt: now - 7100,
+    syncStartedAt: new Date((now - 7200) * 1000),
+    syncCompletedAt: new Date((now - 7100) * 1000),
     status: 'success',
     workoutsSyncedCount: 2,
-    createdAt: now - 7200,
+    createdAt: new Date((now - 7200) * 1000),
   },
   {
     id: 'isl_002',
     userId: 'user_002',
     serviceType: 'garmin',
-    syncStartedAt: now - 3600,
-    syncCompletedAt: now - 3550,
+    syncStartedAt: new Date((now - 3600) * 1000),
+    syncCompletedAt: new Date((now - 3550) * 1000),
     status: 'success',
     workoutsSyncedCount: 1,
-    createdAt: now - 3600,
+    createdAt: new Date((now - 3600) * 1000),
   },
 ];
 
@@ -439,10 +436,10 @@ const activeFitnessPlansData: NewActiveFitnessPlan[] = [
     status: 'active',
     completedWorkouts: 12,
     totalScheduledWorkouts: 36,
-    startDate: now - 172800,
-    endDate: now + 1209600, // 2 weeks in the future
-    createdAt: now - 172800,
-    updatedAt: now - 3600,
+    startDate: new Date((now - 172800) * 1000),
+    endDate: new Date((now + 1209600) * 1000), // 2 weeks in the future
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date((now - 3600) * 1000),
   },
   {
     id: 'afp_002',
@@ -458,10 +455,10 @@ const activeFitnessPlansData: NewActiveFitnessPlan[] = [
     status: 'active',
     completedWorkouts: 52,
     totalScheduledWorkouts: 144,
-    startDate: now - 259200,
-    endDate: now + 604800, // 1 week in the future
-    createdAt: now - 259200,
-    updatedAt: now - 7200,
+    startDate: new Date((now - 259200) * 1000),
+    endDate: new Date((now + 604800) * 1000), // 1 week in the future
+    createdAt: new Date((now - 259200) * 1000),
+    updatedAt: new Date((now - 7200) * 1000),
   },
 ];
 
@@ -470,8 +467,8 @@ const weeklySchedulesData: NewWeeklySchedule[] = [
     id: 'ws_001',
     planId: 'afp_001',
     weekNumber: 3,
-    startDate: now - 259200, // Beginning of week 3
-    endDate: now - 200800, // End of week 3
+    startDate: new Date((now - 259200) * 1000), // Beginning of week 3
+    endDate: new Date((now - 200800) * 1000), // End of week 3
     focus: 'Leg Strength',
     targetWorkouts: 4,
     workoutsJson: [
@@ -496,15 +493,15 @@ const weeklySchedulesData: NewWeeklySchedule[] = [
         ],
       },
     ],
-    createdAt: now - 259200,
-    updatedAt: now - 259200,
+    createdAt: new Date((now - 259200) * 1000),
+    updatedAt: new Date((now - 259200) * 1000),
   },
   {
     id: 'ws_002',
     planId: 'afp_002',
     weekNumber: 8,
-    startDate: now - 172800, // Beginning of week 8
-    endDate: now - 114400, // End of week 8
+    startDate: new Date((now - 172800) * 1000), // Beginning of week 8
+    endDate: new Date((now - 114400) * 1000), // End of week 8
     focus: 'Long Run Build',
     targetWorkouts: 5,
     workoutsJson: [
@@ -531,8 +528,8 @@ const weeklySchedulesData: NewWeeklySchedule[] = [
         ],
       },
     ],
-    createdAt: now - 172800,
-    updatedAt: now - 172800,
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date((now - 172800) * 1000),
   },
 ];
 
@@ -553,8 +550,8 @@ const workoutTemplatesData: NewWorkoutTemplate[] = [
       { name: 'Squats', sets: 5, reps: 5, weightKg: 100 },
       { name: 'Romanian Deadlifts', sets: 4, reps: 6, weightKg: 80 },
     ],
-    createdAt: now - 518400,
-    updatedAt: now - 518000,
+    createdAt: new Date((now - 518400) * 1000),
+    updatedAt: new Date((now - 518000) * 1000),
   },
   {
     id: 'wt_002',
@@ -573,8 +570,8 @@ const workoutTemplatesData: NewWorkoutTemplate[] = [
       { name: 'Intervals', details: '6 x 800m @ 5K pace', type: 'intervals' },
       { name: 'Cool-down', duration: 15, type: 'easy_jog' },
     ],
-    createdAt: now - 172800,
-    updatedAt: now - 172400,
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date((now - 172400) * 1000),
   },
 ];
 
@@ -643,10 +640,14 @@ export async function seedUserBase(storage: DurableObjectStorage) {
     console.log(`  - Inserting ${connectedServicesData.length} connected services...`);
     await db.insert(connectedServices).values(connectedServicesData);
 
-    console.log(`  - Inserting ${integrationSyncLogsData.length} integration sync logs...`);
+    console.log(
+      `  - Inserting ${integrationSyncLogsData.length} integration sync logs...`,
+    );
     await db.insert(integrationSyncLog).values(integrationSyncLogsData);
 
-    console.log(`  - Inserting ${activeFitnessPlansData.length} active fitness plans...`);
+    console.log(
+      `  - Inserting ${activeFitnessPlansData.length} active fitness plans...`,
+    );
     await db.insert(activeFitnessPlan).values(activeFitnessPlansData);
 
     console.log(`  - Inserting ${weeklySchedulesData.length} weekly schedules...`);

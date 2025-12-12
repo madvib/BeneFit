@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { participants } from './participants.ts';
+import { participants } from './participants';
 
 export const sessionChat = sqliteTable('session_chat', {
   id: text('id').primaryKey(),
@@ -8,7 +8,7 @@ export const sessionChat = sqliteTable('session_chat', {
     .references(() => participants.id)
     .notNull(),
   message: text('message').notNull(),
-  createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
 });
 
 export const sessionChatRelations = relations(sessionChat, ({ one }) => ({

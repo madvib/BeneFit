@@ -1,5 +1,5 @@
-import { User } from '@bene/core/index.js';
-import { user } from '../schema/schema.js';
+import { User } from '@core/index.js';
+import { user } from '../../data/schema/schema.js';
 
 import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 

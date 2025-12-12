@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { userStats } from './user_stats.ts';
-import { achievements } from './achievements.ts';
+import { userStats } from './user_stats';
+import { achievements } from './achievements';
 
 export const profile = sqliteTable('profile', {
   userId: text('user_id').primaryKey().notNull(),
@@ -18,13 +18,13 @@ export const profile = sqliteTable('profile', {
   trainingConstraintsJson: text('training_constraints_json', { mode: 'json' }),
   experienceProfileJson: text('experience_profile_json', { mode: 'json' }),
 
-  createdAt: integer('created_at', { mode: 'number' })
+  createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: integer('updated_at', { mode: 'number' })
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
-  lastActiveAt: integer('last_active_at', { mode: 'number' })
+  lastActiveAt: integer('last_active_at', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
 });

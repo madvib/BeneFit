@@ -1,14 +1,14 @@
-import { userProfileSchema } from './user-profile/index.ts';
-import { coachSchema } from './coach/index.ts';
-import { workoutsSchema } from './workouts/index.ts';
-import { integrationsSchema } from './integrations/index.ts';
-import { fitnessPlanSchema } from './fitness-plan/index.ts';
+import { userProfileSchema } from './user-profile/index';
+import { coachSchema } from './coach/index';
+import { workoutsSchema } from './workouts/index';
+import { integrationsSchema } from './integrations/index';
+import { fitnessPlanSchema } from './fitness-plan/index';
 
-export * from './user-profile/index.ts';
-export * from './coach/index.ts';
-export * from './workouts/index.ts';
-export * from './integrations/index.ts';
-export * from './fitness-plan/index.ts';
+export * from './user-profile/index';
+export * from './coach/index';
+export * from './workouts/index';
+export * from './integrations/index';
+export * from './fitness-plan/index';
 
 export const user_do_schema = {
   ...userProfileSchema,

@@ -13,7 +13,7 @@ This is a monorepo managed with pnpm and Turborepo. It contains the following:
 ## Tech Stack
 
 - **Package Manager**: pnpm
-- **Build System**: Turborepo
+- **Build System**: NX
 - **Framework (bene-web)**: Next.js
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS

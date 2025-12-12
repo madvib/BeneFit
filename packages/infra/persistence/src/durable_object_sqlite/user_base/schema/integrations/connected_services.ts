@@ -23,7 +23,7 @@ export const connectedServices = sqliteTable(
     // OAuth credentials (encrypted)
     accessTokenEncrypted: text('access_token_encrypted').notNull(),
     refreshTokenEncrypted: text('refresh_token_encrypted'),
-    tokenExpiresAt: integer('token_expires_at', { mode: 'number' }),
+    tokenExpiresAt: integer('token_expires_at', { mode: 'timestamp' }),
     scope: text('scope'), // OAuth scope
 
     // Service info
@@ -38,18 +38,20 @@ export const connectedServices = sqliteTable(
     isActive: integer('is_active', { mode: 'boolean' }).default(true),
     isPaused: integer('is_paused', { mode: 'boolean' }).default(false),
 
-    // LEGACY FIELDS (from integrations.ts) - Consider adding if needed:
+    // LEGACY FIELDS (from integrations) - Consider adding if needed:
     // credentialsEncrypted: text('credentials_encrypted') - All OAuth credentials as single encrypted JSON
     //   (currently split into accessTokenEncrypted, refreshTokenEncrypted, tokenExpiresAt, scope)
     //   This approach may be simpler for credential rotation
 
     // Timestamps
-    connectedAt: integer('connected_at', { mode: 'number' }).default(
+    connectedAt: integer('connected_at', { mode: 'timestamp' }).default(
       sql`(unixepoch())`,
     ),
-    lastSyncAt: integer('last_sync_at', { mode: 'number' }),
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    lastSyncAt: integer('last_sync_at', { mode: 'timestamp' }),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index('connected_services_user_id_service_type_idx').on(

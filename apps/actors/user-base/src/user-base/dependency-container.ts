@@ -105,9 +105,11 @@ export class DependencyContainer {
       'completeWorkoutUseCase',
       () =>
         new CompleteWorkoutUseCase(
+          this.resolve('workoutSessionRepository'),
           this.resolve('completedWorkoutRepository'),
           this.resolve('userProfileRepository'),
           this.resolve('eventBus'),
+
         ),
     );
 

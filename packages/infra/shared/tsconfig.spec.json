@@ -9,7 +9,6 @@
       "node",
       "vitest"
     ],
-    "importHelpers": true
   },
   "include": [
     "vite.config.ts",

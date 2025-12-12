@@ -8,8 +8,8 @@ export const participants = sqliteTable(
     userId: text('user_id').notNull(),
     displayName: text('display_name').notNull(),
     avatarUrl: text('avatar_url'),
-    joinedAt: integer('joined_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    lastHeartbeatAt: integer('last_heartbeat_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    joinedAt: integer('joined_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+    lastHeartbeatAt: integer('last_heartbeat_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
     status: text('status', { enum: ['active', 'disconnected'] }).default('active'),
   },
   (table) => [

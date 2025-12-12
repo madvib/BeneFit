@@ -1,16 +1,10 @@
-/// <reference types='vitest' />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/packages/infra/persistence',
-  plugins: [],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [],
-  // },
+  cacheDir: '../node_modules/.vite/database',
   test: {
-    name: '@bene/persistence',
+    name: 'database',
     watch: false,
     globals: true,
     environment: 'node',

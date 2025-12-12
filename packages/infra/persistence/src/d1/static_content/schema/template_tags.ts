@@ -1,6 +1,6 @@
 import { sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
-import { planTemplates } from './plan_templates.ts';
+import { planTemplates } from './plan_templates';
 
 export const templateTags = sqliteTable(
   'template_tags',

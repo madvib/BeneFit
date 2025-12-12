@@ -1,10 +1,10 @@
-import { profile, profileRelations } from './profile.ts';
-import { userStats, userStatsRelations } from './user_stats.ts';
-import { achievements, achievementsRelations } from './achievements.ts';
+import { profile, profileRelations } from './profile';
+import { userStats, userStatsRelations } from './user_stats';
+import { achievements, achievementsRelations } from './achievements';
 
-export * from './profile.ts';
-export * from './user_stats.ts';
-export * from './achievements.ts';
+export * from './profile';
+export * from './user_stats';
+export * from './achievements';
 
 export const userProfileSchema = {
   profile,

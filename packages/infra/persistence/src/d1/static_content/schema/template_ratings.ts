@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { planTemplates } from './plan_templates.js';
+import { planTemplates } from './plan_templates';
 
 export const templateRatings = sqliteTable(
   'template_ratings',
@@ -10,7 +10,8 @@ export const templateRatings = sqliteTable(
     userId: text('user_id').notNull(),
     rating: integer('rating').notNull(), // 1-5
     reviewText: text('review_text'),
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
     index('template_ratings_template_id_idx').on(table.templateId),

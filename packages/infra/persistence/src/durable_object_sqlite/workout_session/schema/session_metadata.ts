@@ -33,15 +33,15 @@ export const sessionMetadata = sqliteTable(
     activityFeedJson: text('activity_feed_json', { mode: 'json' }), // SessionFeedItem[]
     
     // Timing
-    startedAt: integer('started_at', { mode: 'number' }),
-    pausedAt: integer('paused_at', { mode: 'number' }),
-    resumedAt: integer('resumed_at', { mode: 'number' }),
-    completedAt: integer('completed_at', { mode: 'number' }),
-    abandonedAt: integer('abandoned_at', { mode: 'number' }),
+    startedAt: integer('started_at', { mode: 'timestamp_ms' }),
+    pausedAt: integer('paused_at', { mode: 'timestamp_ms' }),
+    resumedAt: integer('resumed_at', { mode: 'timestamp_ms' }),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+    abandonedAt: integer('abandoned_at', { mode: 'timestamp_ms' }),
     totalPausedSeconds: integer('total_paused_seconds').default(0),
 
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).default(sql`(unixepoch())`),
   }
 );
 

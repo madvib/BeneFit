@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { activityReactions } from './activity_reactions.ts';
+import { activityReactions } from './activity_reactions';
 
 export const activityFeed = sqliteTable(
   'activity_feed',
@@ -12,7 +12,7 @@ export const activityFeed = sqliteTable(
     activityType: text('activity_type', { enum: ['workout_completed', 'pr_achieved', 'streak_milestone', 'plan_completed', 'team_joined'] }),
     contentJson: text('content_json', { mode: 'json' }), // json
     visibility: text('visibility', { enum: ['public', 'team', 'private'] }),
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
   },
   (table) => [
     index('activity_feed_owner_id_created_at_idx').on(table.ownerId, table.createdAt),

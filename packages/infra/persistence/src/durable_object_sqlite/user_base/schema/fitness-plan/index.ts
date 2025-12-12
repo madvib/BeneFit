@@ -1,10 +1,10 @@
-import { weeklySchedules } from './weekly_schedules.ts';
-import { workoutTemplates } from './workout_templates.ts';
-import { activeFitnessPlan } from './active_workout_plan.ts';
+import { weeklySchedules } from './weekly_schedules';
+import { workoutTemplates } from './workout_templates';
+import { activeFitnessPlan } from './active_workout_plan';
 
-export * from './weekly_schedules.ts';
-export * from './workout_templates.ts';
-export * from './active_workout_plan.ts';
+export * from './weekly_schedules';
+export * from './workout_templates';
+export * from './active_workout_plan';
 
 export const fitnessPlanSchema = {
   weeklySchedules,

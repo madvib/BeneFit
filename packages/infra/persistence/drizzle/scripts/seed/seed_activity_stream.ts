@@ -1,8 +1,6 @@
-import { D1Helper } from "@nerdfolio/drizzle-d1-helpers";
-import { activityFeed, NewActivityFeedItem } from "./schema/activity_feed.js";
-import { activityReactions, NewActivityReaction } from "./schema/activity_reactions.js";
-import { drizzle } from "drizzle-orm/d1";
-
+import { activityFeed, NewActivityFeedItem } from '../../../src/d1/activity_stream/schema/activity_feed.js';
+import { activityReactions, NewActivityReaction } from '../../../src/d1/activity_stream/schema/activity_reactions.js';
+import { useLocalD1 } from '../../helpers/get-d1-helper.ts';
 
 const now = Math.floor(Date.now() / 1000);
 // Use your schema types for type safety
@@ -13,9 +11,13 @@ const feedItems: NewActivityFeedItem[] = [
     creatorId: 'user_001',
     teamId: null,
     activityType: 'workout_completed',
-    contentJson: JSON.stringify({ title: "Leg Day Destruction", duration: 3600, calories: 450 }),
+    contentJson: JSON.stringify({
+      title: 'Leg Day Destruction',
+      duration: 3600,
+      calories: 450,
+    }),
     visibility: 'public',
-    createdAt: Date.now(),
+    createdAt: new Date(), // Use Date object instead of number
   },
   {
     id: 'feed_002',
@@ -25,7 +27,7 @@ const feedItems: NewActivityFeedItem[] = [
     activityType: 'streak_milestone',
     contentJson: JSON.stringify({ days: 30 }),
     visibility: 'team',
-    createdAt: now + 1000,
+    createdAt: new Date((now + 1000) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 'feed_003',
@@ -33,9 +35,9 @@ const feedItems: NewActivityFeedItem[] = [
     creatorId: 'user_003',
     teamId: null,
     activityType: 'pr_achieved',
-    contentJson: JSON.stringify({ exercise: "Bench Press", weight: 100, unit: "kg" }),
+    contentJson: JSON.stringify({ exercise: 'Bench Press', weight: 100, unit: 'kg' }),
     visibility: 'public',
-    createdAt: now + 2000,
+    createdAt: new Date((now + 2000) * 1000), // Convert Unix timestamp to Date
   },
 ];
 
@@ -45,48 +47,40 @@ const reactions: NewActivityReaction[] = [
     feedItemId: 'feed_001',
     userId: 'user_003',
     emoji: '🔥',
-    createdAt: now + 100,
+    createdAt: new Date((now + 100) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 'react_002',
     feedItemId: 'feed_001',
     userId: 'user_002',
     emoji: '👏',
-    createdAt: now + 500,
+    createdAt: new Date((now + 500) * 1000), // Convert Unix timestamp to Date
   },
 ];
-
 
 /**
  * Seeds the Activity Stream database using Drizzle ORM and D1Helper.
  */
 export async function seedActivityStream() {
   console.log('🌱 Seeding Activity Stream database with Drizzle ORM...');
-  
-  // Use D1Helper to get the database binding
-  const d1Helper = D1Helper.get('DB_ACTIVITY_STREAM');
 
   try {
     // Execute the seeding logic using the D1 binding
-    await d1Helper.useLocalD1(async ({$client: rawD1}) => {
-      // Initialize the type-safe Drizzle client
-      const db = drizzle(rawD1); 
-
+    await useLocalD1('DB_ACTIVITY_STREAM', async (db) => {
       console.log('  - Clearing existing data...');
       // Use Drizzle ORM for clear operations
       await db.delete(activityReactions);
       await db.delete(activityFeed);
 
       // --- 2. Insert Data ---
-      
-      console.log(`  - Inserting ${feedItems.length} activity feed items...`);
+
+      console.log(`  - Inserting ${ feedItems.length } activity feed items...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityFeed).values(feedItems);
 
-      console.log(`  - Inserting ${reactions.length} reactions...`);
+      console.log(`  - Inserting ${ reactions.length } reactions...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityReactions).values(reactions);
-
     });
 
     console.log('✅ Activity Stream database seeded successfully');
@@ -97,7 +91,7 @@ export async function seedActivityStream() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${ process.argv[1] }`) {
   seedActivityStream().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

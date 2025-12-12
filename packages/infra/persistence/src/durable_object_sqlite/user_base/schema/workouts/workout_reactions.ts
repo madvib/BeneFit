@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { completedWorkouts } from './completed_workouts.ts';
+import { completedWorkouts } from './completed_workouts';
 
 export const workoutReactions = sqliteTable(
   'workout_reactions',
@@ -10,7 +10,7 @@ export const workoutReactions = sqliteTable(
     userId: text('user_id').notNull(),
     userName: text('user_name').notNull(),
     reactionType: text('reaction_type', { enum: ['fire', 'strong', 'clap', 'heart', 'smile'] }).notNull(),
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
   },
   (table) => [
     index('workout_reactions_workout_id_idx').on(table.workoutId),

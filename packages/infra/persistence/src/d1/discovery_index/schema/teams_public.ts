@@ -1,7 +1,7 @@
 
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
-import { usersPublic } from "./users_public.ts";
+import { usersPublic } from "./users_public";
 
 export const teamsPublic = sqliteTable(
   'teams',
@@ -13,8 +13,10 @@ export const teamsPublic = sqliteTable(
     isPublic: integer('is_public', { mode: 'boolean' }).default(false),
     inviteCode: text('invite_code').unique(),
     memberCount: integer('member_count').default(1),
-    createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-    updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
   },
   (table) => [
  index('teams_created_by_user_idx').on(table.createdByUserId),

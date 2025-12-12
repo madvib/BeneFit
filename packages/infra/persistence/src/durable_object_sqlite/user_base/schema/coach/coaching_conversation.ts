@@ -18,11 +18,12 @@ export const coachingConversation = sqliteTable('coaching_conversation', {
   pendingCheckIns: integer('pending_check_ins').default(0),
 
   // Timestamps
-  startedAt: integer('started_at', { mode: 'number' }).default(sql`(unixepoch())`),
-  lastMessageAt: integer('last_message_at', { mode: 'number' }).default(
+  startedAt: integer('started_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+  lastMessageAt: integer('last_message_at', { mode: 'timestamp' }).default(
     sql`(unixepoch())`,
   ),
-  lastContextUpdateAt: integer('last_context_update_at', { mode: 'number' }),
+  lastContextUpdateAt: integer('last_context_update_at', { mode: 'timestamp' }),
 
   // Note: Messages are in separate coaching_messages table
   // Note: Check-ins are in separate check_ins table

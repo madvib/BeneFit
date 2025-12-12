@@ -40,13 +40,13 @@
       "path": "./packages/infra/coach"
     },
     {
+      "path": "./packages/infra/shared"
+    },
+    {
       "path": "./packages/auth"
     },
     {
       "path": "./packages/blog"
-    },
-    {
-      "path": "./packages/infra/shared"
     }
   ]
 }

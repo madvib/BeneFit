@@ -27,19 +27,21 @@ export const activeFitnessPlan = sqliteTable('active_workout_plan', {
   totalScheduledWorkouts: integer('total_scheduled_workouts'),
 
   // Dates
-  startDate: integer('start_date', { mode: 'number' }).notNull(),
-  endDate: integer('end_date', { mode: 'number' }),
+  startDate: integer('start_date', { mode: 'timestamp' }).notNull(),
+  endDate: integer('end_date', { mode: 'timestamp' }),
 
   // Legacy: full plan structure (consider deprecating in favor of weekly_schedules table)
   weeksJson: text('weeks_json', { mode: 'json' }), // full plan structure - now nullable
 
   // Lifecycle timestamps
-  startedAt: integer('started_at', { mode: 'number' }), // When actually started (vs created)
-  completedAt: integer('completed_at', { mode: 'number' }),
-  abandonedAt: integer('abandoned_at', { mode: 'number' }),
+  startedAt: integer('started_at', { mode: 'timestamp' }), // When actually started (vs created)
+  completedAt: integer('completed_at', { mode: 'timestamp' }),
+  abandonedAt: integer('abandoned_at', { mode: 'timestamp' }),
 
-  createdAt: integer('created_at', { mode: 'number' }).default(sql`(unixepoch())`),
-  updatedAt: integer('updated_at', { mode: 'number' }).default(sql`(unixepoch())`),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
+    sql`(unixepoch())`),
 });
 
 export type ActiveFitnessPlan = typeof activeFitnessPlan.$inferSelect;

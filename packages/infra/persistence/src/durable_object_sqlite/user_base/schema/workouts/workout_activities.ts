@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { completedWorkouts } from './completed_workouts.ts';
+import { completedWorkouts } from './completed_workouts';
 
 export const workoutActivities = sqliteTable(
   'workout_activities',
@@ -20,7 +20,7 @@ export const workoutActivities = sqliteTable(
     setsJson: text('sets_json', { mode: 'json' }), // nullable - [{reps, weight, rest_seconds}]
 
     // Cardio-specific
-    durationSeconds: integer('duration_seconds'), // nullable
+    durationSeconds: integer('duration_ms'), // nullable
     distanceMeters: integer('distance_meters'), // nullable
     paceAvg: real('pace_avg'), // nullable
     heartRateAvg: integer('heart_rate_avg'), // nullable
@@ -29,7 +29,7 @@ export const workoutActivities = sqliteTable(
     holdDurationSeconds: integer('hold_duration_seconds'), // nullable
 
     notes: text('notes'),
-    completedAt: integer('completed_at', { mode: 'number' }).default(
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }).default(
       sql`(unixepoch())`,
     ),
   },

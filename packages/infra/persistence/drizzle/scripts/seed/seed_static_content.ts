@@ -1,8 +1,7 @@
-import { D1Helper } from '@nerdfolio/drizzle-d1-helpers';
-import { planTemplates, NewPlanTemplate } from './schema/plan_templates.js';
-import { templateRatings, NewTemplateRating } from './schema/template_ratings.js';
-import { templateTags, NewTemplateTag } from './schema/template_tags.js';
-import { drizzle } from 'drizzle-orm/d1';
+import { planTemplates, NewPlanTemplate } from '../../../src/d1/static_content/schema/plan_templates.js';
+import { templateRatings, NewTemplateRating } from '../../../src/d1/static_content/schema/template_ratings.js';
+import { templateTags, NewTemplateTag } from '../../../src/d1/static_content/schema/template_tags.js';
+import { useLocalD1 } from '../../helpers/get-d1-helper.ts';
 
 const now = Math.floor(Date.now() / 1000);
 
@@ -34,8 +33,9 @@ const plans: NewPlanTemplate[] = [
     ratingCount: 10,
     usageCount: 100,
     version: 1,
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date(now * 1000),
+    updatedAt: new Date(now * 1000),
+    publishedAt: null,
   },
   {
     id: 'plan_002',
@@ -62,8 +62,9 @@ const plans: NewPlanTemplate[] = [
     ratingCount: 8,
     usageCount: 85,
     version: 1,
-    createdAt: now + 1000,
-    updatedAt: now + 1000,
+    createdAt: new Date((now + 1000) * 1000),
+    updatedAt: new Date((now + 1000) * 1000),
+    publishedAt: null,
   },
 ];
 
@@ -74,7 +75,7 @@ const ratings: NewTemplateRating[] = [
     userId: 'user_002',
     rating: 5,
     reviewText: 'Great for beginners! Really helped me get started with running.',
-    createdAt: now,
+    createdAt: new Date(now * 1000),
   },
   {
     id: 'rating_002',
@@ -82,7 +83,7 @@ const ratings: NewTemplateRating[] = [
     userId: 'user_003',
     rating: 5,
     reviewText: 'The classic! Builds serious strength if you stick with it.',
-    createdAt: now + 500,
+    createdAt: new Date((now + 500) * 1000),
   },
 ];
 
@@ -100,13 +101,13 @@ export async function seedStaticContent() {
   console.log('🌱 Seeding Static Content database with Drizzle ORM...');
 
   // Use D1Helper to get the database binding
-  const d1Helper = D1Helper.get('DB_STATIC_CONTENT');
+  // const d1Helper = getD1Helper('DB_ACTIVITY_STREAM');
 
   try {
     // Execute the seeding logic using the D1 binding
-    await d1Helper.useLocalD1(async ({ $client: rawD1 }) => {
+    await useLocalD1('DB_STATIC_CONTENT', async (db) => {
       // Initialize the type-safe Drizzle client
-      const db = drizzle(rawD1);
+      // const db = drizzle(rawD1);
 
       console.log('  - Clearing existing data...');
       // Use Drizzle ORM for clear operations
@@ -116,15 +117,15 @@ export async function seedStaticContent() {
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${plans.length} plan templates...`);
+      console.log(`  - Inserting ${ plans.length } plan templates...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(planTemplates).values(plans);
 
-      console.log(`  - Inserting ${ratings.length} template ratings...`);
+      console.log(`  - Inserting ${ ratings.length } template ratings...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(templateRatings).values(ratings);
 
-      console.log(`  - Inserting ${tags.length} template tags...`);
+      console.log(`  - Inserting ${ tags.length } template tags...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(templateTags).values(tags);
     });
@@ -137,7 +138,7 @@ export async function seedStaticContent() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${ process.argv[1] }`) {
   seedStaticContent().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

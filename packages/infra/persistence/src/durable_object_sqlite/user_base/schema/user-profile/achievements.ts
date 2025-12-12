@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { profile } from './profile.ts';
+import { profile } from './profile';
 
 export const achievements = sqliteTable(
   'achievements',
@@ -23,7 +23,7 @@ export const achievements = sqliteTable(
         'plan_completed',
       ],
     }).notNull(),
-    earnedAt: integer('earned_at', { mode: 'number' })
+    earnedAt: integer('earned_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),
     metadataJson: text('metadata_json', { mode: 'json' }), // achievement-specific data
