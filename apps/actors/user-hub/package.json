@@ -1,0 +1,19 @@
+{
+  "name": "@bene/user-hub",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/training-application": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
+    "@bene/persistence": "workspace:*",
+    "@bene/coach-infra": "workspace:*",
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*",
+    "@bene/integrations-infra": "workspace:*",
+    "agents": "0.2.32",
+    "drizzle-orm": "catalog:"
+  }
+}

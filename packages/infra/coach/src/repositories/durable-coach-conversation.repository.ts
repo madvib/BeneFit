@@ -4,13 +4,13 @@ import type {
   CoachConversation,
   CoachConversationRepository,
 } from '@bene/coach-domain';
-import type { coachSchema, DOClient } from '@bene/persistence';
+import type { coach_schema, DOClient } from '@bene/persistence';
 import { coachingConversation } from '@bene/persistence';
 import { toDomain, toDatabase } from '../mappers/coach-conversation.mapper.js';
 import { EntityNotFoundError, QueryError, SaveError } from '@bene/shared-infra';
 
 export class DurableCoachConversationRepository implements CoachConversationRepository {
-  constructor(private db: DOClient<typeof coachSchema>) {}
+  constructor(private db: DOClient<typeof coach_schema>) { }
   findById(id: string): Promise<Result<CoachConversation>> {
     throw new Error('Method not implemented.');
   }

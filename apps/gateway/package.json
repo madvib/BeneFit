@@ -1,0 +1,9 @@
+{
+  "name": "@bene/gateway",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "hono": "^4.10.8",
+    "@bene/user-hub": "workspace:*"
+  }
+}

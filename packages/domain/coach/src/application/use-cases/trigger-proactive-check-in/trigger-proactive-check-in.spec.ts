@@ -2,9 +2,9 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared-domain';
 import { CoachConversation } from '@core/index.js';
 import { TriggerProactiveCheckInUseCase } from './trigger-proactive-check-in.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../services/coach-context-builder.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder } from '../../ports/coach-context-builder.js';
+import { AICoachService } from '../../ports/ai-coach-service.js';
 import { EventBus } from '@bene/shared-domain';
 
 // Mock repositories and services

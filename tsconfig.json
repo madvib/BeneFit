@@ -28,7 +28,7 @@
       "path": "./packages/domain/coach"
     },
     {
-      "path": "./packages/infra/persistence"
+      "path": "./packages/persistence"
     },
     {
       "path": "./packages/infra/training"

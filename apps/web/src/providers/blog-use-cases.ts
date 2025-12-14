@@ -1,9 +1,9 @@
-import { MockBlogRepository } from '@bene/infrastructure/blog';
+import { MockBlogRepository } from '@bene/blog';
 import {
   GetAllBlogPostsUseCase,
   GetBlogCategoriesUseCase,
   GetBlogPostByIdUseCase,
-} from '@bene/application/blog';
+} from '@bene/blog';
 
 // Create repository instance
 const blogRepository = new MockBlogRepository();

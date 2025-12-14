@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@bene/shared-domain": "workspace:*",
+    "@bene/auth": "workspace:*",
     "@bene/utils": "workspace:*",
     "@opennextjs/cloudflare": "^1.11.0",
     "class-variance-authority": "^0.7.1",

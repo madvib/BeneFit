@@ -1,9 +1,7 @@
 import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../services/coach-context-builder.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
-
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '../../services/index.js';
 export interface SendMessageToCoachRequest {
   userId: string;
   message: string;
@@ -20,15 +18,16 @@ export interface SendMessageToCoachResponse {
   suggestedFollowUps?: string[];
 }
 
-export class SendMessageToCoachUseCase
-  implements UseCase<SendMessageToCoachRequest, SendMessageToCoachResponse>
-{
+export class SendMessageToCoachUseCase implements UseCase<
+  SendMessageToCoachRequest,
+  SendMessageToCoachResponse
+> {
   constructor(
     private conversationRepository: CoachConversationRepository,
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: SendMessageToCoachRequest,
@@ -83,7 +82,7 @@ export class SendMessageToCoachUseCase
 
     if (aiResponseResult.isFailure) {
       const error = aiResponseResult.error;
-      return Result.fail(new Error(`Coach unavailable: ${error}`));
+      return Result.fail(new Error(`Coach unavailable: ${ error }`));
     }
 
     const aiResponse = aiResponseResult.value;

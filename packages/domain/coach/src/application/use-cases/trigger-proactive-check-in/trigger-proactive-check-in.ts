@@ -1,15 +1,13 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase, EventBus } from '@bene/shared-domain';
+import { Injury } from '@bene/training-core';
 import {
   CoachConversationCommands,
   createCoachConversation,
   createCheckIn,
   CheckInTrigger,
 } from '@core/index.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../services/coach-context-builder.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
-import { EventBus } from '@bene/shared-domain';
-import { Injury } from '@bene/training-core';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '../../services/index.js';
 
 export interface TriggerProactiveCheckInRequest {
   userId: string;
@@ -21,15 +19,16 @@ export interface TriggerProactiveCheckInResponse {
   triggeredBy: string;
 }
 
-export class TriggerProactiveCheckInUseCase
-  implements UseCase<TriggerProactiveCheckInRequest, TriggerProactiveCheckInResponse>
-{
+export class TriggerProactiveCheckInUseCase implements UseCase<
+  TriggerProactiveCheckInRequest,
+  TriggerProactiveCheckInResponse
+> {
   constructor(
     private conversationRepository: CoachConversationRepository,
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: TriggerProactiveCheckInRequest,

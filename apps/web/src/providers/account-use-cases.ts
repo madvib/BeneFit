@@ -1,7 +1,7 @@
 import {
   GetUserProfileUseCase,
   UpdateUserProfileUseCase,
-} from '@bene/application/auth';
+} from '@bene/auth';
 import { authUserRepository } from './repositories.js';
 
 // Instantiate account use cases as constants

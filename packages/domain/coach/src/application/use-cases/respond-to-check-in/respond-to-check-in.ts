@@ -1,8 +1,7 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
-import { EventBus } from '@bene/shared-domain';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { AICoachService } from '../../services/index.js';
 
 export interface RespondToCheckInRequest {
   userId: string;
@@ -19,14 +18,15 @@ export interface RespondToCheckInResponse {
   }>;
 }
 
-export class RespondToCheckInUseCase
-  implements UseCase<RespondToCheckInRequest, RespondToCheckInResponse>
-{
+export class RespondToCheckInUseCase implements UseCase<
+  RespondToCheckInRequest,
+  RespondToCheckInResponse
+> {
   constructor(
     private conversationRepository: CoachConversationRepository,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: RespondToCheckInRequest,
@@ -111,7 +111,7 @@ export class RespondToCheckInUseCase
   ): Promise<void> {
     // Similar to SendMessageToCoachUseCase.applyCoachActions
     await this.eventBus.publish({
-      type: `Coach${action.type.charAt(0).toUpperCase() + action.type.slice(1)}`,
+      type: `Coach${ action.type.charAt(0).toUpperCase() + action.type.slice(1) }`,
       userId,
       details: action.details,
       timestamp: new Date(),

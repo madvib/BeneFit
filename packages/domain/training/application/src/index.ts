@@ -37,17 +37,6 @@ export type {
   GetUpcomingWorkoutsResponse,
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 
-// Repository
-export type { FitnessPlanRepository } from './repositories/fitness-plan-repository.js';
-export type { PlanTemplateRepository } from './repositories/plan-template-repository.js';
-
-// Services
-export type {
-  AdjustPlanInput,
-  AIPlanGenerator,
-  GeneratePlanInput,
-} from './services/ai-plan-generator.js';
-
 // Profile module exports
 
 // Use cases
@@ -97,8 +86,16 @@ export type {
 export * from './repositories/completed-workout-repository.js';
 export type { UserProfileRepository } from './repositories/user-profile-repository.js';
 export * from './repositories/workout-session-repository.js';
+
 export * from './use-cases/add-workout-reaction/add-workout-reaction.js';
 export * from './use-cases/complete-workout/complete-workout.js';
 export * from './use-cases/get-workout-history/get-workout-history.js';
 export * from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
 export * from './use-cases/start-workout/start-workout.js';
+
+// Repository
+export type { FitnessPlanRepository } from './repositories/fitness-plan-repository.js';
+export type { PlanTemplateRepository } from './repositories/plan-template-repository.js';
+
+// Services
+export * from './services/index.js';  

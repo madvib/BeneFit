@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./validate": "./src/validate/index.ts"
+    ".": "./src/index.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*"
+  },
   "nx": {
     "tags": [
-      "layer:shared"
+      "scope:shared"
     ]
   }
 }

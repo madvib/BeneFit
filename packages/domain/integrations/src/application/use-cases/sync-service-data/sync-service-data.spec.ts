@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
 import { Result } from '@bene/shared-domain';
 import { ConnectedService } from '../../../core/index.js';
 import { SyncServiceDataUseCase } from './sync-service-data.js';
-import { IntegrationClient } from '../../services/integration-client.js';
+import { IntegrationClient } from '../../ports/integration-client.js';
 import { EventBus } from '@bene/shared-domain';
 
 // Mock repositories and services

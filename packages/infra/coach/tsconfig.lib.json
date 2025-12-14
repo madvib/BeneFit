@@ -10,7 +10,7 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
   ],
   "references": [
     {
@@ -26,7 +26,7 @@
       "path": "../../domain/shared/tsconfig.lib.json"
     },
     {
-      "path": "../persistence/tsconfig.lib.json"
+      "path": "../../persistence/tsconfig.lib.json"
     },
     {
       "path": "../../domain/coach/tsconfig.lib.json"

@@ -1,0 +1,9 @@
+{
+	"$schema": "../../../node_modules/wrangler/config-schema.json",
+	"name": "integrations-service",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-12-13",
+	"observability": {
+		"enabled": true,
+	},
+}

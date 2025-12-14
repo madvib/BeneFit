@@ -1,7 +1,7 @@
 import { Result, UseCase } from '@bene/shared-domain';
 
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
-import { IntegrationClient } from '../../services/integration-client.js';
+import { ConnectedServiceRepository } from '../../ports/connected-service-repository.js';
+import { IntegrationClient } from '../../ports/integration-client.js';
 import { EventBus } from '@bene/shared-domain';
 import {
   createConnectedService,
@@ -23,9 +23,10 @@ export interface ConnectServiceResponse {
   permissions: ServicePermissions;
 }
 
-export class ConnectServiceUseCase
-  implements UseCase<ConnectServiceRequest, ConnectServiceResponse>
-{
+export class ConnectServiceUseCase implements UseCase<
+  ConnectServiceRequest,
+  ConnectServiceResponse
+> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,

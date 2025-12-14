@@ -3,7 +3,7 @@ import { Result } from '@bene/shared-domain';
 import type { ConnectedService, ServiceType } from '@bene/integrations-domain';
 import type { ConnectedServiceRepository } from '@bene/integrations-domain';
 import type { DOClient } from '@bene/persistence';
-import { connectedServices, integrationsSchema } from '@bene/persistence';
+import { connectedServices, integrations_schema } from '@bene/persistence';
 import { toDatabase, toDomain } from '../mappers/connected-service.mapper.js';
 import {
   EntityNotFoundError,
@@ -13,7 +13,7 @@ import {
 } from '@bene/shared-infra';
 
 export class DurableConnectedServiceRepository implements ConnectedServiceRepository {
-  constructor(private db: DOClient<typeof integrationsSchema>) {}
+  constructor(private db: DOClient<typeof integrations_schema>) { }
 
   async findById(serviceId: string): Promise<Result<ConnectedService>> {
     try {

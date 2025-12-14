@@ -1,0 +1,13 @@
+{
+  "name": "@bene/ai",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*",
+    "@bene/shared-infra": "workspace:*"
+  },
+  "nx": {}
+}

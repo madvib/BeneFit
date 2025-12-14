@@ -1,6 +1,3 @@
-// Integrations module exports
-
-// Use cases
 export { ConnectServiceUseCase } from './use-cases/connect-service/connect-service.js';
 export type {
   ConnectServiceRequest,
@@ -25,8 +22,6 @@ export type {
   GetConnectedServicesResponse,
 } from './use-cases/get-connected-services/get-connected-services.js';
 
-// Repository
-export type { ConnectedServiceRepository } from './repositories/connected-service-repository.js';
-
-// Services
-export type { IntegrationClient } from './services/integration-client.js';
+// Ports
+export type { ConnectedServiceRepository } from './ports/connected-service-repository.js';
+export type { IntegrationClient } from './ports/integration-client.js';

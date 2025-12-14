@@ -1,7 +1,7 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
-import { IntegrationClient } from '../../services/integration-client.js';
+import { ConnectedServiceRepository } from '../../ports/connected-service-repository.js';
+import { IntegrationClient } from '../../ports/integration-client.js';
 import { EventBus } from '@bene/shared-domain';
 
 export interface SyncServiceDataRequest {
@@ -16,9 +16,10 @@ export interface SyncServiceDataResponse {
   error?: string;
 }
 
-export class SyncServiceDataUseCase
-  implements UseCase<SyncServiceDataRequest, SyncServiceDataResponse>
-{
+export class SyncServiceDataUseCase implements UseCase<
+  SyncServiceDataRequest,
+  SyncServiceDataResponse
+> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,

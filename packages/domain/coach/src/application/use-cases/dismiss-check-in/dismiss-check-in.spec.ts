@@ -2,7 +2,7 @@ import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { EventBus, Result } from '@bene/shared-domain';
 import { CoachConversation, CheckIn } from '@core/index.js';
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 
 // Mock repositories and services
 const mockConversationRepository = {

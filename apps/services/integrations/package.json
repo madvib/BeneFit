@@ -1,0 +1,12 @@
+{
+  "name": "@bene/integrations-service",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*"
+  }
+}

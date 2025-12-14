@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result, EventBus } from '@bene/shared-domain';
 import { GenerateWeeklySummaryUseCase } from './generate-weekly-summary.js';
-import { CoachContextBuilder } from '../../services/coach-context-builder.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
+import { CoachContextBuilder } from '../../ports/coach-context-builder.js';
+import { AICoachService } from '../../ports/ai-coach-service.js';
 
 // Mock services
 const mockContextBuilder = {

@@ -1,6 +1,6 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import { CoachConversation } from '@core/index.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 
 export interface GetCoachHistoryRequest {
   userId: string;
@@ -30,9 +30,10 @@ export interface GetCoachHistoryResponse {
   };
 }
 
-export class GetCoachHistoryUseCase
-  implements UseCase<GetCoachHistoryRequest, GetCoachHistoryResponse>
-{
+export class GetCoachHistoryUseCase implements UseCase<
+  GetCoachHistoryRequest,
+  GetCoachHistoryResponse
+> {
   constructor(private conversationRepository: CoachConversationRepository) {}
 
   async execute(

@@ -17,7 +17,7 @@
       "path": "../shared/tsconfig.lib.json"
     },
     {
-      "path": "../persistence/tsconfig.lib.json"
+      "path": "../../persistence/tsconfig.lib.json"
     },
     {
       "path": "../../domain/integrations/tsconfig.lib.json"

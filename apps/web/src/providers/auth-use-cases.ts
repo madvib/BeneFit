@@ -5,8 +5,8 @@ import {
   SignOutUseCase,
   GetCurrentUserUseCase,
   GetCurrentSessionUseCase,
-} from '@bene/application/auth';
-import { BetterAuthService } from '@bene/infrastructure/auth';
+} from '@bene/auth';
+import { BetterAuthService } from '@bene/auth';
 
 let auth: BetterAuthService;
 const loadAuthService = async () => {

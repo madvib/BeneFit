@@ -1,6 +1,6 @@
 import { Result, UseCase } from '@bene/shared-domain';
 import { ConnectedServiceCommands } from '@core/index.js';
-import { ConnectedServiceRepository } from '../../repositories/connected-service-repository.js';
+import { ConnectedServiceRepository } from '../../ports/connected-service-repository.js';
 import { EventBus } from '@bene/shared-domain';
 
 export interface DisconnectServiceRequest {
@@ -13,9 +13,10 @@ export interface DisconnectServiceResponse {
   disconnected: boolean;
 }
 
-export class DisconnectServiceUseCase
-  implements UseCase<DisconnectServiceRequest, DisconnectServiceResponse>
-{
+export class DisconnectServiceUseCase implements UseCase<
+  DisconnectServiceRequest,
+  DisconnectServiceResponse
+> {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private eventBus: EventBus,

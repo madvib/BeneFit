@@ -1,6 +1,6 @@
 import { Result, UseCase, EventBus } from '@bene/shared-domain';
 import { CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 
 export interface DismissCheckInRequest {
   userId: string;
@@ -12,13 +12,14 @@ export interface DismissCheckInResponse {
   dismissed: boolean;
 }
 
-export class DismissCheckInUseCase
-  implements UseCase<DismissCheckInRequest, DismissCheckInResponse>
-{
+export class DismissCheckInUseCase implements UseCase<
+  DismissCheckInRequest,
+  DismissCheckInResponse
+> {
   constructor(
     private conversationRepository: CoachConversationRepository,
     private eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(
     request: DismissCheckInRequest,

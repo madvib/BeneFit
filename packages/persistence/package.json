@@ -1,0 +1,78 @@
+{
+  "name": "@bene/persistence",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "drizzle-orm": "catalog:"
+  },
+  "scripts": {
+    "db:generate": "pnpm run d1:generate && pnpm run do:generate",
+    "d1:generate": "pnpm run activity_stream:generate && pnpm run discovery_index:generate && pnpm run static_content:generate",
+    "do:generate": "pnpm run team_hub:generate && pnpm run user_hub:generate && pnpm run workout_session:generate",
+    "activity_stream:generate": "drizzle-kit generate --config=drizzle/drizzle-activity-stream.config.ts",
+    "discovery_index:generate": "drizzle-kit generate --config=drizzle/drizzle-discovery-index.config.ts",
+    "static_content:generate": "drizzle-kit generate --config=drizzle/drizzle-static-content.config.ts",
+    "team_hub:generate": "drizzle-kit generate --config=drizzle/drizzle-team-hub.config.ts",
+    "user_hub:generate": "drizzle-kit generate --config=drizzle/drizzle-user-hub.config.ts",
+    "workout_session:generate": "drizzle-kit generate --config=drizzle/drizzle-workout-session.config.ts",
+    "d1:migrate:local": "tsx drizzle/scripts/migrate_d1.ts --env=local",
+    "d1:migrate:staging": "tsx drizzle/scripts/migrate_d1.ts --env=staging",
+    "d1:migrate:prod": "tsx drizzle/scripts/migrate_d1.ts --env=production",
+    "activity_stream:migrate:local": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
+    "activity_stream:migrate:staging": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --env staging --config wrangler.jsonc",
+    "activity_stream:migrate:prod": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --env production --config wrangler.jsonc",
+    "discovery_index:migrate:local": "wrangler d1 migrations apply DB_DISCOVERY_INDEX --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
+    "discovery_index:migrate:staging": "wrangler d1 migrations apply DB_DISCOVERY_INDEX --env staging --config wrangler.jsonc",
+    "discovery_index:migrate:prod": "wrangler d1 migrations apply DB_DISCOVERY_INDEX --env production --config wrangler.jsonc",
+    "static_content:migrate:local": "wrangler d1 migrations apply DB_STATIC_CONTENT --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
+    "static_content:migrate:staging": "wrangler d1 migrations apply DB_STATIC_CONTENT --env staging --config wrangler.jsonc",
+    "static_content:migrate:prod": "wrangler d1 migrations apply DB_STATIC_CONTENT --env production --config wrangler.jsonc",
+    "d1:seed:local": "tsx drizzle/scripts/seed_d1.ts --env=local",
+    "unstable:db:seed:staging": "tsx drizzle/scripts/seed_d1.ts --env=staging",
+    "db:clean:local": "tsx drizzle/scripts/clean.ts --env=local",
+    "unstable:db:clean:staging": "tsx drizzle/scripts/clean.ts --env=staging",
+    "d1:reset:local": "pnpm run db:clean:local && pnpm run d1:migrate:local && pnpm run d1:seed:local",
+    "db:reset:staging": "pnpm run db:clean:staging && pnpm run db:migrate:staging && pnpm run db:seed:staging",
+    "activity_stream:studio": "drizzle-kit studio --config=drizzle/drizzle-activity-stream.config.ts",
+    "discovery_index:studio": "drizzle-kit studio --config=drizzle/drizzle-discovery-index.config.ts",
+    "static_content:studio": "drizzle-kit studio --config=drizzle/drizzle-static-content.config.ts",
+    "db:studio:do": "tsx drizzle/scripts/studio-do.ts studio",
+    "db:list:do": "tsx drizzle/scripts/studio-do.ts list",
+    "unstable:test:integration": "tsx drizzle/scripts/test-setup.ts && vitest run",
+    "unstable:test:integration:watch": "tsx drizzle/scripts/test-setup.ts && vitest"
+  },
+  "nx": {
+    "sourceRoot": "packages/persistence/src",
+    "targets": {
+      "build": {
+        "options": {
+          "assets": [
+            {
+              "input": "packages/persistence/src",
+              "glob": "**/migrations/**/*.{js,json,sql}",
+              "output": "."
+            }
+          ]
+        }
+      }
+    },
+    "tags": [
+      "type:infrastructure",
+      "scope:persistence",
+      "layer:infrastructure"
+    ]
+  }
+}

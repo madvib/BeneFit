@@ -17,6 +17,7 @@
   "dependencies": {
     "@bene/shared-domain": "workspace:*",
     "@bene/training-core": "workspace:*",
+    "@bene/utils": "workspace:*",
     "@swc/helpers": "~0.5.11"
   },
   "nx": {

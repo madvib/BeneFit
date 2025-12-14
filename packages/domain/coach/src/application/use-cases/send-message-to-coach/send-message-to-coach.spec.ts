@@ -1,11 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result, EventBus } from '@bene/shared-domain';
 import { CoachConversation, CoachAction } from '@core/index.js';
 import { SendMessageToCoachUseCase } from './send-message-to-coach.js';
-import { CoachConversationRepository } from '../../repositories/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../services/coach-context-builder.js';
-import { AICoachService } from '../../services/ai-coach-service.js';
-import { EventBus } from '@bene/shared-domain';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '../../services/index.js';
 
 // Mock repositories and services
 const mockConversationRepository = {

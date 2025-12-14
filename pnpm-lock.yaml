@@ -6,14 +6,17 @@ settings:
 
 catalogs:
   default:
+    agents:
+      specifier: 0.2.32
+      version: 0.2.32
     drizzle-orm:
       specifier: 0.45.1
       version: 0.45.1
     react:
-      specifier: ^19.2.0
+      specifier: ^19.2.3
       version: 19.2.3
     react-dom:
-      specifier: ^19.2.0
+      specifier: ^19.2.3
       version: 19.2.3
 
 importers:
@@ -30,6 +33,9 @@ importers:
       '@bene/nx-plugin':
         specifier: workspace:*
         version: link:tools/nx-plugin
+      '@cloudflare/vitest-pool-workers':
+        specifier: ^0.10.15
+        version: 0.10.15(@cloudflare/workers-types@4.20251212.0)(@vitest/runner@4.0.15)(@vitest/snapshot@4.0.15)(vitest@4.0.15)
       '@eslint/eslintrc':
         specifier: ^3.3.1
         version: 3.3.3
@@ -184,11 +190,23 @@ importers:
         specifier: ^4.50.0
         version: 4.54.0(@cloudflare/workers-types@4.20251212.0)
 
-  apps/actors/user-base:
+  apps/actors/user-hub:
     dependencies:
+      '@bene/coach-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/coach
+      '@bene/coach-infra':
+        specifier: workspace:*
+        version: link:../../../packages/infra/coach/dist
+      '@bene/integrations-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/integrations
+      '@bene/integrations-infra':
+        specifier: workspace:*
+        version: link:../../../packages/infra/integrations/dist
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../../../packages/infra/persistence
+        version: link:../../../packages/persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../../packages/domain/shared
@@ -196,11 +214,66 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/domain/training/application
       agents:
-        specifier: 0.2.30
-        version: 0.2.30(@cloudflare/workers-types@4.20251212.0)(react@19.2.3)(typescript@5.9.3)
+        specifier: 0.2.32
+        version: 0.2.32(@cloudflare/workers-types@4.20251212.0)(react@19.2.3)(typescript@5.9.3)
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.1(@cloudflare/workers-types@4.20251212.0)(@opentelemetry/api@1.9.0)(kysely@0.28.8)
+
+  apps/actors/workout_session:
+    dependencies:
+      '@bene/persistence':
+        specifier: workspace:*
+        version: link:../../../packages/persistence
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/shared
+      '@bene/training-application':
+        specifier: workspace:*
+        version: link:../../../packages/domain/training/application
+      agents:
+        specifier: 'catalog:'
+        version: 0.2.32(@cloudflare/workers-types@4.20251212.0)(react@19.2.3)(typescript@5.9.3)
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.1(@cloudflare/workers-types@4.20251212.0)(@opentelemetry/api@1.9.0)(kysely@0.28.8)
+
+  apps/gateway:
+    dependencies:
+      '@bene/user-hub':
+        specifier: workspace:*
+        version: link:../actors/user-hub
+      hono:
+        specifier: ^4.10.8
+        version: 4.10.8
+
+  apps/services/ai:
+    dependencies:
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/shared
+      '@bene/shared-infra':
+        specifier: workspace:*
+        version: link:../../../packages/infra/shared
+
+  apps/services/discovery-index: {}
+
+  apps/services/event-bus: {}
+
+  apps/services/integrations:
+    dependencies:
+      '@bene/integrations-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/integrations
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../../../packages/domain/shared
 
   apps/web:
     dependencies:
+      '@bene/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../packages/domain/shared
@@ -264,6 +337,9 @@ importers:
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../shared
+      '@bene/training-application':
+        specifier: workspace:*
+        version: link:../training/application
       '@bene/training-core':
         specifier: workspace:*
         version: link:../training/core
@@ -294,6 +370,9 @@ importers:
       '@bene/training-core':
         specifier: workspace:*
         version: link:../core
+      '@bene/utils':
+        specifier: workspace:*
+        version: link:../../../utils
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
@@ -314,7 +393,7 @@ importers:
         version: link:../../domain/coach
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../persistence
+        version: link:../../persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../domain/shared
@@ -341,7 +420,7 @@ importers:
         version: link:../../../domain/coach
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../../persistence
+        version: link:../../../persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../../domain/shared
@@ -368,7 +447,7 @@ importers:
         version: link:../../domain/integrations
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../persistence
+        version: link:../../persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../domain/shared
@@ -389,22 +468,13 @@ importers:
         version: link:../../../domain/integrations
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../../persistence
+        version: link:../../../persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../../domain/shared
       '@bene/shared-infra':
         specifier: workspace:*
         version: link:../../shared
-      '@swc/helpers':
-        specifier: ~0.5.11
-        version: 0.5.17
-      drizzle-orm:
-        specifier: 'catalog:'
-        version: 0.45.1(@cloudflare/workers-types@4.20251212.0)(@opentelemetry/api@1.9.0)(kysely@0.28.8)
-
-  packages/infra/persistence:
-    dependencies:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
@@ -428,7 +498,7 @@ importers:
     dependencies:
       '@bene/persistence':
         specifier: workspace:*
-        version: link:../persistence
+        version: link:../../persistence
       '@bene/shared-domain':
         specifier: workspace:*
         version: link:../../domain/shared
@@ -448,7 +518,20 @@ importers:
         specifier: 'catalog:'
         version: 0.45.1(@cloudflare/workers-types@4.20251212.0)(@opentelemetry/api@1.9.0)(kysely@0.28.8)
 
-  packages/utils: {}
+  packages/persistence:
+    dependencies:
+      '@swc/helpers':
+        specifier: ~0.5.11
+        version: 0.5.17
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.1(@cloudflare/workers-types@4.20251212.0)(@opentelemetry/api@1.9.0)(kysely@0.28.8)
+
+  packages/utils:
+    dependencies:
+      '@bene/shared-domain':
+        specifier: workspace:*
+        version: link:../domain/shared
 
   tools/nx-plugin:
     dependencies:
@@ -1555,6 +1638,13 @@ packages:
     peerDependenciesMeta:
       workerd:
         optional: true
+
+  '@cloudflare/vitest-pool-workers@0.10.15':
+    resolution: {integrity: sha512-eISef+JvqC5xr6WBv2+kc6WEjxuKSrZ1MdMuIwdb4vsh8olqw7WHW5pLBL/UzAhbLVlXaAL1uH9UyxIlFkJe7w==}
+    peerDependencies:
+      '@vitest/runner': 2.0.x - 3.2.x
+      '@vitest/snapshot': 2.0.x - 3.2.x
+      vitest: 2.0.x - 3.2.x
 
   '@cloudflare/workerd-darwin-64@1.20251210.0':
     resolution: {integrity: sha512-Nn9X1moUDERA9xtFdCQ2XpQXgAS9pOjiCxvOT8sVx9UJLAiBLkfSCGbpsYdarODGybXCpjRlc77Yppuolvt7oQ==}
@@ -5105,8 +5195,8 @@ packages:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
 
-  agents@0.2.30:
-    resolution: {integrity: sha512-lrgcaOENROLv9DInKxN2hJTAORuuVMFG/dMY00+hDS8p2/gPubQIJzVDi7hr0A8+NmKfMuGy1YQfxP1/KW0C4Q==}
+  agents@0.2.32:
+    resolution: {integrity: sha512-XxhOeHqp0N7GSVIYEGQ/JpvEveLu65KmRrNoY/3t4mlHdgvM9MX/WZlYkVFTX06ULUL2GP/mhTSSvikuZEnooQ==}
     hasBin: true
     peerDependencies:
       react: '*'
@@ -5454,6 +5544,9 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
+  birpc@0.2.14:
+    resolution: {integrity: sha512-37FHE8rqsYM5JEKCnXFyHpBCzvgHEExwVVTq+nUmloInU7l8ezD1TpOhKpS8oe1DTYFqEK27rFZVKG43oTqXRA==}
+
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
@@ -5608,6 +5701,9 @@ packages:
   ci-info@4.3.1:
     resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
     engines: {node: '>=8'}
+
+  cjs-module-lexer@1.4.3:
+    resolution: {integrity: sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q==}
 
   cjs-module-lexer@2.1.1:
     resolution: {integrity: sha512-+CmxIZ/L2vNcEfvNtLdU0ZQ6mbq3FZnwAP2PPTiKP+1QOoKwlKlPgb8UKV0Dds7QVaMnHm+FwSft2VB0s/SLjQ==}
@@ -6095,6 +6191,9 @@ packages:
     resolution: {integrity: sha512-CmnVc+Hek2egPx1PeTFVta2W78xy2K/9Rkf6cC4T59S50tVnzKj+tnx5mmx5lwvCkujZ4uRrpRSuV+IVs3f90Q==}
     engines: {node: '>= 4.0.0'}
     hasBin: true
+
+  devalue@5.6.1:
+    resolution: {integrity: sha512-jDwizj+IlEZBunHcOuuFVBnIMPAEHvTsJj0BcIp94xYguLRVBcXO853px/MyIJvbVzWdsGvrRweIUWJw8hBP7A==}
 
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -12674,6 +12773,23 @@ snapshots:
     optionalDependencies:
       workerd: 1.20251210.0
 
+  '@cloudflare/vitest-pool-workers@0.10.15(@cloudflare/workers-types@4.20251212.0)(@vitest/runner@4.0.15)(@vitest/snapshot@4.0.15)(vitest@4.0.15)':
+    dependencies:
+      '@vitest/runner': 4.0.15
+      '@vitest/snapshot': 4.0.15
+      birpc: 0.2.14
+      cjs-module-lexer: 1.4.3
+      devalue: 5.6.1
+      miniflare: 4.20251210.0
+      semver: 7.7.3
+      vitest: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.3)(@vitest/ui@3.2.4)(happy-dom@20.0.11)(jiti@2.6.1)(less@4.4.2)(lightningcss@1.30.2)(sass-embedded@1.96.0)(sass@1.96.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20251212.0)
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@cloudflare/workers-types'
+      - bufferutil
+      - utf-8-validate
+
   '@cloudflare/workerd-darwin-64@1.20251210.0':
     optional: true
 
@@ -14861,7 +14977,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.2
+      picomatch: 4.0.3
     optionalDependencies:
       rollup: 4.53.3
 
@@ -16581,7 +16697,7 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  agents@0.2.30(@cloudflare/workers-types@4.20251212.0)(react@19.2.3)(typescript@5.9.3):
+  agents@0.2.32(@cloudflare/workers-types@4.20251212.0)(react@19.2.3)(typescript@5.9.3):
     dependencies:
       '@ai-sdk/openai': 2.0.73(zod@3.25.76)
       '@cfworker/json-schema': 4.1.1
@@ -16965,6 +17081,8 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
+  birpc@0.2.14: {}
+
   bl@4.1.0:
     dependencies:
       buffer: 5.7.1
@@ -17144,6 +17262,8 @@ snapshots:
   ci-info@3.9.0: {}
 
   ci-info@4.3.1: {}
+
+  cjs-module-lexer@1.4.3: {}
 
   cjs-module-lexer@2.1.1: {}
 
@@ -17631,6 +17751,8 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+
+  devalue@5.6.1: {}
 
   dir-glob@3.0.1:
     dependencies:

@@ -37,9 +37,8 @@ export type {
   GetCoachHistoryResponse,
 } from './use-cases/get-coaching-history/get-coaching-history.js';
 
-// Repository
-export type { CoachConversationRepository } from './repositories/coach-conversation-repository.js';
+// Ports
+export type { CoachConversationRepository } from './ports/coach-conversation-repository.js';
 
 // Services
-export type { AICoachService, AICoachResponse } from './services/ai-coach-service.js';
-export type { CoachContextBuilder } from './services/coach-context-builder.js';
+export * from './services/index.js';

@@ -11,15 +11,3 @@ export abstract class ServiceError extends Error {
     }
   }
 }
-
-export class AIError extends ServiceError {
-  constructor(message: string, cause?: Error) {
-    super(message, 'AI_ERROR', cause);
-  }
-}
-
-export class ParseError extends ServiceError {
-  constructor(message: string, cause?: Error) {
-    super(message, 'PARSE_ERROR', cause);
-  }
-}

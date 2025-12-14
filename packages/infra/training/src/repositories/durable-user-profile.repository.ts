@@ -2,26 +2,26 @@ import { eq } from 'drizzle-orm';
 import { Result } from '@bene/shared-domain';
 import type { UserProfile } from '@bene/training-core';
 import type { UserProfileRepository } from '@bene/training-application';
-import type { DOClient } from '@bene/persistence';
 import {
+  type DOClient,
   profile as profileTable,
   userStats,
-  userProfileSchema,
+  user_profile_schema,
 } from '@bene/persistence';
-import {
-  toDomain,
-  toProfileDatabase,
-  toStatsDatabase,
-} from '../mappers/user-profile.mapper.js';
 import {
   EntityNotFoundError,
   QueryError,
   SaveError,
   DeleteError,
 } from '@bene/shared-infra';
+import {
+  toDomain,
+  toProfileDatabase,
+  toStatsDatabase,
+} from '../mappers/user-profile.mapper.js';
 
 export class DurableUserProfileRepository implements UserProfileRepository {
-  constructor(private db: DOClient<typeof userProfileSchema>) {}
+  constructor(private db: DOClient<typeof user_profile_schema>) { }
 
   async findById(userId: string): Promise<Result<UserProfile>> {
     try {
