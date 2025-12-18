@@ -1,24 +1,42 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import { CompletedWorkoutCommands } from '@bene/training-core';
-import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
-import type { EventBus } from '@bene/shared-domain';
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { CompletedWorkoutCommands } from '@bene/training-core';
+import type { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
+import { WorkoutReactionAddedEvent } from '@/events/workout-reaction-added.event.js';
 
-export interface AddWorkoutReactionRequest {
-  userId: string;
-  userName: string;
-  workoutId: string;
-  reactionType: 'fire' | 'strong' | 'clap' | 'heart' | 'smile';
-}
+// Client-facing schema (what comes in the request body)
+export const AddWorkoutReactionRequestClientSchema = z.object({
+  workoutId: z.string(),
+  reactionType: z.enum(['fire', 'strong', 'clap', 'heart', 'smile']),
+});
 
-export interface AddWorkoutReactionResponse {
-  workoutId: string;
-  totalReactions: number;
-}
+export type AddWorkoutReactionRequestClient = z.infer<typeof AddWorkoutReactionRequestClientSchema>;
 
-export class AddWorkoutReactionUseCase
-  implements UseCase<AddWorkoutReactionRequest, AddWorkoutReactionResponse>
-{
+// Complete use case input schema (client data + server context)
+export const AddWorkoutReactionRequestSchema = AddWorkoutReactionRequestClientSchema.extend({
+  userId: z.string(),
+  userName: z.string(),
+});
+
+// Zod inferred type with original name
+export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;
+
+// Zod schema for response validation
+export const AddWorkoutReactionResponseSchema = z.object({
+  workoutId: z.string(),
+  totalReactions: z.number(),
+});
+
+// Zod inferred type with original name
+export type AddWorkoutReactionResponse = z.infer<
+  typeof AddWorkoutReactionResponseSchema
+>;
+
+export class AddWorkoutReactionUseCase implements UseCase<
+  AddWorkoutReactionRequest,
+  AddWorkoutReactionResponse
+> {
   constructor(
     private completedWorkoutRepository: CompletedWorkoutRepository,
     private eventBus: EventBus,
@@ -62,19 +80,34 @@ export class AddWorkoutReactionUseCase
     await this.completedWorkoutRepository.save(updatedWorkoutResult.value);
 
     // 5. Emit event (for notifications)
-    await this.eventBus.publish({
-      type: 'WorkoutReactionAdded',
-      workoutId: request.workoutId,
-      workoutOwnerId: workout.userId,
-      reactorId: request.userId,
-      reactorName: request.userName,
-      reactionType: request.reactionType,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new WorkoutReactionAddedEvent({
+        workoutId: request.workoutId,
+        workoutOwnerId: workout.userId,
+        reactorId: request.userId,
+        reactorName: request.userName,
+        reactionType: request.reactionType,
+      }),
+    );
 
     return Result.ok({
       workoutId: workout.id,
       totalReactions: updatedWorkoutResult.value.reactions.length,
     });
   }
+}
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use AddWorkoutReactionRequest type instead */
+export interface AddWorkoutReactionRequest_Deprecated {
+  userId: string;
+  userName: string;
+  workoutId: string;
+  reactionType: 'fire' | 'strong' | 'clap' | 'heart' | 'smile';
+}
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use AddWorkoutReactionResponse type instead */
+export interface AddWorkoutReactionResponse_Deprecated {
+  workoutId: string;
+  totalReactions: number;
 }

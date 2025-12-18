@@ -1,125 +1,127 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { UserHub } from '@bene/user-hub';
+import {
+  SendMessageToCoachRequestClientSchema,
+  SendMessageToCoachRequestSchema,
+  GenerateWeeklySummaryRequestSchema,
+  DismissCheckInRequestClientSchema,
+  DismissCheckInRequestSchema,
+  RespondToCheckInRequestClientSchema,
+  RespondToCheckInRequestSchema,
+  TriggerProactiveCheckInRequestSchema,
+} from '@bene/coach-domain';
 
-type Bindings = {
-  USER_HUB: DurableObjectNamespace<UserHub>;
-};
+export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+  .post(
+    '/message',
+    zValidator('json', SendMessageToCoachRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
 
-const coachRoutes = new Hono<{ Bindings: Bindings }>();
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
 
-// POST /api/coach/message
-coachRoutes.post('/message', async (c) => {
-  const body = await c.req.json();
-  const { userId, message } = body;
+      const validated = SendMessageToCoachRequestSchema.parse(useCaseInput);
 
-  if (!userId || !message) {
-    throw new HTTPException(400, { message: 'UserId and Message are required' });
-  }
+      const id = c.env.USER_HUB.idFromName(user.id);
+      const stub = c.env.USER_HUB.get(id);
 
-  const id = c.env.USER_HUB.idFromName(userId);
-  // @ts-ignore - access helper
-  const stub = c.env.USER_HUB.get(id);
+      const result = await stub.coach.sendMessage(validated);
+      return c.json(result);
+    },
+  )
+  .post('/summary', async (c) => {
+    const user = c.get('user');
 
-  try {
-    const result = await stub.coach.sendMessage({ userId, message });
+    const useCaseInput = {
+      userId: user.id,
+    };
+
+    const validated = GenerateWeeklySummaryRequestSchema.parse(useCaseInput);
+
+    const id = c.env.USER_HUB.idFromName(user.id);
+    const stub = c.env.USER_HUB.get(id);
+
+    const result = await stub.coach.generateWeeklySummary(validated);
     return c.json(result);
-  } catch (error) {
-    console.error('Error sending coaching message:', error);
-    throw new HTTPException(500, { message: 'Failed to send coaching message' });
-  }
-});
+  })
+  // .get('/history', async (c) => {
+  //   const userId = c.req.query('userId');
 
-// GET /api/coach/history
-coachRoutes.get('/history', async (c) => {
-  const userId = c.req.query('userId');
+  //   if (!userId) {
+  //     throw new HTTPException(400, { message: 'UserId is required' });
+  //   }
 
-  if (!userId) {
-    throw new HTTPException(400, { message: 'UserId is required' });
-  }
+  //   const id = c.env.USER_HUB.idFromName(userId);
+  //   const stub = c.env.USER_HUB.get(id);
 
-  const id = c.env.USER_HUB.idFromName(userId);
-  const stub = c.env.USER_HUB.get(id);
+  //   try {
+  //     const result = await stub.coach.getHistory();
+  //     return c.json(result);
+  //   } catch (error) {
+  //     console.error('Error getting coaching history:', error);
+  //     throw new HTTPException(500, { message: 'Failed to get coaching history' });
+  //   }
+  // })
+  .post(
+    '/check-in/dismiss',
+    zValidator('json', DismissCheckInRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
 
-  try {
-    const result = await stub.coach.getHistory();
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
+
+      const validated = DismissCheckInRequestSchema.parse(useCaseInput);
+
+      const id = c.env.USER_HUB.idFromName(user.id);
+      const stub = c.env.USER_HUB.get(id);
+
+      const result = await stub.coach.dismissCheckIn(validated);
+      return c.json(result);
+    },
+  )
+
+  .post(
+    '/check-in/respond',
+    zValidator('json', RespondToCheckInRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
+
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
+
+      const validated = RespondToCheckInRequestSchema.parse(useCaseInput);
+
+      const id = c.env.USER_HUB.idFromName(user.id);
+      const stub = c.env.USER_HUB.get(id);
+      const result = await stub.coach.respondToCheckIn(validated);
+      return c.json(result);
+    },
+  )
+  .post('/check-in/trigger', async (c) => {
+    const user = c.get('user');
+
+    const useCaseInput = {
+      userId: user.id,
+    };
+
+    const validated = TriggerProactiveCheckInRequestSchema.parse(useCaseInput);
+
+    const id = c.env.USER_HUB.idFromName(user.id);
+    const stub = c.env.USER_HUB.get(id);
+
+    const result = await stub.coach.triggerProactiveCheckIn(validated);
     return c.json(result);
-  } catch (error) {
-    console.error('Error getting coaching history:', error);
-    throw new HTTPException(500, { message: 'Failed to get coaching history' });
-  }
-});
+  });
 
-// POST /api/coach/check-in/dismiss
-coachRoutes.post('/check-in/dismiss', async (c) => {
-  const body = await c.req.json();
-  const { userId, checkInId } = body;
-  if (!userId || !checkInId) {
-    throw new HTTPException(400, { message: 'UserId and CheckInId are required' });
-  }
-  const id = c.env.USER_HUB.idFromName(userId);
-  const stub = c.env.USER_HUB.get(id);
-  try {
-    const result = await stub.coach.dismissCheckIn({ userId, checkInId });
-    return c.json(result);
-  } catch (error) {
-    console.error('Error dismissing check-in:', error);
-    throw new HTTPException(500, { message: 'Failed to dismiss check-in' });
-  }
-});
-
-// POST /api/coach/summary
-coachRoutes.post('/summary', async (c) => {
-  const body = await c.req.json();
-  const { userId } = body;
-  if (!userId) {
-    throw new HTTPException(400, { message: 'UserId is required' });
-  }
-  const id = c.env.USER_HUB.idFromName(userId);
-  const stub = c.env.USER_HUB.get(id);
-  try {
-    const result = await stub.coach.generateWeeklySummary({ userId });
-    return c.json(result);
-  } catch (error) {
-    console.error('Error generating summary:', error);
-    throw new HTTPException(500, { message: 'Failed to generate summary' });
-  }
-});
-
-// POST /api/coach/check-in/respond
-coachRoutes.post('/check-in/respond', async (c) => {
-  const body = await c.req.json();
-  const { userId, checkInId, response } = body;
-  if (!userId || !checkInId || !response) {
-    throw new HTTPException(400, { message: 'UserId, CheckInId and Response are required' });
-  }
-  const id = c.env.USER_HUB.idFromName(userId);
-  const stub = c.env.USER_HUB.get(id);
-  try {
-    const result = await stub.coach.respondToCheckIn({ userId, checkInId, response });
-    return c.json(result);
-  } catch (error) {
-    console.error('Error responding to check-in:', error);
-    throw new HTTPException(500, { message: 'Failed to respond to check-in' });
-  }
-});
-
-// POST /api/coach/check-in/trigger
-coachRoutes.post('/check-in/trigger', async (c) => {
-  const body = await c.req.json();
-  const { userId } = body;
-  if (!userId) {
-    throw new HTTPException(400, { message: 'UserId is required' });
-  }
-  const id = c.env.USER_HUB.idFromName(userId);
-  const stub = c.env.USER_HUB.get(id);
-  try {
-    const result = await stub.coach.triggerProactiveCheckIn({ userId });
-    return c.json(result);
-  } catch (error) {
-    console.error('Error triggering check-in:', error);
-    throw new HTTPException(500, { message: 'Failed to trigger check-in' });
-  }
-});
-
-export default coachRoutes;
+export type CoachRoute = typeof coachRoutes;

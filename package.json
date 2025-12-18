@@ -21,12 +21,15 @@
     "build:domain": "nx run-many -t build --projects=tag:type:domain",
     "build:infra": "nx run-many -t build --projects=tag:type:infrastructure --verbose",
     "build:shared": "nx run-many -t build --projects=tag:scope:shared",
+    "wrangler:types:env": "nx run-many -t wrangler:types:env --projects=tag:runtime:worker,tag:runtime:durable-object ",
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
     "nx:affected": "nx affected -t lint test build",
     "inspect-eslint": "eslint --inspect-config"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.5",
+    "@babel/preset-react": "^7.14.5",
     "@bene/nx-plugin": "workspace:*",
     "@cloudflare/vitest-pool-workers": "^0.10.15",
     "@eslint/eslintrc": "^3.3.1",
@@ -42,6 +45,7 @@
     "@nx/react": "22.2.0",
     "@nx/vite": "22.2.0",
     "@nx/vitest": "22.2.0",
+    "@nx/web": "22.2.0",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.7.9",
     "@swc/core": "~1.15.3",
@@ -56,7 +60,7 @@
     "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-react": "^5.0.4",
     "@vitest/coverage-v8": "^4.0.0",
-    "@vitest/ui": "^3.0.0",
+    "@vitest/ui": "^4.0.0",
     "drizzle-kit": "^0.31.8",
     "eslint": "^9.38.0",
     "eslint-config-next": "16.0.0",
@@ -68,6 +72,8 @@
     "eslint-plugin-unicorn": "^61.0.2",
     "eslint-plugin-vitest": "^0.5.4",
     "happy-dom": "^20.0.8",
+    "jiti": "2.4.2",
+    "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
     "nx": "22.2.0",
     "prettier": "^3.6.2",
@@ -77,6 +83,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
     "vite": "^7.0.0",
+    "vite-plugin-dts": "~4.5.0",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "^4.0.0",
     "wrangler": "^4.50.0"
@@ -88,6 +95,8 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tslib": "^2.8.1"
   }
 }

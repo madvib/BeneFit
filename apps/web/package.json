@@ -15,8 +15,6 @@
     "cf-deploy": "opennextjs-cloudflare deploy",
     "deploy": "pnpm run cf-build && pnpm run cf-deploy",
     "preview": "pnpm run cf-build && opennextjs-cloudflare preview",
-    "cf-typegen:env": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-    "cf-typegen:runtime": "wrangler types --include-env=false ../../types/cloudflare-runtime.d.ts",
     "auth:migration:apply:local": "wrangler d1 migrations apply DB_USER_AUTH --local"
   },
   "dependencies": {
@@ -34,10 +32,10 @@
   },
   "nx": {
     "tags": [
+      "scope:frontend",
       "type:app",
-      "scope:web",
-      "platform:nextjs",
-      "layer:presentation"
+      "platform:web",
+      "runtime:worker"
     ]
   }
 }

@@ -1,12 +1,25 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { z } from 'zod';
+import { Result, type UseCase } from '@bene/shared-domain';
 import { FitnessPlanQueries } from '@bene/training-core';
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
 
-export interface GetTodaysWorkoutRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetTodaysWorkoutRequest type instead */
+export interface GetTodaysWorkoutRequest_Deprecated {
   userId: string;
 }
 
-export interface GetTodaysWorkoutResponse {
+// Zod schema for request validation
+export const GetTodaysWorkoutRequestSchema = z.object({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type GetTodaysWorkoutRequest = z.infer<typeof GetTodaysWorkoutRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetTodaysWorkoutResponse type instead */
+export interface GetTodaysWorkoutResponse_Deprecated {
   hasWorkout: boolean;
   workout?: {
     workoutId: string;
@@ -22,9 +35,34 @@ export interface GetTodaysWorkoutResponse {
   message?: string; // "Rest day!" or "No active plan"
 }
 
-export class GetTodaysWorkoutUseCase
-  implements UseCase<GetTodaysWorkoutRequest, GetTodaysWorkoutResponse>
-{
+// Zod schema for response validation
+const ActivitySchema = z.object({
+  type: z.enum(['warmup', 'main', 'cooldown']),
+  instructions: z.string(),
+  durationMinutes: z.number(),
+});
+
+const WorkoutSchema = z.object({
+  workoutId: z.string(),
+  planId: z.string(),
+  type: z.string(),
+  durationMinutes: z.number(),
+  activities: z.array(ActivitySchema),
+});
+
+export const GetTodaysWorkoutResponseSchema = z.object({
+  hasWorkout: z.boolean(),
+  workout: WorkoutSchema.optional(),
+  message: z.string().optional(), // "Rest day!" or "No active plan"
+});
+
+// Zod inferred type with original name
+export type GetTodaysWorkoutResponse = z.infer<typeof GetTodaysWorkoutResponseSchema>;
+
+export class GetTodaysWorkoutUseCase implements UseCase<
+  GetTodaysWorkoutRequest,
+  GetTodaysWorkoutResponse
+> {
   constructor(private planRepository: FitnessPlanRepository) {}
 
   async execute(

@@ -4,5 +4,16 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/shared-domain": "workspace:*"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
   }
 }

@@ -1,299 +1,127 @@
 import { Agent } from 'agents';
-import { AdjustPlanRequest } from '@bene/training-application';
 import { initializeUserHubDB } from '@bene/persistence';
-import { initializeUserHubDB } from '@bene/persistence';
-import { QueryFactory, UseCaseFactory, ServiceFactory, RepositoryFactory } from '../factories';
+import { ServiceFactory, RepositoryFactory, UseCaseFactory } from '../factories/index';
+import {
+  ProfileFacade,
+  WorkoutsFacade,
+  PlanningFacade,
+  IntegrationsFacade,
+  CoachFacade,
+} from '../facades/index';
 
 // Define the state interface for TypeScript
 interface UserHubState {
-  currentSession?: any; // Would be more specific in real implementation
-  activePlans?: any[];
-  coachConversation?: any[];
+  currentSession?: unknown;
+  activePlans?: unknown[];
+  coachConversation?: unknown[];
 }
 
 export default class UserHub extends Agent<Env, UserHubState> {
-  // Lazy-loaded factories
-  private _queries?: QueryFactory;
+  // Lazy-loaded dependencies
   private _useCaseFactory?: UseCaseFactory;
+  private _serviceFactory?: ServiceFactory;
+  private _repositoryFactory?: RepositoryFactory;
+  // Facades
+  private _workouts?: WorkoutsFacade;
+  private _profile?: ProfileFacade;
+  private _planning?: PlanningFacade;
+  private _integrations?: IntegrationsFacade;
+
+  // Features
+  private _coach?: CoachFacade;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => {
-      await initializeUserHubDB(ctx.storage, env);
+      await initializeUserHubDB(ctx.storage, env.NODE_ENV === 'development');
     });
   }
 
-  // ===== Factory Getters =====
+  // ===== PUBLIC FACADES (RPC Entry Points) =====
 
-  private get queries() {
-    if (!this._queries) {
-      this._queries = new QueryFactory(this.ctx.storage);
+  get workouts() {
+    if (!this._workouts) {
+      this._workouts = new WorkoutsFacade(this.useCaseFactory);
     }
-    return this._queries;
+    return this._workouts;
   }
 
-  private get useCaseFactory() {
-    if (!this._useCaseFactory) {
-      // Create factories
-      // Assuming RepositoryFactory is exported from '../factories' or needs direct import
-      // We need to import ServiceFactory and RepositoryFactory
-      const repoFactory = new RepositoryFactory(this.ctx.storage, this.env.PLAN_TEMPLATE_DB);
-      const serviceFactory = new ServiceFactory(this.env, repoFactory);
-
-      this._useCaseFactory = new UseCaseFactory(repoFactory, serviceFactory);
+  get profile() {
+    if (!this._profile) {
+      this._profile = new ProfileFacade(this.useCaseFactory);
     }
-    return this._useCaseFactory;
+    return this._profile;
   }
 
-  // ===== QUERIES (Fast Path) =====
-
-  async getUserProfile(userId: string) {
-    return await this.queries.getUserProfileQuery().execute({ userId });
-  }
-
-  async getActivePlan(userId: string) {
-    return await this.queries.getActivePlanQuery().execute({ userId });
-  }
-
-  async getTodaysWorkout(userId: string) {
-    return await this.queries.getTodaysWorkoutQuery().execute({ userId });
-  }
-
-  async getWorkoutHistory(userId: string, limit?: number) {
-    return await this.queries
-      .getWorkoutHistoryQuery()
-      .execute({ userId, limit: limit || 10 });
-  }
-
-  // ===== USE CASE METHODS (Factory Pattern) =====
-
-  async startWorkout(input: { userId: string; workoutId: string }) {
-    const startWorkoutUseCase = this.useCaseFactory.getStartWorkoutUseCase();
-
-    const result = await startWorkoutUseCase.execute(input);
-
-    // Update local state
-    await this.state.put('currentSession', result);
-
-    return result;
-  }
-
-  async completeWorkout(input: { sessionId: string; performanceData: any }) {
-    const completeWorkoutUseCase = this.useCaseFactory.getCompleteWorkoutUseCase();
-
-    const result = await completeWorkoutUseCase.execute(input);
-
-    // Update local state
-    const currentSession = await this.state.get('currentSession');
-    if (currentSession && currentSession.id === input.sessionId) {
-      await this.state.put('currentSession', null);
+  get planning() {
+    if (!this._planning) {
+      this._planning = new PlanningFacade(this.useCaseFactory);
     }
-
-    // Broadcast to connected clients
-    this.broadcast({ type: 'workout_completed', completedWorkout: result });
-
-    return result;
+    return this._planning;
   }
 
-  async generatePlanFromGoals(input: {
-    userId: string;
-    goals: string[];
-    constraints: any;
-  }) {
-    const generatePlanFromGoalsUseCase =
-      this.useCaseFactory.getGeneratePlanFromGoalsUseCase();
-
-    const result = await generatePlanFromGoalsUseCase.execute(input);
-
-    // Update local state
-    let activePlans = await this.state.get('activePlans');
-    if (!activePlans) activePlans = [];
-    activePlans = [...activePlans, result];
-    await this.state.put('activePlans', activePlans);
-
-    // Broadcast to connected clients
-    this.broadcast({ type: 'plan_generated', plan: result });
-
-    return result;
+  get integrations() {
+    if (!this._integrations) {
+      this._integrations = new IntegrationsFacade(this.useCaseFactory);
+    }
+    return this._integrations;
   }
 
-  async activatePlan(input: { userId: string; planId: string }) {
-    const activatePlanUseCase = this.useCaseFactory.getActivatePlanUseCase();
-
-    return await activatePlanUseCase.execute(input);
+  get coach() {
+    if (!this._coach) {
+      this._coach = new CoachFacade(this.ctx, this.useCaseFactory);
+    }
+    return this._coach;
   }
 
-  async skipWorkout(input: { userId: string; workoutId: string; reason: string }) {
-    const skipWorkoutUseCase = this.useCaseFactory.getSkipWorkoutUseCase();
-
-    return await skipWorkoutUseCase.execute(input);
-  }
-
-  async createUserProfile(input: {
-    userId: string;
-    name: string;
-    fitnessGoals: string[];
-  }) {
-    const createUserProfileUseCase = this.useCaseFactory.getCreateUserProfileUseCase();
-
-    return await createUserProfileUseCase.execute(input);
-  }
-
-  async getProfile(input: { userId: string }) {
-    return await this.useCaseFactory.getGetProfileUseCase().execute(input);
-  }
-
-  async updateFitnessGoals(input: { userId: string; goals: string[] }) {
-    const updateFitnessGoalsUseCase =
-      this.useCaseFactory.getUpdateFitnessGoalsUseCase();
-
-    return await updateFitnessGoalsUseCase.execute(input);
-  }
-
-  async updateTrainingConstraints(input: { userId: string; constraints: any }) {
-    const updateTrainingConstraintsUseCase =
-      this.useCaseFactory.getUpdateTrainingConstraintsUseCase();
-
-    return await updateTrainingConstraintsUseCase.execute(input);
-  }
-
-  async updatePreferences(input: { userId: string; preferences: any }) {
-    const updatePreferencesUseCase = this.useCaseFactory.getUpdatePreferencesUseCase();
-
-    return await updatePreferencesUseCase.execute(input);
-  }
-
-  async getUserStats(input: { userId: string }) {
-    const getUserStatsUseCase = this.useCaseFactory.getGetUserStatsUseCase();
-
-    return await getUserStatsUseCase.execute(input);
-  }
-
-  async adjustPlanBasedOnFeedback(input: AdjustPlanRequest) {
-    const adjustPlanUseCase = this.useCaseFactory.getAdjustPlanBasedOnFeedbackUseCase();
-
-    return await adjustPlanUseCase.execute(input);
-  }
-
-  async pausePlan(input: { userId: string; planId: string }) {
-    const pausePlanUseCase = this.useCaseFactory.getPausePlanUseCase();
-
-    return await pausePlanUseCase.execute(input);
-  }
-
-  async sendMessageToCoach(input: { userId: string; message: string }) {
-    // For now, using startWorkout as placeholder since coaching use case may not exist in factory
-    const sendMessageToCoachUseCase = this.useCaseFactory.getStartWorkoutUseCase();
-
-    const result = await sendMessageToCoachUseCase.execute(input);
-
-    // Update conversation state
-    let currentConversation = await this.state.get('coachConversation');
-    if (!currentConversation) currentConversation = [];
-    currentConversation = [...currentConversation, result];
-    await this.state.put('coachConversation', currentConversation);
-
-    // Broadcast to connected clients
-    this.broadcast({ type: 'coach_message', response: result });
-
-    return result;
-  }
-
-  async getCoachingHistory(input: { userId: string }) {
-    // For now, using getProfile as placeholder since coaching history use case may not exist in factory
-    const getCoachingHistoryUseCase = this.useCaseFactory.getGetProfileUseCase();
-
-    return await getCoachingHistoryUseCase.execute(input);
-  }
-
-  async getUpcomingWorkouts(input: { userId: string }) {
-    const getUpcomingWorkoutsUseCase =
-      this.useCaseFactory.getGetUpcomingWorkoutsUseCase();
-
-    return await getUpcomingWorkoutsUseCase.execute(input);
-  }
-
-  // ===== WEBSOCKET (Real-Time) =====
+  // ===== WEBSOCKET HANDLING =====
 
   async onWebSocketMessage(ws: WebSocket, message: string) {
     const data = JSON.parse(message);
 
     switch (data.type) {
       case 'chat':
-        await this.handleChat(ws, data.message, data.userId);
+        await this.coach.handleMessage(ws, data);
         break;
 
       case 'subscribe':
-        this.handleSubscribe(ws, data.userId);
+        // Subscription logic usually requires access to local state,
+        // so it might reside here or in a specialized "ConnectionManager"
+        ws.send(JSON.stringify({ type: 'connected', userId: data.userId }));
         break;
 
-      case 'start_workout':
-        const session = await this.startWorkout(data.userId, data.workoutId);
-        ws.send(JSON.stringify({ type: 'workout_started', session }));
-        break;
-
-      case 'complete_workout':
-        const completed = await this.completeWorkout(
-          data.sessionId,
-          data.performanceData,
-        );
-        ws.send(JSON.stringify({ type: 'workout_completed', completed }));
-        break;
-
-      case 'get_todays_workout':
-        const workout = await this.getTodaysWorkout(data.userId);
-        ws.send(JSON.stringify({ type: 'todays_workout', workout }));
-        break;
-
-      case 'generate_plan':
-        const plan = await this.generatePlanFromGoals(
-          data.userId,
-          data.goals,
-          data.constraints,
-        );
-        ws.send(JSON.stringify({ type: 'plan_generated', plan }));
-        break;
+      default:
+        console.warn('Unknown message type:', data.type);
     }
-  }
-
-  private async handleChat(ws: WebSocket, message: string, userId: string) {
-    const container = getContainer();
-    const useCase = container.get('sendMessageToCoachUseCase'); // Would use actual coaching use case
-
-    const response = await useCase.execute(
-      { userId, message },
-      { userId }, // context
-    );
-
-    ws.send(JSON.stringify({ type: 'chat_response', response }));
-  }
-
-  private async handleSubscribe(ws: WebSocket, userId: string) {
-    // Tag WebSocket with user ID for targeted broadcasts
-    (ws as any).userId = userId;
-
-    // Get current session and plans from state
-    const currentSession = await this.state.get('currentSession');
-    const activePlans = (await this.state.get('activePlans')) || [];
-
-    ws.send(
-      JSON.stringify({
-        type: 'connected',
-        userId,
-        timestamp: new Date().toISOString(),
-        currentSession,
-        activePlans,
-      }),
-    );
   }
 
   // ===== SCHEDULED TASKS =====
 
   async onAlarm() {
-    // Agent SDK handles this - processes all scheduled tasks
-    console.log('Processing scheduled tasks in UserHub...');
+    // Simple alarm router if needed
+    console.log('UserHub: Alarm fired');
+  }
+  // ===== INTERNAL DEPENDENCIES =====
 
-    // Could handle reminders, scheduled notifications, etc.
-    // The Agent SDK provides enhanced scheduling capabilities
+  private get useCaseFactory() {
+    if (!this._useCaseFactory) {
+      this._useCaseFactory = new UseCaseFactory(this.repositories, this.services);
+    }
+    return this._useCaseFactory;
+  }
+  private get repositories() {
+    if (!this._repositoryFactory) {
+      this._repositoryFactory = new RepositoryFactory(
+        this.ctx.storage,
+        this.env.PLAN_TEMPLATE_DB,
+      );
+    }
+    return this._repositoryFactory;
+  }
+  private get services() {
+    if (!this._serviceFactory) {
+      this._serviceFactory = new ServiceFactory(this.env, this.repositories);
+    }
+    return this._serviceFactory;
   }
 }

@@ -10,8 +10,8 @@
     {
       "plugin": "./tools/nx-plugin/src/plugins/eslint_inference.ts"
     },
-        {
-      "plugin": "./tools/nx-plugin/src/plugins/wrangler_inference.ts"
+    {
+      "plugin": "./tools/nx-plugin/src/plugins/wrangler/target_inference.ts"
     },
     {
       "plugin": "@nx/js/typescript",

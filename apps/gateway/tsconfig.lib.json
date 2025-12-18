@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "declaration": true,
+    "lib": [
+      "ESNext"
+    ]
+  },
+  "types": [
+    "../../types/cloudflare-runtime.d.ts",
+    "worker-env.d.ts",
+  ],
+  "include": [
+    "./src/client.ts",
+  ],
+  "exclude": []
+}

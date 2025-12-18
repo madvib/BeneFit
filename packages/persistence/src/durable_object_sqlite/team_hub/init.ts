@@ -10,9 +10,8 @@ import migrations from './migrations/migrations.ts';
  */
 export async function initializeTeamHubDB(
   storage: DurableObjectStorage,
-  env: { NODE_ENV?: string },
+  shouldSeed: boolean,
 ) {
-  const shouldSeed = process.env.NODE_ENV !== 'production';
   console.log('🚀 Initializing Team Base database...');
 
   // Create the Drizzle client using the provided storage

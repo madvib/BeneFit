@@ -1,22 +1,18 @@
-// apps/actors/user-hub/src/adapters/ai-service.adapter.ts
-import type {
-  AIProvider,
+import {
   AICompletionRequest,
   AICompletionResponse,
+  AIProvider,
   AIStreamChunk,
-} from '@bene/shared-infra';
-import { Result } from '@bene/shared-domain';
+  Result,
+} from '@bene/shared-domain';
+import { env } from 'cloudflare:workers';
 
 export class AIServiceAdapter implements AIProvider {
-  private aiService: Fetcher;
-
-  constructor(aiService: Fetcher) {
-    this.aiService = aiService;
-  }
+  constructor(private aiService: typeof env.AI_SERVICE) {}
 
   async complete(request: AICompletionRequest): Promise<Result<AICompletionResponse>> {
     // Call AI service worker via RPC
-    const response = await this.aiService.complete(request);
+    const response = await this.aiService.chat(request);
     return Result.ok(response);
   }
 
@@ -24,7 +20,7 @@ export class AIServiceAdapter implements AIProvider {
     request: AICompletionRequest,
   ): AsyncGenerator<AIStreamChunk, void, unknown> {
     // Call AI service worker via RPC with streaming
-    const streamResponse = await this.aiService.stream(request);
+    const streamResponse = await this.aiService.streamChat(request);
     yield* streamResponse;
   }
 

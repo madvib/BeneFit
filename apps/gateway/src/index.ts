@@ -1,27 +1,39 @@
 import { Hono } from 'hono';
-import userRoutes from './routes/users';
-import workoutRoutes from './routes/workouts';
-import coachRoutes from './routes/coach';
-import integrationRoutes from './routes/integrations';
+import { authMiddleware } from './middleware/auth';
+import { createAuth } from './lib/auth';
+import {
+  coachRoutes,
+  fitnessPlanRoutes,
+  integrationRoutes,
+  profileRoutes,
+  workoutRoutes,
+} from './routes';
 
-import { UserHub } from '@bene/user-hub';
+const app = new Hono<{
+  Bindings: Env;
+  Variables: { user: any };
+}>()
+  .on(['POST', 'GET'], '/api/auth/*', (c) => {
+    return createAuth(c.env).handler(c.req.raw);
+  })
+  .use('/api/*', authMiddleware)
+  .route('/api/coach', coachRoutes)
+  .route('/api/fitness-plan', fitnessPlanRoutes)
+  .route('/api/integrations', integrationRoutes)
+  .route('/api/profile', profileRoutes)
+  .route('/api/workouts', workoutRoutes)
+  .get('/ws', async (c) => {
+    const user = c.get('user');
+    const id = c.env.USER_HUB.idFromName(user.id);
+    const stub = c.env.USER_HUB.get(id);
 
-type Bindings = {
-  USER_HUB: DurableObjectNamespace<UserHub>;
-  WORKOUT_SESSION: DurableObjectNamespace<import('@bene/workout-session').WorkoutSession>;
-};
-
-const app = new Hono<{ Bindings: Bindings }>();
-
-// Mount routes
-app.route('/api', userRoutes); // mounts at /api -> /users/...
-app.route('/api/workouts', workoutRoutes);
-app.route('/api/coach', coachRoutes);
-app.route('/api/integrations', integrationRoutes);
-
-// Health check
-app.get('/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+    // Forward WebSocket upgrade request to the UserHub DO
+    return await stub.fetch(c.req.raw);
+  })
+  .get('/health', (c) => {
+    return c.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
 export default app;
+
+export type AppType = typeof app;

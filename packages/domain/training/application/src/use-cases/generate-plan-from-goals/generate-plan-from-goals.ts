@@ -1,37 +1,59 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import type { EventBus } from '@bene/shared-domain';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-import {
-  AIPlanGenerator,
-  GeneratePlanInput,
-} from '../../services/ai-plan-generator.js';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { PlanGoals, UserProfile } from '@bene/training-core';
-import { UserProfileRepository } from 'src/repositories/user-profile-repository.js';
+import { FitnessPlanRepository, UserProfileRepository } from '@/repositories/index.js';
+import { AIPlanGenerator, GeneratePlanInput } from '@/services/ai-plan-generator.js';
+import { PlanGoalsSchema } from '@/schemas/index.js';
+import { PlanGeneratedEvent } from '@/events/plan-generated.event.js';
+import { toDomainPlanGoals } from '@/utils/type-converters.js';
 
-export interface GeneratePlanFromGoalsRequest {
-  userId: string;
-  goals: PlanGoals;
-  customInstructions?: string; // "I want more cardio", "Focus on upper body", etc.
-}
+// Client-facing schema (what comes in the request body)
+export const GeneratePlanFromGoalsRequestClientSchema = z.object({
+  goals: PlanGoalsSchema,
+  customInstructions: z.string().optional(), // "I want more cardio", "Focus on upper body", etc.
+});
 
-export interface GeneratePlanFromGoalsResponse {
-  planId: string;
-  name: string;
-  durationWeeks: number;
-  workoutsPerWeek: number;
-  preview: {
-    weekNumber: number;
-    workouts: Array<{
-      day: string;
-      type: string;
-      summary: string;
-    }>;
-  };
-}
+export type GeneratePlanFromGoalsRequestClient = z.infer<typeof GeneratePlanFromGoalsRequestClientSchema>;
 
-export class GeneratePlanFromGoalsUseCase
-  implements UseCase<GeneratePlanFromGoalsRequest, GeneratePlanFromGoalsResponse>
-{
+// Complete use case input schema (client data + server context)
+export const GeneratePlanFromGoalsRequestSchema = GeneratePlanFromGoalsRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type GeneratePlanFromGoalsRequest = z.infer<
+  typeof GeneratePlanFromGoalsRequestSchema
+>;
+
+// Zod schema for response validation
+const WorkoutPreviewSchema = z.object({
+  day: z.string(),
+  type: z.string(),
+  summary: z.string(),
+});
+
+const PreviewSchema = z.object({
+  weekNumber: z.number(),
+  workouts: z.array(WorkoutPreviewSchema),
+});
+
+export const GeneratePlanFromGoalsResponseSchema = z.object({
+  planId: z.string(),
+  name: z.string(),
+  durationWeeks: z.number(),
+  workoutsPerWeek: z.number(),
+  preview: PreviewSchema,
+});
+
+// Zod inferred type with original name
+export type GeneratePlanFromGoalsResponse = z.infer<
+  typeof GeneratePlanFromGoalsResponseSchema
+>;
+
+export class GeneratePlanFromGoalsUseCase implements UseCase<
+  GeneratePlanFromGoalsRequest,
+  GeneratePlanFromGoalsResponse
+> {
   constructor(
     private planRepository: FitnessPlanRepository,
     private profileRepository: UserProfileRepository,
@@ -61,7 +83,7 @@ export class GeneratePlanFromGoalsUseCase
 
     // 3. Generate plan using AI
     const planInput: GeneratePlanInput = {
-      goals: request.goals,
+      goals: toDomainPlanGoals(request.goals),
       constraints: profile.trainingConstraints || {
         equipment: [],
         injuries: [],
@@ -85,13 +107,13 @@ export class GeneratePlanFromGoalsUseCase
     }
 
     // 5. Emit event
-    await this.eventBus.publish({
-      type: 'PlanGenerated',
-      userId: request.userId,
-      planId: plan.id,
-      goals: request.goals,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new PlanGeneratedEvent({
+        userId: request.userId,
+        planId: plan.id,
+        goals: toDomainPlanGoals(request.goals),
+      }),
+    );
 
     // 6. Return DTO with preview
     const firstWeek = plan.weeks[0] || { workouts: [] };
@@ -121,4 +143,29 @@ export class GeneratePlanFromGoalsUseCase
       },
     });
   }
+}
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GeneratePlanFromGoalsRequest type instead */
+export interface GeneratePlanFromGoalsRequest_Deprecated {
+  userId: string;
+  goals: PlanGoals;
+  customInstructions?: string; // "I want more cardio", "Focus on upper body", etc.
+}
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GeneratePlanFromGoalsResponse type instead */
+export interface GeneratePlanFromGoalsResponse_Deprecated {
+  planId: string;
+  name: string;
+  durationWeeks: number;
+  workoutsPerWeek: number;
+  preview: {
+    weekNumber: number;
+    workouts: Array<{
+      day: string;
+      type: string;
+      summary: string;
+    }>;
+  };
 }

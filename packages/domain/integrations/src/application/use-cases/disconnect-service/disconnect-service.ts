@@ -1,17 +1,46 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { ConnectedServiceCommands } from '@core/index.js';
-import { ConnectedServiceRepository } from '../../ports/connected-service-repository.js';
-import { EventBus } from '@bene/shared-domain';
+import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
+import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
 
-export interface DisconnectServiceRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use DisconnectServiceRequest type instead */
+export interface DisconnectServiceRequest_Deprecated {
   userId: string;
   serviceId: string;
 }
 
-export interface DisconnectServiceResponse {
+// Client-facing schema (what comes in the request body)
+export const DisconnectServiceRequestClientSchema = z.object({
+  serviceId: z.string(),
+});
+
+export type DisconnectServiceRequestClient = z.infer<typeof DisconnectServiceRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const DisconnectServiceRequestSchema = DisconnectServiceRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type DisconnectServiceRequest = z.infer<typeof DisconnectServiceRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use DisconnectServiceResponse type instead */
+export interface DisconnectServiceResponse_Deprecated {
   serviceId: string;
   disconnected: boolean;
 }
+
+// Zod schema for response validation
+export const DisconnectServiceResponseSchema = z.object({
+  serviceId: z.string(),
+  disconnected: z.boolean(),
+});
+
+// Zod inferred type with original name
+export type DisconnectServiceResponse = z.infer<typeof DisconnectServiceResponseSchema>;
 
 export class DisconnectServiceUseCase implements UseCase<
   DisconnectServiceRequest,
@@ -45,13 +74,13 @@ export class DisconnectServiceUseCase implements UseCase<
     await this.serviceRepository.save(disconnectedService);
 
     // 5. Emit event
-    await this.eventBus.publish({
-      type: 'ServiceDisconnected',
-      userId: request.userId,
-      serviceId: service.id,
-      serviceType: service.serviceType,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new ServiceDisconnectedEvent({
+        userId: request.userId,
+        serviceId: service.id,
+        serviceType: service.serviceType,
+      }),
+    );
 
     return Result.ok({
       serviceId: request.serviceId,

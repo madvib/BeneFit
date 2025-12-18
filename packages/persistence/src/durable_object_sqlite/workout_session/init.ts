@@ -9,9 +9,8 @@ import migrations from './migrations/migrations.js';
  */
 export async function initializeWorkoutSessionDB(
   storage: DurableObjectStorage,
-  env: { NODE_ENV?: string },
+  shouldSeed: boolean,
 ) {
-  const shouldSeed = process.env.NODE_ENV !== 'production';
   console.log('🚀 Initializing Workout Session database...');
   // Create the Drizzle client using the provided storage
   const db = createDOClient(storage);

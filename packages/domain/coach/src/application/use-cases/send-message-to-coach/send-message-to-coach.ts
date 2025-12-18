@@ -1,14 +1,37 @@
-import { Result, UseCase, EventBus } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
-import { CoachContextBuilder, AICoachService } from '../../services/index.js';
-export interface SendMessageToCoachRequest {
+import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
+import { CoachMessageSentEvent, CoachAdjustedPlanEvent, CoachScheduledFollowupEvent } from '@app/events/index.js';
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SendMessageToCoachRequest type instead */
+export interface SendMessageToCoachRequest_Deprecated {
   userId: string;
   message: string;
   checkInId?: string; // If responding to a check-in
 }
 
-export interface SendMessageToCoachResponse {
+// Client-facing schema (what comes in the request body)
+export const SendMessageToCoachRequestClientSchema = z.object({
+  message: z.string(),
+  checkInId: z.string().optional(), // If responding to a check-in
+});
+
+export type SendMessageToCoachRequestClient = z.infer<typeof SendMessageToCoachRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const SendMessageToCoachRequestSchema = SendMessageToCoachRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type SendMessageToCoachRequest = z.infer<typeof SendMessageToCoachRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SendMessageToCoachResponse type instead */
+export interface SendMessageToCoachResponse_Deprecated {
   conversationId: string;
   coachResponse: string;
   actions?: Array<{
@@ -17,6 +40,24 @@ export interface SendMessageToCoachResponse {
   }>;
   suggestedFollowUps?: string[];
 }
+
+// Zod schema for response validation
+const ActionSchema = z.object({
+  type: z.string(),
+  details: z.string(),
+});
+
+export const SendMessageToCoachResponseSchema = z.object({
+  conversationId: z.string(),
+  coachResponse: z.string(),
+  actions: z.array(ActionSchema).optional(),
+  suggestedFollowUps: z.array(z.string()).optional(),
+});
+
+// Zod inferred type with original name
+export type SendMessageToCoachResponse = z.infer<
+  typeof SendMessageToCoachResponseSchema
+>;
 
 export class SendMessageToCoachUseCase implements UseCase<
   SendMessageToCoachRequest,
@@ -27,7 +68,7 @@ export class SendMessageToCoachUseCase implements UseCase<
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) { }
+  ) {}
 
   async execute(
     request: SendMessageToCoachRequest,
@@ -82,7 +123,7 @@ export class SendMessageToCoachUseCase implements UseCase<
 
     if (aiResponseResult.isFailure) {
       const error = aiResponseResult.error;
-      return Result.fail(new Error(`Coach unavailable: ${ error }`));
+      return Result.fail(new Error(`Coach unavailable: ${error}`));
     }
 
     const aiResponse = aiResponseResult.value;
@@ -111,13 +152,13 @@ export class SendMessageToCoachUseCase implements UseCase<
     await this.conversationRepository.save(updatedConversation);
 
     // 7. Emit event
-    await this.eventBus.publish({
-      type: 'CoachMessageSent',
-      userId: request.userId,
-      conversationId: updatedConversation.id,
-      actionsApplied: aiResponse.actions?.length || 0,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new CoachMessageSentEvent({
+        userId: request.userId,
+        conversationId: updatedConversation.id,
+        actionsApplied: aiResponse.actions?.length || 0,
+      }),
+    );
 
     return Result.ok({
       conversationId: updatedConversation.id,
@@ -138,22 +179,24 @@ export class SendMessageToCoachUseCase implements UseCase<
       // Emit events for actions that need to be handled
       switch (action.type) {
         case 'adjusted_plan':
-          await this.eventBus.publish({
-            type: 'CoachAdjustedPlan',
-            userId,
-            details: action.details,
-            planChangeId: action.planChangeId,
-            timestamp: new Date(),
-          });
+          await this.eventBus.publish(
+            new CoachAdjustedPlanEvent({
+              userId,
+              details: action.details,
+              planChangeId: action.planChangeId,
+              timestamp: new Date(),
+            })
+          );
           break;
 
         case 'scheduled_followup':
-          await this.eventBus.publish({
-            type: 'CoachScheduledFollowup',
-            userId,
-            details: action.details,
-            timestamp: new Date(),
-          });
+          await this.eventBus.publish(
+            new CoachScheduledFollowupEvent({
+              userId,
+              details: action.details,
+              timestamp: new Date(),
+            })
+          );
           break;
 
         // Other actions...

@@ -1,5 +1,5 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import type { EventBus } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import {
   createCompletedWorkout,
   type WorkoutPerformance,
@@ -7,20 +7,42 @@ import {
   type CompletedWorkout,
   UserProfileCommands,
   WorkoutType,
+  FitnessPlanCommands,
 } from '@bene/training-core';
-import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
-import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
-import { UserProfileRepository } from 'src/repositories/user-profile-repository.js';
+import type {
+  UserProfileRepository,
+  CompletedWorkoutRepository,
+  WorkoutSessionRepository,
+  FitnessPlanRepository,
+} from '@/repositories/index.js';
+import {
+  WorkoutPerformanceSchema,
+  WorkoutVerificationSchema,
+} from '@/schemas/index.js';
+import { WorkoutCompletedEvent } from '@/events/index.js';
+import { toDomainWorkoutPerformance, toDomainWorkoutVerification } from '@/mappers/index.js';
 
-export interface CompleteWorkoutRequest {
-  userId: string;
-  sessionId: string;
-  performance: WorkoutPerformance;
-  verification: WorkoutVerification;
-  shareToFeed?: boolean;
-}
+// Client-facing schema (what comes in the request body)
+export const CompleteWorkoutRequestClientSchema = z.object({
+  sessionId: z.string(),
+  performance: WorkoutPerformanceSchema,
+  verification: WorkoutVerificationSchema,
+  shareToFeed: z.boolean().optional(),
+});
 
-export interface CompleteWorkoutResponse {
+export type CompleteWorkoutRequestClient = z.infer<typeof CompleteWorkoutRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const CompleteWorkoutRequestSchema = CompleteWorkoutRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type CompleteWorkoutRequest = z.infer<typeof CompleteWorkoutRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use CompleteWorkoutResponse type instead */
+export interface CompleteWorkoutResponse_Deprecated {
   workoutId: string;
   // planUpdated: boolean;
   newStreak?: number;
@@ -36,13 +58,39 @@ export interface CompleteWorkoutResponse {
   };
 }
 
-export class CompleteWorkoutUseCase
-  implements UseCase<CompleteWorkoutRequest, CompleteWorkoutResponse>
-{
+// Zod schema for response validation
+const AchievementSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+});
+
+const StatsSchema = z.object({
+  totalWorkouts: z.number(),
+  totalVolume: z.number(),
+  totalMinutes: z.number(),
+});
+
+export const CompleteWorkoutResponseSchema = z.object({
+  workoutId: z.string(),
+  // planUpdated: z.boolean(), // commented in original
+  newStreak: z.number().optional(),
+  achievementsEarned: z.array(AchievementSchema),
+  stats: StatsSchema,
+});
+
+// Zod inferred type with original name
+export type CompleteWorkoutResponse = z.infer<typeof CompleteWorkoutResponseSchema>;
+
+export class CompleteWorkoutUseCase implements UseCase<
+  CompleteWorkoutRequest,
+  CompleteWorkoutResponse
+> {
   constructor(
     private sessionRepository: WorkoutSessionRepository,
     private completedWorkoutRepository: CompletedWorkoutRepository,
     private profileRepository: UserProfileRepository,
+    private fitnessPlanRepository: FitnessPlanRepository,
     private eventBus: EventBus,
   ) {}
 
@@ -66,13 +114,15 @@ export class CompleteWorkoutUseCase
         new Error(`Cannot complete workout in ${session.state} state`),
       );
     }
-
     // 2. Create CompletedWorkout
+    const domainPerformance = toDomainWorkoutPerformance(request.performance);
+    const domainVerification = toDomainWorkoutVerification(request.verification);
+
     const completedWorkoutResult = createCompletedWorkout({
       userId: request.userId,
       workoutType: session.workoutType as WorkoutType,
-      performance: request.performance,
-      verification: request.verification,
+      performance: domainPerformance,
+      verification: domainVerification,
       planId: session.planId,
       workoutTemplateId: session.workoutTemplateId,
       multiplayerSessionId: session.id,
@@ -89,33 +139,33 @@ export class CompleteWorkoutUseCase
 
     //Circular dependency...perhaps use queues or something
     // 4. Update plan if from a plan
-    // let planUpdated = false;
-    // if (session.planId && session.workoutTemplateId) {
-    //   const planResult = await this.planRepository.findById(session.planId);
-    //   if (planResult.isSuccess) {
-    //     const plan = planResult.value;
-    //     const updatedPlanResult = WorkoutPlanCommands.completeWorkout(
-    //       plan,
-    //       session.workoutTemplateId,
-    //       completedWorkout.id,
-    //     );
+    let planUpdated = false;
+    if (session.planId && session.workoutTemplateId) {
+      const planResult = await this.fitnessPlanRepository.findById(session.planId);
+      if (planResult.isSuccess) {
+        const plan = planResult.value;
+        const updatedPlanResult = FitnessPlanCommands.completeWorkout(
+          plan,
+          session.workoutTemplateId,
+          completedWorkout.id,
+        );
 
-    //     if (updatedPlanResult.isSuccess) {
-    //       await this.planRepository.save(updatedPlanResult.value);
-    //       planUpdated = true;
-    //     }
-    //   }
-    // }
+        if (updatedPlanResult.isSuccess) {
+          await this.fitnessPlanRepository.save(updatedPlanResult.value);
+          planUpdated = true;
+        }
+      }
+    }
 
     // 5. Update user profile stats
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isSuccess) {
       const profile = profileResult.value;
-      const volume = this.calculateVolume(request.performance);
+      const volume = this.calculateVolume(domainPerformance);
 
       const updatedProfile = UserProfileCommands.recordWorkoutCompleted(
         profile,
-        request.performance.completedAt,
+        new Date(request.performance.completedAt), // Convert string to Date
         request.performance.durationMinutes,
         volume,
       );
@@ -130,13 +180,13 @@ export class CompleteWorkoutUseCase
     await this.sessionRepository.delete(session.id);
 
     // 8. Emit events
-    await this.eventBus.publish({
-      type: 'WorkoutCompleted',
-      userId: request.userId,
-      workoutId: completedWorkout.id,
-      planId: session.planId,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new WorkoutCompletedEvent({
+        userId: request.userId,
+        workoutId: completedWorkout.id,
+        planId: session.planId,
+      }),
+    );
 
     // 9. Get updated stats
     const updatedProfile = await this.profileRepository.findById(request.userId);
@@ -188,10 +238,19 @@ export class CompleteWorkoutUseCase
     }
 
     // Use the workout parameter (example: check workout type for achievements)
-    if (workout.workoutType === 'marathon') {
-      // Award marathon achievement
+    if (workout.workoutType === 'cardio') {
     }
 
     return achievements;
   }
+}
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use CompleteWorkoutRequest type instead */
+export interface CompleteWorkoutRequest_Deprecated {
+  userId: string;
+  sessionId: string;
+  performance: WorkoutPerformance;
+  verification: WorkoutVerification;
+  shareToFeed?: boolean;
 }

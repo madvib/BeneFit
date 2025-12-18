@@ -1,0 +1,32 @@
+{
+  "name": "@bene/react-api-client",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@bene/gateway": "workspace:*",
+    "@tanstack/react-query": "5.90.12",
+    "agents": "0.0.1",
+    "ai": "^3.0.0",
+    "hono": "4.11.0",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "nx": {
+    "tags": [
+      "scope:client",
+      "type:library",
+      "layer:interface"
+    ]
+  }
+}

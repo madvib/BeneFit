@@ -1,11 +1,26 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import { ConnectedServiceRepository } from '../../index.js';
+import { z } from 'zod';
+import { Result, type UseCase } from '@bene/shared-domain';
+import { ConnectedServiceRepository } from '@app/index.js';
 
-export interface GetConnectedServicesRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetConnectedServicesRequest type instead */
+export interface GetConnectedServicesRequest_Deprecated {
   userId: string;
 }
 
-export interface GetConnectedServicesResponse {
+// Zod schema for request validation
+export const GetConnectedServicesRequestSchema = z.object({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type GetConnectedServicesRequest = z.infer<
+  typeof GetConnectedServicesRequestSchema
+>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetConnectedServicesResponse type instead */
+export interface GetConnectedServicesResponse_Deprecated {
   services: Array<{
     id: string;
     serviceType: string;
@@ -16,9 +31,29 @@ export interface GetConnectedServicesResponse {
   }>;
 }
 
-export class GetConnectedServicesUseCase
-  implements UseCase<GetConnectedServicesRequest, GetConnectedServicesResponse>
-{
+// Zod schema for response validation
+const ServiceSchema = z.object({
+  id: z.string(),
+  serviceType: z.string(),
+  isActive: z.boolean(),
+  isPaused: z.boolean(),
+  lastSyncAt: z.date().optional(),
+  syncStatus: z.string(),
+});
+
+export const GetConnectedServicesResponseSchema = z.object({
+  services: z.array(ServiceSchema),
+});
+
+// Zod inferred type with original name
+export type GetConnectedServicesResponse = z.infer<
+  typeof GetConnectedServicesResponseSchema
+>;
+
+export class GetConnectedServicesUseCase implements UseCase<
+  GetConnectedServicesRequest,
+  GetConnectedServicesResponse
+> {
   constructor(private serviceRepository: ConnectedServiceRepository) {}
 
   async execute(

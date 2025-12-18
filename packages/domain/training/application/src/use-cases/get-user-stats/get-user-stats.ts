@@ -1,30 +1,48 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase } from '@bene/shared-domain';
 import { UserProfile } from '@bene/training-core';
-import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
 
-export interface GetUserStatsRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetUserStatsRequest type instead */
+export interface GetUserStatsRequest_Deprecated {
   userId: string;
 }
 
-export interface GetUserStatsResponse {
-  totalWorkouts: number;
-  totalMinutes: number;
-  totalVolume: number;
-  currentStreak: number;
-  longestStreak: number;
-  lastWorkoutDate?: Date;
-  achievements: Array<{
-    id: string;
-    name: string;
-    earnedAt: Date;
-  }>;
-  streakActive: boolean;
-  daysSinceLastWorkout: number | null;
-}
+// Zod schema for request validation
+export const GetUserStatsRequestSchema = z.object({
+  userId: z.string(),
+});
 
-export class GetUserStatsUseCase
-  implements UseCase<GetUserStatsRequest, GetUserStatsResponse>
-{
+// Zod inferred type with original name
+export type GetUserStatsRequest = z.infer<typeof GetUserStatsRequestSchema>;
+
+// Zod schema for response validation
+const AchievementSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  earnedAt: z.date(),
+});
+
+export const GetUserStatsResponseSchema = z.object({
+  totalWorkouts: z.number(),
+  totalMinutes: z.number(),
+  totalVolume: z.number(),
+  currentStreak: z.number(),
+  longestStreak: z.number(),
+  lastWorkoutDate: z.date().optional(),
+  achievements: z.array(AchievementSchema),
+  streakActive: z.boolean(),
+  daysSinceLastWorkout: z.number().nullable(),
+});
+
+// Zod inferred type with original name
+export type GetUserStatsResponse = z.infer<typeof GetUserStatsResponseSchema>;
+
+export class GetUserStatsUseCase implements UseCase<
+  GetUserStatsRequest,
+  GetUserStatsResponse
+> {
   constructor(private profileRepository: UserProfileRepository) {}
 
   async execute(request: GetUserStatsRequest): Promise<Result<GetUserStatsResponse>> {
@@ -90,4 +108,22 @@ export class GetUserStatsUseCase
       (today.getTime() - lastWorkout.getTime()) / (1000 * 60 * 60 * 24),
     );
   }
+}
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetUserStatsResponse type instead */
+export interface GetUserStatsResponse_Deprecated {
+  totalWorkouts: number;
+  totalMinutes: number;
+  totalVolume: number;
+  currentStreak: number;
+  longestStreak: number;
+  lastWorkoutDate?: Date;
+  achievements: Array<{
+    id: string;
+    name: string;
+    earnedAt: Date;
+  }>;
+  streakActive: boolean;
+  daysSinceLastWorkout: number | null;
 }

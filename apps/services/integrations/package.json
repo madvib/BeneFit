@@ -8,5 +8,13 @@
   "dependencies": {
     "@bene/shared-domain": "workspace:*",
     "@bene/integrations-domain": "workspace:*"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
   }
 }

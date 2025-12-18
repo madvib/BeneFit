@@ -1,9 +1,39 @@
 {
   "name": "@bene/gateway",
   "type": "module",
+  "exports": {
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    }
+  },
   "scripts": {},
   "dependencies": {
+    "@bene/persistence": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*",
+    "@hono/zod-validator": "0.7.5",
+    "better-auth": "1.4.7",
     "hono": "^4.10.8",
-    "@bene/user-hub": "workspace:*"
+    "zod": "4.2.1"
+  },
+  "nx": {
+    "targets": {
+      "build-client": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "tsc src/client --outFile dist/client.d.ts --declaration --emitDeclarationOnly --skipLibCheck",
+          "cwd": "apps/gateway"
+        }
+      }
+    },
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:api",
+      "runtime:worker"
+    ]
   }
 }

@@ -6,14 +6,24 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "@bene/training-application": "workspace:*",
-    "@bene/shared-domain": "workspace:*",
-    "@bene/persistence": "workspace:*",
-    "@bene/coach-infra": "workspace:*",
     "@bene/coach-domain": "workspace:*",
+    "@bene/coach-infra": "workspace:*",
+    "@bene/shared-infra": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
     "@bene/integrations-domain": "workspace:*",
     "@bene/integrations-infra": "workspace:*",
+    "@bene/persistence": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/training-infra": "workspace:*",
     "agents": "0.2.32",
     "drizzle-orm": "catalog:"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:infrastructure",
+      "runtime:durable-object"
+    ]
   }
 }

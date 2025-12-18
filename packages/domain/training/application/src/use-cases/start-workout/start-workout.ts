@@ -1,13 +1,34 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import {
   createWorkoutSession,
   WorkoutActivity,
   WorkoutSessionCommands,
+  createWorkoutActivity,
 } from '@bene/training-core';
-import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
-import type { EventBus } from '@bene/shared-domain';
+import type { WorkoutSessionRepository } from '@/repositories/workout-session-repository.js';
+import { WorkoutStartedEvent } from '@/events/workout-started.event.js';
 
-export interface StartWorkoutRequest {
+// Simplified schema for WorkoutActivity - we'll use unknown for now and convert at runtime
+const WorkoutActivitySchema = z
+  .object({
+    name: z.string(),
+    type: z.enum(['warmup', 'main', 'cooldown', 'interval', 'circuit']),
+    order: z.number(),
+    structure: z.unknown().optional(),
+    instructions: z.array(z.string()).optional(),
+    distance: z.number().optional(),
+    duration: z.number().optional(),
+    pace: z.string().optional(),
+    videoUrl: z.string().optional(),
+    equipment: z.array(z.string()).optional(),
+    alternativeExercises: z.array(z.string()).optional(),
+  })
+  .readonly();
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use StartWorkoutRequest type instead */
+export interface StartWorkoutRequest_Deprecated {
   userId: string;
   userName: string;
   userAvatar?: string;
@@ -24,7 +45,36 @@ export interface StartWorkoutRequest {
   isPublic?: boolean;
 }
 
-export interface StartWorkoutResponse {
+// Client-facing schema (what comes in the request body)
+export const StartWorkoutRequestClientSchema = z.object({
+  userName: z.string(),
+  userAvatar: z.string().optional(),
+
+  // Option 1: From active plan
+  fromPlan: z.boolean().optional(),
+
+  // Option 2: Custom workout
+  workoutType: z.string().optional(),
+  activities: z.array(WorkoutActivitySchema).optional(),
+
+  // Multiplayer options
+  isMultiplayer: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
+});
+
+export type StartWorkoutRequestClient = z.infer<typeof StartWorkoutRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const StartWorkoutRequestSchema = StartWorkoutRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type StartWorkoutRequest = z.infer<typeof StartWorkoutRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use StartWorkoutResponse type instead */
+export interface StartWorkoutResponse_Deprecated {
   sessionId: string;
   workoutType: string;
   totalActivities: number;
@@ -35,9 +85,25 @@ export interface StartWorkoutResponse {
   };
 }
 
-export class StartWorkoutUseCase
-  implements UseCase<StartWorkoutRequest, StartWorkoutResponse>
-{
+// Zod schema for response validation
+export const StartWorkoutResponseSchema = z.object({
+  sessionId: z.string(),
+  workoutType: z.string(),
+  totalActivities: z.number(),
+  estimatedDurationMinutes: z.number(),
+  currentActivity: z.object({
+    type: z.string(),
+    instructions: z.array(z.string()),
+  }),
+});
+
+// Zod inferred type with original name
+export type StartWorkoutResponse = z.infer<typeof StartWorkoutResponseSchema>;
+
+export class StartWorkoutUseCase implements UseCase<
+  StartWorkoutRequest,
+  StartWorkoutResponse
+> {
   constructor(
     private sessionRepository: WorkoutSessionRepository,
     // private planRepository: FitnessPlanRepository,
@@ -52,11 +118,34 @@ export class StartWorkoutUseCase
       );
     }
 
+    // 2. Convert schema activities to domain activities
+    const domainActivities = request.activities.map(activity => {
+      const activityResult = createWorkoutActivity({
+        name: activity.name,
+        type: activity.type,
+        order: activity.order,
+        structure: undefined, // We'll handle structure conversion separately if needed
+        instructions: activity.instructions,
+        distance: activity.distance,
+        duration: activity.duration,
+        pace: activity.pace,
+        videoUrl: activity.videoUrl,
+        equipment: activity.equipment,
+        alternativeExercises: activity.alternativeExercises,
+      });
+
+      if (activityResult.isFailure) {
+        throw new Error(`Failed to create workout activity: ${activityResult.error}`);
+      }
+
+      return activityResult.value;
+    });
+
     // 2. Create session
     const sessionResult = createWorkoutSession({
       ownerId: request.userId,
       workoutType: request.workoutType,
-      activities: request.activities || [],
+      activities: domainActivities,
       planId: undefined,
       workoutTemplateId: undefined,
       isMultiplayer: request.isMultiplayer,
@@ -86,13 +175,13 @@ export class StartWorkoutUseCase
     await this.sessionRepository.save(session);
 
     // 5. Emit event
-    await this.eventBus.publish({
-      type: 'WorkoutStarted',
-      userId: request.userId,
-      sessionId: session.id,
-      planId: session.planId,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new WorkoutStartedEvent({
+        userId: request.userId,
+        sessionId: session.id,
+        planId: session.planId,
+      }),
+    );
 
     // 6. Return session details
     const firstActivity = session.activities[0];

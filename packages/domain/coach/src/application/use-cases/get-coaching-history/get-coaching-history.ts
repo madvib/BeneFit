@@ -1,13 +1,27 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase } from '@bene/shared-domain';
 import { CoachConversation } from '@core/index.js';
-import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 
-export interface GetCoachHistoryRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetCoachHistoryRequest type instead */
+export interface GetCoachHistoryRequest_Deprecated {
   userId: string;
   limit?: number;
 }
 
-export interface GetCoachHistoryResponse {
+// Zod schema for request validation
+export const GetCoachHistoryRequestSchema = z.object({
+  userId: z.string(),
+  limit: z.number().optional(),
+});
+
+// Zod inferred type with original name
+export type GetCoachHistoryRequest = z.infer<typeof GetCoachHistoryRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetCoachHistoryResponse type instead */
+export interface GetCoachHistoryResponse_Deprecated {
   messages: Array<{
     id: string;
     role: 'user' | 'coach' | 'system';
@@ -29,6 +43,41 @@ export interface GetCoachHistoryResponse {
     actionsApplied: number;
   };
 }
+
+// Zod schema for response validation
+const ActionSchema = z.object({
+  type: z.string(),
+  details: z.string(),
+});
+
+const MessageSchema = z.object({
+  id: z.string(),
+  role: z.enum(['user', 'coach', 'system']),
+  content: z.string(),
+  timestamp: z.date(),
+  actions: z.array(ActionSchema).optional(),
+});
+
+const PendingCheckInSchema = z.object({
+  id: z.string(),
+  question: z.string(),
+  triggeredBy: z.string().optional(),
+});
+
+const StatsSchema = z.object({
+  totalMessages: z.number(),
+  totalCheckIns: z.number(),
+  actionsApplied: z.number(),
+});
+
+export const GetCoachHistoryResponseSchema = z.object({
+  messages: z.array(MessageSchema),
+  pendingCheckIns: z.array(PendingCheckInSchema),
+  stats: StatsSchema,
+});
+
+// Zod inferred type with original name
+export type GetCoachHistoryResponse = z.infer<typeof GetCoachHistoryResponseSchema>;
 
 export class GetCoachHistoryUseCase implements UseCase<
   GetCoachHistoryRequest,

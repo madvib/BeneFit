@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -9,7 +10,8 @@
       "ESNext"
     ],
     "types": [
-      "../../types/cloudflare-runtime.d.ts"
+      "../../types/cloudflare-runtime.d.ts",
+      "./worker-env.d.ts"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"

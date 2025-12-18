@@ -1,4 +1,5 @@
-import { Result, UseCase, EventBus } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { Injury } from '@bene/training-core';
 import {
   CoachConversationCommands,
@@ -6,18 +7,45 @@ import {
   createCheckIn,
   CheckInTrigger,
 } from '@core/index.js';
-import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
-import { CoachContextBuilder, AICoachService } from '../../services/index.js';
+import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
+import { ProactiveCheckInTriggeredEvent } from '@app/events/proactive-check-in-triggered.event.js';
 
-export interface TriggerProactiveCheckInRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use TriggerProactiveCheckInRequest type instead */
+export interface TriggerProactiveCheckInRequest_Deprecated {
   userId: string;
 }
 
-export interface TriggerProactiveCheckInResponse {
+// Zod schema for request validation
+export const TriggerProactiveCheckInRequestSchema = z.object({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type TriggerProactiveCheckInRequest = z.infer<
+  typeof TriggerProactiveCheckInRequestSchema
+>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use TriggerProactiveCheckInResponse type instead */
+export interface TriggerProactiveCheckInResponse_Deprecated {
   checkInId: string;
   question: string;
   triggeredBy: string;
 }
+
+// Zod schema for response validation
+export const TriggerProactiveCheckInResponseSchema = z.object({
+  checkInId: z.string(),
+  question: z.string(),
+  triggeredBy: z.string(),
+});
+
+// Zod inferred type with original name
+export type TriggerProactiveCheckInResponse = z.infer<
+  typeof TriggerProactiveCheckInResponseSchema
+>;
 
 export class TriggerProactiveCheckInUseCase implements UseCase<
   TriggerProactiveCheckInRequest,
@@ -28,7 +56,7 @@ export class TriggerProactiveCheckInUseCase implements UseCase<
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) { }
+  ) {}
 
   async execute(
     request: TriggerProactiveCheckInRequest,
@@ -105,13 +133,13 @@ export class TriggerProactiveCheckInUseCase implements UseCase<
     await this.conversationRepository.save(conversation);
 
     // 8. Emit event (for notification)
-    await this.eventBus.publish({
-      type: 'ProactiveCheckInTriggered',
-      userId: request.userId,
-      checkInId: checkIn.id,
-      trigger,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new ProactiveCheckInTriggeredEvent({
+        userId: request.userId,
+        checkInId: checkIn.id,
+        trigger,
+      }),
+    );
 
     return Result.ok({
       checkInId: checkIn.id,

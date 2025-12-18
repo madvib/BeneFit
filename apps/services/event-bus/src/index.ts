@@ -1,5 +1,6 @@
 // apps/services/queue/src/index.ts
 import { WorkerEntrypoint } from 'cloudflare:workers';
+import { DomainEvent } from '@bene/shared-domain';
 
 export default class QueueService extends WorkerEntrypoint<Env> {
   // Publish single event
@@ -94,7 +95,7 @@ export default class QueueService extends WorkerEntrypoint<Env> {
 
     for (const event of events) {
       const queue = this.routeEvent(event);
-      const queueName = this.getQueueName(queue);
+      const queueName = this.getQueue(queue);
 
       if (!grouped[queueName]) {
         grouped[queueName] = [];

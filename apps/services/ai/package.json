@@ -9,5 +9,12 @@
     "@bene/shared-domain": "workspace:*",
     "@bene/shared-infra": "workspace:*"
   },
-  "nx": {}
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
+  }
 }

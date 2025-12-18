@@ -2,18 +2,18 @@
 import {
   ActivatePlanUseCase,
   GeneratePlanFromGoalsUseCase,
-  GetTodaysWorkoutUseCase,
   AdjustPlanBasedOnFeedbackUseCase,
   PausePlanUseCase,
+  GetTodaysWorkoutUseCase, //Where in gateway
   GetUpcomingWorkoutsUseCase,
-  CreateUserProfileUseCase,
-  UpdateFitnessGoalsUseCase,
-  UpdateTrainingConstraintsUseCase,
-  UpdatePreferencesUseCase,
-  GetUserStatsUseCase,
-  GetProfileUseCase,
   GetWorkoutHistoryUseCase,
   SkipWorkoutUseCase,
+  GetProfileUseCase,
+  CreateUserProfileUseCase,
+  UpdateFitnessGoalsUseCase,
+  UpdatePreferencesUseCase,
+  GetUserStatsUseCase,
+  UpdateTrainingConstraintsUseCase,
 } from '@bene/training-application';
 
 import {
@@ -23,17 +23,14 @@ import {
   GenerateWeeklySummaryUseCase,
   RespondToCheckInUseCase,
   TriggerProactiveCheckInUseCase,
-  CoachContextBuilder,
-  AICoachService
 } from '@bene/coach-domain';
 
 import {
   ConnectServiceUseCase,
   DisconnectServiceUseCase,
   GetConnectedServicesUseCase,
-  SyncServiceDataUseCase
+  SyncServiceDataUseCase,
 } from '@bene/integrations-domain';
-
 
 import { MockIntegrationClient } from '../adapters/mock-integration-client';
 import { RepositoryFactory } from './repository-factory';
@@ -41,39 +38,39 @@ import { ServiceFactory } from './service-factory';
 
 export class UseCaseFactory {
   // --- Training Use Cases ---
-  private _activatePlanUC: ActivatePlanUseCase | null = null;
-  private _generatePlanFromGoalsUC: GeneratePlanFromGoalsUseCase | null = null;
-  private _getTodaysWorkoutUC: GetTodaysWorkoutUseCase | null = null;
-  private _adjustPlanBasedOnFeedbackUC: AdjustPlanBasedOnFeedbackUseCase | null = null;
-  private _pausePlanUC: PausePlanUseCase | null = null;
-  private _getUpcomingWorkoutsUC: GetUpcomingWorkoutsUseCase | null = null;
-  private _createUserProfileUC: CreateUserProfileUseCase | null = null;
-  private _updateFitnessGoalsUC: UpdateFitnessGoalsUseCase | null = null;
-  private _updateTrainingConstraintsUC: UpdateTrainingConstraintsUseCase | null = null;
-  private _updatePreferencesUC: UpdatePreferencesUseCase | null = null;
-  private _getUserStatsUC: GetUserStatsUseCase | null = null;
-  private _getProfileUC: GetProfileUseCase | null = null;
-  private _getWorkoutHistoryUC: GetWorkoutHistoryUseCase | null = null;
-  private _skipWorkoutUC: SkipWorkoutUseCase | null = null;
+  private _activatePlanUC?: ActivatePlanUseCase;
+  private _generatePlanFromGoalsUC?: GeneratePlanFromGoalsUseCase;
+  private _getTodaysWorkoutUC?: GetTodaysWorkoutUseCase;
+  private _adjustPlanBasedOnFeedbackUC?: AdjustPlanBasedOnFeedbackUseCase;
+  private _pausePlanUC?: PausePlanUseCase;
+  private _getUpcomingWorkoutsUC?: GetUpcomingWorkoutsUseCase;
+  private _createUserProfileUC?: CreateUserProfileUseCase;
+  private _updateFitnessGoalsUC?: UpdateFitnessGoalsUseCase;
+  private _updateTrainingConstraintsUC?: UpdateTrainingConstraintsUseCase;
+  private _updatePreferencesUC?: UpdatePreferencesUseCase;
+  private _getUserStatsUC?: GetUserStatsUseCase;
+  private _getProfileUC?: GetProfileUseCase;
+  private _getWorkoutHistoryUC?: GetWorkoutHistoryUseCase;
+  private _skipWorkoutUC?: SkipWorkoutUseCase;
 
   // --- Coach Use Cases ---
-  private _sendMessageToCoachUC: SendMessageToCoachUseCase | null = null;
-  private _getCoachHistoryUC: GetCoachHistoryUseCase | null = null;
-  private _dismissCheckInUC: DismissCheckInUseCase | null = null;
-  private _generateWeeklySummaryUC: GenerateWeeklySummaryUseCase | null = null;
-  private _respondToCheckInUC: RespondToCheckInUseCase | null = null;
-  private _triggerProactiveCheckInUC: TriggerProactiveCheckInUseCase | null = null;
+  private _sendMessageToCoachUC?: SendMessageToCoachUseCase;
+  private _getCoachHistoryUC?: GetCoachHistoryUseCase;
+  private _dismissCheckInUC?: DismissCheckInUseCase;
+  private _generateWeeklySummaryUC?: GenerateWeeklySummaryUseCase;
+  private _respondToCheckInUC?: RespondToCheckInUseCase;
+  private _triggerProactiveCheckInUC?: TriggerProactiveCheckInUseCase;
 
   // --- Integration Use Cases ---
-  private _connectServiceUC: ConnectServiceUseCase | null = null;
-  private _disconnectServiceUC: DisconnectServiceUseCase | null = null;
-  private _getConnectedServicesUC: GetConnectedServicesUseCase | null = null;
-  private _syncServiceDataUC: SyncServiceDataUseCase | null = null;
+  private _connectServiceUC?: ConnectServiceUseCase;
+  private _disconnectServiceUC?: DisconnectServiceUseCase;
+  private _getConnectedServicesUC?: GetConnectedServicesUseCase;
+  private _syncServiceDataUC?: SyncServiceDataUseCase;
 
   constructor(
     private repoFactory: RepositoryFactory,
     private serviceFactory: ServiceFactory,
-  ) { }
+  ) {}
 
   // ... (Existing Training getters kept for compatibility or gradual migration) ...
 
@@ -107,7 +104,6 @@ export class UseCaseFactory {
     }
     return this._getTodaysWorkoutUC;
   }
-
 
   public getAdjustPlanBasedOnFeedbackUseCase(): AdjustPlanBasedOnFeedbackUseCase {
     if (!this._adjustPlanBasedOnFeedbackUC) {
@@ -215,7 +211,6 @@ export class UseCaseFactory {
     return this._skipWorkoutUC;
   }
 
-
   // --- Coach Getters ---
 
   public getSendMessageToCoachUseCase(): SendMessageToCoachUseCase {
@@ -224,7 +219,7 @@ export class UseCaseFactory {
         this.repoFactory.getCoachConversationRepository(),
         this.serviceFactory.getCoachContextBuilder(),
         this.serviceFactory.getAICoachService(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._sendMessageToCoachUC;
@@ -233,7 +228,7 @@ export class UseCaseFactory {
   public getGetCoachHistoryUseCase(): GetCoachHistoryUseCase {
     if (!this._getCoachHistoryUC) {
       this._getCoachHistoryUC = new GetCoachHistoryUseCase(
-        this.repoFactory.getCoachConversationRepository()
+        this.repoFactory.getCoachConversationRepository(),
       );
     }
     return this._getCoachHistoryUC;
@@ -243,7 +238,7 @@ export class UseCaseFactory {
     if (!this._dismissCheckInUC) {
       this._dismissCheckInUC = new DismissCheckInUseCase(
         this.repoFactory.getCoachConversationRepository(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._dismissCheckInUC;
@@ -254,7 +249,7 @@ export class UseCaseFactory {
       this._generateWeeklySummaryUC = new GenerateWeeklySummaryUseCase(
         this.serviceFactory.getCoachContextBuilder(),
         this.serviceFactory.getAICoachService(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._generateWeeklySummaryUC;
@@ -265,7 +260,7 @@ export class UseCaseFactory {
       this._respondToCheckInUC = new RespondToCheckInUseCase(
         this.repoFactory.getCoachConversationRepository(),
         this.serviceFactory.getAICoachService(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._respondToCheckInUC;
@@ -277,7 +272,7 @@ export class UseCaseFactory {
         this.repoFactory.getCoachConversationRepository(),
         this.serviceFactory.getCoachContextBuilder(),
         this.serviceFactory.getAICoachService(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._triggerProactiveCheckInUC;
@@ -285,7 +280,7 @@ export class UseCaseFactory {
 
   // --- Integration Getters ---
 
-  private _integrationClients?: Map<string, any>;
+  private _integrationClients?: Map<string, MockIntegrationClient>;
   private get integrationClients() {
     if (!this._integrationClients) {
       this._integrationClients = new Map();
@@ -300,7 +295,7 @@ export class UseCaseFactory {
       this._connectServiceUC = new ConnectServiceUseCase(
         this.repoFactory.getConnectedServiceRepository(),
         this.integrationClients,
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._connectServiceUC;
@@ -310,7 +305,7 @@ export class UseCaseFactory {
     if (!this._disconnectServiceUC) {
       this._disconnectServiceUC = new DisconnectServiceUseCase(
         this.repoFactory.getConnectedServiceRepository(),
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._disconnectServiceUC;
@@ -319,7 +314,7 @@ export class UseCaseFactory {
   public getGetConnectedServicesUseCase(): GetConnectedServicesUseCase {
     if (!this._getConnectedServicesUC) {
       this._getConnectedServicesUC = new GetConnectedServicesUseCase(
-        this.repoFactory.getConnectedServiceRepository()
+        this.repoFactory.getConnectedServiceRepository(),
       );
     }
     return this._getConnectedServicesUC;
@@ -329,14 +324,14 @@ export class UseCaseFactory {
     if (!this._syncServiceDataUC) {
       // NOTE: Missing IntegrationSyncLogRepository. Passing null or stub if possible, or needing update.
       // SyncServiceDataUseCase likely needs it.
-      // Assuming RepoFactory was updated? No, I didn't add SyncLogRepo to it. 
+      // Assuming RepoFactory was updated? No, I didn't add SyncLogRepo to it.
       // I'll skip SyncServiceDataUseCase logic or use 'any' cast if optional, or add Todo.
       // Actually `SyncServiceDataUseCase` was inspected? No I didn't verify its constructor.
       // Assuming it needs log repo. I will comment it out or stub it to avoid build error if missing.
       // Let's assume for now we cannot fully support sync until that repo is ready.
       // Or I can add it to RepoFactory. I'll add a TODO.
       // For now I'll just throw or mock.
-      // Actually, let's look at `SyncServiceDataUseCase` constructor via view_file or just skip it if not critical. 
+      // Actually, let's look at `SyncServiceDataUseCase` constructor via view_file or just skip it if not critical.
       // The plan said "Integrate domain/coach and integration".
       // I'll assume standard 3 args if I can.
       // Wait, I saw ConnectServiceUseCase constructor.
@@ -344,7 +339,7 @@ export class UseCaseFactory {
       this._syncServiceDataUC = new SyncServiceDataUseCase(
         this.repoFactory.getConnectedServiceRepository(),
         this.integrationClients,
-        this.serviceFactory.getEventBus()
+        this.serviceFactory.getEventBus(),
       );
     }
     return this._syncServiceDataUC;

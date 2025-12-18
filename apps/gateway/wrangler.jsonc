@@ -11,10 +11,22 @@
       {
         "class_name": "UserHub",
         "name": "USER_HUB",
-        "script_name": "user-hub-worker"
+        "script_name": "user-hub-handler",
+      },
+      {
+        "class_name": "WorkoutSession",
+        "name": "WORKOUT_SESSION",
+        "script_name": "workout-session-handler",
       },
     ],
   },
+  "d1_databases": [
+    {
+      "binding": "DB_USER_AUTH",
+      "database_name": "db-user-auth",
+      "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
+    }
+  ]
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },

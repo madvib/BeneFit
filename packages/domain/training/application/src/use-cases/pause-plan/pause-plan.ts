@@ -1,19 +1,50 @@
-import { EventBus } from '@bene/shared-domain';
-import { Result, UseCase } from '@bene/shared-domain';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { FitnessPlanCommands } from '@bene/training-core';
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { PlanPausedEvent } from '@/events/plan-paused.event.js';
 
-export interface PausePlanRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use PausePlanRequest type instead */
+export interface PausePlanRequest_Deprecated {
   userId: string;
   planId: string;
   reason?: string;
 }
 
-export interface PausePlanResponse {
+// Client-facing schema (what comes in the request body)
+export const PausePlanRequestClientSchema = z.object({
+  planId: z.string(),
+  reason: z.string().optional(),
+});
+
+export type PausePlanRequestClient = z.infer<typeof PausePlanRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const PausePlanRequestSchema = PausePlanRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type PausePlanRequest = z.infer<typeof PausePlanRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use PausePlanResponse type instead */
+export interface PausePlanResponse_Deprecated {
   planId: string;
   status: string;
   pausedAt: Date;
 }
+
+// Zod schema for response validation
+export const PausePlanResponseSchema = z.object({
+  planId: z.string(),
+  status: z.string(),
+  pausedAt: z.date(),
+});
+
+// Zod inferred type with original name
+export type PausePlanResponse = z.infer<typeof PausePlanResponseSchema>;
 
 export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResponse> {
   constructor(
@@ -40,13 +71,13 @@ export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResp
     const pausedPlan = pausedPlanResult.value;
     await this.planRepository.save(pausedPlan);
 
-    await this.eventBus.publish({
-      type: 'PlanPaused',
-      userId: request.userId,
-      planId: plan.id,
-      reason: request.reason,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new PlanPausedEvent({
+        userId: request.userId,
+        planId: plan.id,
+        reason: request.reason,
+      }),
+    );
 
     return Result.ok({
       planId: pausedPlan.id,

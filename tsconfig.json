@@ -47,6 +47,9 @@
     },
     {
       "path": "./packages/blog"
+    },
+    {
+      "path": "./packages/react-api-client"
     }
   ]
 }

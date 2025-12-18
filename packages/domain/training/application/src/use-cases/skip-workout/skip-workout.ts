@@ -1,24 +1,57 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import type { EventBus } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { WorkoutTemplateCommands } from '@bene/training-core';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { WorkoutSkippedEvent } from '@/events/workout-skipped.event.js';
 
-export interface SkipWorkoutRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SkipWorkoutRequest type instead */
+export interface SkipWorkoutRequest_Deprecated {
   userId: string;
   planId: string;
   workoutId: string;
   reason: string;
 }
 
-export interface SkipWorkoutResponse {
+// Client-facing schema (what comes in the request body)
+export const SkipWorkoutRequestClientSchema = z.object({
+  planId: z.string(),
+  workoutId: z.string(),
+  reason: z.string(),
+});
+
+export type SkipWorkoutRequestClient = z.infer<typeof SkipWorkoutRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const SkipWorkoutRequestSchema = SkipWorkoutRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type SkipWorkoutRequest = z.infer<typeof SkipWorkoutRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SkipWorkoutResponse type instead */
+export interface SkipWorkoutResponse_Deprecated {
   planId: string;
   skippedWorkoutId: string;
   message: string;
 }
 
-export class SkipWorkoutUseCase
-  implements UseCase<SkipWorkoutRequest, SkipWorkoutResponse>
-{
+// Zod schema for response validation
+export const SkipWorkoutResponseSchema = z.object({
+  planId: z.string(),
+  skippedWorkoutId: z.string(),
+  message: z.string(),
+});
+
+// Zod inferred type with original name
+export type SkipWorkoutResponse = z.infer<typeof SkipWorkoutResponseSchema>;
+
+export class SkipWorkoutUseCase implements UseCase<
+  SkipWorkoutRequest,
+  SkipWorkoutResponse
+> {
   constructor(
     private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
@@ -98,14 +131,14 @@ export class SkipWorkoutUseCase
     await this.planRepository.save(updatedPlan);
 
     // 4. Emit event (for AI coach to potentially respond)
-    await this.eventBus.publish({
-      type: 'WorkoutSkipped',
-      userId: request.userId,
-      planId: request.planId,
-      workoutId: request.workoutId,
-      reason: request.reason,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new WorkoutSkippedEvent({
+        userId: request.userId,
+        planId: request.planId,
+        workoutId: request.workoutId,
+        reason: request.reason,
+      }),
+    );
 
     return Result.ok({
       planId: plan.id,

@@ -1,4 +1,6 @@
+import { DomainEvent } from '../../core/base-classes/index.js';
+
 export interface EventBus {
-  publish(event: Record<string, unknown>): Promise<void>;
-  subscribe(eventType: string, handler: (event: Record<string, unknown>) => Promise<void>): void;
+  publish(event: DomainEvent): Promise<void>;
+  subscribe(eventType: string, handler: (event: DomainEvent) => Promise<void>): void;
 }

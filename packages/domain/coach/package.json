@@ -18,7 +18,8 @@
     "@swc/helpers": "~0.5.11",
     "@bene/shared-domain": "workspace:*",
     "@bene/training-core": "workspace:*",
-    "@bene/training-application": "workspace:*"
+    "@bene/training-application": "workspace:*",
+    "zod": "catalog:"
   },
   "nx": {
     "sourceRoot": "packages/domain/coach/src",

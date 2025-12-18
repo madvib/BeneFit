@@ -5,12 +5,21 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
-      "@core/*": ["./src/core/*"]
+      "@core/*": [
+        "./src/core/*"
+      ],
+      "@app/*": [
+        "./src/application/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
   "references": [
     {
       "path": "../training/application/tsconfig.lib.json"

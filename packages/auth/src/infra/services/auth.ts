@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
-import { user, session, account, verification } from '../data/schema/schema.js';
+import { user, session, account, verification } from '../../data/schema/schema.js';
 
 const authConfig = {
   baseURL: 'http://localhost:3000',

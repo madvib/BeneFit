@@ -30,16 +30,16 @@ import { createD1Client, createDOClient, D1Client, DOClient } from '@bene/persis
  */
 export class RepositoryFactory {
   // Private properties for lazy caching
-  private _userProfileRepo: UserProfileRepository | null = null;
-  private _completedWorkoutRepo: CompletedWorkoutRepository | null = null;
-  private _fitnessPlanRepo: FitnessPlanRepository | null = null;
-  private _planTemplateRepo: PlanTemplateRepository | null = null;
-  private _workoutSessionRepo: WorkoutSessionRepository | null = null;
+  private _userProfileRepo?: UserProfileRepository;
+  private _completedWorkoutRepo?: CompletedWorkoutRepository;
+  private _fitnessPlanRepo?: FitnessPlanRepository;
+  private _planTemplateRepo?: PlanTemplateRepository;
+  private _workoutSessionRepo?: WorkoutSessionRepository;
   // New repos
-  private _coachConversationRepo: CoachConversationRepository | null = null;
-  private _connectedServiceRepo: ConnectedServiceRepository | null = null;
+  private _coachConversationRepo?: CoachConversationRepository;
+  private _connectedServiceRepo?: ConnectedServiceRepository;
 
-  private db: DOClient<any>;
+  private db: DOClient<unknown>;
   private d1DB: D1Client;
 
   constructor(storage: DurableObjectStorage, planTemplateDB: D1Database) {
@@ -49,7 +49,7 @@ export class RepositoryFactory {
 
   // --- Public Getters (Lazy-Loaded) ---
 
-  public getUserProfileRepository(): UserProfileRepository {
+  getUserProfileRepository(): UserProfileRepository {
     if (!this._userProfileRepo) {
       this._userProfileRepo = new DurableUserProfileRepository(this.db);
     }
@@ -67,7 +67,7 @@ export class RepositoryFactory {
     if (!this._fitnessPlanRepo) {
       this._fitnessPlanRepo = new DurableFitnessPlanRepository(this.db);
     }
-    return this._fitnessPlanRepo!;
+    return this._fitnessPlanRepo;
   }
 
   public getPlanTemplateRepository(): PlanTemplateRepository {

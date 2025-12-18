@@ -1,0 +1,24 @@
+{
+  "name": "@bene/workout-session",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/persistence": "workspace:*",
+    "@bene/shared-domain": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/training-infra": "workspace:*",
+    "agents": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:infrastructure",
+      "runtime:durable-object"
+    ]
+  }
+}

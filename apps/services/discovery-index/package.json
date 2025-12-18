@@ -4,5 +4,13 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
   }
 }

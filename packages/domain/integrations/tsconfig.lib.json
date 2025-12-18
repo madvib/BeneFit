@@ -11,6 +11,9 @@
     "paths": {
       "@core/*": [
         "./src/core/*"
+      ],
+      "@app/*": [
+        "./src/application/*"
       ]
     }
   },

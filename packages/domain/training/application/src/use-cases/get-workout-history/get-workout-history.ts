@@ -1,13 +1,34 @@
-import { Result, UseCase } from '@bene/shared-domain';
-import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import { z } from 'zod';
+import { Result, type UseCase } from '@bene/shared-domain';
+import type { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
 
-export interface GetWorkoutHistoryRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetWorkoutHistoryRequest type instead */
+export interface GetWorkoutHistoryRequest_Deprecated {
   userId: string;
   limit?: number;
   offset?: number;
 }
 
-export interface GetWorkoutHistoryResponse {
+// Client-facing schema (what comes in the request body)
+export const GetWorkoutHistoryRequestClientSchema = z.object({
+  limit: z.number().optional(),
+  offset: z.number().optional(),
+});
+
+export type GetWorkoutHistoryRequestClient = z.infer<typeof GetWorkoutHistoryRequestClientSchema>;
+
+// Complete use case input schema (client data + server context)
+export const GetWorkoutHistoryRequestSchema = GetWorkoutHistoryRequestClientSchema.extend({
+  userId: z.string(),
+});
+
+// Zod inferred type with original name
+export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use GetWorkoutHistoryResponse type instead */
+export interface GetWorkoutHistoryResponse_Deprecated {
   workouts: Array<{
     id: string;
     type: string;
@@ -21,9 +42,30 @@ export interface GetWorkoutHistoryResponse {
   total: number;
 }
 
-export class GetWorkoutHistoryUseCase
-  implements UseCase<GetWorkoutHistoryRequest, GetWorkoutHistoryResponse>
-{
+// Zod schema for response validation
+const WorkoutSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  date: z.date(),
+  durationMinutes: z.number(),
+  perceivedExertion: z.number(),
+  enjoyment: z.number(),
+  verified: z.boolean(),
+  reactionCount: z.number(),
+});
+
+export const GetWorkoutHistoryResponseSchema = z.object({
+  workouts: z.array(WorkoutSchema),
+  total: z.number(),
+});
+
+// Zod inferred type with original name
+export type GetWorkoutHistoryResponse = z.infer<typeof GetWorkoutHistoryResponseSchema>;
+
+export class GetWorkoutHistoryUseCase implements UseCase<
+  GetWorkoutHistoryRequest,
+  GetWorkoutHistoryResponse
+> {
   constructor(private completedWorkoutRepository: CompletedWorkoutRepository) {}
 
   async execute(

@@ -7,10 +7,6 @@ interface ChatMessage {
   timestamp: string;
 }
 
-interface CoachState {
-  conversation: ChatMessage[];
-}
-
 export class CoachFeature {
   constructor(
     private state: DurableObjectState,

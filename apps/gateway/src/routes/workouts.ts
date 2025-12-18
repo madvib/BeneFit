@@ -1,52 +1,202 @@
+import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-// @ts-ignore - build time dependency
-import { WorkoutSession } from '@bene/workout-session';
+import {
+  GetUpcomingWorkoutsRequestClientSchema,
+  GetUpcomingWorkoutsRequestSchema,
+  GetWorkoutHistoryRequestClientSchema,
+  GetWorkoutHistoryRequestSchema,
+  SkipWorkoutRequestClientSchema,
+  SkipWorkoutRequestSchema,
+  StartWorkoutRequestClientSchema,
+  StartWorkoutRequestSchema,
+  CompleteWorkoutRequestClientSchema,
+  CompleteWorkoutRequestSchema,
+  JoinMultiplayerWorkoutRequestClientSchema,
+  JoinMultiplayerWorkoutRequestSchema,
+  AddWorkoutReactionRequestClientSchema,
+  AddWorkoutReactionRequestSchema,
+} from '@bene/training-application';
 
-type Bindings = {
-  WORKOUT_SESSION: DurableObjectNamespace<WorkoutSession>;
-};
+export const workoutRoutes = new Hono<{
+  Bindings: Env;
+  Variables: { user: any };
+}>()
+  .get('/today', async (c) => {
+    const user = c.get('user');
 
-const workoutRoutes = new Hono<{ Bindings: Bindings }>();
+    const id = c.env.USER_HUB.idFromName(user.id);
+    const stub = c.env.USER_HUB.get(id);
 
-// GET /api/workouts/today
-workoutRoutes.get('/today', async (c) => {
-  const userId = c.req.query('userId');
-  if (!userId) {
-    throw new HTTPException(400, { message: 'UserId is required' });
-  }
+    const workout = await stub.workouts.getTodaysWorkout({ userId: user.id });
 
-  const id = c.env.WORKOUT_SESSION.idFromName(userId);
-  const stub = c.env.WORKOUT_SESSION.get(id);
+    return c.json(workout);
+  })
+  .get(
+    '/upcoming',
+    zValidator('json', GetUpcomingWorkoutsRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
 
-  try {
-    const result = await stub.getTodaysWorkout(userId);
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
+
+      // Validate the complete input (optional but catches bugs)
+      const validated = GetUpcomingWorkoutsRequestSchema.parse(useCaseInput);
+
+      const id = c.env.USER_HUB.idFromName(user.id);
+      const stub = c.env.USER_HUB.get(id);
+
+      const result = await stub.workouts.getTodaysWorkout(validated);
+
+      return c.json(result);
+    },
+  )
+  .get(
+    '/history',
+    zValidator('json', GetWorkoutHistoryRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
+
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
+
+      // Validate the complete input (optional but catches bugs)
+      const validated = GetWorkoutHistoryRequestSchema.parse(useCaseInput);
+
+      const id = c.env.USER_HUB.idFromName(user.id);
+      const stub = c.env.USER_HUB.get(id);
+
+      const result = await stub.workouts.getTodaysWorkout(validated);
+      return c.json(result);
+    },
+  )
+  .post('/skip', zValidator('json', SkipWorkoutRequestClientSchema), async (c) => {
+    const user = c.get('user');
+    const clientInput = c.req.valid('json');
+
+    // Merge server context with client input
+    const useCaseInput = {
+      ...clientInput,
+      userId: user.id,
+    };
+
+    // Validate the complete input (optional but catches bugs)
+    const validated = SkipWorkoutRequestSchema.parse(useCaseInput);
+
+    const id = c.env.USER_HUB.idFromName(user.id);
+    const stub = c.env.USER_HUB.get(id);
+
+    const result = await stub.workouts.skip(validated);
     return c.json(result);
-  } catch (error) {
-    console.error('Error getting today\'s workout:', error);
-    throw new HTTPException(500, { message: 'Failed to get today\'s workout' });
-  }
-});
+  })
+  .post(
+    '/:sessionId/start',
+    zValidator('json', StartWorkoutRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const clientInput = c.req.valid('json');
+      const sessionId = c.req.param('sessionId');
 
-// POST /api/workouts/start
-workoutRoutes.post('/start', async (c) => {
-  const body = await c.req.json();
-  const { userId, workoutId } = body;
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+        userName: user.name || 'Unknown',
+      };
 
-  if (!userId || !workoutId) {
-    throw new HTTPException(400, { message: 'UserId and WorkoutId are required' });
-  }
+      // Validate the complete input (optional but catches bugs)
+      const validated = StartWorkoutRequestSchema.parse(useCaseInput);
 
-  const id = c.env.WORKOUT_SESSION.idFromName(userId);
-  const stub = c.env.WORKOUT_SESSION.get(id);
+      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
+      const stub = c.env.WORKOUT_SESSION.get(id);
 
-  try {
-    const result = await stub.startWorkout({ userId, workoutId });
-    return c.json(result);
-  } catch (error) {
-    console.error('Error starting workout:', error);
-    throw new HTTPException(500, { message: 'Failed to start workout' });
-  }
-});
+      const response = await stub.workouts.start(validated);
 
-export default workoutRoutes;
+      return c.json(response, 201);
+    },
+  )
+  .post(
+    '/:sessionId/complete',
+    zValidator('json', CompleteWorkoutRequestClientSchema),
+    async (c) => {
+      const sessionId = c.req.param('sessionId');
+      const clientInput = c.req.valid('json');
+      const user = c.get('user');
+
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+      };
+
+      // Validate the complete input (optional but catches bugs)
+      const validated = CompleteWorkoutRequestSchema.parse(useCaseInput);
+
+      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
+      const stub = c.env.WORKOUT_SESSION.get(id);
+
+      const response = await stub.workouts.complete(validated);
+
+      return c.json(response);
+    },
+  )
+  .post(
+    '/:sessionId/join',
+    zValidator('json', JoinMultiplayerWorkoutRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const sessionId = c.req.param('sessionId');
+      const clientInput = c.req.valid('json');
+
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+        userName: user.name || 'Anonymous',
+      };
+
+      // Validate the complete input (optional but catches bugs)
+      const validated = JoinMultiplayerWorkoutRequestSchema.parse(useCaseInput);
+
+      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
+      const stub = c.env.WORKOUT_SESSION.get(id);
+
+      const result = await stub.workouts.joinMultiplayer(validated);
+      return c.json(result);
+    },
+  )
+  .post(
+    '/:sessionId/reaction',
+    zValidator('json', AddWorkoutReactionRequestClientSchema),
+    async (c) => {
+      const user = c.get('user');
+      const sessionId = c.req.param('sessionId');
+      const clientInput = c.req.valid('json');
+
+      // Merge server context with client input
+      const useCaseInput = {
+        ...clientInput,
+        userId: user.id,
+        userName: user.name || 'Anonymous',
+      };
+
+      // Validate the complete input (optional but catches bugs)
+      const validated = AddWorkoutReactionRequestSchema.parse(useCaseInput);
+
+      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
+      const stub = c.env.WORKOUT_SESSION.get(id);
+
+      const result = await stub.workouts.addReaction(validated);
+      return c.json(result);
+    },
+  );
+
+export type WorkoutRoute = typeof workoutRoutes;

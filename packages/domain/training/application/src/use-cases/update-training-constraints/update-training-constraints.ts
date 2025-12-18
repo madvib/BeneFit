@@ -1,22 +1,55 @@
-import { Result, UseCase, EventBus } from '@bene/shared-domain';
-import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { TrainingConstraints, UserProfileCommands } from '@bene/training-core';
+import { UserProfileRepository } from '@/repositories/index.js';
+import { TrainingConstraintsSchema } from '@/schemas/index.js';
+import { TrainingConstraintsUpdatedEvent } from '@/events/index.js';
+import { toDomainTrainingConstraints } from '@/mappers/type-mappers.js';
 
-export interface UpdateTrainingConstraintsRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use UpdateTrainingConstraintsRequest type instead */
+export interface UpdateTrainingConstraintsRequest_Deprecated {
   userId: string;
   constraints: TrainingConstraints;
 }
-
-export interface UpdateTrainingConstraintsResponse {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use UpdateTrainingConstraintsResponse type instead */
+export interface UpdateTrainingConstraintsResponse_Deprecated {
   userId: string;
   constraints: TrainingConstraints;
   shouldAdjustPlan: boolean;
 }
 
-export class UpdateTrainingConstraintsUseCase
-  implements
-    UseCase<UpdateTrainingConstraintsRequest, UpdateTrainingConstraintsResponse>
-{
+export const UpdateTrainingConstraintsRequestClientSchema = z.object({
+  constraints: TrainingConstraintsSchema, // Using proper schema instead of z.unknown()
+});
+// Zod schema for request validation
+export const UpdateTrainingConstraintsRequestSchema =
+  UpdateTrainingConstraintsRequestClientSchema.extend({
+    userId: z.string(),
+  });
+
+// Zod inferred type with original name
+export type UpdateTrainingConstraintsRequest = z.infer<
+  typeof UpdateTrainingConstraintsRequestSchema
+>;
+
+// Zod schema for response validation
+export const UpdateTrainingConstraintsResponseSchema = z.object({
+  userId: z.string(),
+  constraints: TrainingConstraintsSchema, // Using proper schema instead of z.unknown()
+  shouldAdjustPlan: z.boolean(),
+});
+
+// Zod inferred type with original name
+export type UpdateTrainingConstraintsResponse = z.infer<
+  typeof UpdateTrainingConstraintsResponseSchema
+>;
+
+export class UpdateTrainingConstraintsUseCase implements UseCase<
+  UpdateTrainingConstraintsRequest,
+  UpdateTrainingConstraintsResponse
+> {
   constructor(
     private profileRepository: UserProfileRepository,
     private eventBus: EventBus,
@@ -44,7 +77,7 @@ export class UpdateTrainingConstraintsUseCase
     // 3. Update constraints using command
     const updatedProfileResult = UserProfileCommands.updateTrainingConstraints(
       profile,
-      request.constraints,
+      toDomainTrainingConstraints(request.constraints),
     );
     if (updatedProfileResult.isFailure) {
       return Result.fail(new Error(updatedProfileResult.error as unknown as string));
@@ -54,14 +87,14 @@ export class UpdateTrainingConstraintsUseCase
     await this.profileRepository.save(updatedProfileResult.value);
 
     // 5. Emit event
-    await this.eventBus.publish({
-      type: 'TrainingConstraintsUpdated',
-      userId: request.userId,
-      constraints: request.constraints,
-      injuriesChanged,
-      availableDaysChanged,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new TrainingConstraintsUpdatedEvent({
+        userId: request.userId,
+        constraints: request.constraints,
+        injuriesChanged,
+        availableDaysChanged,
+      }),
+    );
 
     return Result.ok({
       userId: request.userId,

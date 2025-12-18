@@ -7,7 +7,7 @@ export class MockIntegrationClient implements IntegrationClient {
 
   async exchangeAuthCode(
     code: string,
-    redirectUri: string,
+    _redirectUri: string,
   ): Promise<
     Result<{
       accessToken: string;
@@ -19,19 +19,25 @@ export class MockIntegrationClient implements IntegrationClient {
   > {
     // Return mock token
     return Result.ok({
-      accessToken: `mock-access-token-${ code }`,
-      refreshToken: `mock-refresh-token-${ code }`,
+      accessToken: `mock-access-token-${code}`,
+      refreshToken: `mock-refresh-token-${code}`,
       expiresAt: new Date(Date.now() + 3600 * 1000), // 1 hour
       scopes: ['read', 'activity:read'],
       permissions: {
         canReadProfile: true,
         canReadWorkouts: true,
         canWriteWorkouts: false,
+        readBodyMetrics: false,
+        writeWorkouts: false,
+        readHeartRate: false,
+        readNutrition: false,
+        readSleep: false,
+        readWorkouts: false,
       },
     });
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<Result<OAuthCredentials>> {
+  async refreshAccessToken(_refreshToken: string): Promise<Result<OAuthCredentials>> {
     return Result.ok({
       accessToken: `mock-new-access-token`,
       refreshToken: `mock-new-refresh-token`,
@@ -41,7 +47,7 @@ export class MockIntegrationClient implements IntegrationClient {
     });
   }
 
-  async getUserProfile(accessToken: string): Promise<
+  async getUserProfile(_accessToken: string): Promise<
     Result<{
       id: string;
       username: string;
@@ -56,7 +62,10 @@ export class MockIntegrationClient implements IntegrationClient {
     });
   }
 
-  async getActivitiesSince(accessToken: string, since: Date): Promise<Result<Array<unknown>>> {
+  async getActivitiesSince(
+    _accessToken: string,
+    _since: Date,
+  ): Promise<Result<Array<unknown>>> {
     return Result.ok([]);
   }
 }

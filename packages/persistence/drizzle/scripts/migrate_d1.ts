@@ -6,7 +6,7 @@ type Environment = 'local' | 'staging' | 'production';
 const env = (process.argv.find((arg) => arg.startsWith('--env='))?.split('=')[1] ||
   'local') as Environment;
 
-const D1_DATABASES = ['DB_ACTIVITY_STREAM', 'DB_DISCOVERY_INDEX', 'DB_STATIC_CONTENT'];
+const D1_DATABASES = ['DB_ACTIVITY_STREAM', 'DB_DISCOVERY_INDEX', 'DB_STATIC_CONTENT', "DB_USER_AUTH"];
 
 console.log(`\n🚀 Migrating D1 databases for ${env}...\n`);
 

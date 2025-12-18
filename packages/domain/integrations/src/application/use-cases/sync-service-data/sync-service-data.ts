@@ -1,20 +1,45 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { z } from 'zod';
+import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
 import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
-import { ConnectedServiceRepository } from '../../ports/connected-service-repository.js';
-import { IntegrationClient } from '../../ports/integration-client.js';
-import { EventBus } from '@bene/shared-domain';
+import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
+import { IntegrationClient } from '@app/ports/integration-client.js';
+import { ServiceSyncedEvent } from '@app/events/service-synced.event.js';
 
-export interface SyncServiceDataRequest {
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SyncServiceDataRequest type instead */
+export interface SyncServiceDataRequest_Deprecated {
   serviceId: string;
 }
 
-export interface SyncServiceDataResponse {
+// Zod schema for request validation
+export const SyncServiceDataRequestSchema = z.object({
+  serviceId: z.string(),
+});
+
+// Zod inferred type with original name
+export type SyncServiceDataRequest = z.infer<typeof SyncServiceDataRequestSchema>;
+
+// Deprecated original interface - preserve for potential rollback
+/** @deprecated Use SyncServiceDataResponse type instead */
+export interface SyncServiceDataResponse_Deprecated {
   serviceId: string;
   success: boolean;
   workoutsSynced: number;
   activitiesSynced: number;
   error?: string;
 }
+
+// Zod schema for response validation
+export const SyncServiceDataResponseSchema = z.object({
+  serviceId: z.string(),
+  success: z.boolean(),
+  workoutsSynced: z.number(),
+  activitiesSynced: z.number(),
+  error: z.string().optional(),
+});
+
+// Zod inferred type with original name
+export type SyncServiceDataResponse = z.infer<typeof SyncServiceDataResponseSchema>;
 
 export class SyncServiceDataUseCase implements UseCase<
   SyncServiceDataRequest,
@@ -111,13 +136,13 @@ export class SyncServiceDataUseCase implements UseCase<
     await this.serviceRepository.save(syncSuccessService);
 
     // 9. Emit event
-    await this.eventBus.publish({
-      type: 'ServiceSynced',
-      userId: service.userId,
-      serviceId: service.id,
-      workoutsSynced,
-      timestamp: new Date(),
-    });
+    await this.eventBus.publish(
+      new ServiceSyncedEvent({
+        userId: service.userId,
+        serviceId: service.id,
+        workoutsSynced,
+      }),
+    );
 
     return Result.ok({
       serviceId: request.serviceId,

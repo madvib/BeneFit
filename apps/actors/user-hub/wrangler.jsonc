@@ -4,7 +4,7 @@
  */
 {
   "$schema": "../../../node_modules/wrangler/config-schema.json",
-  "name": "user-hub-worker",
+  "name": "user-hub-handler",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-05",
   "compatibility_flags": [
@@ -23,7 +23,7 @@
     "bindings": [
       {
         "class_name": "UserHub",
-        "name": "USER_Hub",
+        "name": "USER_HUB",
       },
     ],
   },
@@ -38,19 +38,19 @@
   "services": [
     {
       "binding": "AI_SERVICE",
-      "service": "ai-service"
+      "service": "ai",
     },
     {
       "binding": "EVENT_BUS",
-      "service": "event-bus"
+      "service": "event-bus",
     },
   ],
   "d1_databases": [
     {
       "binding": "PLAN_TEMPLATE_DB",
       "database_name": "bene-fit-plan-templates-dev",
-      "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    }
+      "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    },
   ],
   "observability": {
     "enabled": true,
@@ -59,13 +59,9 @@
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
    */
-  // "placement": { "mode": "smart" }
-  /**
-   * Bindings
-   * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-   * databases, object storage, AI inference, real-time communication and more.
-   * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-   */
+  "placement": {
+    "mode": "smart"
+  },
   /**
    * Environment Variables
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
