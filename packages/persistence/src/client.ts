@@ -1,4 +1,4 @@
-// packages/database/src/client.ts
+// packages/database/src/client.js
 // Drizzle client factory for Cloudflare bindings
 
 import { drizzle as drizzleD1, type DrizzleD1Database } from 'drizzle-orm/d1';
@@ -21,8 +21,10 @@ export function createD1Client(binding: D1Database): DrizzleD1Database {
  * @param storage - Cloudflare DurableObjectStorage binding
  * @returns Drizzle Durable Object database instance
  */
-export function createDOClient(storage: DurableObjectStorage): DrizzleSqliteDODatabase {
-  return drizzleDO(storage);
+export function createDOClient<T extends Record<string, unknown>>(
+  storage: DurableObjectStorage,
+): DrizzleSqliteDODatabase<T> {
+  return drizzleDO<T>(storage);
 }
 
 /**

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { FitnessPlanQueries } from '@bene/training-core';
-import { Result, UseCase } from '@bene/shared-domain';
-import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { Result, UseCase } from '@bene/shared';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use GetUpcomingWorkoutsRequest type instead */
@@ -15,12 +15,15 @@ export const GetUpcomingWorkoutsRequestClientSchema = z.object({
   days: z.number().optional(), // Default to 7
 });
 
-export type GetUpcomingWorkoutsRequestClient = z.infer<typeof GetUpcomingWorkoutsRequestClientSchema>;
+export type GetUpcomingWorkoutsRequestClient = z.infer<
+  typeof GetUpcomingWorkoutsRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const GetUpcomingWorkoutsRequestSchema = GetUpcomingWorkoutsRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const GetUpcomingWorkoutsRequestSchema =
+  GetUpcomingWorkoutsRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type GetUpcomingWorkoutsRequest = z.infer<

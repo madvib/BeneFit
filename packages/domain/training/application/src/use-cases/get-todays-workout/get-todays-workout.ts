@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
+import { Result, type UseCase } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
-import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use GetTodaysWorkoutRequest type instead */

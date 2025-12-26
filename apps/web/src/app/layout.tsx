@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
 import { ThemeProvider } from '@/components';
-import { SessionProvider } from '@/controllers';
+import { Providers } from '@/providers/providers';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,10 +22,10 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <SessionProvider>
+          <Providers>
             <div>{modal}</div>
             <div>{children}</div>
-          </SessionProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

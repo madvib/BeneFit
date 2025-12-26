@@ -1,3 +1,4 @@
+import { RpcTarget } from 'cloudflare:workers';
 import { UseCaseFactory } from '../factories/use-case-factory';
 import {
   ConnectServiceRequest,
@@ -6,26 +7,28 @@ import {
   SyncServiceDataRequest
 } from '@bene/integrations-domain';
 
-export class IntegrationsFacade {
-  constructor(private useCaseFactory: UseCaseFactory) { }
+export class IntegrationsFacade extends RpcTarget {
+  constructor(private useCaseFactory: UseCaseFactory) {
+    super();
+  }
 
   async connect(input: ConnectServiceRequest) {
-    const uc = this.useCaseFactory.getConnectServiceUseCase();
-    return await uc.execute(input);
+    const result = await this.useCaseFactory.getConnectServiceUseCase().execute(input);
+    return result.serialize();
   }
 
   async disconnect(input: DisconnectServiceRequest) {
-    const uc = this.useCaseFactory.getDisconnectServiceUseCase();
-    return await uc.execute(input);
+    const result = await this.useCaseFactory.getDisconnectServiceUseCase().execute(input);
+    return result.serialize();
   }
 
   async getConnectedServices(input: GetConnectedServicesRequest) {
-    const uc = this.useCaseFactory.getGetConnectedServicesUseCase();
-    return await uc.execute(input);
+    const result = await this.useCaseFactory.getGetConnectedServicesUseCase().execute(input);
+    return result.serialize();
   }
 
   async sync(input: SyncServiceDataRequest) {
-    const uc = this.useCaseFactory.getSyncServiceDataUseCase();
-    return await uc.execute(input);
+    const result = await this.useCaseFactory.getSyncServiceDataUseCase().execute(input);
+    return result.serialize();
   }
 }

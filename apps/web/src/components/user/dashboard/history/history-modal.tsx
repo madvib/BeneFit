@@ -30,13 +30,51 @@ const HISTORY_ITEMS = [
   },
 ];
 
+interface WorkoutHistoryItem {
+  id: string;
+  date: string;
+  workout: string;
+  duration: string;
+  calories: string;
+  type: string;
+}
+
 interface HistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  workouts?: WorkoutHistoryItem[];
 }
 
-export default function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
+export default function HistoryModal({ isOpen, onClose, workouts }: HistoryModalProps) {
   if (!isOpen) return null;
+
+  // Use provided workouts or fallback to hardcoded data
+  const historyItems = workouts && workouts.length > 0 ? workouts : [
+    {
+      id: '1',
+      date: 'Today, 8:00 AM',
+      workout: 'Morning Run',
+      duration: '30 min',
+      calories: '320 kcal',
+      type: 'Cardio',
+    },
+    {
+      id: '2',
+      date: 'Yesterday, 6:30 PM',
+      workout: 'Upper Body Power',
+      duration: '45 min',
+      calories: '210 kcal',
+      type: 'Strength',
+    },
+    {
+      id: '3',
+      date: 'Oct 20, 2025',
+      workout: 'Yoga Flow',
+      duration: '60 min',
+      calories: '150 kcal',
+      type: 'Flexibility',
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -55,7 +93,7 @@ export default function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
         {/* Content */}
         <div className="max-h-[60vh] overflow-y-auto p-6">
           <div className="space-y-4">
-            {HISTORY_ITEMS.map((item) => (
+            {historyItems.map((item) => (
               <div
                 key={item.id}
                 className="group flex items-center justify-between rounded-2xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-sm"

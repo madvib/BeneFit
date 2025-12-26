@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { IntegrationClient } from '@app/ports/integration-client.js';

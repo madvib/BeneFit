@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { CheckInDismissedEvent } from '@app/events/check-in-dismissed.event.js';
@@ -16,7 +16,9 @@ export const DismissCheckInRequestClientSchema = z.object({
   checkInId: z.string(),
 });
 
-export type DismissCheckInRequestClient = z.infer<typeof DismissCheckInRequestClientSchema>;
+export type DismissCheckInRequestClient = z.infer<
+  typeof DismissCheckInRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
 export const DismissCheckInRequestSchema = DismissCheckInRequestClientSchema.extend({

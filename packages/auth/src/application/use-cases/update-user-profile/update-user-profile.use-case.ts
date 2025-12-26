@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase } from '@bene/shared';
 import { IUserRepository } from '../../ports/user.repository.js';
 
 // Input and output interfaces
@@ -18,9 +18,10 @@ interface UpdateUserProfileOutput {
   message?: string;
 }
 
-export class UpdateUserProfileUseCase
-  implements UseCase<UpdateUserProfileInput, UpdateUserProfileOutput>
-{
+export class UpdateUserProfileUseCase implements UseCase<
+  UpdateUserProfileInput,
+  UpdateUserProfileOutput
+> {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(

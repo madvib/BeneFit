@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import {
   createCompletedWorkout,
   type WorkoutPerformance,
@@ -14,13 +14,16 @@ import type {
   CompletedWorkoutRepository,
   WorkoutSessionRepository,
   FitnessPlanRepository,
-} from '@/repositories/index.js';
+} from '../../repositories/index.js';
 import {
   WorkoutPerformanceSchema,
   WorkoutVerificationSchema,
-} from '@/schemas/index.js';
-import { WorkoutCompletedEvent } from '@/events/index.js';
-import { toDomainWorkoutPerformance, toDomainWorkoutVerification } from '@/mappers/index.js';
+} from '../../schemas/index.js';
+import { WorkoutCompletedEvent } from '../../events/index.js';
+import {
+  toDomainWorkoutPerformance,
+  toDomainWorkoutVerification,
+} from '../../mappers/index.js';
 
 // Client-facing schema (what comes in the request body)
 export const CompleteWorkoutRequestClientSchema = z.object({
@@ -30,7 +33,9 @@ export const CompleteWorkoutRequestClientSchema = z.object({
   shareToFeed: z.boolean().optional(),
 });
 
-export type CompleteWorkoutRequestClient = z.infer<typeof CompleteWorkoutRequestClientSchema>;
+export type CompleteWorkoutRequestClient = z.infer<
+  typeof CompleteWorkoutRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
 export const CompleteWorkoutRequestSchema = CompleteWorkoutRequestClientSchema.extend({

@@ -1,4 +1,4 @@
-import { DomainEvent } from '@bene/shared-domain';
+import { DomainEvent } from '@bene/shared';
 import { TrainingConstraints } from '@bene/training-core';
 
 export interface TrainingConstraintsUpdatedEventPayload {

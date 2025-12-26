@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Paperclip, Send, Mic } from 'lucide-react';
-import { MessageData } from '@/controllers/coach';
+import { MessageData } from '@/deprecated/coach';
 import ChatMessage from './chat-message';
 
 interface ChatViewProps {

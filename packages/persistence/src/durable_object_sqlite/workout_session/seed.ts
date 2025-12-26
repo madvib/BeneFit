@@ -1,8 +1,8 @@
-import { createDOClient } from '../../client.ts';
-import { sessionMetadata, NewSessionMetadata } from './schema/session_metadata.ts';
-import { participants, NewParticipant } from './schema/participants.ts';
-import { activityProgress, NewActivityProgress } from './schema/activity_progress.ts';
-import { sessionChat, NewSessionChat } from './schema/session_chat.ts';
+import { createDOClient } from '../../client.js';
+import { sessionMetadata, NewSessionMetadata } from './schema/session_metadata.js';
+import { participants, NewParticipant } from './schema/participants.js';
+import { activityProgress, NewActivityProgress } from './schema/activity_progress.js';
+import { sessionChat, NewSessionChat } from './schema/session_chat.js';
 
 const now = Math.floor(Date.now() / 1000);
 
@@ -168,19 +168,19 @@ export async function seedWorkoutSession(storage: DurableObjectStorage) {
     await db.delete(sessionMetadata);
 
     // Insert data
-    console.log(`  - Inserting ${ sessions.length } session metadata...`);
+    console.log(`  - Inserting ${sessions.length} session metadata...`);
     const existing = await db.select().from(sessionMetadata).limit(1);
     if (existing.length === 0) {
       await db.insert(sessionMetadata).values(sessions);
     }
 
-    console.log(`  - Inserting ${ participantsData.length } participants...`);
+    console.log(`  - Inserting ${participantsData.length} participants...`);
     await db.insert(participants).values(participantsData);
 
-    console.log(`  - Inserting ${ progress.length } activity progress records...`);
+    console.log(`  - Inserting ${progress.length} activity progress records...`);
     await db.insert(activityProgress).values(progress);
 
-    console.log(`  - Inserting ${ chat.length } chat messages...`);
+    console.log(`  - Inserting ${chat.length} chat messages...`);
     await db.insert(sessionChat).values(chat);
 
     console.log('✅ Workout Session database seeded successfully');

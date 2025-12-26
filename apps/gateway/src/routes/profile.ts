@@ -2,6 +2,12 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import {
   GetProfileRequestSchema,
+  GetProfileResponse,
+  CreateUserProfileResponse,
+  UpdateFitnessGoalsResponse,
+  UpdatePreferencesResponse,
+  GetUserStatsResponse,
+  UpdateTrainingConstraintsResponse,
   CreateUserProfileRequestClientSchema,
   CreateUserProfileRequestSchema,
   UpdateFitnessGoalsRequestClientSchema,
@@ -12,6 +18,7 @@ import {
   UpdatePreferencesRequestClientSchema,
   UpdateTrainingConstraintsRequestClientSchema,
 } from '@bene/training-application';
+import { handleResult } from '../lib/handle-result';
 
 export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .get('/', async (c) => {
@@ -23,11 +30,11 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     const validated = GetProfileRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-    const result = await stub.profile.get(validated);
-    return c.json(result);
+    const result = await stub.get(validated);
+
+    return handleResult<GetProfileResponse>(result, c);
   })
   .post('/', zValidator('json', CreateUserProfileRequestClientSchema), async (c) => {
     const user = c.get('user');
@@ -40,11 +47,10 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     const validated = CreateUserProfileRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-    const result = await stub.profile.create(validated);
-    return c.json(result);
+    const result = await stub.create(validated);
+    return handleResult<CreateUserProfileResponse>(result, c);
   })
   .post(
     '/goals',
@@ -60,11 +66,11 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
       const validated = UpdateFitnessGoalsRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-      const result = await stub.profile.updateGoals(validated);
-      return c.json(result);
+
+      const result = await stub.updateGoals(validated);
+      return handleResult<UpdateFitnessGoalsResponse>(result, c);
     },
   )
   .post(
@@ -80,11 +86,11 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
       const validated = UpdatePreferencesRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-      const result = await stub.profile.updatePreferences(validated);
-      return c.json(result);
+
+      const result = await stub.updatePreferences(validated);
+      return handleResult<UpdatePreferencesResponse>(result, c);
     },
   )
   .get('/stats', async (c) => {
@@ -96,11 +102,11 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     const validated = GetUserStatsRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-    const result = await stub.profile.getStats(validated);
-    return c.json(result);
+    const result = await stub.getStats(validated);
+
+    return handleResult<GetUserStatsResponse>(result, c);
   })
   .post(
     '/contraints',
@@ -116,10 +122,10 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
       const validated = UpdateTrainingConstraintsRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).profile();
 
-      const result = await stub.profile.updateConstraints(validated);
-      return c.json(result);
+
+      const result = await stub.updateConstraints(validated);
+      return handleResult<UpdateTrainingConstraintsResponse>(result, c);
     },
   );

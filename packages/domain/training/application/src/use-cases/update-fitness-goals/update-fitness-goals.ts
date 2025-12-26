@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { FitnessGoals, UserProfileCommands } from '@bene/training-core';
-import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
-import { FitnessGoalsSchema } from '@/schemas/index.js';
-import { FitnessGoalsUpdatedEvent } from '@/events/fitness-goals-updated.event.js';
-import { toDomainFitnessGoals } from '@/mappers/type-mappers.js';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { FitnessGoalsSchema } from '../../schemas/index.js';
+import { FitnessGoalsUpdatedEvent } from '../../events/fitness-goals-updated.event.js';
+import { toDomainFitnessGoals } from '../../mappers/type-mappers.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use UpdateFitnessGoalsRequest type instead */
@@ -18,12 +18,15 @@ export const UpdateFitnessGoalsRequestClientSchema = z.object({
   goals: FitnessGoalsSchema,
 });
 
-export type UpdateFitnessGoalsRequestClient = z.infer<typeof UpdateFitnessGoalsRequestClientSchema>;
+export type UpdateFitnessGoalsRequestClient = z.infer<
+  typeof UpdateFitnessGoalsRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const UpdateFitnessGoalsRequestSchema = UpdateFitnessGoalsRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const UpdateFitnessGoalsRequestSchema =
+  UpdateFitnessGoalsRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type UpdateFitnessGoalsRequest = z.infer<typeof UpdateFitnessGoalsRequestSchema>;
@@ -90,7 +93,9 @@ export class UpdateFitnessGoalsUseCase implements UseCase<
         oldGoals: profile.fitnessGoals,
         newGoals: {
           ...request.goals,
-          targetDate: request.goals.targetDate ? new Date(request.goals.targetDate) : undefined
+          targetDate: request.goals.targetDate
+            ? new Date(request.goals.targetDate)
+            : undefined,
         },
         significantChange: primaryGoalChanged,
       }),

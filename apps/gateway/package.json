@@ -7,24 +7,31 @@
       "default": "./dist/client.js"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "auth:schema": "pnpm dlx @better-auth/cli generate --config src/lib/better-auth/auth.ts --output src/lib/better-auth/schema.ts",
+    "user_auth:generate": "drizzle-kit generate --config=drizzle-user-auth.config.ts",
+    "user_auth:migrate:local": "wrangler d1 migrations apply DB_USER_AUTH --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
+    "user_auth:migrate:staging": "wrangler d1 migrations apply DB_USER_AUTH --env staging --config wrangler.jsonc",
+    "user_auth:migrate:prod": "wrangler d1 migrations apply DB_USER_AUTH --env production --config wrangler.jsonc",
+    "user_auth:studio": "drizzle-kit studio --config=drizzle-user-auth.config.ts"
+  },
   "dependencies": {
-    "@bene/persistence": "workspace:*",
-    "@bene/shared-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@bene/training-application": "workspace:*",
     "@bene/coach-domain": "workspace:*",
     "@bene/integrations-domain": "workspace:*",
     "@hono/zod-validator": "0.7.5",
-    "better-auth": "1.4.7",
+    "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
     "hono": "^4.10.8",
-    "zod": "4.2.1"
+    "zod": "catalog:"
   },
   "nx": {
     "targets": {
       "build-client": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "tsc src/client --outFile dist/client.d.ts --declaration --emitDeclarationOnly --skipLibCheck",
+          "command": "tsc --project tsconfig.client.json",
           "cwd": "apps/gateway"
         }
       }

@@ -1,9 +1,9 @@
 'use client';
 import { X } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@bene/react-api-client';
 import { HeaderLeft, HeaderRight } from './primitives/sections';
 import HeaderRoot from './primitives/header-root';
-import { useSession } from '@/controllers';
 import { BeneLogo } from '../ui-primitives/logo/logo';
 import { ThemeToggle } from '@/components/theme/theme-toggle/theme-toggle';
 import UserAccountMenu from '@/components/common/header/navigation/account-dropdown/account-dropdown';
@@ -19,7 +19,7 @@ export default function UnifiedHeader({
   variant: 'marketing' | 'application';
 }) {
   const [mobileMenuOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated } = useSession();
+  const { isAuthenticated } = useAuth();
   const dashboardLink = () => {
     return variant === 'marketing' ? <DashboardLink /> : null;
   };

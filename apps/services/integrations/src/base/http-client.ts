@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 
 /**
  * Base HTTP client for making API requests

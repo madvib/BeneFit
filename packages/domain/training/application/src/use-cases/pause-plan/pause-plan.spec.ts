@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { WorkoutPlan, WorkoutPlanCommands } from '@bene/training-core';
 import { PausePlanUseCase } from './pause-plan.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-import { EventBus } from '@bene/shared-domain';
+import { EventBus } from '@bene/shared';
 
 // Mock repositories and services
 const mockPlanRepository = {

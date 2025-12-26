@@ -5,7 +5,7 @@ import {
   AICompletionResponse,
   AIStreamChunk,
   Result,
-} from '@bene/shared-domain';
+} from '@bene/shared';
 
 interface CloudflareAIConfig {
   ai: Ai;
@@ -37,24 +37,21 @@ export class CloudflareProvider implements AIProvider {
 
   async complete(request: AICompletionRequest): Promise<Result<AICompletionResponse>> {
     try {
-      const response = await this.ai.run(
-        request.model || this.defaultModel,
-        {
-          messages: request.messages.map(m => ({
-            role: m.role as 'user' | 'assistant' | 'system',
-            content: m.content,
-          })),
-          max_tokens: request.maxTokens || this.defaultMaxTokens,
-          temperature: request.temperature ?? this.defaultTemperature,
-        }
-      );
+      const response = await this.ai.run(request.model || this.defaultModel, {
+        messages: request.messages.map((m) => ({
+          role: m.role as 'user' | 'assistant' | 'system',
+          content: m.content,
+        })),
+        max_tokens: request.maxTokens || this.defaultMaxTokens,
+        temperature: request.temperature ?? this.defaultTemperature,
+      });
 
       // Cloudflare AI response format
       const aiResponse: AICompletionResponse = {
         content: (response as any).response || '',
         model: request.model || this.defaultModel,
         usage: {
-          inputTokens: 0,  // Cloudflare doesn't provide token counts
+          inputTokens: 0, // Cloudflare doesn't provide token counts
           outputTokens: 0,
         },
       };
@@ -64,29 +61,27 @@ export class CloudflareProvider implements AIProvider {
       console.error('Error calling Cloudflare AI:', error);
       return Result.fail(
         new Error(
-          `Error calling Cloudflare AI: ${ error instanceof Error ? error.message : String(error)
-          }`
-        )
+          `Error calling Cloudflare AI: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
       );
     }
   }
 
   async *stream(
-    request: AICompletionRequest
+    request: AICompletionRequest,
   ): AsyncGenerator<AIStreamChunk, void, unknown> {
     try {
-      const stream = await this.ai.run(
-        request.model || this.defaultModel,
-        {
-          messages: request.messages.map(m => ({
-            role: m.role as 'user' | 'assistant' | 'system',
-            content: m.content,
-          })),
-          max_tokens: request.maxTokens || this.defaultMaxTokens,
-          temperature: request.temperature ?? this.defaultTemperature,
-          stream: true,
-        }
-      );
+      const stream = await this.ai.run(request.model || this.defaultModel, {
+        messages: request.messages.map((m) => ({
+          role: m.role as 'user' | 'assistant' | 'system',
+          content: m.content,
+        })),
+        max_tokens: request.maxTokens || this.defaultMaxTokens,
+        temperature: request.temperature ?? this.defaultTemperature,
+        stream: true,
+      });
 
       // Cloudflare AI returns an async iterable
       for await (const chunk of stream as any) {

@@ -1,12 +1,12 @@
 'use client';
 
 import { useCoachController } from '@/controllers';
+import { useChatUI } from '@/controllers/hooks/use-chat-ui';
 import {
   ChatView,
   SavedChatsView,
   RightActionPanel,
 } from '@/components/user/dashboard/coach';
-import { useChatUI } from '@/controllers/hooks/use-chat-ui';
 import { LoadingSpinner, ErrorPage } from '@/components';
 
 export default function CoachPage() {
@@ -27,12 +27,14 @@ export default function CoachPage() {
   }
 
   if (error) {
-    <ErrorPage
-      title="Connections Loading Error"
-      message="Unable to load your connected services."
-      error={error}
-      backHref="/"
-    />;
+    return (
+      <ErrorPage
+        title="Coach Error"
+        message="Unable to load coach functionality."
+        error={error}
+        backHref="/"
+      />
+    );
   }
 
   return (

@@ -1,4 +1,4 @@
-import { MessageData } from '@/controllers/coach';
+import { MessageData } from '@/deprecated/coach';
 import { Bot, User } from 'lucide-react';
 
 export default function ChatMessage({ message }: MessageData) {

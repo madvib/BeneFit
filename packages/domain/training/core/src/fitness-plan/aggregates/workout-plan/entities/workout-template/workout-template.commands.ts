@@ -1,5 +1,5 @@
 // workout-template.commands.ts
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 
 import { WorkoutAlternative, WorkoutTemplate } from './workout-template.types.js';
 import { WorkoutActivity } from '@/workouts/index.js';

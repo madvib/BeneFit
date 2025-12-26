@@ -1,7 +1,7 @@
 import { WorkoutTemplate } from "../workout-template/index.js";
 
 interface WeeklyScheduleData {
-  id: string; // Must be part of the core data now
+  id: string;
   weekNumber: number;
   planId: string;
   startDate: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { Card } from '@/components';
-import { ProfileGoal } from '@/controllers/account';
+import { ProfileGoal } from '@/deprecated/account';
 import { CheckCircle, XCircle } from 'lucide-react';
 interface GoalsSectionProps {
   goals: ProfileGoal[];

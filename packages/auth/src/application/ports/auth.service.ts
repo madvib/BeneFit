@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { LoginInput, LoginOutput } from '../use-cases/login/login.use-case.js';
 import { SignupInput } from '../use-cases/signup/signup.use-case.js';
 import { ResetPasswordInput } from '../use-cases/reset-password/reset-password.use-case.js';

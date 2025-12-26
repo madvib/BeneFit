@@ -1,5 +1,5 @@
-import { AICompletionRequest, AIError, AIProvider, Result } from '@bene/shared-domain';
-import { PromptBuilder } from '@bene/training-application'
+import { AICompletionRequest, AIError, AIProvider, Result } from '@bene/shared';
+import { PromptBuilder } from '@bene/training-application';
 
 import {
   CheckIn,
@@ -17,7 +17,7 @@ export interface AICoachResponse {
 }
 
 export class AICoachService {
-  constructor(private provider: AIProvider) { }
+  constructor(private provider: AIProvider) {}
 
   async getResponse(input: {
     conversation: CoachConversation;
@@ -33,7 +33,7 @@ export class AICoachService {
       const response = await this.provider.complete(request);
 
       if (response.isFailure) {
-        return Result.fail(new AIError(`Failed to get AI response: ${ response.error }`));
+        return Result.fail(new AIError(`Failed to get AI response: ${response.error}`));
       }
 
       const aiResponse: AICoachResponse = {
@@ -45,7 +45,7 @@ export class AICoachService {
       return Result.ok(aiResponse);
     } catch (error) {
       console.error('Error calling AI coach service:', error);
-      const errorMessage = `Error calling AI coach service: ${ error instanceof Error ? error.message : String(error) }`;
+      const errorMessage = `Error calling AI coach service: ${error instanceof Error ? error.message : String(error)}`;
       return Result.fail(
         new AIError(errorMessage, error instanceof Error ? error : undefined),
       );
@@ -76,14 +76,14 @@ export class AICoachService {
 
       if (response.isFailure) {
         return Result.fail(
-          new AIError(`Failed to generate check-in question: ${ response.error }`),
+          new AIError(`Failed to generate check-in question: ${response.error}`),
         );
       }
 
       return Result.ok(response.value.content.trim());
     } catch (error) {
       console.error('Error generating check-in question:', error);
-      const errorMessage = `Error generating check-in question: ${ error instanceof Error ? error.message : String(error) }`;
+      const errorMessage = `Error generating check-in question: ${error instanceof Error ? error.message : String(error)}`;
       return Result.fail(new CoachErrors.CheckInError(errorMessage));
     }
   }
@@ -117,7 +117,7 @@ export class AICoachService {
 
       if (response.isFailure) {
         return Result.fail(
-          new AIError(`Failed to analyze check-in: ${ response.error }`),
+          new AIError(`Failed to analyze check-in: ${response.error}`),
         );
       }
 
@@ -127,7 +127,7 @@ export class AICoachService {
       return Result.ok(result);
     } catch (error) {
       console.error('Error analyzing check-in response:', error);
-      const errorMessage = `Error analyzing check-in response: ${ error instanceof Error ? error.message : String(error) }`;
+      const errorMessage = `Error analyzing check-in response: ${error instanceof Error ? error.message : String(error)}`;
       return Result.fail(new CoachErrors.AnalysisError(errorMessage));
     }
   }
@@ -157,7 +157,7 @@ export class AICoachService {
 
       if (response.isFailure) {
         return Result.fail(
-          new AIError(`Failed to generate weekly summary: ${ response.error }`),
+          new AIError(`Failed to generate weekly summary: ${response.error}`),
         );
       }
 
@@ -167,7 +167,7 @@ export class AICoachService {
       return Result.ok(result);
     } catch (error) {
       console.error('Error generating weekly summary:', error);
-      const errorMessage = `Error generating weekly summary: ${ error instanceof Error ? error.message : String(error) }`;
+      const errorMessage = `Error generating weekly summary: ${error instanceof Error ? error.message : String(error)}`;
       return Result.fail(new CoachErrors.CommunicationError(errorMessage));
     }
   }
@@ -208,12 +208,12 @@ export class AICoachService {
     let prompt = PromptBuilder.buildCoachSystemPrompt();
 
     if (currentPlan) {
-      prompt += `\n\nThey are currently following a plan called "${ currentPlan.planName || 'their plan' }". `;
+      prompt += `\n\nThey are currently following a plan called "${currentPlan.planName || 'their plan'}". `;
     }
 
     if (context?.recentWorkouts && context.recentWorkouts.length > 0) {
       const lastWorkout = context.recentWorkouts[0];
-      prompt += `\n\nTheir last workout on ${ lastWorkout?.date } was a ${ lastWorkout?.type }. `;
+      prompt += `\n\nTheir last workout on ${lastWorkout?.date} was a ${lastWorkout?.type}. `;
     }
 
     return prompt;
@@ -232,18 +232,18 @@ Output only the question, nothing else.`;
 
   private buildCheckInQuestionRequest(context: CoachContext, trigger: string): string {
     let request = `Generate a check-in question based on this context:\n\n`;
-    request += `Trigger: ${ trigger }\n`;
+    request += `Trigger: ${trigger}\n`;
 
     if (context.currentPlan) {
-      request += `Current plan: ${ context.currentPlan.planName }, Week ${ context.currentPlan.weekNumber }\n`;
+      request += `Current plan: ${context.currentPlan.planName}, Week ${context.currentPlan.weekNumber}\n`;
     }
 
     if (context.workoutsThisWeek !== undefined) {
-      request += `Workouts this week: ${ context.workoutsThisWeek }/${ context.plannedWorkoutsThisWeek || 0 }\n`;
+      request += `Workouts this week: ${context.workoutsThisWeek}/${context.plannedWorkoutsThisWeek || 0}\n`;
     }
 
     if (context.energyLevel) {
-      request += `Energy level: ${ context.energyLevel }\n`;
+      request += `Energy level: ${context.energyLevel}\n`;
     }
 
     return request;
@@ -264,11 +264,11 @@ Be supportive and constructive. Focus on actionable insights.`;
     context: CoachContext,
   ): string {
     let request = `Analyze this check-in response:\n\n`;
-    request += `Question: ${ checkIn.question }\n`;
-    request += `User's response: "${ userResponse }"\n\n`;
+    request += `Question: ${checkIn.question}\n`;
+    request += `User's response: "${userResponse}"\n\n`;
 
     if (context.currentPlan) {
-      request += `Context: Week ${ context.currentPlan.weekNumber } of ${ context.currentPlan.totalWeeks }\n`;
+      request += `Context: Week ${context.currentPlan.weekNumber} of ${context.currentPlan.totalWeeks}\n`;
     }
 
     request += `\nProvide analysis and suggested actions.`;
@@ -290,20 +290,20 @@ Be encouraging and specific. Celebrate wins and provide actionable guidance.`;
     let request = `Create a weekly summary based on this context:\n\n`;
 
     if (context.workoutsThisWeek !== undefined) {
-      request += `Workouts completed: ${ context.workoutsThisWeek }/${ context.plannedWorkoutsThisWeek || 0 }\n`;
+      request += `Workouts completed: ${context.workoutsThisWeek}/${context.plannedWorkoutsThisWeek || 0}\n`;
     }
 
     if (context.recentWorkouts && context.recentWorkouts.length > 0) {
       request += `\nRecent workouts:\n`;
       context.recentWorkouts.slice(0, 5).forEach((w) => {
-        request += `- ${ w.type } (${ new Date(w.date).toLocaleDateString() })`;
-        if (w.perceivedExertion) request += ` - Exertion: ${ w.perceivedExertion }/10`;
+        request += `- ${w.type} (${new Date(w.date).toLocaleDateString()})`;
+        if (w.perceivedExertion) request += ` - Exertion: ${w.perceivedExertion}/10`;
         request += `\n`;
       });
     }
 
     if (context.trends) {
-      request += `\nTrends: ${ JSON.stringify(context.trends) }\n`;
+      request += `\nTrends: ${JSON.stringify(context.trends)}\n`;
     }
 
     return request;

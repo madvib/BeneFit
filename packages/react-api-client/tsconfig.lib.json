@@ -6,7 +6,8 @@
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
-      "vite/client"
+      "vite/client",
+      "../../types/vite-env.d.ts"
     ],
     "rootDir": "src",
     "jsx": "react-jsx",
@@ -26,7 +27,7 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "vite.config.ts",
-    "vite.config.mts",
+    "vite.config.ms",
     "vitest.config.ts",
     "vitest.config.mts",
     "src/**/*.test.ts",

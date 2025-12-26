@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { OAuthCredentials, ServicePermissions } from '@bene/integrations-domain';
 import { IntegrationClient } from '@bene/integrations-domain'; // Assuming it's exported from there
 

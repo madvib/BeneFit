@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createWebSocketClient, BenefitWebSocketClient } from '../websocket';
 
 // Helper to get token (duplicated from client.ts, maybe shared lib?)
-const getToken = () => {
-  if (typeof window !== 'undefined') {
+const getToken = (): string => {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     return localStorage.getItem('token') || '';
   }
   return '';
@@ -32,14 +32,14 @@ export function useWebSocket(userId: string) {
   }, [userId, token]);
 
   const send = useCallback(
-    (type: string, payload?: any) => {
+    (type: string, payload?: unknown) => {
       client?.send(type, payload);
     },
     [client],
   );
 
   const subscribe = useCallback(
-    (messageType: string, callback: (data: any) => void) => {
+    (messageType: string, callback: (data: unknown) => void) => {
       return client?.on(messageType, callback);
     },
     [client],
@@ -51,20 +51,20 @@ export function useWebSocket(userId: string) {
 // Specific hook for workout progress
 export function useWorkoutProgress(userId: string) {
   const { connected, send, subscribe } = useWebSocket(userId);
-  const [progress, setProgress] = useState<any>(null);
+  const [progress, setProgress] = useState<unknown>(null);
 
   useEffect(() => {
     if (!connected) return;
 
     const unsubscribe = subscribe?.('workout.progress', (data) => {
-      setProgress(data.data);
+      setProgress(data && typeof data === 'object' && 'data' in data ? (data as {data: unknown}).data : null);
     });
 
     return unsubscribe;
   }, [connected, subscribe]);
 
   const updateProgress = useCallback(
-    (payload: any) => {
+    (payload: unknown) => {
       send('workout.progress', payload);
     },
     [send],
@@ -85,7 +85,9 @@ export function useStreamingChat(userId: string) {
     if (!connected) return;
 
     const unsubscribeChunk = subscribe?.('chat.chunk', (data) => {
-      setChunks((prev) => [...prev, data.chunk]);
+      if (data && typeof data === 'object' && 'chunk' in data) {
+        setChunks((prev) => [...prev, (data as {chunk: string}).chunk]);
+      }
     });
 
     const unsubscribeComplete = subscribe?.('chat.complete', () => {

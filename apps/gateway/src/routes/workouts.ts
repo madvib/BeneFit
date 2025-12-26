@@ -3,19 +3,28 @@ import { Hono } from 'hono';
 import {
   GetUpcomingWorkoutsRequestClientSchema,
   GetUpcomingWorkoutsRequestSchema,
+  GetUpcomingWorkoutsResponse,
   GetWorkoutHistoryRequestClientSchema,
   GetWorkoutHistoryRequestSchema,
+  GetWorkoutHistoryResponse,
   SkipWorkoutRequestClientSchema,
   SkipWorkoutRequestSchema,
+  SkipWorkoutResponse,
   StartWorkoutRequestClientSchema,
   StartWorkoutRequestSchema,
+  StartWorkoutResponse,
   CompleteWorkoutRequestClientSchema,
   CompleteWorkoutRequestSchema,
+  CompleteWorkoutResponse,
   JoinMultiplayerWorkoutRequestClientSchema,
   JoinMultiplayerWorkoutRequestSchema,
+  JoinMultiplayerWorkoutResponse,
   AddWorkoutReactionRequestClientSchema,
   AddWorkoutReactionRequestSchema,
+  AddWorkoutReactionResponse,
+  GetTodaysWorkoutResponse,
 } from '@bene/training-application';
+import { handleResult } from '../lib/handle-result';
 
 export const workoutRoutes = new Hono<{
   Bindings: Env;
@@ -24,12 +33,13 @@ export const workoutRoutes = new Hono<{
   .get('/today', async (c) => {
     const user = c.get('user');
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id);
 
-    const workout = await stub.workouts.getTodaysWorkout({ userId: user.id });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - Recursion limit only in client build (tsconfig.lib.json)    
+    const result = await stub.workouts.getTodaysWorkout({ userId: user.id });
 
-    return c.json(workout);
+    return handleResult<GetTodaysWorkoutResponse>(result, c);
   })
   .get(
     '/upcoming',
@@ -38,21 +48,18 @@ export const workoutRoutes = new Hono<{
       const user = c.get('user');
       const clientInput = c.req.valid('json');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = GetUpcomingWorkoutsRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).workouts();
 
-      const result = await stub.workouts.getTodaysWorkout(validated);
+      const result = await stub.getUpcoming(validated);
 
-      return c.json(result);
+      return handleResult<GetUpcomingWorkoutsResponse>(result, c);
     },
   )
   .get(
@@ -62,40 +69,34 @@ export const workoutRoutes = new Hono<{
       const user = c.get('user');
       const clientInput = c.req.valid('json');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = GetWorkoutHistoryRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).workouts();
 
-      const result = await stub.workouts.getTodaysWorkout(validated);
-      return c.json(result);
+      const result = await stub.getHistory(validated);
+      return handleResult<GetWorkoutHistoryResponse>(result, c);
     },
   )
   .post('/skip', zValidator('json', SkipWorkoutRequestClientSchema), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 
-    // Merge server context with client input
     const useCaseInput = {
       ...clientInput,
       userId: user.id,
     };
 
-    // Validate the complete input (optional but catches bugs)
     const validated = SkipWorkoutRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).workouts();
 
-    const result = await stub.workouts.skip(validated);
-    return c.json(result);
+    const result = await stub.skip(validated);
+    return handleResult<SkipWorkoutResponse>(result, c);
   })
   .post(
     '/:sessionId/start',
@@ -105,22 +106,19 @@ export const workoutRoutes = new Hono<{
       const clientInput = c.req.valid('json');
       const sessionId = c.req.param('sessionId');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
         userName: user.name || 'Unknown',
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = StartWorkoutRequestSchema.parse(useCaseInput);
 
-      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
-      const stub = c.env.WORKOUT_SESSION.get(id);
+      const stub = c.env.WORKOUT_SESSION.getByName(sessionId).workouts();
 
-      const response = await stub.workouts.start(validated);
+      const result = await stub.start(validated);
 
-      return c.json(response, 201);
+      return handleResult<StartWorkoutResponse>(result, c);
     },
   )
   .post(
@@ -131,21 +129,18 @@ export const workoutRoutes = new Hono<{
       const clientInput = c.req.valid('json');
       const user = c.get('user');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = CompleteWorkoutRequestSchema.parse(useCaseInput);
 
-      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
-      const stub = c.env.WORKOUT_SESSION.get(id);
+      const stub = c.env.WORKOUT_SESSION.getByName(sessionId).workouts();
 
-      const response = await stub.workouts.complete(validated);
+      const result = await stub.complete(validated);
 
-      return c.json(response);
+      return handleResult<CompleteWorkoutResponse>(result, c);
     },
   )
   .post(
@@ -156,21 +151,18 @@ export const workoutRoutes = new Hono<{
       const sessionId = c.req.param('sessionId');
       const clientInput = c.req.valid('json');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
         userName: user.name || 'Anonymous',
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = JoinMultiplayerWorkoutRequestSchema.parse(useCaseInput);
 
-      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
-      const stub = c.env.WORKOUT_SESSION.get(id);
+      const stub = c.env.WORKOUT_SESSION.getByName(sessionId).workouts();
 
-      const result = await stub.workouts.joinMultiplayer(validated);
-      return c.json(result);
+      const result = await stub.joinMultiplayer(validated);
+      return handleResult<JoinMultiplayerWorkoutResponse>(result, c);
     },
   )
   .post(
@@ -181,21 +173,18 @@ export const workoutRoutes = new Hono<{
       const sessionId = c.req.param('sessionId');
       const clientInput = c.req.valid('json');
 
-      // Merge server context with client input
       const useCaseInput = {
         ...clientInput,
         userId: user.id,
         userName: user.name || 'Anonymous',
       };
 
-      // Validate the complete input (optional but catches bugs)
       const validated = AddWorkoutReactionRequestSchema.parse(useCaseInput);
 
-      const id = c.env.WORKOUT_SESSION.idFromName(sessionId);
-      const stub = c.env.WORKOUT_SESSION.get(id);
+      const stub = c.env.WORKOUT_SESSION.getByName(sessionId).workouts();
 
-      const result = await stub.workouts.addReaction(validated);
-      return c.json(result);
+      const result = await stub.addReaction(validated);
+      return handleResult<AddWorkoutReactionResponse>(result, c);
     },
   );
 

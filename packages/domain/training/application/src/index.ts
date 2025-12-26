@@ -69,6 +69,18 @@ export {
   GetUpcomingWorkoutsResponseSchema,
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 
+export { GetCurrentPlanUseCase } from './use-cases/get-current-plan/get-current-plan.js';
+export type {
+  GetCurrentPlanRequest,
+  GetCurrentPlanResponse,
+  GetCurrentPlanRequestClient,
+} from './use-cases/get-current-plan/get-current-plan.js';
+export {
+  GetCurrentPlanRequestSchema,
+  GetCurrentPlanRequestClientSchema,
+  GetCurrentPlanResponseSchema,
+} from './use-cases/get-current-plan/get-current-plan.js';
+
 // Profile module exports
 
 // Use cases

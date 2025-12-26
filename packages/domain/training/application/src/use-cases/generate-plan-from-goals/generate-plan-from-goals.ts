@@ -1,11 +1,17 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { PlanGoals, UserProfile } from '@bene/training-core';
-import { FitnessPlanRepository, UserProfileRepository } from '@/repositories/index.js';
-import { AIPlanGenerator, GeneratePlanInput } from '@/services/ai-plan-generator.js';
-import { PlanGoalsSchema } from '@/schemas/index.js';
-import { PlanGeneratedEvent } from '@/events/plan-generated.event.js';
-import { toDomainPlanGoals } from '@/utils/type-converters.js';
+import {
+  FitnessPlanRepository,
+  UserProfileRepository,
+} from '../../repositories/index.js';
+import {
+  AIPlanGenerator,
+  GeneratePlanInput,
+} from '../../services/ai-plan-generator.js';
+import { PlanGoalsSchema } from '../../schemas/index.js';
+import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
+import { toDomainPlanGoals } from '../../utils/type-converters.js';
 
 // Client-facing schema (what comes in the request body)
 export const GeneratePlanFromGoalsRequestClientSchema = z.object({
@@ -13,12 +19,15 @@ export const GeneratePlanFromGoalsRequestClientSchema = z.object({
   customInstructions: z.string().optional(), // "I want more cardio", "Focus on upper body", etc.
 });
 
-export type GeneratePlanFromGoalsRequestClient = z.infer<typeof GeneratePlanFromGoalsRequestClientSchema>;
+export type GeneratePlanFromGoalsRequestClient = z.infer<
+  typeof GeneratePlanFromGoalsRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const GeneratePlanFromGoalsRequestSchema = GeneratePlanFromGoalsRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const GeneratePlanFromGoalsRequestSchema =
+  GeneratePlanFromGoalsRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type GeneratePlanFromGoalsRequest = z.infer<

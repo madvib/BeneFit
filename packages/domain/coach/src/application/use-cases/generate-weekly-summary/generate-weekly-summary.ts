@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { AICoachService, CoachContextBuilder } from '@app/services/index.js';
 import { WeeklySummaryGeneratedEvent } from '@app/events/weekly-summary-generated.event.js';
 

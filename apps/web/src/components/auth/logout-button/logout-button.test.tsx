@@ -2,30 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LogoutButton } from './logout-button';
 
-// Mock the signOutAction function
-vi.mock('@/controllers/auth/auth-actions', () => ({
-  signOutAction: vi.fn(() => Promise.resolve()),
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+  }),
 }));
 
-// Mock the providers that use Cloudflare context to avoid runtime errors in tests
-vi.mock('@/providers/auth-use-cases', () => ({
-  authUseCases: {
-    signOutUseCase: vi.fn(() => Promise.resolve({
-      execute: vi.fn().mockResolvedValue({ isSuccess: true })
-    })),
-    loginUseCase: vi.fn(() => Promise.resolve({
-      execute: vi.fn(),
-    })),
-    signupUseCase: vi.fn(() => Promise.resolve({
-      execute: vi.fn(),
-    })),
-    resetPasswordUseCase: vi.fn(() => Promise.resolve({
-      execute: vi.fn(),
-    })),
-    getCurrentUserUseCase: vi.fn(() => Promise.resolve({
-      execute: vi.fn(),
-    })),
-  }
+// Mock the getAuthClient function
+const mockGetAuthClient = vi.fn();
+vi.mock('@bene/react-api-client', () => ({
+  getAuthClient: mockGetAuthClient,
 }));
 
 describe('LogoutButton', () => {
@@ -34,6 +21,14 @@ describe('LogoutButton', () => {
   });
 
   it('renders with default variant', () => {
+    const signOutMutation = { mutateAsync: vi.fn(), isPending: false };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
+
     render(<LogoutButton />);
 
     const button = screen.getByRole('button');
@@ -44,6 +39,14 @@ describe('LogoutButton', () => {
   });
 
   it('renders with ghost variant', () => {
+    const signOutMutation = { mutateAsync: vi.fn(), isPending: false };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
+
     render(<LogoutButton variant="ghost" />);
 
     const button = screen.getByRole('button');
@@ -52,6 +55,14 @@ describe('LogoutButton', () => {
   });
 
   it('applies className prop', () => {
+    const signOutMutation = { mutateAsync: vi.fn(), isPending: false };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
+
     render(<LogoutButton className="custom-class" />);
 
     const button = screen.getByRole('button');
@@ -59,8 +70,14 @@ describe('LogoutButton', () => {
   });
 
   it('calls signOut when clicked', async () => {
-    const importedModule = await import('@/controllers/auth/auth-actions');
-    const signOutActionMock = vi.mocked(importedModule.signOutAction);
+    const signOutMock = vi.fn().mockResolvedValue({});
+    const signOutMutation = { mutateAsync: signOutMock, isPending: false };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
 
     render(<LogoutButton />);
 
@@ -68,38 +85,39 @@ describe('LogoutButton', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(signOutActionMock).toHaveBeenCalledTimes(1);
+      expect(signOutMock).toHaveBeenCalledTimes(1);
     });
   });
 
   it('shows loading state when signing out', async () => {
-    // Mock a slow signOut function
-    const importedModule = await import('@/controllers/auth/auth-actions');
-    const signOutActionMock = vi.mocked(importedModule.signOutAction);
-    signOutActionMock.mockImplementation(
-      () => new Promise((resolve) => setTimeout(resolve, 10)),
-    );
+    const signOutMutation = { mutateAsync: vi.fn(), isPending: true };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
 
     render(<LogoutButton />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
-    // Wait for state update to happen
-    await waitFor(() => {
-      expect(button).toBeDisabled();
-    });
-
+    expect(button).toBeDisabled();
     expect(screen.getByText('Signing out...')).toBeInTheDocument();
   });
 
   it('shows error message in console when signOut fails', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    // Mock signOut to throw an error
-    const importedModule2 = await import('@/controllers/auth/auth-actions');
-    const signOutActionMock = vi.mocked(importedModule2.signOutAction);
-    signOutActionMock.mockRejectedValue(new Error('Network error'));
+    const signOutMock = vi.fn().mockRejectedValue(new Error('Network error'));
+    const signOutMutation = { mutateAsync: signOutMock, isPending: false };
+    const mockAuthClient = {
+      signOut: {
+        use: () => signOutMutation,
+      }
+    };
+    mockGetAuthClient.mockReturnValue(mockAuthClient);
 
     render(<LogoutButton />);
 

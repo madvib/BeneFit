@@ -23,6 +23,7 @@ export function getCurrentWeek(plan: FitnessPlan): WeeklySchedule | undefined {
   return plan.weeks.find((w) => w.weekNumber === plan.currentPosition.week);
 }
 
+
 /**
  * QUERY: Checks if the plan is completed.
  */
@@ -137,3 +138,4 @@ export function getWorkoutSummary(plan: FitnessPlan): {
     { total: 0, completed: 0 },
   );
 }
+

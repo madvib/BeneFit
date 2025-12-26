@@ -1,92 +1,62 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { integrationClient } from '../client';
+import type { InferRequestType } from 'hono/client';
+import { client } from '../client';
+import { fetchApi, type ApiSuccessResponse } from '../lib/api-client';
 
-export function useConnectedServices(userId: string) {
-  return useQuery({
-    queryKey: ['integrations', userId],
-    queryFn: async () => {
-      const res = await integrationClient.connected.$get({
-        query: { userId },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to fetch connected integrations');
-      }
-      return await res.json();
-    },
-    enabled: !!userId,
+// Query keys factory
+export const integrationKeys = {
+  all: ['integrations'] as const,
+  connected: (userId: string) => [...integrationKeys.all, userId, 'connected'] as const,
+} as const;
+
+// Based on actual routes from gateway/src/routes/integrations.ts
+// Routes: POST /connect, POST /disconnect, GET /connected, POST /sync
+
+const $getConnectedServices = client.api.integrations.connected.$get;
+export type GetConnectedServicesResponse = ApiSuccessResponse<typeof $getConnectedServices>;
+
+export function useConnectedServices() {
+  return useQuery<GetConnectedServicesResponse>({
+    queryKey: ['integrations', 'connected'], // No userId needed since it's injected from auth
+    queryFn: () => fetchApi($getConnectedServices),
   });
 }
+
+const $connect = client.api.integrations.connect.$post;
+export type ConnectRequest = InferRequestType<typeof $connect>;
 
 export function useConnect() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      userId,
-      serviceType,
-      authorizationCode,
-      redirectUri,
-    }: {
-      userId: string;
-      serviceType: string;
-      authorizationCode: string;
-      redirectUri: string;
-    }) => {
-      const res = await integrationClient.connect.$post({
-        json: { userId, serviceType, authorizationCode, redirectUri },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to connect integration');
-      }
-      return await res.json();
-    },
-    onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['integrations', userId] });
+    mutationFn: (request: ConnectRequest) => fetchApi($connect, request),
+    onSuccess: () => {
+      // Note: userId is injected server-side, we can't retrieve it from mutation variables
+      queryClient.invalidateQueries({ queryKey: ['integrations', 'connected'] });
     },
   });
 }
+
+const $disconnect = client.api.integrations.disconnect.$post;
+export type DisconnectRequest = InferRequestType<typeof $disconnect>;
 
 export function useDisconnect() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      userId,
-      serviceId,
-    }: {
-      userId: string;
-      serviceId: string;
-    }) => {
-      const res = await integrationClient.disconnect.$post({
-        json: { userId, serviceId },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to disconnect integration');
-      }
-      return await res.json();
-    },
-    onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['integrations', userId] });
+    mutationFn: (request: DisconnectRequest) => fetchApi($disconnect, request),
+    onSuccess: () => {
+      // Note: userId is injected server-side, we can't retrieve it from mutation variables
+      queryClient.invalidateQueries({ queryKey: ['integrations', 'connected'] });
     },
   });
 }
 
+const $sync = client.api.integrations.sync.$post;
+export type SyncRequest = InferRequestType<typeof $sync>;
+
 export function useSync() {
   return useMutation({
-    mutationFn: async ({
-      userId,
-      serviceId,
-    }: {
-      userId: string;
-      serviceId: string;
-    }) => {
-      const res = await integrationClient.sync.$post({
-        json: { userId, serviceId },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to sync integration');
-      }
-      return await res.json();
-    },
+    mutationFn: (request: SyncRequest) => fetchApi($sync, request),
   });
 }

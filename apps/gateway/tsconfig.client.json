@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "declaration": true,
+    "lib": [
+      "ESNext"
+    ],
+    "types": [
+      "../../types/cloudflare-runtime.d.ts",
+      "./worker-env.client.d.ts",
+      "node"
+    ]
+  },
+  "include": [
+    "./src/client.ts"
+  ],
+  "exclude": [],
+  "references": [
+    {
+      "path": "../../packages/domain/integrations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/domain/coach/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/domain/training/application/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/persistence/tsconfig.lib.json"
+    }
+  ]
+}

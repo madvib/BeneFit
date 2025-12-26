@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import {
   createUserProfile,
   ExperienceProfile,
@@ -10,10 +10,14 @@ import {
   ExperienceProfileSchema,
   FitnessGoalsSchema,
   TrainingConstraintsSchema,
-} from '@/schemas/index.js';
-import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
-import { ProfileCreatedEvent } from '@/events/profile-created.event.js';
-import { toDomainExperienceProfile, toDomainFitnessGoals, toDomainTrainingConstraints } from '@/mappers/type-mappers.js';
+} from '../../schemas/index.js';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
+import { ProfileCreatedEvent } from '../../events/profile-created.event.js';
+import {
+  toDomainExperienceProfile,
+  toDomainFitnessGoals,
+  toDomainTrainingConstraints,
+} from '../../mappers/type-mappers.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use CreateUserProfileRequest type instead */
@@ -41,12 +45,15 @@ export const CreateUserProfileRequestClientSchema = z.object({
   location: z.string().optional(),
 });
 
-export type CreateUserProfileRequestClient = z.infer<typeof CreateUserProfileRequestClientSchema>;
+export type CreateUserProfileRequestClient = z.infer<
+  typeof CreateUserProfileRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const CreateUserProfileRequestSchema = CreateUserProfileRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const CreateUserProfileRequestSchema =
+  CreateUserProfileRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type CreateUserProfileRequest = z.infer<typeof CreateUserProfileRequestSchema>;

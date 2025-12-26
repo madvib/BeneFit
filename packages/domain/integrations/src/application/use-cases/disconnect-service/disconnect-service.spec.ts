@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { ConnectedService } from '../../../core/index.js';
 import { DisconnectServiceUseCase } from './disconnect-service.js';
-import { EventBus } from '@bene/shared-domain';
+import { EventBus } from '@bene/shared';
 
 // Mock repositories and services
 const mockServiceRepository = {

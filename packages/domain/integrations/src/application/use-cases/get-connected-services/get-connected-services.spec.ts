@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { ConnectedService } from '../../../core/index.js';
 import { GetConnectedServicesUseCase } from './get-connected-services.js';
 

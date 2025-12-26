@@ -1,7 +1,7 @@
 import { Agent } from 'agents';
-import { initializeUserHubDB } from '@bene/persistence';
 import { RepositoryFactory, ServiceFactory, UseCaseFactory } from '../factories';
 import { WorkoutsFacade } from '../facades/workouts.facade';
+import { initializeWorkoutSessionDB } from '../data/init';
 
 // Define the state interface for TypeScript
 interface WorkoutSessionState {
@@ -19,11 +19,11 @@ export default class WorkoutSession extends Agent<Env, WorkoutSessionState> {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => {
-      await initializeUserHubDB(ctx.storage, env.NODE_ENV === 'development');
+      await initializeWorkoutSessionDB(ctx.storage);
     });
   }
 
-  get workouts(): WorkoutsFacade {
+  async workouts() {
     if (!this._workoutsFacade) {
       this._workoutsFacade = new WorkoutsFacade(this.useCaseFactory);
     }
@@ -37,7 +37,9 @@ export default class WorkoutSession extends Agent<Env, WorkoutSessionState> {
 
     switch (data.type) {
       case 'start_workout': {
-        const session = await this.workouts.start({
+        const session = await (
+          await this.workouts()
+        ).start({
           userId: data.userId,
           workoutId: data.workoutId,
           userName: data.userName || 'User',
@@ -50,7 +52,9 @@ export default class WorkoutSession extends Agent<Env, WorkoutSessionState> {
       }
 
       case 'complete_workout': {
-        const completed = await this.workouts.complete({
+        const completed = await (
+          await this.workouts()
+        ).complete({
           sessionId: data.sessionId,
           userId: data.userId,
           endedAt: new Date(),

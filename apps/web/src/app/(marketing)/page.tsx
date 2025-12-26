@@ -2,12 +2,12 @@
 
 import { LoadingSpinner } from '@/components';
 import { HomeHero, ImageCard, FeaturesSection } from '@/components/marketing/home';
-import { useSession } from '@/controllers';
+import { useAuth } from '@bene/react-api-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function LandingPage() {
-  const { isAuthenticated, isLoading } = useSession();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {

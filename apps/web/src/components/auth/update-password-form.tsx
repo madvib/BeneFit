@@ -1,51 +1,109 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
-import { AuthError } from './auth-error/auth-error';
+import { useForm } from '@tanstack/react-form';
+import { getAuthClient, authSchemas } from '@bene/react-api-client';
 import { useRouter } from 'next/navigation';
-import {
-  UpdatePasswordFormState,
-  updatePasswordAction,
-} from '@/controllers/auth/auth-actions';
-import { AuthSubmitButton, PasswordInput } from './auth-inputs';
+import { AuthError } from './auth-error/auth-error';
+import { Button, ControlledInput } from '../common';
+import { useState } from 'react';
 
 interface UpdatePasswordFormProps {
   onPasswordUpdated?: () => void;
 }
 
-// Auth form component that handles errors and loading states
 export function UpdatePasswordForm({ onPasswordUpdated }: UpdatePasswordFormProps) {
-  const [state, formAction] = useActionState<UpdatePasswordFormState, FormData>(
-    updatePasswordAction,
-    {
-      success: false,
-    },
-  );
+  const authClient = getAuthClient();
   const router = useRouter();
+  const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    if (state.success) {
-      // Redirect after a short delay to show success message
-      setTimeout(() => {
-        router.push('/login');
-        onPasswordUpdated?.();
-      }, 2000);
-    }
-  }, [state.success, router, onPasswordUpdated]);
+  const form = useForm({
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+    validators: {
+      onChange: authSchemas.UpdatePasswordSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const { error } = await authClient.resetPassword({
+        newPassword: value.password,
+      });
+
+      if (error) {
+        form.setErrorMap({
+          onSubmit: {
+            form: error.message,
+            fields: { password: '', confirmPassword: '' },
+          },
+        });
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push('/login');
+          onPasswordUpdated?.();
+        }, 2000);
+      }
+    },
+  });
 
   return (
-    <form action={formAction} className="space-y-4">
-      {state?.error && <AuthError message={state.error} />}
-      {state.success && (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className="space-y-4"
+    >
+      {form.state.errorMap.onSubmit && (
+        <AuthError message={form.state.errorMap.onSubmit as string} />
+      )}
+
+      {success && (
         <div className="bg-success/15 text-success flex items-center gap-x-2 rounded-md p-3 text-sm">
           <p>Your password has been updated successfully!</p>
         </div>
       )}
-      <PasswordInput label="New Password" />
-      <PasswordInput label="Confirm New Password" />
-      <AuthSubmitButton pendingText="Updating Password">
-        Update Password
-      </AuthSubmitButton>
+
+      <form.Field
+        name="password"
+        validators={{
+          onChange: authSchemas.UpdatePasswordSchema.shape.password,
+        }}
+      >
+        {(field) => (
+          <ControlledInput
+            field={field}
+            label="New Password"
+            type="password"
+            placeholder="••••••••"
+          />
+        )}
+      </form.Field>
+
+      <form.Field
+        name="confirmPassword"
+        validators={{
+          onChange: authSchemas.UpdatePasswordSchema.shape.confirmPassword,
+        }}
+      >
+        {(field) => (
+          <ControlledInput
+            field={field}
+            label="Confirm New Password"
+            type="password"
+            placeholder="••••••••"
+          />
+        )}
+      </form.Field>
+
+      <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+        {([canSubmit, isSubmitting]) => (
+          <Button disabled={!canSubmit || success}>
+            {isSubmitting ? 'Updating Password...' : 'Update Password'}
+          </Button>
+        )}
+      </form.Subscribe>
     </form>
   );
 }

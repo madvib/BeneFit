@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
@@ -16,12 +16,15 @@ export const DisconnectServiceRequestClientSchema = z.object({
   serviceId: z.string(),
 });
 
-export type DisconnectServiceRequestClient = z.infer<typeof DisconnectServiceRequestClientSchema>;
+export type DisconnectServiceRequestClient = z.infer<
+  typeof DisconnectServiceRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const DisconnectServiceRequestSchema = DisconnectServiceRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const DisconnectServiceRequestSchema =
+  DisconnectServiceRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type DisconnectServiceRequest = z.infer<typeof DisconnectServiceRequestSchema>;

@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 
 import { createBetterAuth } from './auth.js';
 import { APIError, type Auth } from 'better-auth';

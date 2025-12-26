@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
+import { Result, type UseCase } from '@bene/shared';
 import { UserProfile } from '@bene/training-core';
-import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use GetUserStatsRequest type instead */

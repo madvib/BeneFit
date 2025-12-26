@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
+import { Result, type UseCase } from '@bene/shared';
 import { UserProfileCommands } from '@bene/training-core';
-import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use UpdatePreferencesRequest type instead */
@@ -15,12 +15,15 @@ export const UpdatePreferencesRequestClientSchema = z.object({
   preferences: z.record(z.string(), z.unknown()).optional(), // Using record for partial preferences update with string keys
 });
 
-export type UpdatePreferencesRequestClient = z.infer<typeof UpdatePreferencesRequestClientSchema>;
+export type UpdatePreferencesRequestClient = z.infer<
+  typeof UpdatePreferencesRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const UpdatePreferencesRequestSchema = UpdatePreferencesRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const UpdatePreferencesRequestSchema =
+  UpdatePreferencesRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type UpdatePreferencesRequest = z.infer<typeof UpdatePreferencesRequestSchema>;
@@ -59,7 +62,7 @@ export class UpdatePreferencesUseCase implements UseCase<
     // 2. Update preferences using command - handle undefined preferences
     const updatedProfile = UserProfileCommands.updatePreferences(
       profileResult.value,
-      request.preferences ?? {} // Provide empty object if undefined
+      request.preferences ?? {}, // Provide empty object if undefined
     );
 
     // 3. Save

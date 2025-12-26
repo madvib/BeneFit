@@ -1,8 +1,8 @@
-import { createDOClient } from '../../client.ts';
-import { team, NewTeam } from './schema/team.ts';
-import { teamMembers, NewTeamMember } from './schema/team_members.ts';
-import { teamChallenges, NewTeamChallenge } from './schema/team_challenges.ts';
-import { chatMessages, NewChatMessage } from './schema/chat_messages.ts';
+import { createDOClient } from '../../client.js';
+import { team, NewTeam } from './schema/team.js';
+import { teamMembers, NewTeamMember } from './schema/team_members.js';
+import { teamChallenges, NewTeamChallenge } from './schema/team_challenges.js';
+import { chatMessages, NewChatMessage } from './schema/chat_messages.js';
 
 const now = Date.now();
 
@@ -126,16 +126,16 @@ export async function seedTeamHub(storage: DurableObjectStorage) {
     await db.delete(team);
 
     // Insert data
-    console.log(`  - Inserting ${ teams.length } teams...`);
+    console.log(`  - Inserting ${teams.length} teams...`);
     await db.insert(team).values(teams);
 
-    console.log(`  - Inserting ${ members.length } team members...`);
+    console.log(`  - Inserting ${members.length} team members...`);
     await db.insert(teamMembers).values(members);
 
-    console.log(`  - Inserting ${ challenges.length } team challenges...`);
+    console.log(`  - Inserting ${challenges.length} team challenges...`);
     await db.insert(teamChallenges).values(challenges);
 
-    console.log(`  - Inserting ${ messages.length } chat messages...`);
+    console.log(`  - Inserting ${messages.length} chat messages...`);
     await db.insert(chatMessages).values(messages);
 
     console.log('✅ Team Base database seeded successfully');

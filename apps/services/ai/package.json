@@ -6,8 +6,7 @@
     "start": "wrangler dev"
   },
   "dependencies": {
-    "@bene/shared-domain": "workspace:*",
-    "@bene/shared-infra": "workspace:*"
+    "@bene/shared": "workspace:*"
   },
   "nx": {
     "tags": [

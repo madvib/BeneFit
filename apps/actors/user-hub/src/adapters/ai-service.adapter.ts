@@ -4,7 +4,7 @@ import {
   AIProvider,
   AIStreamChunk,
   Result,
-} from '@bene/shared-domain';
+} from '@bene/shared';
 import { env } from 'cloudflare:workers';
 
 export class AIServiceAdapter implements AIProvider {

@@ -52,7 +52,7 @@ export const completedWorkouts = sqliteTable(
     heartRateDataJson: text('heart_rate_data_json', { mode: 'json' }), // nullable - time series
     gpsDataJson: text('gps_data_json', { mode: 'json' }), // nullable - route
 
-    // LEGACY FIELDS (from workouts.ts) - Consider adding if needed:
+    // LEGACY FIELDS (from workouts.js) - Consider adding if needed:
     // reactionCount: integer('reaction_count').default(0) - Denormalized reaction count
 
     createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
+import { Result, type UseCase } from '@bene/shared';
 import { ConnectedServiceRepository } from '@app/index.js';
 
 // Deprecated original interface - preserve for potential rollback

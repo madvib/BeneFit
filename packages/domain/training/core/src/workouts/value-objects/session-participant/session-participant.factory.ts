@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { ParticipantRole, SessionParticipant } from './session-participant.types.js';
 
 export function createSessionParticipant(props: {

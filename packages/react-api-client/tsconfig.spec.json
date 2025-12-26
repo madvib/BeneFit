@@ -2,14 +2,20 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/vitest",
-    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"],
+    "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node",
+      "vitest"
+    ],
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler"
   },
   "include": [
     "vite.config.ts",
-    "vite.config.mts",
+    "vite.config.ms",
     "vitest.config.ts",
     "vitest.config.mts",
     "src/**/*.test.ts",
@@ -20,7 +26,8 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "./package.json"
   ],
   "references": [
     {

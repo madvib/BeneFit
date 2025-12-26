@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { AuthService } from '../../../services/auth.service.js';
 import { GetCurrentUserUseCase } from './get-current-user.use-case.js';
 

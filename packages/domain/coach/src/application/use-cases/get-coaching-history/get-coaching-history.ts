@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
+import { Result, type UseCase } from '@bene/shared';
 import { CoachConversation } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 

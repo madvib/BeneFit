@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { TrainingConstraints, UserProfileCommands } from '@bene/training-core';
-import { UserProfileRepository } from '@/repositories/index.js';
-import { TrainingConstraintsSchema } from '@/schemas/index.js';
-import { TrainingConstraintsUpdatedEvent } from '@/events/index.js';
-import { toDomainTrainingConstraints } from '@/mappers/type-mappers.js';
+import { UserProfileRepository } from '../../repositories/index.js';
+import { TrainingConstraintsSchema } from '../../schemas/index.js';
+import { TrainingConstraintsUpdatedEvent } from '../../events/index.js';
+import { toDomainTrainingConstraints } from '../../mappers/type-mappers.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use UpdateTrainingConstraintsRequest type instead */

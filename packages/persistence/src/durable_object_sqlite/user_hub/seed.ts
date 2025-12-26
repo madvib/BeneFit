@@ -1,7 +1,7 @@
-import { createDOClient } from '../../client.ts';
-import { profile, NewProfile } from './schema/user-profile/profile.ts';
-import { userStats, NewUserStats } from './schema/user-profile/user_stats.ts';
-import { achievements, NewAchievement } from './schema/user-profile/achievements.ts';
+import { createDOClient } from '../../client.js';
+import { profile, NewProfile } from './schema/user-profile/profile.js';
+import { userStats, NewUserStats } from './schema/user-profile/user_stats.js';
+import { achievements, NewAchievement } from './schema/user-profile/achievements.js';
 import {
   completedWorkouts,
   NewCompletedWorkout,
@@ -605,55 +605,55 @@ export async function seedUserHub(storage: DurableObjectStorage) {
     await db.delete(profile);
 
     // Insert data
-    console.log(`  - Inserting ${ profilesData.length } profiles...`);
+    console.log(`  - Inserting ${profilesData.length} profiles...`);
     await db.insert(profile).values(profilesData);
 
-    console.log(`  - Inserting ${ userStatsData.length } user stats...`);
+    console.log(`  - Inserting ${userStatsData.length} user stats...`);
     await db.insert(userStats).values(userStatsData);
 
-    console.log(`  - Inserting ${ achievementsData.length } achievements...`);
+    console.log(`  - Inserting ${achievementsData.length} achievements...`);
     await db.insert(achievements).values(achievementsData);
 
-    console.log(`  - Inserting ${ completedWorkoutsData.length } completed workouts...`);
+    console.log(`  - Inserting ${completedWorkoutsData.length} completed workouts...`);
     await db.insert(completedWorkouts).values(completedWorkoutsData);
 
-    console.log(`  - Inserting ${ workoutActivitiesData.length } workout activities...`);
+    console.log(`  - Inserting ${workoutActivitiesData.length} workout activities...`);
     await db.insert(workoutActivities).values(workoutActivitiesData);
 
-    console.log(`  - Inserting ${ workoutMetadataData.length } workout metadata...`);
+    console.log(`  - Inserting ${workoutMetadataData.length} workout metadata...`);
     await db.insert(workoutMetadata).values(workoutMetadataData);
 
-    console.log(`  - Inserting ${ workoutReactionsData.length } workout reactions...`);
+    console.log(`  - Inserting ${workoutReactionsData.length} workout reactions...`);
     await db.insert(workoutReactions).values(workoutReactionsData);
 
     console.log(
-      `  - Inserting ${ coachingConversationsData.length } coaching conversations...`,
+      `  - Inserting ${coachingConversationsData.length} coaching conversations...`,
     );
     await db.insert(coachingConversation).values(coachingConversationsData);
 
-    console.log(`  - Inserting ${ coachingMessagesData.length } coaching messages...`);
+    console.log(`  - Inserting ${coachingMessagesData.length} coaching messages...`);
     await db.insert(coachingMessages).values(coachingMessagesData);
 
-    console.log(`  - Inserting ${ checkInsData.length } check-ins...`);
+    console.log(`  - Inserting ${checkInsData.length} check-ins...`);
     await db.insert(checkIns).values(checkInsData);
 
-    console.log(`  - Inserting ${ connectedServicesData.length } connected services...`);
+    console.log(`  - Inserting ${connectedServicesData.length} connected services...`);
     await db.insert(connectedServices).values(connectedServicesData);
 
     console.log(
-      `  - Inserting ${ integrationSyncLogsData.length } integration sync logs...`,
+      `  - Inserting ${integrationSyncLogsData.length} integration sync logs...`,
     );
     await db.insert(integrationSyncLog).values(integrationSyncLogsData);
 
     console.log(
-      `  - Inserting ${ activeFitnessPlansData.length } active fitness plans...`,
+      `  - Inserting ${activeFitnessPlansData.length} active fitness plans...`,
     );
     await db.insert(activeFitnessPlan).values(activeFitnessPlansData);
 
-    console.log(`  - Inserting ${ weeklySchedulesData.length } weekly schedules...`);
+    console.log(`  - Inserting ${weeklySchedulesData.length} weekly schedules...`);
     await db.insert(weeklySchedules).values(weeklySchedulesData);
 
-    console.log(`  - Inserting ${ workoutTemplatesData.length } workout templates...`);
+    console.log(`  - Inserting ${workoutTemplatesData.length} workout templates...`);
     await db.insert(workoutTemplates).values(workoutTemplatesData);
 
     console.log('✅ User Base database seeded successfully');

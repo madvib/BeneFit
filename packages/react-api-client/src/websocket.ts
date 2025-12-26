@@ -10,7 +10,8 @@ export class BenefitWebSocketClient {
     this.client = new AgentClient({
       agent: agentName,
       name: agentId,
-      query: { token }
+      query: { token },
+      host: '',
     });
 
     this.client.onmessage = (event) => {
@@ -21,7 +22,7 @@ export class BenefitWebSocketClient {
   connect() {
     // PartySocket connects automatically usually, but we can access the internal socket if needed
     // or just let it handle reconnections.
-    // AgentClient/PartySocket doesn't typically expose a manual 'connect' promise in the same way 
+    // AgentClient/PartySocket doesn't typically expose a manual 'connect' promise in the same way
     // without accessing the underlying reconnecting-websocket.
     // But we can check readyState.
     // For this wrapper, we'll assume instantiation starts connection or is handled by the framework.
@@ -78,7 +79,7 @@ export class BenefitWebSocketClient {
 // Factory function
 export function createWebSocketClient(token: string) {
   // We assume we are connecting to the UserHub agent for the current user
-  // We need the userId. 
+  // We need the userId.
   // IF the token contains the userId, the backend can validate.
   // But AgentClient needs the `name` (agentId).
   // We might need to decode the token or pass userId explicitly.
@@ -87,9 +88,10 @@ export function createWebSocketClient(token: string) {
   // Maybe we default to a "guest" or require the caller to provide ID.
   // I will change signature to `createWebSocketClient(userId: string, token: string)` to be safe.
 
-  return (userId: string) => new BenefitWebSocketClient(
-    'user-hub', // The agent class name
-    userId,     // The specific agent instance
-    token,
-  );
+  return (userId: string) =>
+    new BenefitWebSocketClient(
+      'user-hub', // The agent class name
+      userId, // The specific agent instance
+      token,
+    );
 }

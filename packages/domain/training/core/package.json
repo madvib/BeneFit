@@ -15,7 +15,7 @@
     }
   },
   "dependencies": {
-    "@bene/shared-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@swc/helpers": "~0.5.11"
   },
   "nx": {

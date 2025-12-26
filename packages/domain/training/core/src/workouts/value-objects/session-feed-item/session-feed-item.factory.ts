@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { FeedItemType, SessionFeedItem } from './session-feed-item.types.js';
 import { randomUUID } from 'crypto';
 

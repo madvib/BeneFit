@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import type { ConnectedService } from '@bene/integrations-domain';
 import { OAuth2Client, HttpClient } from './base/index.js';
 import { TokenManager, IntegrationMapper } from './utils/index.js';
@@ -111,7 +111,7 @@ export class StravaClient extends OAuth2Client {
       ...(state && { state }),
     });
 
-    return `https://www.strava.com/oauth/authorize?${ params.toString() }`;
+    return `https://www.strava.com/oauth/authorize?${params.toString()}`;
   }
 
   /**
@@ -157,7 +157,7 @@ export class StravaClient extends OAuth2Client {
         },
         {
           athleteId: data.athlete.id,
-          athleteName: `${ data.athlete.firstname } ${ data.athlete.lastname }`,
+          athleteName: `${data.athlete.firstname} ${data.athlete.lastname}`,
           profileUrl: data.athlete.profile,
         },
         {
@@ -170,7 +170,7 @@ export class StravaClient extends OAuth2Client {
     } catch (error) {
       return Result.fail(
         new Error(
-          `Failed to authenticate with Strava: ${ error instanceof Error ? error.message : String(error) }`,
+          `Failed to authenticate with Strava: ${error instanceof Error ? error.message : String(error)}`,
         ),
       );
     }
@@ -190,7 +190,7 @@ export class StravaClient extends OAuth2Client {
     }
 
     return this.http.get<StravaActivity[]>(
-      `/athlete/activities?per_page=${ limit }`,
+      `/athlete/activities?per_page=${limit}`,
       this.accessToken,
     );
   }
@@ -238,7 +238,7 @@ export class StravaClient extends OAuth2Client {
       : Math.floor(Date.now() / 1000) - 30 * 24 * 60 * 60; // Default to last 30 days
 
     const result = await this.http.get<StravaActivity[]>(
-      `/athlete/activities?after=${ afterDate }&per_page=50`,
+      `/athlete/activities?after=${afterDate}&per_page=50`,
       this.accessToken!,
     );
 

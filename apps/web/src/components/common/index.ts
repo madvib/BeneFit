@@ -6,6 +6,7 @@ export { default as Input } from './ui-primitives/form/input';
 export { default as Select } from './ui-primitives/form/select';
 export { default as Checkbox } from './ui-primitives/form/checkbox';
 export { default as FormSection } from './ui-primitives/form/form-section';
+export { ControlledInput } from './ui-primitives/form/controlled-input';
 export { Button } from './ui-primitives/buttons/button';
 export { ActionButton } from './ui-primitives/buttons/action-button';
 export { default as EmptyState } from './ui-primitives/empty-state';

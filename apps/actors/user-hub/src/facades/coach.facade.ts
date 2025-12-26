@@ -1,41 +1,43 @@
+import { RpcTarget } from 'cloudflare:workers';
 import { UseCaseFactory } from '../factories/use-case-factory';
-import { CoachFeature } from '../features/coach/coach.feature';
 import {
   SendMessageToCoachRequest,
   DismissCheckInRequest,
   GenerateWeeklySummaryRequest,
   RespondToCheckInRequest,
-  TriggerProactiveCheckInRequest
+  TriggerProactiveCheckInRequest,
 } from '@bene/coach-domain';
 
-export class CoachFacade extends CoachFeature {
-  constructor(
-    state: DurableObjectState,
-    useCaseFactory: UseCaseFactory
-  ) {
-    super(state, useCaseFactory);
+export class CoachFacade extends RpcTarget {
+  constructor(private useCaseFactory: UseCaseFactory) {
+    super();
   }
 
   async sendMessage(input: SendMessageToCoachRequest) {
-    // Delegate to feature logic which now uses UseCaseFactory properly (will be updated)
-    // Or override here.
-    // The previous CoachFeature had a `sendMessage` method.
-    return super.sendMessage(input);
+    const result = await this.useCaseFactory.getSendMessageToCoachUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async dismissCheckIn(input: DismissCheckInRequest) {
-    return this.useCaseFactory.getDismissCheckInUseCase().execute(input);
+    const result = await this.useCaseFactory.getDismissCheckInUseCase().execute(input);
+    return result.serialize();
   }
 
   async generateWeeklySummary(input: GenerateWeeklySummaryRequest) {
-    return this.useCaseFactory.getGenerateWeeklySummaryUseCase().execute(input);
+    const result = await this.useCaseFactory.getGenerateWeeklySummaryUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async respondToCheckIn(input: RespondToCheckInRequest) {
-    return this.useCaseFactory.getRespondToCheckInUseCase().execute(input);
+    const result = await this.useCaseFactory.getRespondToCheckInUseCase().execute(input);
+    return result.serialize();
   }
 
   async triggerProactiveCheckIn(input: TriggerProactiveCheckInRequest) {
-    return this.useCaseFactory.getTriggerProactiveCheckInUseCase().execute(input);
+    const result = await this.useCaseFactory.getTriggerProactiveCheckInUseCase().execute(input);
+    return result.serialize();
+
   }
 }

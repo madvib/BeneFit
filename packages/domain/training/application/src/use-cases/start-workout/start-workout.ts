@@ -1,13 +1,13 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import {
   createWorkoutSession,
   WorkoutActivity,
   WorkoutSessionCommands,
   createWorkoutActivity,
 } from '@bene/training-core';
-import type { WorkoutSessionRepository } from '@/repositories/workout-session-repository.js';
-import { WorkoutStartedEvent } from '@/events/workout-started.event.js';
+import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
+import { WorkoutStartedEvent } from '../../events/workout-started.event.js';
 
 // Simplified schema for WorkoutActivity - we'll use unknown for now and convert at runtime
 const WorkoutActivitySchema = z
@@ -119,7 +119,7 @@ export class StartWorkoutUseCase implements UseCase<
     }
 
     // 2. Convert schema activities to domain activities
-    const domainActivities = request.activities.map(activity => {
+    const domainActivities = request.activities.map((activity) => {
       const activityResult = createWorkoutActivity({
         name: activity.name,
         type: activity.type,

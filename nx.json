@@ -25,9 +25,9 @@
     },
     {
       "plugin": "@nx/vite/plugin",
+      "include": ["apps/**", "packages/**"],
       "options": {
         "buildTargetName": "build:vite",
-        "testTargetName": "test",
         "serveTargetName": "serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",

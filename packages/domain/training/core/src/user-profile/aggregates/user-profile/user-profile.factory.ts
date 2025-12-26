@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { ExperienceProfile } from '../../value-objects/experience-profile/index.js';
 import { FitnessGoals } from '../../value-objects/fitness-goals/index.js';
 import { createDefaultPreferences } from '../../value-objects/user-preferences/index.js';

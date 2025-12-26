@@ -1,5 +1,5 @@
 // workout-activity.factory.ts
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { ActivityValidationError } from '../../errors/workout-errors.js';
 import { WorkoutActivity } from './workout-activity.types.js';
 import { ActivityStructure } from '../activity-structure/activity-structure.types.js';

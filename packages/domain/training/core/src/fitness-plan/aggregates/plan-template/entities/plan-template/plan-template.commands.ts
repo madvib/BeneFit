@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { PlanTemplate } from './plan-template.types.js';
 import { CreateTemplateParams } from './plan-template.factory.js';
 

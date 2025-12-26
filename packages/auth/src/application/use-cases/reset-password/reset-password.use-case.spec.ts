@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { ResetPasswordUseCase, ResetPasswordInput } from './reset-password.use-case.js';
 import { AuthError } from '../../errors/index.js';
 import { IAuthService } from '../../index.js';

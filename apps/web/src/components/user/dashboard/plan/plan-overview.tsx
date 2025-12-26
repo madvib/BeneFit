@@ -1,8 +1,11 @@
 'use client';
 
 import { Trophy, Flame, Timer, Zap, Activity, Edit2 } from 'lucide-react';
-import { PlanData } from './types';
 import { Card } from '@/components/common/ui-primitives/card/card';
+import type { fitnessPlan } from '@bene/react-api-client';
+
+// Extract plan type from API response
+type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
 
 interface PlanOverviewProps {
   currentPlan: PlanData | null;
@@ -12,26 +15,32 @@ interface PlanOverviewProps {
 export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewProps) {
   if (!currentPlan) {
     return (
-      <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border border-dashed border-muted bg-accent/5 p-8 text-center animate-in fade-in zoom-in-95 duration-500">
-        <div className="mb-4 rounded-full bg-accent/10 p-4">
+      <div className="border-muted bg-accent/5 animate-in fade-in zoom-in-95 flex h-full min-h-[300px] flex-col items-center justify-center rounded-3xl border border-dashed p-8 text-center duration-500">
+        <div className="bg-accent/10 mb-4 rounded-full p-4">
           <Activity size={32} className="text-muted-foreground opacity-50" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground">No Active Plan</h3>
-        <p className="text-sm text-muted-foreground">Start a new plan to see your progress here.</p>
+        <h3 className="text-foreground text-lg font-semibold">No Active Plan</h3>
+        <p className="text-muted-foreground text-sm">
+          Start a new plan to see your progress here.
+        </p>
       </div>
     );
   }
+
+  // Calculate progress from stats
+  const weeklyProgress = currentPlan.stats.completedWorkouts;
+  const totalWorkouts = currentPlan.stats.totalWorkouts;
 
   return (
     <Card
       title="My Plan"
       icon={Trophy}
-      className="h-full border-primary/20 bg-gradient-to-br from-card to-primary/5 shadow-lg"
+      className="border-primary/20 from-card to-primary/5 h-full bg-gradient-to-br shadow-lg"
       headerClassName="bg-transparent border-b border-primary/10"
       headerAction={
         <button
           onClick={() => onEditPlan(currentPlan.id)}
-          className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+          className="text-muted-foreground hover:bg-primary/10 hover:text-primary rounded-full p-2 transition-colors"
         >
           <Edit2 size={18} />
         </button>
@@ -41,68 +50,76 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
         {/* Progress Section */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Weekly Goal</p>
+            <p className="text-muted-foreground text-sm font-medium">Weekly Goal</p>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-4xl font-bold tracking-tight text-primary">
-                {currentPlan.weeklyProgress}
+              <span className="text-primary text-4xl font-bold tracking-tight">
+                {weeklyProgress}
               </span>
-              <span className="text-sm font-medium text-muted-foreground">
-                / {currentPlan.totalWorkouts} workouts
+              <span className="text-muted-foreground text-sm font-medium">
+                / {totalWorkouts} workouts
               </span>
             </div>
           </div>
-          <div className="h-16 w-16 overflow-hidden rounded-full border-4 border-background bg-muted shadow-sm">
+          <div className="border-background bg-muted h-16 w-16 overflow-hidden rounded-full border-4 shadow-sm">
             <div
-              className="h-full w-full bg-primary transition-all duration-1000 ease-out"
+              className="bg-primary h-full w-full transition-all duration-1000 ease-out"
               style={{
                 clipPath: `polygon(0 0, 100% 0, 100% ${
-                  (currentPlan.weeklyProgress / currentPlan.totalWorkouts) * 100
-                }%, 0 ${(currentPlan.weeklyProgress / currentPlan.totalWorkouts) * 100}%)`,
+                  (weeklyProgress / totalWorkouts) * 100
+                }%, 0 ${(weeklyProgress / totalWorkouts) * 100}%)`,
               }}
             />
           </div>
         </div>
 
         {/* Current Phase */}
-        <div className="rounded-xl bg-background/50 p-4 ring-1 ring-border/50 backdrop-blur-sm">
+        <div className="bg-background/50 ring-border/50 rounded-xl p-4 ring-1 backdrop-blur-sm">
           <div className="mb-3 flex items-center justify-between">
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary uppercase tracking-wide">
-              Current Phase
+            <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
+              Current Week
             </span>
-            <span className="text-xs font-medium text-muted-foreground">
-              Week {currentPlan.currentWeek} of {currentPlan.totalWeeks}
+            <span className="text-muted-foreground text-xs font-medium">
+              Week {currentPlan.currentWeek} of {currentPlan.durationWeeks}
             </span>
           </div>
-          <h3 className="mb-1 text-xl font-bold text-foreground">{currentPlan.phase}</h3>
-          <p className="text-sm text-muted-foreground">{currentPlan.description}</p>
+          <h3 className="text-foreground mb-1 text-xl font-bold">
+            {currentPlan.title}
+          </h3>
+          <p className="text-muted-foreground text-sm">
+            {currentPlan.description || 'Keep up the great work!'}
+          </p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="rounded-xl bg-background/50 p-3 text-center ring-1 ring-border/50 transition-colors hover:bg-background/80">
+          <div className="bg-background/50 ring-border/50 hover:bg-background/80 rounded-xl p-3 text-center ring-1 transition-colors">
             <div className="mb-1 flex justify-center text-orange-500">
               <Flame size={20} />
             </div>
-            <div className="text-lg font-bold text-foreground">{currentPlan.stats.streak}</div>
-            <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="text-foreground text-lg font-bold">
+              {currentPlan.stats.currentStreak}
+            </div>
+            <div className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               Day Streak
             </div>
           </div>
-          <div className="rounded-xl bg-background/50 p-3 text-center ring-1 ring-border/50 transition-colors hover:bg-background/80">
+          <div className="bg-background/50 ring-border/50 hover:bg-background/80 rounded-xl p-3 text-center ring-1 transition-colors">
             <div className="mb-1 flex justify-center text-blue-500">
               <Timer size={20} />
             </div>
-            <div className="text-lg font-bold text-foreground">{currentPlan.stats.minutes}</div>
-            <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="text-foreground text-lg font-bold">
+              {currentPlan.stats.totalMinutes}
+            </div>
+            <div className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               Active Mins
             </div>
           </div>
-          <div className="rounded-xl bg-background/50 p-3 text-center ring-1 ring-border/50 transition-colors hover:bg-background/80">
+          <div className="bg-background/50 ring-border/50 hover:bg-background/80 rounded-xl p-3 text-center ring-1 transition-colors">
             <div className="mb-1 flex justify-center text-green-500">
               <Zap size={20} />
             </div>
-            <div className="text-lg font-bold text-foreground">{currentPlan.stats.calories}</div>
-            <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="text-foreground text-lg font-bold">-</div>
+            <div className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
               Calories
             </div>
           </div>

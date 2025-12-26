@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result, EventBus } from '@bene/shared-domain';
+import { Result, EventBus } from '@bene/shared';
 import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import { JoinMultiplayerWorkoutUseCase } from './join-multiplayer-workout.js';
 import * as workoutsDomain from '@bene/training-core';

@@ -1,31 +1,28 @@
-import { Result } from '@bene/shared-domain';
+import { type SerializedResult } from '@bene/shared';
 import { Context } from 'hono';
 import { ContentfulStatusCode } from 'hono/utils/http-status';
 
 export function handleResult<T>(
-  result: Result<T>,
+  result: SerializedResult<T>,
   c: Context,
   successStatus: ContentfulStatusCode = 200,
 ) {
+  console.log(result);
   if (result.isFailure) {
-    // Map domain errors to HTTP status codes
-    const statusCode = mapErrorToStatus(result.error);
-
     return c.json(
       {
-        error: result.error.message,
+        error: result.errorMessage,
       },
-      statusCode,
+      mapErrorToStatus(result.errorMessage),
     );
   }
 
-  return c.json(result.value, successStatus);
+  return c.json<T>(result.value, successStatus);
 }
 
-function mapErrorToStatus(error: Error): ContentfulStatusCode {
-  // You can be more sophisticated here
-  if (error.message.includes('not found')) return 404;
-  if (error.message.includes('Unauthorized')) return 401;
-  if (error.message.includes('forbidden')) return 403;
+function mapErrorToStatus(error: string): ContentfulStatusCode {
+  if (error.includes('not found')) return 404;
+  if (error.includes('Unauthorized')) return 401;
+  if (error.includes('forbidden')) return 403;
   return 400; // Bad request for business logic errors
 }

@@ -25,6 +25,7 @@
       "binding": "DB_USER_AUTH",
       "database_name": "db-user-auth",
       "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
+      "migrations_dir": "src/lib/better-auth/migrations/"
     }
   ]
   // "vars": {

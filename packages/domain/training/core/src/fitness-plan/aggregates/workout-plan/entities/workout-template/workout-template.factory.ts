@@ -1,5 +1,5 @@
 // workout-template.factory.ts
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { WorkoutTemplate, WorkoutTemplateData } from './workout-template.types.js';
 import { WorkoutTemplateValidationError } from '../../../../errors/fitness-plan-errors.js';
 

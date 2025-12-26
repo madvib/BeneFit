@@ -31,38 +31,33 @@
     "strict": true,
     /* Skip type checking all .d.ts files. */
     "skipLibCheck": true,
+    "composite": true,
     "types": [
       "../../../types/cloudflare-runtime.d.ts",
-      "./worker-env.d.ts"
+      "../../../types/vite-env.d.ts",
+      "./worker-env.d.ts",
+      "vite"
     ]
   },
+  "include": [
+    "src/**/*",
+    "migrations"
+  ],
   "references": [
     {
-      "path": "../../../packages/infra/training"
-    },
-    {
-      "path": "../../../packages/infra/shared"
-    },
-    {
-      "path": "../../../packages/infra/integrations"
+      "path": "../../../packages/domain/training/application"
     },
     {
       "path": "../../../packages/domain/integrations"
     },
     {
+      "path": "../../../packages/shared"
+    },
+    {
+      "path": "../../../packages/domain/training/core"
+    },
+    {
       "path": "../../../packages/domain/coach"
-    },
-    {
-      "path": "../../../packages/infra/coach"
-    },
-    {
-      "path": "../../../packages/persistence"
-    },
-    {
-      "path": "../../../packages/domain/shared"
-    },
-    {
-      "path": "../../../packages/domain/training/application"
     }
   ]
 }

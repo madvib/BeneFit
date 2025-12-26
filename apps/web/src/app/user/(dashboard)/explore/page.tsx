@@ -44,7 +44,7 @@ export default async function ExplorePage() {
       <div className="bg-primary text-primary-foreground relative mb-12 overflow-hidden rounded-3xl px-8 py-16 md:px-16">
         <div className="relative z-10 max-w-2xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
-            {`${data.message} Discover Your Next Challenge`}
+            Discover Your Next Challenge
           </h1>
           <p className="text-primary-foreground/80 mb-8 text-lg">
             Find local events, join communities, and connect with expert coaches to

@@ -2,10 +2,7 @@
 
 import { LoadingSpinner, ErrorPage } from '@/components';
 import { ServiceCard } from '@/components/user/connections';
-import {
-  ServiceConnectionData,
-  useConnectionsController,
-} from '@/controllers/connections';
+import { useConnectionsController } from '@/controllers';
 import { PageHeader } from '@/components/user/account/shared/page-header';
 
 export default function ConnectionsClient() {
@@ -30,7 +27,7 @@ export default function ConnectionsClient() {
   const connectedServices = services.filter((service) => service.connected);
   const availableServices = services.filter((service) => !service.connected);
 
-  const serviceCards = (services: ServiceConnectionData[]) => {
+  const serviceCards = (services: any[]) => {
     return services.map((service) => (
       <ServiceCard
         key={service.id}

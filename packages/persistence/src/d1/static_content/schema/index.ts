@@ -3,16 +3,16 @@ This database holds static resources like exercise table, plan and workout templ
  *
  */
 
-import { planTemplates } from './plan_templates.ts';
-import { templateRatings } from './template_ratings.ts';
-import { templateTags } from './template_tags.ts';
+import { planTemplates } from './plan_templates.js';
+import { templateRatings } from './template_ratings.js';
+import { templateTags } from './template_tags.js';
 
-export * from './plan_templates.ts';
-export * from './template_ratings.ts';
-export * from './template_tags.ts';
+export * from './plan_templates.js';
+export * from './template_ratings.js';
+export * from './template_tags.js';
 
 export const static_content_schema = {
-  ...planTemplates,
-  ...templateRatings,
-  ...templateTags,
+  planTemplates,
+  templateRatings,
+  templateTags,
 };

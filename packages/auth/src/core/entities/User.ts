@@ -1,4 +1,4 @@
-import { Entity, Result } from '@bene/shared-domain';
+import { Entity, Result } from '@bene/shared';
 
 interface UserProps {
   email: string;

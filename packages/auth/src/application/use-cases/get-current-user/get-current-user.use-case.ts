@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase } from '@bene/shared';
 import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 // Output interface
@@ -8,9 +8,10 @@ export interface GetCurrentUserOutput {
   name?: string;
 }
 
-export class GetCurrentUserUseCase
-  implements UseCase<RequestContext, GetCurrentUserOutput>
-{
+export class GetCurrentUserUseCase implements UseCase<
+  RequestContext,
+  GetCurrentUserOutput
+> {
   constructor(private authService: IAuthService) {}
 
   async execute(requestContext: RequestContext): Promise<Result<GetCurrentUserOutput>> {

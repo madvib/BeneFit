@@ -1,4 +1,4 @@
-import { Guard } from '@bene/shared-domain';
+import { Guard } from '@bene/shared';
 import {
   ExperienceLevel,
   ExperienceProfile,

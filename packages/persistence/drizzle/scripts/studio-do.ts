@@ -4,7 +4,7 @@ import { join } from 'path';
 import { spawn } from 'child_process';
 
 // Always look at root .wrangler
-const PERSIST_DIR = join(process.cwd(), '../../../.wrangler/state');
+const PERSIST_DIR = join(process.cwd(), '../../../../.wrangler/state');
 
 function findDODatabase(className: string, instanceId?: string): string | null {
   const doDir = join(PERSIST_DIR, 'v3', 'do', className);

@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { GetProfileUseCase } from './get-profile.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 

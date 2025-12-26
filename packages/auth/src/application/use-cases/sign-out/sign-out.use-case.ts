@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 /**

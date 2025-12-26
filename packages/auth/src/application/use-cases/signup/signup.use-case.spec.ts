@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { Result, EmailAddress, Password } from '@bene/shared-domain';
+import { Result, EmailAddress, Password } from '@bene/shared';
 import { AuthError, EmailExistsError } from '../../errors/index.js';
 import { IAuthService, SignupUseCase } from '../../index.js';
 

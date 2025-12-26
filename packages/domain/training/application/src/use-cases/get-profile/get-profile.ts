@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
-import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+import { Result, type UseCase } from '@bene/shared';
+import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use GetProfileRequest type instead */

@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import type { CoachContext, PerformanceTrends } from '@core/index.js';
 import { CoachErrors, TREND_MAPS } from '@core/index.js';
 import type { FitnessPlan, CompletedWorkout } from '@bene/training-core';

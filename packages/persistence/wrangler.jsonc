@@ -24,12 +24,6 @@
       "database_id": "static-content-local-db",
       "migrations_dir": "src/d1/static_content/migrations",
     },
-    {
-      "binding": "DB_USER_AUTH",
-      "database_name": "db-user-auth",
-      "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
-      "migrations_dir": "src/d1/user_auth/migrations/"
-    }
   ],
   "durable_objects": {
     "bindings": [

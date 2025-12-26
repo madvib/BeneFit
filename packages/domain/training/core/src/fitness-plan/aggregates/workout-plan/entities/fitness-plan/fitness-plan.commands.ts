@@ -1,5 +1,5 @@
 // workout-plan.commands.ts
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { FitnessPlan } from './fitness-plan.types.js';
 
 import { WeeklySchedule } from '../weekly-schedule/weekly-schedule.types.js';

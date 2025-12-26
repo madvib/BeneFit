@@ -1,38 +1,39 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import {
-  // GetTodaysWorkoutRequestClientSchema,
-  // GetTodaysWorkoutRequestSchema,
   GeneratePlanFromGoalsRequestClientSchema,
   GeneratePlanFromGoalsRequestSchema,
+  GeneratePlanFromGoalsResponse,
   ActivatePlanRequestClientSchema,
   ActivatePlanRequestSchema,
+  ActivatePlanResponse,
   AdjustPlanBasedOnFeedbackRequestClientSchema,
   AdjustPlanBasedOnFeedbackRequestSchema,
+  AdjustPlanBasedOnFeedbackResponse,
   PausePlanRequestClientSchema,
   PausePlanRequestSchema,
+  PausePlanResponse,
+  GetCurrentPlanRequestSchema,
+  GetCurrentPlanResponse,
 } from '@bene/training-application';
+import { handleResult } from '../lib/handle-result';
 
 export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
-  // .get('/', zValidator('json', GetTodaysWorkoutRequestClientSchema), async (c) => {
-  //   const user = c.get('user');
-  //   const clientInput = c.req.valid('json');
+  .get('/active', async (c) => {
+    const user = c.get('user');
 
-  //   // Merge server context with client input
-  //   const useCaseInput = {
-  //     ...clientInput,
-  //     userId: user.id,
-  //   };
+    const useCaseInput = {
+      userId: user.id,
+    };
 
-  //   // Validate the complete input (optional but catches bugs)
-  //   const validated = GetTodaysWorkoutRequestSchema.parse(useCaseInput);
+    const validated = GetCurrentPlanRequestSchema.parse(useCaseInput);
 
-  //   const id = c.env.USER_HUB.idFromName(user.id);
-  //   const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).planning();
 
-  //   const result = await stub.planning.getActivePlan(validated);
-  //   return c.json(result);
-  // })
+    const result = await stub.getCurrentPlan(validated);
+
+    return handleResult<GetCurrentPlanResponse>(result, c);
+  })
   .post(
     '/generate',
     zValidator('json', GeneratePlanFromGoalsRequestClientSchema),
@@ -47,11 +48,11 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
 
       const validated = GeneratePlanFromGoalsRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).planning();
 
-      const result = await stub.planning.generateFromGoals(validated);
-      return c.json(result);
+      const result = await stub.generateFromGoals(validated);
+
+      return handleResult<GeneratePlanFromGoalsResponse>(result, c);
     },
   )
   .post('/activate', zValidator('json', ActivatePlanRequestClientSchema), async (c) => {
@@ -65,11 +66,11 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
 
     const validated = ActivatePlanRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).planning();
 
-    const result = await stub.planning.activate(validated);
-    return c.json(result);
+    const result = await stub.activate(validated);
+
+    return handleResult<ActivatePlanResponse>(result, c);
   })
   .post(
     '/adjust',
@@ -85,11 +86,11 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
 
       const validated = AdjustPlanBasedOnFeedbackRequestSchema.parse(useCaseInput);
 
-      const id = c.env.USER_HUB.idFromName(user.id);
-      const stub = c.env.USER_HUB.get(id);
+      const stub = c.env.USER_HUB.getByName(user.id).planning();
 
-      const result = await stub.planning.adjust(validated);
-      return c.json(result);
+
+      const result = await stub.adjust(validated);
+      return handleResult<AdjustPlanBasedOnFeedbackResponse>(result, c);
     },
   )
   .post('/pause', zValidator('json', PausePlanRequestClientSchema), async (c) => {
@@ -103,9 +104,8 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
 
     const validated = PausePlanRequestSchema.parse(useCaseInput);
 
-    const id = c.env.USER_HUB.idFromName(user.id);
-    const stub = c.env.USER_HUB.get(id);
+    const stub = c.env.USER_HUB.getByName(user.id).planning();
 
-    const result = await stub.planning.pause(validated);
-    return c.json(result);
+    const result = await stub.pause(validated);
+    return handleResult<PausePlanResponse>(result, c);
   });

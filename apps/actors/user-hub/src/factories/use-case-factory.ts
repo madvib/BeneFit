@@ -14,6 +14,7 @@ import {
   UpdatePreferencesUseCase,
   GetUserStatsUseCase,
   UpdateTrainingConstraintsUseCase,
+  GetCurrentPlanUseCase,
 } from '@bene/training-application';
 
 import {
@@ -52,6 +53,7 @@ export class UseCaseFactory {
   private _getProfileUC?: GetProfileUseCase;
   private _getWorkoutHistoryUC?: GetWorkoutHistoryUseCase;
   private _skipWorkoutUC?: SkipWorkoutUseCase;
+  private _getCurrentPlanUC?: GetCurrentPlanUseCase;
 
   // --- Coach Use Cases ---
   private _sendMessageToCoachUC?: SendMessageToCoachUseCase;
@@ -70,7 +72,7 @@ export class UseCaseFactory {
   constructor(
     private repoFactory: RepositoryFactory,
     private serviceFactory: ServiceFactory,
-  ) {}
+  ) { }
 
   // ... (Existing Training getters kept for compatibility or gradual migration) ...
 
@@ -209,6 +211,15 @@ export class UseCaseFactory {
       );
     }
     return this._skipWorkoutUC;
+  }
+
+  public getGetCurrentPlanUseCase(): GetCurrentPlanUseCase {
+    if (!this._getCurrentPlanUC) {
+      this._getCurrentPlanUC = new GetCurrentPlanUseCase(
+        this.repoFactory.getFitnessPlanRepository(),
+      );
+    }
+    return this._getCurrentPlanUC;
   }
 
   // --- Coach Getters ---

@@ -1,17 +1,16 @@
-import { chatMessages } from './schema/chat_messages.ts';
-import { team } from './schema/team.ts';
-import { teamChallenges } from './schema/team_challenges.ts';
-import { teamMembers } from './schema/team_members.ts';
+import { chatMessages } from './schema/chat_messages.js';
+import { team } from './schema/team.js';
+import { teamChallenges } from './schema/team_challenges.js';
+import { teamMembers } from './schema/team_members.js';
 
-export * from './schema/team_challenges.ts';
-export * from './schema/team_members.ts';
-export * from './schema/chat_messages.ts';
-export * from './schema/team.ts';
-
+export * from './schema/team_challenges.js';
+export * from './schema/team_members.js';
+export * from './schema/chat_messages.js';
+export * from './schema/team.js';
 
 export const team_do_schema = {
   teamChallenges,
   teamMembers,
   team,
-  chatMessages
+  chatMessages,
 };

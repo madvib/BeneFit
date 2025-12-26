@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { PlanPosition } from './plan-position.types.js';
 
 export interface PlanPositionProps {

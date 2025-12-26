@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { WorkoutPlan, WorkoutPlanQueries } from '@bene/training-core';
 import { WorkoutTemplate } from '@bene/training-core';
 import { GetUpcomingWorkoutsUseCase } from './get-upcoming-workouts.js';

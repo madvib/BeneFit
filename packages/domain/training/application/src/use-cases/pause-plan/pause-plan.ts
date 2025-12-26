@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { FitnessPlanCommands } from '@bene/training-core';
-import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
-import { PlanPausedEvent } from '@/events/plan-paused.event.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { PlanPausedEvent } from '../../events/plan-paused.event.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use PausePlanRequest type instead */

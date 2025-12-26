@@ -1,5 +1,5 @@
 // workout-plan.factory.ts
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { PlanType, FitnessPlan } from './fitness-plan.types.js';
 import { TrainingConstraints } from '@/shared/index.js';
 import {

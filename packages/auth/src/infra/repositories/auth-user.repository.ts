@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { User } from '@core/index.js';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import { user as userTable } from '../../data/schema/schema.js';

@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { GoalsValidationError } from '../../errors/fitness-plan-errors.js';
 import {
   CompletionCriteria,

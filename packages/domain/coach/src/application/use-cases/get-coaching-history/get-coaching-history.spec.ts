@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { CoachConversation, CoachMsg } from '@core/index.js';
 import { GetCoachHistoryUseCase } from './get-coaching-history.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';

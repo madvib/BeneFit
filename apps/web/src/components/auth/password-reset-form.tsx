@@ -1,29 +1,82 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useForm } from '@tanstack/react-form';
+import { getAuthClient, authSchemas } from '@bene/react-api-client';
 import { AuthError } from './auth-error/auth-error';
-import { resetPasswordAction } from '@/controllers/auth/auth-actions';
-import { AuthSubmitButton, EmailInput } from './auth-inputs';
+import { Button, ControlledInput } from '../common';
+import { useState } from 'react';
 
 export function PasswordResetForm() {
-  const [state, formAction] = useActionState(resetPasswordAction, {});
+  const authClient = getAuthClient();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const form = useForm({
+    defaultValues: {
+      email: '',
+    },
+    validators: {
+      onChange: authSchemas.PasswordResetSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const { error } = await authClient.requestPasswordReset({
+        email: value.email,
+        redirectTo: '/update-password',
+      });
+
+      if (error) {
+        form.setErrorMap({
+          onSubmit: { form: error.message, fields: { email: '' } },
+        });
+      } else {
+        setSuccessMessage('Password reset email sent! Please check your inbox.');
+      }
+    },
+  });
+
+  if (successMessage) {
+    return (
+      <div className="bg-success/15 text-success flex items-center gap-x-2 rounded-md p-3 text-sm">
+        <p>{successMessage}</p>
+      </div>
+    );
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      {state?.error && <AuthError message={state.error} />}
-      {state?.message && (
-        <div className="bg-success/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-success">
-          <p>{state.message}</p>
-        </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className="space-y-4"
+    >
+      <form.Field
+        name="email"
+        validators={{
+          onChange: authSchemas.PasswordResetSchema.shape.email,
+        }}
+      >
+        {(field) => (
+          <ControlledInput
+            field={field}
+            label="Email"
+            type="email"
+            placeholder="you@example.com"
+          />
+        )}
+      </form.Field>
+
+      {form.state.errorMap.onSubmit && (
+        <AuthError message={form.state.errorMap.onSubmit as string} />
       )}
-      {!state?.message && (
-        <>
-          <EmailInput />
-          <AuthSubmitButton pendingText={'Sending...'}>
-            Send Password Reset Email
-          </AuthSubmitButton>
-        </>
-      )}
+
+      <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+        {([canSubmit, isSubmitting]) => (
+          <Button disabled={!canSubmit}>
+            {isSubmitting ? 'Sending...' : 'Send Password Reset Email'}
+          </Button>
+        )}
+      </form.Subscribe>
     </form>
   );
 }

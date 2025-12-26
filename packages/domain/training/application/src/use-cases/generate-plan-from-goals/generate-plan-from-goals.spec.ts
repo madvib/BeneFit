@@ -1,11 +1,11 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { FitnessPlan } from '@bene/training-core';
 import { UserProfile } from '@bene/training-core';
 import { GeneratePlanFromGoalsUseCase } from './generate-plan-from-goals.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { AIPlanGenerator } from '../../services/ai-plan-generator.js';
-import { EventBus } from '@bene/shared-domain';
+import { EventBus } from '@bene/shared';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Mock repositories and services

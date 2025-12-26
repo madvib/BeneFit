@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared-domain';
-import type { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
+import { Result, type UseCase } from '@bene/shared';
+import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 
 // Deprecated original interface - preserve for potential rollback
 /** @deprecated Use GetWorkoutHistoryRequest type instead */
@@ -16,12 +16,15 @@ export const GetWorkoutHistoryRequestClientSchema = z.object({
   offset: z.number().optional(),
 });
 
-export type GetWorkoutHistoryRequestClient = z.infer<typeof GetWorkoutHistoryRequestClientSchema>;
+export type GetWorkoutHistoryRequestClient = z.infer<
+  typeof GetWorkoutHistoryRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const GetWorkoutHistoryRequestSchema = GetWorkoutHistoryRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const GetWorkoutHistoryRequestSchema =
+  GetWorkoutHistoryRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSchema>;

@@ -11,9 +11,31 @@
     ],
     "types": [
       "../../types/cloudflare-runtime.d.ts",
-      "./worker-env.d.ts"
+      "../../types/vite-env.d.ts",
+      "node"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
   },
+  "include": [
+    "./worker-env.d.ts",
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../../packages/domain/integrations"
+    },
+    {
+      "path": "../../packages/domain/coach"
+    },
+    {
+      "path": "../../packages/domain/training/application"
+    },
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/persistence"
+    }
+  ]
 }

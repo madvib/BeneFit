@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "wrangler dev"
+    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
   },
   "dependencies": {
     "@bene/persistence": "workspace:*",
-    "@bene/shared-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@bene/training-application": "workspace:*",
-    "@bene/training-infra": "workspace:*",
+    "@bene/training-core": "workspace:*",
     "agents": "catalog:",
     "drizzle-orm": "catalog:"
   },

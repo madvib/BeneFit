@@ -7,7 +7,6 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    "./auth-options": "./better-auth/options.ts",
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,30 +15,20 @@
     }
   },
   "dependencies": {
-    "@swc/helpers": "~0.5.11",
-    "drizzle-orm": "catalog:"
+    "@swc/helpers": "~0.5.11"
   },
   "devDependencies": {
-    "better-auth": "1.4.7"
+    "drizzle-orm": "catalog:"
   },
   "scripts": {
-    "auth:schema": "pnpm dlx @better-auth/cli generate --config better-auth/auth.ts --output src/d1/user_auth/schema/schema.ts",
-    "db:generate": "pnpm run d1:generate && pnpm run do:generate",
-    "d1:generate": "pnpm run activity_stream:generate && pnpm run discovery_index:generate && pnpm run static_content:generate && pnpm run user_auth:generate",
-    "do:generate": "pnpm run team_hub:generate && pnpm run user_hub:generate && pnpm run workout_session:generate",
+    "d1:generate": "pnpm run activity_stream:generate && pnpm run discovery_index:generate && pnpm run static_content:generate",
     "activity_stream:generate": "drizzle-kit generate --config=drizzle/drizzle-activity-stream.config.ts",
     "discovery_index:generate": "drizzle-kit generate --config=drizzle/drizzle-discovery-index.config.ts",
     "static_content:generate": "drizzle-kit generate --config=drizzle/drizzle-static-content.config.ts",
-    "user_auth:generate": "drizzle-kit generate --config=drizzle/drizzle-user-auth.config.ts",
     "team_hub:generate": "drizzle-kit generate --config=drizzle/drizzle-team-hub.config.ts",
-    "user_hub:generate": "drizzle-kit generate --config=drizzle/drizzle-user-hub.config.ts",
-    "workout_session:generate": "drizzle-kit generate --config=drizzle/drizzle-workout-session.config.ts",
     "d1:migrate:local": "tsx drizzle/scripts/migrate_d1.ts --env=local",
     "d1:migrate:staging": "tsx drizzle/scripts/migrate_d1.ts --env=staging",
     "d1:migrate:prod": "tsx drizzle/scripts/migrate_d1.ts --env=production",
-    "user_auth:migrate:local": "wrangler d1 migrations apply DC_USER_AUTH --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
-    "user_auth:migrate:staging": "wrangler d1 migrations apply DC_USER_AUTH --env staging --config wrangler.jsonc",
-    "user_auth:migrate:prod": "wrangler d1 migrations apply DC_USER_AUTH --env production --config wrangler.jsonc",
     "activity_stream:migrate:local": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
     "activity_stream:migrate:staging": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --env staging --config wrangler.jsonc",
     "activity_stream:migrate:prod": "wrangler d1 migrations apply DB_ACTIVITY_STREAM --env production --config wrangler.jsonc",
@@ -58,11 +47,8 @@
     "activity_stream:studio": "drizzle-kit studio --config=drizzle/drizzle-activity-stream.config.ts",
     "discovery_index:studio": "drizzle-kit studio --config=drizzle/drizzle-discovery-index.config.ts",
     "static_content:studio": "drizzle-kit studio --config=drizzle/drizzle-static-content.config.ts",
-    "user_auth:studio": "drizzle-kit studio --config=drizzle/drizze-user-auth.config.ts",
     "db:studio:do": "tsx drizzle/scripts/studio-do.ts studio",
-    "db:list:do": "tsx drizzle/scripts/studio-do.ts list",
-    "unstable:test:integration": "tsx drizzle/scripts/test-setup.ts && vitest run",
-    "unstable:test:integration:watch": "tsx drizzle/scripts/test-setup.ts && vitest"
+    "db:list:do": "tsx drizzle/scripts/studio-do.ts list"
   },
   "nx": {
     "sourceRoot": "packages/persistence/src",

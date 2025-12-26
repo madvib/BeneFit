@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { Result, EmailAddress, Password } from '@bene/shared-domain';
+import { Result, EmailAddress, Password } from '@bene/shared';
 import { LoginUseCase } from './login.use-case.js';
 import { IAuthService } from '../../ports/auth.service.js';
 import { AuthError, InvalidCredentialsError } from '../../errors/index.js';

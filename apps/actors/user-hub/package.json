@@ -2,20 +2,17 @@
   "name": "@bene/user-hub",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "wrangler dev"
+    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
   },
   "dependencies": {
     "@bene/coach-domain": "workspace:*",
-    "@bene/coach-infra": "workspace:*",
-    "@bene/shared-infra": "workspace:*",
-    "@bene/shared-domain": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@bene/integrations-domain": "workspace:*",
-    "@bene/integrations-infra": "workspace:*",
-    "@bene/persistence": "workspace:*",
     "@bene/training-application": "workspace:*",
-    "@bene/training-infra": "workspace:*",
-    "agents": "0.2.32",
+    "agents": "catalog:",
     "drizzle-orm": "catalog:"
   },
   "nx": {

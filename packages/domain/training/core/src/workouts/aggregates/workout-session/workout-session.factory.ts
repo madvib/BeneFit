@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { createDefaultSessionConfig } from '../../value-objects/session-configuration/session-configuration.factory.js';
 import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.types.js';
 import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';

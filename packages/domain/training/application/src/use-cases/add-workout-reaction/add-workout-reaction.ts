@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { CompletedWorkoutCommands } from '@bene/training-core';
-import type { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
-import { WorkoutReactionAddedEvent } from '@/events/workout-reaction-added.event.js';
+import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import { WorkoutReactionAddedEvent } from '../../events/workout-reaction-added.event.js';
 
 // Client-facing schema (what comes in the request body)
 export const AddWorkoutReactionRequestClientSchema = z.object({
@@ -11,13 +11,16 @@ export const AddWorkoutReactionRequestClientSchema = z.object({
   reactionType: z.enum(['fire', 'strong', 'clap', 'heart', 'smile']),
 });
 
-export type AddWorkoutReactionRequestClient = z.infer<typeof AddWorkoutReactionRequestClientSchema>;
+export type AddWorkoutReactionRequestClient = z.infer<
+  typeof AddWorkoutReactionRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const AddWorkoutReactionRequestSchema = AddWorkoutReactionRequestClientSchema.extend({
-  userId: z.string(),
-  userName: z.string(),
-});
+export const AddWorkoutReactionRequestSchema =
+  AddWorkoutReactionRequestClientSchema.extend({
+    userId: z.string(),
+    userName: z.string(),
+  });
 
 // Zod inferred type with original name
 export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;

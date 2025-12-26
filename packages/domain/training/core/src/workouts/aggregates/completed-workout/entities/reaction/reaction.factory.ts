@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { Reaction, ReactionType } from './reaction.types.js';
 import { randomUUID } from 'crypto';
 

@@ -1,5 +1,5 @@
 import { Agent } from 'agents';
-import { initializeUserHubDB } from '@bene/persistence';
+import { initializeUserHubDB } from '../data/init';
 import { ServiceFactory, RepositoryFactory, UseCaseFactory } from '../factories/index';
 import {
   ProfileFacade,
@@ -9,7 +9,6 @@ import {
   CoachFacade,
 } from '../facades/index';
 
-// Define the state interface for TypeScript
 interface UserHubState {
   currentSession?: unknown;
   activePlans?: unknown[];
@@ -33,43 +32,43 @@ export default class UserHub extends Agent<Env, UserHubState> {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => {
-      await initializeUserHubDB(ctx.storage, env.NODE_ENV === 'development');
+      await initializeUserHubDB(ctx.storage);
     });
   }
 
   // ===== PUBLIC FACADES (RPC Entry Points) =====
 
-  get workouts() {
+  async workouts() {
     if (!this._workouts) {
       this._workouts = new WorkoutsFacade(this.useCaseFactory);
     }
     return this._workouts;
   }
 
-  get profile() {
+  async profile() {
     if (!this._profile) {
       this._profile = new ProfileFacade(this.useCaseFactory);
     }
     return this._profile;
   }
 
-  get planning() {
+  async planning() {
     if (!this._planning) {
-      this._planning = new PlanningFacade(this.useCaseFactory);
+      return new PlanningFacade(this.useCaseFactory);
     }
     return this._planning;
   }
 
-  get integrations() {
+  async integrations() {
     if (!this._integrations) {
       this._integrations = new IntegrationsFacade(this.useCaseFactory);
     }
     return this._integrations;
   }
 
-  get coach() {
+  async coach() {
     if (!this._coach) {
-      this._coach = new CoachFacade(this.ctx, this.useCaseFactory);
+      this._coach = new CoachFacade(this.useCaseFactory);
     }
     return this._coach;
   }
@@ -80,9 +79,9 @@ export default class UserHub extends Agent<Env, UserHubState> {
     const data = JSON.parse(message);
 
     switch (data.type) {
-      case 'chat':
-        await this.coach.handleMessage(ws, data);
-        break;
+      // case 'chat':
+      //   await this.coach.handleMessage(ws, data);
+      //   break;
 
       case 'subscribe':
         // Subscription logic usually requires access to local state,
@@ -111,10 +110,7 @@ export default class UserHub extends Agent<Env, UserHubState> {
   }
   private get repositories() {
     if (!this._repositoryFactory) {
-      this._repositoryFactory = new RepositoryFactory(
-        this.ctx.storage,
-        this.env.PLAN_TEMPLATE_DB,
-      );
+      this._repositoryFactory = new RepositoryFactory(this.ctx.storage);
     }
     return this._repositoryFactory;
   }

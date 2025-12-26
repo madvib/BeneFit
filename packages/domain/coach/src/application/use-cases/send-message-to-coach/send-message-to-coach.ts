@@ -1,17 +1,13 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
-import { CoachMessageSentEvent, CoachAdjustedPlanEvent, CoachScheduledFollowupEvent } from '@app/events/index.js';
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SendMessageToCoachRequest type instead */
-export interface SendMessageToCoachRequest_Deprecated {
-  userId: string;
-  message: string;
-  checkInId?: string; // If responding to a check-in
-}
+import {
+  CoachMessageSentEvent,
+  CoachAdjustedPlanEvent,
+  CoachScheduledFollowupEvent,
+} from '@app/events/index.js';
 
 // Client-facing schema (what comes in the request body)
 export const SendMessageToCoachRequestClientSchema = z.object({
@@ -19,27 +15,18 @@ export const SendMessageToCoachRequestClientSchema = z.object({
   checkInId: z.string().optional(), // If responding to a check-in
 });
 
-export type SendMessageToCoachRequestClient = z.infer<typeof SendMessageToCoachRequestClientSchema>;
+export type SendMessageToCoachRequestClient = z.infer<
+  typeof SendMessageToCoachRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const SendMessageToCoachRequestSchema = SendMessageToCoachRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const SendMessageToCoachRequestSchema =
+  SendMessageToCoachRequestClientSchema.extend({
+    userId: z.string(),
+  });
 
 // Zod inferred type with original name
 export type SendMessageToCoachRequest = z.infer<typeof SendMessageToCoachRequestSchema>;
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SendMessageToCoachResponse type instead */
-export interface SendMessageToCoachResponse_Deprecated {
-  conversationId: string;
-  coachResponse: string;
-  actions?: Array<{
-    type: string;
-    details: string;
-  }>;
-  suggestedFollowUps?: string[];
-}
 
 // Zod schema for response validation
 const ActionSchema = z.object({
@@ -82,7 +69,9 @@ export class SendMessageToCoachUseCase implements UseCase<
       // Create new conversation
       const contextResult = await this.contextBuilder.buildContext(request.userId);
       if (contextResult.isFailure) {
-        return Result.fail(new Error('Failed to build coaching context'));
+        return Result.fail(
+          new Error(`Failed to build coaching context: ${contextResult.error}`),
+        );
       }
 
       const newConvResult = createCoachConversation({
@@ -185,7 +174,7 @@ export class SendMessageToCoachUseCase implements UseCase<
               details: action.details,
               planChangeId: action.planChangeId,
               timestamp: new Date(),
-            })
+            }),
           );
           break;
 
@@ -195,7 +184,7 @@ export class SendMessageToCoachUseCase implements UseCase<
               userId,
               details: action.details,
               timestamp: new Date(),
-            })
+            }),
           );
           break;
 

@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { team } from './team.ts';
+import { team } from './team.js';
 
 export const teamMembers = sqliteTable(
   'team_members',

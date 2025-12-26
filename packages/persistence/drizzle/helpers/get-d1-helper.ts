@@ -1,5 +1,5 @@
 import { D1Helper } from '@nerdfolio/drizzle-d1-helpers';
-import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
+import { drizzle as drizzleD1, AnyD1Database } from 'drizzle-orm/d1';
 import { getPlatformProxy } from 'wrangler';
 import { getPersistPath } from './get-persist-path.ts';
 
@@ -26,7 +26,7 @@ export async function useLocalD1<CloudflareEnv>(
     );
   }
 
-  const db = drizzleD1(binding as unknown as D1Database);
+  const db = drizzleD1(binding as unknown as AnyD1Database);
   await doWerk(db);
   await platform.dispose();
 }

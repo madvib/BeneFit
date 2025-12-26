@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { ProgressionStrategy } from './progression-strategy.types.js';
 
 export interface ProgressionStrategyProps {

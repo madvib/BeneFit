@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { WorkoutSession } from '@bene/training-core';
 
 export interface WorkoutSessionRepository {

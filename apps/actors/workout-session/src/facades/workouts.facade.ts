@@ -1,3 +1,4 @@
+import { RpcTarget } from 'cloudflare:workers';
 import { UseCaseFactory } from '../factories/use-case-factory';
 import {
   StartWorkoutRequest,
@@ -6,22 +7,28 @@ import {
   AddWorkoutReactionRequest,
 } from '@bene/training-application';
 
-export class WorkoutsFacade {
-  constructor(private useCaseFactory: UseCaseFactory) {}
+export class WorkoutsFacade extends RpcTarget {
+  constructor(private useCaseFactory: UseCaseFactory) {
+    super();
+  }
 
   async start(input: StartWorkoutRequest) {
-    return this.useCaseFactory.getStartWorkoutUseCase().execute(input);
+    const result = await this.useCaseFactory.getStartWorkoutUseCase().execute(input);
+    return result.serialize();
   }
 
   async complete(input: CompleteWorkoutRequest) {
-    return this.useCaseFactory.getCompleteWorkoutUseCase().execute(input);
+    const result = await this.useCaseFactory.getCompleteWorkoutUseCase().execute(input);
+    return result.serialize();
   }
 
   async joinMultiplayer(input: JoinMultiplayerWorkoutRequest) {
-    return this.useCaseFactory.getJoinMultiplayerWorkoutUseCase().execute(input);
+    const result = await this.useCaseFactory.getJoinMultiplayerWorkoutUseCase().execute(input);
+    return result.serialize();
   }
 
   async addReaction(input: AddWorkoutReactionRequest) {
-    return this.useCaseFactory.getAddWorkoutReactionUseCase().execute(input);
+    const result = await this.useCaseFactory.getAddWorkoutReactionUseCase().execute(input);
+    return result.serialize();
   }
 }

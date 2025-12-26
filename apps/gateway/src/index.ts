@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { authMiddleware } from './middleware/auth';
-import { createAuth } from './lib/auth';
+import { errorHandler } from './middleware/on-error';
 import {
   coachRoutes,
   fitnessPlanRoutes,
@@ -8,13 +9,24 @@ import {
   profileRoutes,
   workoutRoutes,
 } from './routes';
+import { createAuth } from './lib/better-auth';
 
 const app = new Hono<{
   Bindings: Env;
   Variables: { user: any };
 }>()
+  .onError(errorHandler)
+  .use(
+    '/api/*',
+    cors({
+      origin: 'http://localhost:3000',
+      allowHeaders: ['Content-Type', 'Authorization'],
+      allowMethods: ['POST', 'GET', 'OPTIONS'],
+      credentials: true,
+    }),
+  )
   .on(['POST', 'GET'], '/api/auth/*', (c) => {
-    return createAuth(c.env).handler(c.req.raw);
+    return createAuth(c.env.DB_USER_AUTH).handler(c.req.raw);
   })
   .use('/api/*', authMiddleware)
   .route('/api/coach', coachRoutes)

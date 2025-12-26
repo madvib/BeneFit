@@ -1,7 +1,7 @@
 import { migrate } from 'drizzle-orm/durable-sqlite/migrator';
-import { createDOClient } from '../../client.ts';
-import { seedTeamHub } from './seed.ts';
-import migrations from './migrations/migrations.ts';
+import { createDOClient } from '../../client.js';
+import { seedTeamHub } from './seed.js';
+import migrations from './migrations/migrations.js';
 
 /**
  * Initializes the Team Base database by running migrations and optionally seeding in local development.

@@ -1,5 +1,5 @@
 // weekly-schedule.commands.ts
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { WeeklySchedule } from './weekly-schedule.types.js';
 import {
   ScheduleConflictError,

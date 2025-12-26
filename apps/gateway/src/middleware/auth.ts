@@ -1,8 +1,8 @@
 import type { Context, Next } from 'hono';
-import { createAuth } from '../lib/auth';
+import { createAuth } from '../lib/better-auth';
 
 export const authMiddleware = async (c: Context, next: Next) => {
-  const auth = createAuth(c.env);
+  const auth = createAuth(c.env.DB_USER_AUTH);
 
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
@@ -14,5 +14,6 @@ export const authMiddleware = async (c: Context, next: Next) => {
 
   // Set authenticated user in context
   c.set('user', session.user);
+  console.log(`CALLING AUTH MIDDLEWARE ${session.user}`);
   await next();
 };

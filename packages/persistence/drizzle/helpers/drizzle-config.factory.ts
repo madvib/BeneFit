@@ -13,7 +13,12 @@ import { getD1Helper } from './get-d1-helper.ts';
  * to correctly persist the D1 helper path.
  * @returns A Drizzle-kit configuration object.
  */
-export function createDrizzleConfig(dbName: string, configFilename: string): Config {
+export function createDrizzleConfig(
+  dbName: string,
+  configFilename: string,
+  migrationsDir?: string,
+  schemaPath?: string,
+): Config {
   // 1. Initialize D1Helper for the specific database
   const d1Helper = getD1Helper(dbName, configFilename);
   // 2. Determine environment
@@ -36,7 +41,7 @@ export function createDrizzleConfig(dbName: string, configFilename: string): Con
       url: d1Helper.sqliteLocalFileCredentials.url,
     },
   });
-
+  console.log(d1Helper.sqliteLocalFileCredentials.url);
   // 5. Get Credentials based on environment
   const getCredentials = () => {
     return isProd() ? getProdCredentials() : getDevCredentials();
@@ -45,8 +50,8 @@ export function createDrizzleConfig(dbName: string, configFilename: string): Con
   const kebabDbName = dbName.toLowerCase().slice(3);
   // 6. Return the full Drizzle Config
   return defineConfig({
-    out: `src/d1/${kebabDbName}/migrations`,
-    schema: `src/d1/${kebabDbName}/schema/*`,
+    out: migrationsDir ?? `src/d1/${kebabDbName}/migrations`,
+    schema: schemaPath ?? `src/d1/${kebabDbName}/schema/*`,
     dialect: 'sqlite',
     ...getCredentials(),
   });

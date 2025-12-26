@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase } from '@bene/shared';
 import { IAuthService, RequestContext } from '../../ports/auth.service.js';
 
 // Define the user interface for the session
@@ -15,9 +15,10 @@ export interface GetCurrentSessionOutput {
   expiresAt?: Date;
 }
 
-export class GetCurrentSessionUseCase
-  implements UseCase<RequestContext, GetCurrentSessionOutput>
-{
+export class GetCurrentSessionUseCase implements UseCase<
+  RequestContext,
+  GetCurrentSessionOutput
+> {
   constructor(private authService: IAuthService) {}
 
   async execute(

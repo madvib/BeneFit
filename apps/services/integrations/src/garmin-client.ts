@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import type { ConnectedService } from '@bene/integrations-domain';
 import { OAuth2Client, HttpClient } from './base/index.js';
 import { TokenManager, IntegrationMapper } from './utils/index.js';
@@ -75,7 +75,7 @@ export class GarminClient extends OAuth2Client {
       ...(state && { state }),
     });
 
-    return `https://sso.garmin.com/sso/oauth2/embed?${ params.toString() }`;
+    return `https://sso.garmin.com/sso/oauth2/embed?${params.toString()}`;
   }
 
   /**
@@ -101,7 +101,7 @@ export class GarminClient extends OAuth2Client {
       if (!response.ok) {
         const error = await response.text();
         return Result.fail(
-          new Error(`Garmin auth failed: ${ response.status } ${ error }`),
+          new Error(`Garmin auth failed: ${response.status} ${error}`),
         );
       }
 
@@ -151,7 +151,7 @@ export class GarminClient extends OAuth2Client {
     } catch (error) {
       return Result.fail(
         new Error(
-          `Failed to authenticate with Garmin: ${ error instanceof Error ? error.message : String(error) }`,
+          `Failed to authenticate with Garmin: ${error instanceof Error ? error.message : String(error)}`,
         ),
       );
     }
@@ -171,7 +171,7 @@ export class GarminClient extends OAuth2Client {
     }
 
     return this.http.get<GarminActivity[]>(
-      `/activity-service/activitylist-service/activities/search/active-session?start=0&limit=${ limit }`,
+      `/activity-service/activitylist-service/activities/search/active-session?start=0&limit=${limit}`,
       this.accessToken,
     );
   }

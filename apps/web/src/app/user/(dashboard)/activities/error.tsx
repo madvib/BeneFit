@@ -11,7 +11,6 @@ export default function FeedError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error('Dashboard error:', error);
   }, [error]);
 
@@ -22,7 +21,7 @@ export default function FeedError({
         message={
           error.message || 'An error occurred while loading your dashboard data.'
         }
-        error={error.message}
+        error={error}
         showBackButton={true}
         showRefreshButton={true}
         onRefresh={reset}

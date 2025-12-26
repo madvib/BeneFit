@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { TemplateRules } from '../template-rules/template-rules.types.js';
 import { TemplateStructure } from '../template-structure/template-structure.types.js';
 import { TemplateAuthor, WorkoutPreview, PlanTemplate } from './plan-template.types.js';

@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { CoachActionType, CoachAction } from './coach-action.types.js';
 
 export function createCoachAction(props: {

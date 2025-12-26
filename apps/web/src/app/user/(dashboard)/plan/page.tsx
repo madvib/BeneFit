@@ -2,24 +2,23 @@
 
 import { usePlanController } from '@/controllers';
 import { LoadingSpinner, ErrorPage } from '@/components';
-import PlanOverview from '@/components/user/dashboard/plan/plan-overview';
-import WeeklySchedule from '@/components/user/dashboard/plan/weekly-schedule';
-import PlanSuggestions from '@/components/user/dashboard/plan/plan-suggestions';
-import QuickActions from '@/components/user/dashboard/plan/quick-actions';
-import ModernDashboardLayout from '@/components/user/dashboard/plan/modern-dashboard-layout';
+import {
+  PlanOverview,
+  WeeklySchedule,
+  PlanSuggestions,
+  QuickActions,
+  ModernDashboardLayout,
+} from '@/components/user/dashboard/plan';
 
 export default function PlanClient() {
   const {
-    currentPlan,
-    weeklyWorkouts,
-    planSuggestions,
+    activePlanData,
+    upcomingWorkouts,
     isLoading,
     error,
-    handleEditPlan,
-    handleCreatePlan,
+    handleGeneratePlan,
+    handleActivatePlan,
   } = usePlanController();
-
-
 
   // --- Loading State ---
   if (isLoading) {
@@ -38,29 +37,52 @@ export default function PlanClient() {
     );
   }
 
+  // --- No Plan State ---
+  if (!activePlanData?.hasPlan || !activePlanData.plan) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-foreground mb-4 text-3xl font-bold">No Active Plan</h1>
+        <p className="text-muted-foreground mb-8 max-w-md">
+          {activePlanData?.message ||
+            'Create a fitness plan to get started with your training journey!'}
+        </p>
+        <button
+          onClick={() => console.log('TODO: Open plan generation modal')}
+          className="bg-primary text-primary-foreground rounded-full px-8 py-3 font-bold transition-transform hover:scale-105"
+        >
+          Generate Plan
+        </button>
+      </div>
+    );
+  }
+
+  const { plan } = activePlanData;
+
   // --- View Components ---
   const renderOverview = () => (
     <PlanOverview
-      currentPlan={currentPlan}
-      onEditPlan={handleEditPlan}
+      currentPlan={plan}
+      onEditPlan={(id) => console.log('Edit plan:', id)}
     />
   );
 
   const renderSchedule = () => (
-    <WeeklySchedule weeklyWorkouts={weeklyWorkouts} onWorkoutClick={function (id: string): void {
-      throw new Error('Function not implemented.');
-    } } />
+    <WeeklySchedule
+      plan={plan}
+      onWorkoutClick={(id) => console.log('Workout clicked:', id)}
+    />
   );
 
   const renderSuggestions = () => (
-    <PlanSuggestions suggestions={planSuggestions} onSelectPlan={function (planId: string): void {
-      throw new Error('Function not implemented.');
-    } } />
+    <PlanSuggestions
+      suggestions={[]}
+      onSelectPlan={(planId) => console.log('Select plan:', planId)}
+    />
   );
 
   const renderActions = () => (
     <QuickActions
-      onCreatePlan={handleCreatePlan}
+      onCreatePlan={() => console.log('Create plan')}
       onSavePlan={() => console.log('Save plan')}
       onExportPlan={() => console.log('Export plan')}
     />

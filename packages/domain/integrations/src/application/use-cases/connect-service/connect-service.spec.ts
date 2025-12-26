@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result, EventBus } from '@bene/shared-domain';
+import { Result, EventBus } from '@bene/shared';
 import { ConnectServiceUseCase } from './connect-service.js';
 import { IntegrationClient } from '../../ports/integration-client.js';
 

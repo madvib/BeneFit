@@ -1,28 +1,44 @@
-
+import { RpcTarget } from 'cloudflare:workers';
 import { UseCaseFactory } from '../factories/use-case-factory';
 import {
   ActivatePlanRequest,
   GeneratePlanFromGoalsRequest,
-  AdjustPlanRequest,
-  PausePlanRequest
+  AdjustPlanBasedOnFeedbackRequest,
+  PausePlanRequest,
+  GetCurrentPlanRequest,
 } from '@bene/training-application';
 
-export class PlanningFacade {
-  constructor(private useCaseFactory: UseCaseFactory) { }
+export class PlanningFacade extends RpcTarget {
+  constructor(private useCaseFactory: UseCaseFactory) {
+    super();
+  }
 
   async activate(input: ActivatePlanRequest) {
-    return this.useCaseFactory.getActivatePlanUseCase().execute(input);
+    const result = await this.useCaseFactory.getActivatePlanUseCase().execute(input)
+    return result.serialize();
   }
 
   async generateFromGoals(input: GeneratePlanFromGoalsRequest) {
-    return this.useCaseFactory.getGeneratePlanFromGoalsUseCase().execute(input);
+    const result = await this.useCaseFactory.getGeneratePlanFromGoalsUseCase().execute(input)
+    return result.serialize();
+
   }
 
-  async adjust(input: AdjustPlanRequest) {
-    return this.useCaseFactory.getAdjustPlanBasedOnFeedbackUseCase().execute(input);
+  async adjust(input: AdjustPlanBasedOnFeedbackRequest) {
+    const result = await this.useCaseFactory.getAdjustPlanBasedOnFeedbackUseCase().execute(input)
+    return result.serialize();
+
   }
 
   async pause(input: PausePlanRequest) {
-    return this.useCaseFactory.getPausePlanUseCase().execute(input);
+    const result = await this.useCaseFactory.getPausePlanUseCase().execute(input)
+    return result.serialize();
+
+  }
+
+  async getCurrentPlan(input: GetCurrentPlanRequest) {
+    const result = await this.useCaseFactory.getGetCurrentPlanUseCase().execute(input)
+    return result.serialize();
+
   }
 }

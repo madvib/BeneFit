@@ -28,7 +28,7 @@
       "path": "../training/core/tsconfig.lib.json"
     },
     {
-      "path": "../shared/tsconfig.lib.json"
+      "path": "../../shared/tsconfig.lib.json"
     }
   ],
   "exclude": [

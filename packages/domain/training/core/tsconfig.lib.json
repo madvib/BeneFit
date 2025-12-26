@@ -19,7 +19,7 @@
   ],
   "references": [
     {
-      "path": "../../shared/tsconfig.lib.json"
+      "path": "../../../shared/tsconfig.lib.json"
     }
   ],
   "exclude": [

@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface PageErrorProps {
   title?: string;
   message: string;
-  error?: string;
+  error?: Error;
   showBackButton?: boolean;
   showRefreshButton?: boolean;
   showReportButton?: boolean;
@@ -50,7 +50,7 @@ export default function ErrorPage({
 
             {error && (
               <p className="text-destructive bg-destructive/10 mt-2 rounded p-2 font-mono text-sm">
-                {error}
+                {error.message}
               </p>
             )}
           </div>

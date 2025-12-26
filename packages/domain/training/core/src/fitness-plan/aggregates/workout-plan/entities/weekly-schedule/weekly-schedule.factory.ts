@@ -1,5 +1,5 @@
 // weekly-schedule.factory.ts
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { WeeklySchedule } from './weekly-schedule.types.js';
 import { ScheduleValidationError } from '../../../../errors/fitness-plan-errors.js';
 

@@ -7,7 +7,7 @@ import {
   FitnessPreferences,
   SaveSettingsButton,
 } from '@/components/user/settings';
-import { useSettingsController } from '@/controllers/settings';
+import { useSettingsController } from '@/controllers';
 import { PageHeader } from '@/components/user/account/shared/page-header';
 
 export default function SettingsClient() {

@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
-import { teamMembers } from './team_members.ts';
+import { teamMembers } from './team_members.js';
 import { sql } from 'drizzle-orm';
 
 export const chatMessages = sqliteTable(

@@ -1,4 +1,4 @@
-import { Result, Guard } from '@bene/shared-domain';
+import { Result, Guard } from '@bene/shared';
 import { CoachMsg } from './coach-msg.types.js';
 import { CoachAction } from '../index.js';
 import { randomUUID } from 'crypto';

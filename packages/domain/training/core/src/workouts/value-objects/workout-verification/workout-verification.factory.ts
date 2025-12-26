@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 import { VerificationData, WorkoutVerification } from './workout-verification.types.js';
 
 export function createWorkoutVerification(props: {

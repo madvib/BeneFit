@@ -18,9 +18,7 @@ const DEFAULT_OPTIONS: Required<BenePluginOptions> = {
  * NX Plugin to infer build targets and npm scripts for library packages.
  *
  * This plugin reduces configuration duplication by automatically generating:
- * 1. build-types target using @nx/js:tsc
  * 2. build target using @nx/js:swc
- * 3. npm script targets for better visibility
  *
  * The plugin detects buildable packages by looking for:
  * - type: "module" in package.json
@@ -53,11 +51,7 @@ async function createNodesInternal(
   const projectRoot = dirname(configFilePath);
 
   // Skip root package.json and node_modules
-  if (
-    projectRoot === '.' ||
-    projectRoot === '' ||
-    configFilePath.includes('node_modules')
-  ) {
+  if (projectRoot === '.' || projectRoot === '' || configFilePath.includes('node_modules')) {
     return {};
   }
 

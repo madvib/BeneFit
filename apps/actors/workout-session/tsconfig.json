@@ -33,24 +33,22 @@
     "skipLibCheck": true,
     "types": [
       "../../../types/cloudflare-runtime.d.ts",
+      "../../../types/vite-env.d.ts",
       "./worker-env.d.ts"
     ]
   },
   "references": [
     {
-      "path": "../../../packages/infra/training"
-    },
-    {
-      "path": "../../../packages/infra/shared"
-    },
-    {
-      "path": "../../../packages/persistence"
-    },
-    {
-      "path": "../../../packages/domain/shared"
+      "path": "../../../packages/domain/training/core"
     },
     {
       "path": "../../../packages/domain/training/application"
+    },
+    {
+      "path": "../../../packages/shared"
+    },
+    {
+      "path": "../../../packages/persistence"
     }
   ]
 }

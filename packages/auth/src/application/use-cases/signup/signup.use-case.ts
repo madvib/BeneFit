@@ -1,4 +1,4 @@
-import { EmailAddress, Password, Result } from '@bene/shared-domain';
+import { EmailAddress, Password, Result } from '@bene/shared';
 import { AuthError } from '../../errors/index.js';
 import { IAuthService } from '../../ports/auth.service.js';
 

@@ -1,7 +1,12 @@
 export * from './client';
 export * from './websocket';
+export { initAuthClient, getAuthClient } from './auth';
+export * as authSchemas from './schemas/auth';
 export * as coach from './hooks/use-coach';
+export * as fitnessPlan from './hooks/use-fitness-plan';
 export * as integrations from './hooks/use-integrations';
+export * as profile from './hooks/use-profile';
 export * as users from './hooks/use-users';
 export * as workouts from './hooks/use-workouts';
 export * as wss from './hooks/use-websocket';
+export { useAuth } from './hooks/use-auth';

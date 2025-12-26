@@ -1,4 +1,4 @@
-import { Result, UseCase } from '@bene/shared-domain';
+import { Result, UseCase } from '@bene/shared';
 import { IUserRepository } from '../../ports/user.repository.js';
 
 // Define the profile goal interface

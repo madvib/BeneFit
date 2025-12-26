@@ -1,29 +1,21 @@
-// ... existing imports
+import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
+import { drizzle } from 'drizzle-orm/durable-sqlite';
 import {
   UserProfileRepository,
   CompletedWorkoutRepository,
   FitnessPlanRepository,
-  PlanTemplateRepository,
-  WorkoutSessionRepository,
 } from '@bene/training-application';
+import { CoachConversationRepository } from '@bene/coach-domain';
+import { ConnectedServiceRepository } from '@bene/integrations-domain';
+
+import { user_do_schema } from '../data/schema';
 import {
-  CoachConversationRepository,
-} from '@bene/coach-domain';
-import {
-  ConnectedServiceRepository,
-} from '@bene/integrations-domain';
-import {
-  DurableWorkoutSessionRepository,
+  DurableCoachConversationRepository,
+  DurableConnectedServiceRepository,
   DurableUserProfileRepository,
   DurableFitnessPlanRepository,
   DurableCompletedWorkoutRepository,
-  D1PlanTemplateRepository,
-} from '@bene/training-infra';
-import { DurableCoachConversationRepository } from '@bene/coach-infra';
-import { DurableConnectedServiceRepository } from '@bene/integrations-infra';
-
-// Assuming this is your concrete database client/connection
-import { createD1Client, createDOClient, D1Client, DOClient } from '@bene/persistence';
+} from '../repositories';
 
 /**
  * A factory responsible for instantiating all concrete Repository implementations.
@@ -33,18 +25,14 @@ export class RepositoryFactory {
   private _userProfileRepo?: UserProfileRepository;
   private _completedWorkoutRepo?: CompletedWorkoutRepository;
   private _fitnessPlanRepo?: FitnessPlanRepository;
-  private _planTemplateRepo?: PlanTemplateRepository;
-  private _workoutSessionRepo?: WorkoutSessionRepository;
   // New repos
   private _coachConversationRepo?: CoachConversationRepository;
   private _connectedServiceRepo?: ConnectedServiceRepository;
 
-  private db: DOClient<unknown>;
-  private d1DB: D1Client;
+  private db: DrizzleSqliteDODatabase<typeof user_do_schema>;
 
-  constructor(storage: DurableObjectStorage, planTemplateDB: D1Database) {
-    this.db = createDOClient(storage);
-    this.d1DB = createD1Client(planTemplateDB);
+  constructor(storage: DurableObjectStorage) {
+    this.db = drizzle(storage);
   }
 
   // --- Public Getters (Lazy-Loaded) ---
@@ -68,20 +56,6 @@ export class RepositoryFactory {
       this._fitnessPlanRepo = new DurableFitnessPlanRepository(this.db);
     }
     return this._fitnessPlanRepo;
-  }
-
-  public getPlanTemplateRepository(): PlanTemplateRepository {
-    if (!this._planTemplateRepo) {
-      this._planTemplateRepo = new D1PlanTemplateRepository(this.d1DB);
-    }
-    return this._planTemplateRepo;
-  }
-
-  public getWorkoutSessionRepository(): WorkoutSessionRepository {
-    if (!this._workoutSessionRepo) {
-      this._workoutSessionRepo = new DurableWorkoutSessionRepository(this.db); // Placeholder
-    }
-    return this._workoutSessionRepo;
   }
 
   public getCoachConversationRepository(): CoachConversationRepository {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus  } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import {
   createConnectedService,
   OAuthCredentials,
@@ -25,7 +25,9 @@ export const ConnectServiceRequestClientSchema = z.object({
   redirectUri: z.string(),
 });
 
-export type ConnectServiceRequestClient = z.infer<typeof ConnectServiceRequestClientSchema>;
+export type ConnectServiceRequestClient = z.infer<
+  typeof ConnectServiceRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
 export const ConnectServiceRequestSchema = ConnectServiceRequestClientSchema.extend({
@@ -135,7 +137,7 @@ export class ConnectServiceUseCase implements UseCase<
         userId: request.userId,
         serviceId: service.id,
         serviceType: request.serviceType,
-      })
+      }),
     );
 
     return Result.ok({

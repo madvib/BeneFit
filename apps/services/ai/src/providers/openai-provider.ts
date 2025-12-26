@@ -1,4 +1,11 @@
-import { AIProvider, AIProviderConfig, AICompletionRequest, Result, AICompletionResponse, AIStreamChunk } from "@bene/shared-domain";
+import {
+  AIProvider,
+  AIProviderConfig,
+  AICompletionRequest,
+  Result,
+  AICompletionResponse,
+  AIStreamChunk,
+} from '@bene/shared';
 
 export class OpenAIProvider implements AIProvider {
   private readonly baseUrl: string;
@@ -39,12 +46,10 @@ export class OpenAIProvider implements AIProvider {
       if (!response.ok) {
         const error = await response.text();
         console.error('OpenAI API error:', error);
-        return Result.fail(
-          new Error(`OpenAI API error: ${ response.status } ${ error }`)
-        );
+        return Result.fail(new Error(`OpenAI API error: ${response.status} ${error}`));
       }
 
-      const data = await response.json() as any;
+      const data = (await response.json()) as any;
 
       const aiResponse: AICompletionResponse = {
         content: data.choices[0]?.message?.content || '',
@@ -60,15 +65,16 @@ export class OpenAIProvider implements AIProvider {
       console.error('Error calling OpenAI API:', error);
       return Result.fail(
         new Error(
-          `Error calling OpenAI API: ${ error instanceof Error ? error.message : String(error)
-          }`
-        )
+          `Error calling OpenAI API: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ),
       );
     }
   }
 
   async *stream(
-    request: AICompletionRequest
+    request: AICompletionRequest,
   ): AsyncGenerator<AIStreamChunk, void, unknown> {
     const response = await fetch(this.baseUrl, {
       method: 'POST',
@@ -84,7 +90,7 @@ export class OpenAIProvider implements AIProvider {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`OpenAI API error: ${ response.status } ${ error }`);
+      throw new Error(`OpenAI API error: ${response.status} ${error}`);
     }
 
     if (!response.body) {
@@ -138,7 +144,7 @@ export class OpenAIProvider implements AIProvider {
   private getHeaders(): Record<string, string> {
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${ this.apiKey }`,
+      Authorization: `Bearer ${this.apiKey}`,
     };
   }
 }

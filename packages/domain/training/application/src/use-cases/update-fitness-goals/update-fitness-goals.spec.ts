@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { UserProfile } from '@bene/training-core';
 import { UpdateFitnessGoalsUseCase } from './update-fitness-goals.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
-import { EventBus } from '@bene/shared-domain';
+import { EventBus } from '@bene/shared';
 import { UserProfileCommands } from '@bene/training-core';
 
 // Mock repositories and services
@@ -17,7 +17,8 @@ const mockEventBus = {
 } as unknown as EventBus;
 
 vi.mock('@bene/training-core', async () => {
-  const actual = await vi.importActual<typeof import('@bene/training-core')>('@bene/training-core');
+  const actual =
+    await vi.importActual<typeof import('@bene/training-core')>('@bene/training-core');
   return {
     ...actual,
     UserProfileCommands: {

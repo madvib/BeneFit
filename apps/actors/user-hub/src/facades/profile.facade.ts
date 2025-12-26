@@ -1,4 +1,4 @@
-
+import { RpcTarget } from 'cloudflare:workers';
 import { UseCaseFactory } from '../factories/use-case-factory';
 import {
   GetProfileRequest,
@@ -9,30 +9,44 @@ import {
   UpdateTrainingConstraintsRequest
 } from '@bene/training-application';
 
-export class ProfileFacade {
-  constructor(private useCaseFactory: UseCaseFactory) { }
+export class ProfileFacade extends RpcTarget {
+  constructor(private useCaseFactory: UseCaseFactory) {
+    super();
+  }
 
   async get(input: GetProfileRequest) {
-    return this.useCaseFactory.getGetProfileUseCase().execute(input);
+    const result = await this.useCaseFactory.getGetProfileUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async create(input: CreateUserProfileRequest) {
-    return this.useCaseFactory.getCreateUserProfileUseCase().execute(input);
+    const result = await this.useCaseFactory.getCreateUserProfileUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async updateGoals(input: UpdateFitnessGoalsRequest) {
-    return this.useCaseFactory.getUpdateFitnessGoalsUseCase().execute(input);
+    const result = await this.useCaseFactory.getUpdateFitnessGoalsUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async updatePreferences(input: UpdatePreferencesRequest) {
-    return this.useCaseFactory.getUpdatePreferencesUseCase().execute(input);
+    const result = await this.useCaseFactory.getUpdatePreferencesUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async getStats(input: GetUserStatsRequest) {
-    return this.useCaseFactory.getGetUserStatsUseCase().execute(input);
+    const result = await this.useCaseFactory.getGetUserStatsUseCase().execute(input);
+    return result.serialize();
+
   }
 
   async updateConstraints(input: UpdateTrainingConstraintsRequest) {
-    return this.useCaseFactory.getUpdateTrainingConstraintsUseCase().execute(input);
+    const result = await this.useCaseFactory.getUpdateTrainingConstraintsUseCase().execute(input);
+    return result.serialize();
+
   }
 }

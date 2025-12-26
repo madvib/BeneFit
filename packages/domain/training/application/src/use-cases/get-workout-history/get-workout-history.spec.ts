@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { GetWorkoutHistoryUseCase } from './get-workout-history.js';
 

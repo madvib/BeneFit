@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { AICoachService } from '@app/services/index.js';
@@ -19,12 +19,16 @@ export const RespondToCheckInRequestClientSchema = z.object({
   response: z.string(),
 });
 
-export type RespondToCheckInRequestClient = z.infer<typeof RespondToCheckInRequestClientSchema>;
+export type RespondToCheckInRequestClient = z.infer<
+  typeof RespondToCheckInRequestClientSchema
+>;
 
 // Complete use case input schema (client data + server context)
-export const RespondToCheckInRequestSchema = RespondToCheckInRequestClientSchema.extend({
-  userId: z.string(),
-});
+export const RespondToCheckInRequestSchema = RespondToCheckInRequestClientSchema.extend(
+  {
+    userId: z.string(),
+  },
+);
 
 // Zod inferred type with original name
 export type RespondToCheckInRequest = z.infer<typeof RespondToCheckInRequestSchema>;
@@ -153,7 +157,7 @@ export class RespondToCheckInUseCase implements UseCase<
         actionType: action.type,
         details: action.details,
         timestamp: new Date(),
-      })
+      }),
     );
   }
 }

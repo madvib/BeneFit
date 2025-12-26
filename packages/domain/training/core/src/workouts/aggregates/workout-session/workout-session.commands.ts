@@ -1,4 +1,4 @@
-import { Guard, Result } from '@bene/shared-domain';
+import { Guard, Result } from '@bene/shared';
 
 import { SessionState, WorkoutSession } from './workout-session.types.js';
 import {

@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import type { PlanTemplate } from '@bene/training-core';
 
 /**

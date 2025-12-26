@@ -1,4 +1,4 @@
-import { DomainError } from '@bene/shared-domain';
+import { DomainError } from '@bene/shared';
 
 export class ConstraintsValidationError extends DomainError {
   constructor(message: string, context?: Record<string, unknown>) {

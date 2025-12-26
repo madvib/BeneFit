@@ -1,4 +1,4 @@
-import { Guard, Result, VALID_DAYS } from '@bene/shared-domain';
+import { Guard, Result, VALID_DAYS } from '@bene/shared';
 import {
   TrainingConstraints,
   Injury,

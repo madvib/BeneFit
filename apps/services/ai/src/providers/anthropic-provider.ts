@@ -1,4 +1,11 @@
-import { AICompletionRequest, AICompletionResponse, AIProvider, AIProviderConfig, AIStreamChunk, Result } from '@bene/shared-domain';
+import {
+  AICompletionRequest,
+  AICompletionResponse,
+  AIProvider,
+  AIProviderConfig,
+  AIStreamChunk,
+  Result,
+} from '@bene/shared';
 
 /**
  * Anthropic-specific request format
@@ -68,7 +75,7 @@ export class AnthropicProvider implements AIProvider {
         const error = await response.text();
         console.error('Anthropic API error:', error);
         return Result.fail(
-          new Error(`Anthropic API error: ${ response.status } ${ error }`),
+          new Error(`Anthropic API error: ${response.status} ${error}`),
         );
       }
 
@@ -92,7 +99,7 @@ export class AnthropicProvider implements AIProvider {
       console.error('Error calling Anthropic API:', error);
       return Result.fail(
         new Error(
-          `Error calling Anthropic API: ${ error instanceof Error ? error.message : String(error) }`,
+          `Error calling Anthropic API: ${error instanceof Error ? error.message : String(error)}`,
         ),
       );
     }
@@ -112,7 +119,7 @@ export class AnthropicProvider implements AIProvider {
     if (!response.ok) {
       const error = await response.text();
       console.error('Anthropic API error:', error);
-      throw new Error(`Anthropic API error: ${ response.status } ${ error }`);
+      throw new Error(`Anthropic API error: ${response.status} ${error}`);
     }
 
     if (!response.body) {
@@ -188,7 +195,7 @@ export class AnthropicProvider implements AIProvider {
       if (messages[0]?.role === 'user') {
         messages[0] = {
           ...messages[0],
-          content: `${ systemContent }\n\n${ messages[0].content }`,
+          content: `${systemContent}\n\n${messages[0].content}`,
         };
       } else {
         // Insert system content as first user message

@@ -1,4 +1,4 @@
-import { DomainEvent } from '@bene/shared-domain';
+import { DomainEvent } from '@bene/shared';
 
 export interface CheckInDismissedEventPayload {
   userId: string;

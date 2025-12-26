@@ -13,14 +13,15 @@
       "default": "./dist/index.js"
     }
   },
-  "dependencies": {
+  "peerDependencies": {
     "@bene/gateway": "workspace:*",
-    "@tanstack/react-query": "5.90.12",
-    "agents": "0.0.1",
-    "ai": "^3.0.0",
+    "@tanstack/react-query": "catalog:",
+    "agents": "catalog:",
+    "better-auth": "catalog:",
     "hono": "4.11.0",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "zod": "catalog:"
   },
   "nx": {
     "tags": [

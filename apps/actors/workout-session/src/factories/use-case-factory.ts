@@ -36,8 +36,7 @@ export class UseCaseFactory {
     if (!this._completeWorkoutUC) {
       this._completeWorkoutUC = new CompleteWorkoutUseCase(
         this.repoFactory.getWorkoutSessionRepository(),
-        this.repoFactory.getCompletedWorkoutRepository(),
-        this.repoFactory.getUserProfileRepository(),
+
         this.serviceFactory.getEventBus(),
       );
     }
@@ -57,7 +56,6 @@ export class UseCaseFactory {
   public getAddWorkoutReactionUseCase(): AddWorkoutReactionUseCase {
     if (!this._addWorkoutReactionUC) {
       this._addWorkoutReactionUC = new AddWorkoutReactionUseCase(
-        this.repoFactory.getCompletedWorkoutRepository(),
         this.serviceFactory.getEventBus(),
       );
     }

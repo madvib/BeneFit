@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
 import { FitnessPlanCommands, FitnessPlanQueries } from '@bene/training-core';
-import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
-import { PlanActivatedEvent } from '@/events/plan-activated.event.js';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { PlanActivatedEvent } from '../../events/plan-activated.event.js';
 
 // Client-facing schema (what comes in the request body)
 export const ActivatePlanRequestClientSchema = z.object({

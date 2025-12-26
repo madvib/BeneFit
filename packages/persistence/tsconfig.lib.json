@@ -5,9 +5,10 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "module": "es2022",
     "types": [
-      "node",
+      "node"
     ]
   },
   "include": [
@@ -16,7 +17,17 @@
     "src/**/migrations/**/*.json",
     "src/**/migrations/**/*.js"
   ],
-  "references": [],
+  "references": [
+    {
+      "path": "../domain/training/application/tsconfig.lib.json"
+    },
+    {
+      "path": "../domain/training/core/tsconfig.lib.json"
+    },
+    {
+      "path": "../shared/tsconfig.lib.json"
+    }
+  ],
   "exclude": [
     "vite.config.ts",
     "vite.config.mts",

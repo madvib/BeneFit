@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared-domain';
-import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
-import { AIPlanGenerator, AdjustPlanInput } from '@/services/ai-plan-generator.js';
-import { PlanAdjustedEvent } from '@/events/plan-adjusted.event.js';
+import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { AIPlanGenerator, AdjustPlanInput } from '../../services/ai-plan-generator.js';
+import { PlanAdjustedEvent } from '../../events/plan-adjusted.event.js';
 
 // Zod schema for request validation
 const RecentWorkoutSchema = z.object({

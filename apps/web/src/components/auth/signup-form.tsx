@@ -1,30 +1,49 @@
 'use client';
 
-import { useActionState, useEffect, useEffectEvent } from 'react';
-import { AuthError } from './auth-error/auth-error';
-import { signupAction } from '@/controllers/auth/auth-actions';
-import { AuthSubmitButton, EmailInput, PasswordInput } from './auth-inputs';
-import { OAuthButton } from './oauth-button';
-import { useSession } from '@/controllers';
+import { useForm } from '@tanstack/react-form';
+import { getAuthClient, authSchemas } from '@bene/react-api-client';
 import { useRouter } from 'next/navigation';
-import { Card, FormField, Input } from '@/components';
+import { AuthError } from './auth-error/auth-error';
+import { OAuthButton } from './oauth-button';
+import { Button, Card, ControlledInput } from '../common';
 import Link from 'next/link';
 
 export function SignupForm({ isModal = false }) {
-  const [state, formAction] = useActionState(signupAction, {});
+  const authClient = getAuthClient();
   const router = useRouter();
-  const session = useSession();
 
-  const onSuccess = useEffectEvent(() => {
-    if (isModal) router.back();
-    session.refreshSession();
+  const form = useForm({
+    defaultValues: {
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validators: {
+      onChange: authSchemas.SignUpSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const fullName = `${value.name} ${value.surname}`;
+      const { error } = await authClient.signUp.email({
+        email: value.email,
+        password: value.password,
+        name: fullName,
+      });
+
+      if (error) {
+        form.setErrorMap({
+          onSubmit: { fields: { confirmPassword: error.message } },
+        });
+      } else {
+        if (isModal) {
+          router.back();
+        } else {
+          router.push('/user/activities');
+        }
+      }
+    },
   });
-
-  useEffect(() => {
-    if (state.success) {
-      onSuccess();
-    }
-  }, [state.success]);
 
   return (
     <Card variant={'borderless'}>
@@ -35,36 +54,107 @@ export function SignupForm({ isModal = false }) {
         </p>
       </div>
 
-      <form action={formAction} className="space-y-4">
-        {state?.error && <AuthError message={state.error} />}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation(); // Prevent propagation to parent forms
+          form.handleSubmit();
+        }}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField label="First Name">
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="John"
-              required
-              aria-describedby="name-error"
-            />
-          </FormField>
-          <FormField label="Last Name">
-            <Input
-              type="text"
-              id="surname"
-              name="surname"
-              placeholder="Doe"
-              required
-              aria-describedby="surname-error"
-            />
-          </FormField>
+          <form.Field
+            name="name"
+            validators={{
+              onChange: authSchemas.SignUpSchema.shape.name,
+            }}
+          >
+            {(field) => (
+              <ControlledInput
+                field={field}
+                label="First Name"
+                type="text"
+                placeholder="John"
+              />
+            )}
+          </form.Field>
+
+          <form.Field
+            name="surname"
+            validators={{
+              onChange: authSchemas.SignUpSchema.shape.surname,
+            }}
+          >
+            {(field) => (
+              <ControlledInput
+                field={field}
+                label="Last Name"
+                type="text"
+                placeholder="Doe"
+              />
+            )}
+          </form.Field>
         </div>
-        <EmailInput />
-        <PasswordInput />
-        <PasswordInput label="Confirm Password" name="confirmPassword" />
-        <AuthSubmitButton pendingText="Creating account...">
-          Create Account
-        </AuthSubmitButton>
+
+        <form.Field
+          name="email"
+          validators={{
+            onChange: authSchemas.SignUpSchema.shape.email,
+          }}
+        >
+          {(field) => (
+            <ControlledInput
+              field={field}
+              label="Email"
+              type="email"
+              placeholder="you@example.com"
+            />
+          )}
+        </form.Field>
+
+        <form.Field
+          name="password"
+          validators={{
+            onChange: authSchemas.SignUpSchema.shape.password,
+          }}
+        >
+          {(field) => (
+            <ControlledInput
+              field={field}
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+            />
+          )}
+        </form.Field>
+
+        <form.Field
+          name="confirmPassword"
+          validators={{
+            onChange: authSchemas.SignUpSchema.shape.confirmPassword,
+          }}
+        >
+          {(field) => (
+            <ControlledInput
+              field={field}
+              label="Confirm Password"
+              type="password"
+              placeholder="••••••••"
+            />
+          )}
+        </form.Field>
+
+        {form.state.errorMap.onSubmit && (
+          <AuthError message={form.state.errorMap.onSubmit} />
+        )}
+
+        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
+            <Button type="submit" disabled={!canSubmit}>
+              {isSubmitting ? 'Creating account...' : 'Create Account'}
+            </Button>
+          )}
+        </form.Subscribe>
 
         <div className="relative flex items-center">
           <div className="text-text-muted grow border-t"></div>

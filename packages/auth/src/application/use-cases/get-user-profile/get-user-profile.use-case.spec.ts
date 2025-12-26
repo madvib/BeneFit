@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mocked } from 'vitest';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 import { GetUserProfileUseCase } from './get-user-profile.use-case.js';
 import { IAuthService } from '../../ports/auth.service.js';
 import { User } from '@core/index.js';

@@ -1,5 +1,5 @@
 import { User } from '@core/index.js';
-import { Result } from '@bene/shared-domain';
+import { Result } from '@bene/shared';
 
 /**
  * Repository interface for User data operations

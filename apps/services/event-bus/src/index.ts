@@ -1,6 +1,6 @@
 // apps/services/queue/src/index.ts
 import { WorkerEntrypoint } from 'cloudflare:workers';
-import { DomainEvent } from '@bene/shared-domain';
+import { DomainEvent } from '@bene/shared';
 
 export default class QueueService extends WorkerEntrypoint<Env> {
   // Publish single event

@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "@swc/helpers": "~0.5.11",
-    "@bene/shared-domain": "workspace:*",
-    "@bene/utils": "workspace:*",
+    "@bene/shared": "workspace:*",
     "better-auth": "^1.4.1",
     "drizzle-orm": "catalog:"
   },

@@ -1,6 +1,6 @@
 import { migrate } from 'drizzle-orm/durable-sqlite/migrator';
-import { createDOClient } from '../../client.ts';
-import { seedWorkoutSession } from './seed.ts';
+import { createDOClient } from '../../client.js';
+import { seedWorkoutSession } from './seed.js';
 import migrations from './migrations/migrations.js';
 /**
  * Initializes the Workout Session database by running migrations and optionally seeding in local development.

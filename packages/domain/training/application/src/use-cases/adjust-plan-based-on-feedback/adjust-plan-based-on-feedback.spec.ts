@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result, EventBus } from '@bene/shared-domain';
+import { Result, EventBus } from '@bene/shared';
 import { FitnessPlan } from '@bene/training-core';
 import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';

@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result, EventBus } from '@bene/shared-domain';
+import { Result, EventBus } from '@bene/shared';
 import { CoachConversation, CoachAction } from '@core/index.js';
 import { SendMessageToCoachUseCase } from './send-message-to-coach.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';

@@ -1,4 +1,4 @@
-import type { DomainEvent, EventBus } from '@bene/shared-domain';
+import type { DomainEvent, EventBus } from '@bene/shared';
 import { env } from 'cloudflare:workers';
 
 export class EventBusAdapter implements EventBus {

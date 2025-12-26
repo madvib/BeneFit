@@ -7,16 +7,13 @@
       "path": "./apps/web"
     },
     {
-      "path": "./packages/utils"
-    },
-    {
       "path": "./tools/nx-plugin"
     },
     {
       "path": "./packages/domain/integrations"
     },
     {
-      "path": "./packages/domain/shared"
+      "path": "./packages/shared"
     },
     {
       "path": "./packages/domain/training/application"
@@ -31,25 +28,13 @@
       "path": "./packages/persistence"
     },
     {
-      "path": "./packages/infra/training"
-    },
-    {
-      "path": "./packages/infra/integrations"
-    },
-    {
-      "path": "./packages/infra/coach"
-    },
-    {
-      "path": "./packages/infra/shared"
-    },
-    {
       "path": "./packages/auth"
     },
     {
-      "path": "./packages/blog"
+      "path": "./packages/react-api-client"
     },
     {
-      "path": "./packages/react-api-client"
+      "path": "./apps/actors/user-hub"
     }
   ]
 }

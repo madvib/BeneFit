@@ -1,4 +1,4 @@
-import { DomainError } from '@bene/shared-domain';
+import { DomainError } from '@bene/shared';
 
 /**
  * Base class for all workout plan domain errors

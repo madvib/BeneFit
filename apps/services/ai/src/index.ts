@@ -7,12 +7,11 @@ import type {
   AICompletionResponse,
   AIStreamChunk,
   Result,
-} from '@bene/shared-domain';
+} from '@bene/shared';
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import { AnthropicProvider } from './providers/anthropic-provider';
 import { OpenAIProvider } from './providers/openai-provider';
 import { CloudflareProvider } from './providers/cloudflare-provider';
-
 
 // ===== REQUEST/RESPONSE TYPES =====
 // These are what use cases send/receive
@@ -34,8 +33,7 @@ export interface ChatResponse {
   };
 }
 
-export interface StreamChatRequest extends ChatRequest { }
-
+export interface StreamChatRequest extends ChatRequest {}
 
 export default class AIService extends WorkerEntrypoint<Env> {
   private providers: Map<string, AIProvider> = new Map();
@@ -48,31 +46,40 @@ export default class AIService extends WorkerEntrypoint<Env> {
   private initializeProviders() {
     // Anthropic
     if (this.env.ANTHROPIC_API_KEY) {
-      this.providers.set('anthropic', new AnthropicProvider({
-        apiKey: this.env.ANTHROPIC_API_KEY,
-        defaultModel: 'claude-3-5-sonnet-20241022',
-        defaultMaxTokens: 4096,
-        defaultTemperature: 0.7,
-      }));
+      this.providers.set(
+        'anthropic',
+        new AnthropicProvider({
+          apiKey: this.env.ANTHROPIC_API_KEY,
+          defaultModel: 'claude-3-5-sonnet-20241022',
+          defaultMaxTokens: 4096,
+          defaultTemperature: 0.7,
+        }),
+      );
     }
 
     // OpenAI
     if (this.env.OPENAI_API_KEY) {
-      this.providers.set('openai', new OpenAIProvider({
-        apiKey: this.env.OPENAI_API_KEY,
-        defaultModel: 'gpt-4-turbo-preview',
-        defaultMaxTokens: 4096,
-        defaultTemperature: 0.7,
-      }));
+      this.providers.set(
+        'openai',
+        new OpenAIProvider({
+          apiKey: this.env.OPENAI_API_KEY,
+          defaultModel: 'gpt-4-turbo-preview',
+          defaultMaxTokens: 4096,
+          defaultTemperature: 0.7,
+        }),
+      );
     }
 
     // Cloudflare (always available)
-    this.providers.set('cloudflare', new CloudflareProvider({
-      ai: this.env.AI,
-      defaultModel: '@cf/meta/llama-3.1-8b-instruct',
-      defaultMaxTokens: 2048,
-      defaultTemperature: 0.7,
-    }));
+    this.providers.set(
+      'cloudflare',
+      new CloudflareProvider({
+        ai: this.env.AI,
+        defaultModel: '@cf/meta/llama-3.1-8b-instruct',
+        defaultMaxTokens: 2048,
+        defaultTemperature: 0.7,
+      }),
+    );
   }
 
   private getProvider(name?: string): AIProvider {
@@ -80,7 +87,7 @@ export default class AIService extends WorkerEntrypoint<Env> {
     const provider = this.providers.get(providerName);
 
     if (!provider) {
-      throw new Error(`Provider ${ providerName } not configured`);
+      throw new Error(`Provider ${providerName} not configured`);
     }
 
     return provider;
@@ -104,7 +111,7 @@ export default class AIService extends WorkerEntrypoint<Env> {
     const result = await provider.complete(aiRequest);
 
     if (!result.isSuccess) {
-      throw new Error(`AI provider error: ${ result.error?.message }`);
+      throw new Error(`AI provider error: ${result.error?.message}`);
     }
 
     const response = result.value;

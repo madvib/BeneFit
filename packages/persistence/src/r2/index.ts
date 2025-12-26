@@ -1,5 +1,5 @@
 /*
-// src/r2/index.ts
+// src/r2/index.js
 export * from './schemas/workout-archive';
 export * from './schemas/media';
 export * from './schemas/integration-data';

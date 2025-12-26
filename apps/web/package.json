@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "nx lint",
+    "lint": "eslint .",
     "test": "nx test",
     "test:ui": "nx test --ui",
     "test:run": "nx test run",
@@ -14,21 +14,25 @@
     "cf-build": "opennextjs-cloudflare build",
     "cf-deploy": "opennextjs-cloudflare deploy",
     "deploy": "pnpm run cf-build && pnpm run cf-deploy",
-    "preview": "pnpm run cf-build && opennextjs-cloudflare preview",
-    "auth:migration:apply:local": "wrangler d1 migrations apply DB_USER_AUTH --local"
+    "preview": "pnpm run cf-build && opennextjs-cloudflare preview"
   },
   "dependencies": {
-    "@bene/shared-domain": "workspace:*",
-    "@bene/auth": "workspace:*",
-    "@bene/utils": "workspace:*",
+    "@bene/react-api-client": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@opennextjs/cloudflare": "^1.11.0",
+    "@tanstack/react-form": "1.27.5",
+    "@tanstack/react-query": "catalog:",
+    "better-auth": "catalog:",
     "class-variance-authority": "^0.7.1",
-    "hono": "^4.10.6",
     "lucide-react": "^0.546.0",
     "next": "16.0.3",
     "next-themes": "^0.4.6",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tanstack/react-query-devtools": "5.91.1"
   },
   "nx": {
     "tags": [
