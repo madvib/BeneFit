@@ -18,6 +18,7 @@
     "@swc/helpers": "~0.5.11"
   },
   "devDependencies": {
+    "@bene/shared": "workspace:*",
     "drizzle-orm": "catalog:"
   },
   "scripts": {
@@ -38,17 +39,12 @@
     "static_content:migrate:local": "wrangler d1 migrations apply DB_STATIC_CONTENT --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
     "static_content:migrate:staging": "wrangler d1 migrations apply DB_STATIC_CONTENT --env staging --config wrangler.jsonc",
     "static_content:migrate:prod": "wrangler d1 migrations apply DB_STATIC_CONTENT --env production --config wrangler.jsonc",
-    "d1:seed:local": "tsx drizzle/scripts/seed_d1.ts --env=local",
+    "d1:seed:local": "tsx drizzle/scripts/seed/seed_d1.ts --env=local",
     "unstable:db:seed:staging": "tsx drizzle/scripts/seed_d1.ts --env=staging",
-    "db:clean:local": "tsx drizzle/scripts/clean.ts --env=local",
-    "unstable:db:clean:staging": "tsx drizzle/scripts/clean.ts --env=staging",
-    "d1:reset:local": "pnpm run db:clean:local && pnpm run d1:migrate:local && pnpm run d1:seed:local",
     "db:reset:staging": "pnpm run db:clean:staging && pnpm run db:migrate:staging && pnpm run db:seed:staging",
     "activity_stream:studio": "drizzle-kit studio --config=drizzle/drizzle-activity-stream.config.ts",
     "discovery_index:studio": "drizzle-kit studio --config=drizzle/drizzle-discovery-index.config.ts",
-    "static_content:studio": "drizzle-kit studio --config=drizzle/drizzle-static-content.config.ts",
-    "db:studio:do": "tsx drizzle/scripts/studio-do.ts studio",
-    "db:list:do": "tsx drizzle/scripts/studio-do.ts list"
+    "static_content:studio": "drizzle-kit studio --config=drizzle/drizzle-static-content.config.ts"
   },
   "nx": {
     "sourceRoot": "packages/persistence/src",

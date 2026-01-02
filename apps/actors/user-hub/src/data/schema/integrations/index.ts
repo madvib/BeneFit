@@ -1,8 +1,8 @@
-import { connectedServices } from './connected_services.js';
-import { integrationSyncLog } from './integration_sync_log.js';
+import { connectedServices } from './connected_services';
+import { integrationSyncLog } from './integration_sync_log';
 
-export * from './connected_services.js';
-export * from './integration_sync_log.js';
+export * from './connected_services';
+export * from './integration_sync_log';
 
 export const integrations_schema = {
   connectedServices,

@@ -15,7 +15,7 @@ interface UserHubState {
   coachConversation?: unknown[];
 }
 
-export default class UserHub extends Agent<Env, UserHubState> {
+export class UserHub extends Agent<Env, UserHubState> {
   // Lazy-loaded dependencies
   private _useCaseFactory?: UseCaseFactory;
   private _serviceFactory?: ServiceFactory;

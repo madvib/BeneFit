@@ -27,5 +27,10 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "paths": {
+      "@/tools/*": [
+        "./tools/*"
+      ]
+    }
   }
 }

@@ -1,18 +1,18 @@
-import { PageContainer } from '@/components';
+import { PageContainer } from '@/lib/components';
 import {
   AboutHero,
   AboutOurStory,
-  AboutTeamMembers,
+  AboutTestimonials,
   AboutBenefits,
   AboutCallToAction,
-} from '@/components/marketing/about';
+} from '@/app/(marketing)/about/#components';
 
 export default function AboutPage() {
   return (
     <PageContainer>
       <AboutHero />
       <AboutOurStory />
-      <AboutTeamMembers />
+      <AboutTestimonials />
       <AboutBenefits />
       <AboutCallToAction />
     </PageContainer>

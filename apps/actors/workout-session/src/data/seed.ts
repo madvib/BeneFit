@@ -4,13 +4,15 @@ import { participants, NewParticipant } from './schema/participants.js';
 import { activityProgress, NewActivityProgress } from './schema/activity_progress.js';
 import { sessionChat, NewSessionChat } from './schema/session_chat.js';
 
+import { SEED_USER_IDS, SEED_USERS } from '@bene/shared';
+
 const now = Math.floor(Date.now() / 1000);
 
 // Use your schema types for type safety
 const sessions: NewSessionMetadata[] = [
   {
     id: 'session_001',
-    createdByUserId: 'user_001',
+    createdByUserId: SEED_USER_IDS.USER_001,
     workoutId: 'workout_001',
     planId: 'plan_001',
     workoutTemplateId: 'wt_001',
@@ -27,7 +29,7 @@ const sessions: NewSessionMetadata[] = [
   },
   {
     id: 'session_002',
-    createdByUserId: 'user_002',
+    createdByUserId: SEED_USER_IDS.USER_002,
     workoutId: 'workout_002',
     planId: 'plan_002',
     workoutTemplateId: 'wt_002',
@@ -45,35 +47,15 @@ const sessions: NewSessionMetadata[] = [
   },
 ];
 
-const participantsData: NewParticipant[] = [
-  {
-    id: 'part_001',
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-    joinedAt: new Date((now - 3600) * 1000),
-    lastHeartbeatAt: new Date((now - 60) * 1000), // Last heartbeat 1 minute ago
-    status: 'active',
-  },
-  {
-    id: 'part_002',
-    userId: 'user_002',
-    displayName: 'Jane Doe',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-    joinedAt: new Date((now - 3500) * 1000),
-    lastHeartbeatAt: new Date((now - 120) * 1000), // Last heartbeat 2 minutes ago
-    status: 'active',
-  },
-  {
-    id: 'part_003',
-    userId: 'user_003',
-    displayName: 'Dave Smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dave',
-    joinedAt: new Date((now - 1800) * 1000),
-    lastHeartbeatAt: new Date((now - 30) * 1000), // Last heartbeat 30 seconds ago
-    status: 'active',
-  },
-];
+const participantsData: NewParticipant[] = SEED_USERS.map((u, index) => ({
+  id: `part_00${ index + 1 }`,
+  userId: u.id,
+  displayName: u.name,
+  avatarUrl: u.avatarUrl,
+  joinedAt: new Date((now - (3600 - (index * 100))) * 1000),
+  lastHeartbeatAt: new Date((now - (60 * (index + 1))) * 1000),
+  status: 'active',
+}));
 
 const progress: NewActivityProgress[] = [
   {
@@ -168,19 +150,19 @@ export async function seedWorkoutSession(storage: DurableObjectStorage) {
     await db.delete(sessionMetadata);
 
     // Insert data
-    console.log(`  - Inserting ${sessions.length} session metadata...`);
+    console.log(`  - Inserting ${ sessions.length } session metadata...`);
     const existing = await db.select().from(sessionMetadata).limit(1);
     if (existing.length === 0) {
       await db.insert(sessionMetadata).values(sessions);
     }
 
-    console.log(`  - Inserting ${participantsData.length} participants...`);
+    console.log(`  - Inserting ${ participantsData.length } participants...`);
     await db.insert(participants).values(participantsData);
 
-    console.log(`  - Inserting ${progress.length} activity progress records...`);
+    console.log(`  - Inserting ${ progress.length } activity progress records...`);
     await db.insert(activityProgress).values(progress);
 
-    console.log(`  - Inserting ${chat.length} chat messages...`);
+    console.log(`  - Inserting ${ chat.length } chat messages...`);
     await db.insert(sessionChat).values(chat);
 
     console.log('✅ Workout Session database seeded successfully');

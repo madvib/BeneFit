@@ -1,8 +1,8 @@
-import { defineConfig } from 'drizzle-kit';
+import { createDurableObjectDrizzleConfig } from '../../../tools/drizzle/drizzle-config.factory';
 
-export default defineConfig({
-  out: `./migrations`,
-  schema: `./src/data/schema/**/*`,
-  dialect: 'sqlite',
-  driver: 'durable-sqlite',
+export default createDurableObjectDrizzleConfig({
+  durableObjectClass: 'UserHub',
+  workerName: 'user-hub-handler',
+  migrationsDir: './migrations',
+  schemaPath: './src/data/schema/**/*',
 });

@@ -1,4 +1,5 @@
 import { createDOClient } from '../../client.js';
+import { SEED_USER_IDS } from '@bene/shared';
 import { sessionMetadata, NewSessionMetadata } from './schema/session_metadata.js';
 import { participants, NewParticipant } from './schema/participants.js';
 import { activityProgress, NewActivityProgress } from './schema/activity_progress.js';
@@ -10,7 +11,7 @@ const now = Math.floor(Date.now() / 1000);
 const sessions: NewSessionMetadata[] = [
   {
     id: 'session_001',
-    createdByUserId: 'user_001',
+    createdByUserId: SEED_USER_IDS.USER_001,
     workoutId: 'workout_001',
     planId: 'plan_001',
     workoutTemplateId: 'wt_001',
@@ -27,7 +28,7 @@ const sessions: NewSessionMetadata[] = [
   },
   {
     id: 'session_002',
-    createdByUserId: 'user_002',
+    createdByUserId: SEED_USER_IDS.USER_002,
     workoutId: 'workout_002',
     planId: 'plan_002',
     workoutTemplateId: 'wt_002',
@@ -48,27 +49,27 @@ const sessions: NewSessionMetadata[] = [
 const participantsData: NewParticipant[] = [
   {
     id: 'part_001',
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
+    userId: SEED_USER_IDS.USER_001,
+    displayName: 'Test User',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Test',
     joinedAt: new Date((now - 3600) * 1000),
     lastHeartbeatAt: new Date((now - 60) * 1000), // Last heartbeat 1 minute ago
     status: 'active',
   },
   {
     id: 'part_002',
-    userId: 'user_002',
-    displayName: 'Jane Doe',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
+    userId: SEED_USER_IDS.USER_002,
+    displayName: 'John Doe',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
     joinedAt: new Date((now - 3500) * 1000),
     lastHeartbeatAt: new Date((now - 120) * 1000), // Last heartbeat 2 minutes ago
     status: 'active',
   },
   {
     id: 'part_003',
-    userId: 'user_003',
-    displayName: 'Dave Smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dave',
+    userId: SEED_USER_IDS.USER_003,
+    displayName: 'Jane Smith',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
     joinedAt: new Date((now - 1800) * 1000),
     lastHeartbeatAt: new Date((now - 30) * 1000), // Last heartbeat 30 seconds ago
     status: 'active',

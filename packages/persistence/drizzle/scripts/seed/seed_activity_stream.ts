@@ -1,14 +1,22 @@
-import { activityFeed, NewActivityFeedItem } from '../../../src/d1/activity_stream/schema/activity_feed.js';
-import { activityReactions, NewActivityReaction } from '../../../src/d1/activity_stream/schema/activity_reactions.js';
-import { useLocalD1 } from '../../helpers/get-d1-helper.ts';
+import { drizzle } from 'drizzle-orm/d1';
+import { SEED_USER_IDS } from '@bene/shared';
+import {
+  activityFeed,
+  NewActivityFeedItem,
+} from '../../../src/d1/activity_stream/schema/activity_feed.js';
+import {
+  activityReactions,
+  NewActivityReaction,
+} from '../../../src/d1/activity_stream/schema/activity_reactions.js';
+import { useLocalD1 } from '../../../../../tools/drizzle/get-d1-helper.ts';
 
 const now = Math.floor(Date.now() / 1000);
 // Use your schema types for type safety
 const feedItems: NewActivityFeedItem[] = [
   {
     id: 'feed_001',
-    ownerId: 'user_002',
-    creatorId: 'user_001',
+    ownerId: SEED_USER_IDS.USER_002,
+    creatorId: SEED_USER_IDS.USER_001,
     teamId: null,
     activityType: 'workout_completed',
     contentJson: JSON.stringify({
@@ -21,8 +29,8 @@ const feedItems: NewActivityFeedItem[] = [
   },
   {
     id: 'feed_002',
-    ownerId: 'user_003',
-    creatorId: 'user_002',
+    ownerId: SEED_USER_IDS.USER_003,
+    creatorId: SEED_USER_IDS.USER_002,
     teamId: 'team_001',
     activityType: 'streak_milestone',
     contentJson: JSON.stringify({ days: 30 }),
@@ -31,8 +39,8 @@ const feedItems: NewActivityFeedItem[] = [
   },
   {
     id: 'feed_003',
-    ownerId: 'user_001',
-    creatorId: 'user_003',
+    ownerId: SEED_USER_IDS.USER_001,
+    creatorId: SEED_USER_IDS.USER_003,
     teamId: null,
     activityType: 'pr_achieved',
     contentJson: JSON.stringify({ exercise: 'Bench Press', weight: 100, unit: 'kg' }),
@@ -45,14 +53,14 @@ const reactions: NewActivityReaction[] = [
   {
     id: 'react_001',
     feedItemId: 'feed_001',
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     emoji: '🔥',
     createdAt: new Date((now + 100) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 'react_002',
     feedItemId: 'feed_001',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     emoji: '👏',
     createdAt: new Date((now + 500) * 1000), // Convert Unix timestamp to Date
   },
@@ -66,19 +74,22 @@ export async function seedActivityStream() {
 
   try {
     // Execute the seeding logic using the D1 binding
-    await useLocalD1('DB_ACTIVITY_STREAM', async (db) => {
+    await useLocalD1('DB_ACTIVITY_STREAM', async (binding) => {
+      const db = drizzle(binding);
+
       console.log('  - Clearing existing data...');
+
       // Use Drizzle ORM for clear operations
       await db.delete(activityReactions);
       await db.delete(activityFeed);
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${ feedItems.length } activity feed items...`);
+      console.log(`  - Inserting ${feedItems.length} activity feed items...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityFeed).values(feedItems);
 
-      console.log(`  - Inserting ${ reactions.length } reactions...`);
+      console.log(`  - Inserting ${reactions.length} reactions...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityReactions).values(reactions);
     });
@@ -91,7 +102,7 @@ export async function seedActivityStream() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${ process.argv[1] }`) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   seedActivityStream().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

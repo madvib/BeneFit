@@ -1,6 +1,12 @@
 export * from './client';
 export * from './websocket';
-export { initAuthClient, getAuthClient } from './auth';
+export {
+  authClient,
+  getAuthErrorMessage,
+  getAuthErrorContext,
+  type AuthErrorContext,
+} from './lib/auth/auth.js';
+export type { AuthSession, AuthUser, AuthError } from './lib/auth/auth.js';
 export * as authSchemas from './schemas/auth';
 export * as coach from './hooks/use-coach';
 export * as fitnessPlan from './hooks/use-fitness-plan';

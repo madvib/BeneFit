@@ -1,7 +1,17 @@
-import { planTemplates, NewPlanTemplate } from '../../../src/d1/static_content/schema/plan_templates.js';
-import { templateRatings, NewTemplateRating } from '../../../src/d1/static_content/schema/template_ratings.js';
-import { templateTags, NewTemplateTag } from '../../../src/d1/static_content/schema/template_tags.js';
-import { useLocalD1 } from '../../helpers/get-d1-helper.ts';
+import {
+  planTemplates,
+  NewPlanTemplate,
+} from '../../../src/d1/static_content/schema/plan_templates.js';
+import {
+  templateRatings,
+  NewTemplateRating,
+} from '../../../src/d1/static_content/schema/template_ratings.js';
+import {
+  templateTags,
+  NewTemplateTag,
+} from '../../../src/d1/static_content/schema/template_tags.js';
+import { useLocalD1 } from '../../../../../tools/drizzle/get-d1-helper.ts';
+import { drizzle } from 'drizzle-orm/d1';
 
 const now = Math.floor(Date.now() / 1000);
 
@@ -10,8 +20,7 @@ const plans: NewPlanTemplate[] = [
   {
     id: 'plan_001',
     name: 'Couch to 5k',
-    description:
-      'Beginner-friendly running plan to get you from couch to completing a 5k',
+    description: 'Beginner-friendly running plan to get you from couch to completing a 5k',
     authorUserId: 'user_001',
     authorName: 'Mike Tyson',
     minExperienceLevel: 'beginner',
@@ -100,14 +109,11 @@ const tags: NewTemplateTag[] = [
 export async function seedStaticContent() {
   console.log('🌱 Seeding Static Content database with Drizzle ORM...');
 
-  // Use D1Helper to get the database binding
-  // const d1Helper = getD1Helper('DB_ACTIVITY_STREAM');
-
   try {
     // Execute the seeding logic using the D1 binding
-    await useLocalD1('DB_STATIC_CONTENT', async (db) => {
+    await useLocalD1('DB_STATIC_CONTENT', async (binding) => {
       // Initialize the type-safe Drizzle client
-      // const db = drizzle(rawD1);
+      const db = drizzle(binding);
 
       console.log('  - Clearing existing data...');
       // Use Drizzle ORM for clear operations
@@ -117,15 +123,15 @@ export async function seedStaticContent() {
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${ plans.length } plan templates...`);
+      console.log(`  - Inserting ${plans.length} plan templates...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(planTemplates).values(plans);
 
-      console.log(`  - Inserting ${ ratings.length } template ratings...`);
+      console.log(`  - Inserting ${ratings.length} template ratings...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(templateRatings).values(ratings);
 
-      console.log(`  - Inserting ${ tags.length } template tags...`);
+      console.log(`  - Inserting ${tags.length} template tags...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(templateTags).values(tags);
     });
@@ -138,7 +144,7 @@ export async function seedStaticContent() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${ process.argv[1] }`) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   seedStaticContent().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

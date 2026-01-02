@@ -1,4 +1,4 @@
-export { default as UserHub } from './user-hub/user-hub';
+export { UserHub } from './user-hub/user-hub';
 
 export default {
   fetch() {

@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { completedWorkouts } from './completed_workouts.js';
+import { completedWorkouts } from './completed_workouts';
 
 export const workoutReactions = sqliteTable(
   'workout_reactions',

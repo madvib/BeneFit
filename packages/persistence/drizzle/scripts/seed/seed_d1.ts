@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 async function run() {
   // TODO this needs to come from a centralized place
-  dotenv.config({ path: './.dev.vars' });
+  dotenv.config({ path: '.env.local' });
 
   console.log('🌱 Starting D1 Seed using Wrangler CLI...');
 

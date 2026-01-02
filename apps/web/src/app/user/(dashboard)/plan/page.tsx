@@ -1,24 +1,33 @@
 'use client';
 
-import { usePlanController } from '@/controllers';
-import { LoadingSpinner, ErrorPage } from '@/components';
-import {
-  PlanOverview,
-  WeeklySchedule,
-  PlanSuggestions,
-  QuickActions,
-  ModernDashboardLayout,
-} from '@/components/user/dashboard/plan';
+import { fitnessPlan, workouts } from '@bene/react-api-client';
+import { LoadingSpinner, ErrorPage } from '@/lib/components';
+import ModernDashboardLayout from './#components/modern-dashboard-layout';
+import PlanOverview from './#components/plan-overview';
+import QuickActions from './#components/quick-actions';
+import WeeklySchedule from './#components/weekly-schedule';
+import { ROUTES } from '@/lib/constants';
 
 export default function PlanClient() {
-  const {
-    activePlanData,
-    upcomingWorkouts,
-    isLoading,
-    error,
-    handleGeneratePlan,
-    handleActivatePlan,
-  } = usePlanController();
+  const activePlanQuery = fitnessPlan.useActivePlan();
+  const upcomingWorkoutsQuery = workouts.useUpcomingWorkouts({});
+
+  // Mutations
+  const generatePlanMutation = fitnessPlan.useGeneratePlan();
+  const activatePlanMutation = fitnessPlan.useActivatePlan();
+
+  const activePlanData = activePlanQuery.data;
+  const upcomingWorkouts = upcomingWorkoutsQuery.data;
+  const isLoading = activePlanQuery.isLoading || upcomingWorkoutsQuery.isLoading;
+  const error = activePlanQuery.error || upcomingWorkoutsQuery.error;
+
+  const handleGeneratePlan = async (request: fitnessPlan.GeneratePlanRequest) => {
+    await generatePlanMutation.mutateAsync(request);
+  };
+
+  const handleActivatePlan = async (request: fitnessPlan.ActivatePlanRequest) => {
+    await activatePlanMutation.mutateAsync(request);
+  };
 
   // --- Loading State ---
   if (isLoading) {
@@ -32,7 +41,7 @@ export default function PlanClient() {
         title="Plan Loading Error"
         message="Unable to load your workout plan."
         error={error}
-        backHref="/"
+        backHref={ROUTES.HOME}
       />
     );
   }
@@ -60,24 +69,11 @@ export default function PlanClient() {
 
   // --- View Components ---
   const renderOverview = () => (
-    <PlanOverview
-      currentPlan={plan}
-      onEditPlan={(id) => console.log('Edit plan:', id)}
-    />
+    <PlanOverview currentPlan={plan} onEditPlan={(id) => console.log('Edit plan:', id)} />
   );
 
   const renderSchedule = () => (
-    <WeeklySchedule
-      plan={plan}
-      onWorkoutClick={(id) => console.log('Workout clicked:', id)}
-    />
-  );
-
-  const renderSuggestions = () => (
-    <PlanSuggestions
-      suggestions={[]}
-      onSelectPlan={(planId) => console.log('Select plan:', planId)}
-    />
+    <WeeklySchedule plan={plan} onWorkoutClick={(id) => console.log('Workout clicked:', id)} />
   );
 
   const renderActions = () => (
@@ -93,7 +89,6 @@ export default function PlanClient() {
     <ModernDashboardLayout
       overview={renderOverview()}
       schedule={renderSchedule()}
-      suggestions={renderSuggestions()}
       actions={renderActions()}
     />
   );

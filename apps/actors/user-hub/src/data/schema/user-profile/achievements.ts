@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { profile } from './profile.js';
+import { profile } from './profile';
 
 export const achievements = sqliteTable(
   'achievements',

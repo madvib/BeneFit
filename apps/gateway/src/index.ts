@@ -9,7 +9,7 @@ import {
   profileRoutes,
   workoutRoutes,
 } from './routes';
-import { createAuth } from './lib/better-auth';
+import { createAuth } from './lib/better-auth/auth';
 
 const app = new Hono<{
   Bindings: Env;

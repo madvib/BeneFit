@@ -1,4 +1,5 @@
 import { createDOClient } from '../../client.js';
+import { SEED_USER_IDS, SEED_USERS } from '@bene/shared';
 import { profile, NewProfile } from './schema/user-profile/profile.js';
 import { userStats, NewUserStats } from './schema/user-profile/user_stats.js';
 import { achievements, NewAchievement } from './schema/user-profile/achievements.js';
@@ -50,9 +51,9 @@ const now = Math.floor(Date.now() / 1000);
 // Use your schema types for type safety
 const profilesData: NewProfile[] = [
   {
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
+    userId: SEED_USER_IDS.USER_001,
+    displayName: 'Test User',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Test',
     bio: 'Professional boxer turned fitness enthusiast',
     location: 'New York, NY',
     timezone: 'America/New_York',
@@ -60,9 +61,9 @@ const profilesData: NewProfile[] = [
     updatedAt: new Date(now * 1000),
   },
   {
-    userId: 'user_002',
-    displayName: 'Jane Doe',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
+    userId: SEED_USER_IDS.USER_002,
+    displayName: 'John Doe',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
     bio: 'Marathon runner and coach',
     location: 'San Francisco, CA',
     timezone: 'America/Los_Angeles',
@@ -70,9 +71,9 @@ const profilesData: NewProfile[] = [
     updatedAt: new Date(now * 1000),
   },
   {
-    userId: 'user_003',
-    displayName: 'Dave Smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dave',
+    userId: SEED_USER_IDS.USER_003,
+    displayName: 'Jane Smith',
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
     bio: 'Powerlifter and gym enthusiast',
     location: 'Austin, TX',
     timezone: 'America/Chicago',
@@ -83,8 +84,8 @@ const profilesData: NewProfile[] = [
 
 const userStatsData: NewUserStats[] = [
   {
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
+    userId: SEED_USER_IDS.USER_001,
+    displayName: 'Test User',
     currentStreakDays: 15,
     longestStreakDays: 22,
     totalWorkoutsCompleted: 45,
@@ -95,8 +96,8 @@ const userStatsData: NewUserStats[] = [
     updatedAt: new Date(now * 1000),
   },
   {
-    userId: 'user_002',
-    displayName: 'Jane Doe',
+    userId: SEED_USER_IDS.USER_002,
+    displayName: 'John Doe',
     currentStreakDays: 8,
     longestStreakDays: 14,
     totalWorkoutsCompleted: 78,
@@ -107,8 +108,8 @@ const userStatsData: NewUserStats[] = [
     updatedAt: new Date(now * 1000),
   },
   {
-    userId: 'user_003',
-    displayName: 'Dave Smith',
+    userId: SEED_USER_IDS.USER_003,
+    displayName: 'Jane Smith',
     currentStreakDays: 5,
     longestStreakDays: 12,
     totalWorkoutsCompleted: 62,
@@ -123,7 +124,7 @@ const userStatsData: NewUserStats[] = [
 const achievementsData: NewAchievement[] = [
   {
     id: 'ach_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     name: 'First Workout',
     description: 'Completed your first workout',
     achievementType: 'first_workout',
@@ -132,7 +133,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_002',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     name: 'Week Streak',
     description: 'Worked out for 7 consecutive days',
     achievementType: 'streak_7',
@@ -141,7 +142,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_003',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     name: 'Marathon Master',
     description: 'Completed a marathon',
     achievementType: 'pr_distance',
@@ -150,7 +151,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_004',
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     name: 'Heavy Lifter',
     description: 'Lifted 1000kg total in a workout',
     achievementType: 'pr_strength',
@@ -162,7 +163,7 @@ const achievementsData: NewAchievement[] = [
 const completedWorkoutsData: NewCompletedWorkout[] = [
   {
     id: 'cw_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     workoutId: 'wo_001',
     planId: 'plan_001',
     workoutTemplateId: 'wt_001',
@@ -184,7 +185,7 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
   },
   {
     id: 'cw_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     workoutId: 'wo_002',
     planId: 'plan_002',
     workoutTemplateId: 'wt_002',
@@ -247,7 +248,7 @@ const workoutActivitiesData: NewWorkoutActivity[] = [
 const workoutMetadataData: NewWorkoutMetadata[] = [
   {
     id: 'wm_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     teamId: null,
     workoutType: 'strength',
     completedAt: new Date((now - 1800) * 1000),
@@ -260,7 +261,7 @@ const workoutMetadataData: NewWorkoutMetadata[] = [
   },
   {
     id: 'wm_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     teamId: 'team_001',
     workoutType: 'cardio',
     completedAt: new Date((now - 3600) * 1000),
@@ -277,16 +278,16 @@ const workoutReactionsData: NewWorkoutReaction[] = [
   {
     id: 'wr_001',
     workoutId: 'cw_001',
-    userId: 'user_002',
-    userName: 'Jane Doe',
+    userId: SEED_USER_IDS.USER_002,
+    userName: 'John Doe',
     reactionType: 'fire',
     createdAt: new Date((now - 1700) * 1000),
   },
   {
     id: 'wr_002',
     workoutId: 'cw_002',
-    userId: 'user_003',
-    userName: 'Dave Smith',
+    userId: SEED_USER_IDS.USER_003,
+    userName: 'Jane Smith',
     reactionType: 'strong',
     createdAt: new Date((now - 3500) * 1000),
   },
@@ -295,7 +296,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
 const coachingConversationsData: NewCoachConversation[] = [
   {
     id: 'conv_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     contextJson: {
       currentStreak: 15,
       recentWorkouts: ['cw_001'],
@@ -309,7 +310,7 @@ const coachingConversationsData: NewCoachConversation[] = [
   },
   {
     id: 'conv_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     contextJson: {
       currentStreak: 8,
       recentWorkouts: ['cw_002'],
@@ -376,7 +377,7 @@ const checkInsData: NewCheckIn[] = [
 const connectedServicesData: NewConnectedService[] = [
   {
     id: 'cs_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     serviceType: 'strava',
     accessTokenEncrypted: 'encrypted_fake_token',
     refreshTokenEncrypted: 'encrypted_fake_refresh',
@@ -387,7 +388,7 @@ const connectedServicesData: NewConnectedService[] = [
   },
   {
     id: 'cs_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     serviceType: 'garmin',
     accessTokenEncrypted: 'encrypted_fake_token2',
     refreshTokenEncrypted: 'encrypted_fake_refresh2',
@@ -401,7 +402,7 @@ const connectedServicesData: NewConnectedService[] = [
 const integrationSyncLogsData: NewIntegrationSyncLog[] = [
   {
     id: 'isl_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     serviceType: 'strava',
     syncStartedAt: new Date((now - 7200) * 1000),
     syncCompletedAt: new Date((now - 7100) * 1000),
@@ -411,7 +412,7 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
   },
   {
     id: 'isl_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     serviceType: 'garmin',
     syncStartedAt: new Date((now - 3600) * 1000),
     syncCompletedAt: new Date((now - 3550) * 1000),
@@ -424,7 +425,7 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
 const activeFitnessPlansData: NewActiveFitnessPlan[] = [
   {
     id: 'afp_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     title: 'Strength Building Phase',
     description: 'Focus on compound lifts and progressive overload',
     planType: 'strength_program',
@@ -443,7 +444,7 @@ const activeFitnessPlansData: NewActiveFitnessPlan[] = [
   },
   {
     id: 'afp_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     title: 'Marathon Training Plan',
     description: '18-week plan to prepare for a marathon',
     planType: 'event_training',

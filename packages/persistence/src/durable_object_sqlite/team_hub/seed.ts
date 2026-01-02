@@ -1,4 +1,5 @@
 import { createDOClient } from '../../client.js';
+import { SEED_USER_IDS } from '@bene/shared';
 import { team, NewTeam } from './schema/team.js';
 import { teamMembers, NewTeamMember } from './schema/team_members.js';
 import { teamChallenges, NewTeamChallenge } from './schema/team_challenges.js';
@@ -27,25 +28,25 @@ const teams: NewTeam[] = [
 const members: NewTeamMember[] = [
   {
     teamId: 'team_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     role: 'member',
     joinedAt: new Date(now - 86400),
   }, // 1 day ago
   {
     teamId: 'team_001',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     role: 'admin',
     joinedAt: new Date(now - 172800),
   }, // 2 days ago
   {
     teamId: 'team_002',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     role: 'owner',
     joinedAt: new Date(now - 3600),
   }, // 1 hour ago
   {
     teamId: 'team_002',
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     role: 'member',
     joinedAt: new Date(now - 7200),
   }, // 2 hours ago
@@ -77,31 +78,31 @@ const challenges: NewTeamChallenge[] = [
 const messages: NewChatMessage[] = [
   {
     id: 1,
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     content: 'Hey team! Ready for the morning run?',
     createdAt: new Date((now - 3600) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 2,
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     content: 'Absolutely! See you at 6am.',
     createdAt: new Date((now - 3500) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 3,
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     content: 'Count me in for the lifting session later',
     createdAt: new Date((now - 1800) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 4,
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     content: "Great! Don't forget to hydrate",
     createdAt: new Date((now - 1700) * 1000), // Convert Unix timestamp to Date
   },
   {
     id: 5,
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     content: 'Thanks for the reminder!',
     createdAt: new Date((now - 1600) * 1000), // Convert Unix timestamp to Date
   },

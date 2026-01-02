@@ -1,31 +1,33 @@
 'use client';
 
-import { LoadingSpinner } from '@/components';
-import { HomeHero, ImageCard, FeaturesSection } from '@/components/marketing/home';
-import { useAuth } from '@bene/react-api-client';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useAuth } from '@bene/react-api-client';
+import { LoadingSpinner, ImageCard } from '@/lib/components';
+import { HomeHero, FeaturesSection } from './#components';
+import { ROUTES } from '@/lib/constants';
 
 export default function LandingPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) router.replace('/user/activities');
+    if (isLoading) return;
+    const isDirectNavigation =
+      window.performance.getEntriesByType('navigation')[0]?.entryType === 'navigate';
+    if (isDirectNavigation && isAuthenticated) router.replace(ROUTES.USER.ACTIVITIES);
   }, [isAuthenticated, isLoading, router]);
 
   const features = [
     {
       icon: '🏃',
       title: 'Track Everything',
-      description:
-        'Monitor your workouts, nutrition, and progress with detailed analytics.',
+      description: 'Monitor your workouts, nutrition, and progress with detailed analytics.',
     },
     {
       icon: '🎯',
       title: 'Set Goals',
-      description:
-        'Create and achieve personalized fitness goals with our smart system.',
+      description: 'Create and achieve personalized fitness goals with our smart system.',
     },
     {
       icon: '👥',
@@ -35,7 +37,7 @@ export default function LandingPage() {
   ];
 
   return isLoading ? (
-    <LoadingSpinner />
+    <LoadingSpinner variant="screen" />
   ) : (
     <div className="flex min-h-screen w-full items-center">
       <div className="container mx-auto px-4 py-12">
@@ -44,8 +46,8 @@ export default function LandingPage() {
             title="Welcome to"
             primaryWord="BeneFit"
             subtitle="Your ultimate fitness companion. Track your workouts, monitor your progress, and achieve your goals."
-            primaryLink={{ href: '/signup', text: 'Get Started' }}
-            secondaryLink={{ href: '/features', text: 'Learn More' }}
+            primaryLink={{ href: ROUTES.MODAL.SIGNUP, text: 'Get Started' }}
+            secondaryLink={{ href: ROUTES.FEATURES, text: 'Learn More' }}
           />
 
           <ImageCard
@@ -55,7 +57,6 @@ export default function LandingPage() {
             height={1000}
           />
         </div>
-
         <FeaturesSection title="Why Choose BeneFit?" features={features} />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
-import { coachingConversation } from './coaching_conversation.js';
+import { coachingConversation } from './coaching_conversation';
 
 export const coachingMessages = sqliteTable(
   'coaching_messages',

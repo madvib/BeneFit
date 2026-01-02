@@ -1,5 +1,5 @@
 import { Calendar, Users, Trophy, ChevronRight, MapPin } from 'lucide-react';
-import { Card } from '@/components/common/ui-primitives/card/card';
+import { Card } from '@/lib/components';
 
 const EVENTS = [
   {
@@ -39,7 +39,7 @@ const FEATURED_TEAMS = [
 
 export default async function ExplorePage() {
   return (
-    <div className="mx-auto max-w-[1600px] p-4 md:p-6 lg:p-8">
+    <div className="mx-auto max-w-400 p-4 md:p-6 lg:p-8">
       {/* Hero Section */}
       <div className="bg-primary text-primary-foreground relative mb-12 overflow-hidden rounded-3xl px-8 py-16 md:px-16">
         <div className="relative z-10 max-w-2xl">
@@ -47,8 +47,8 @@ export default async function ExplorePage() {
             Discover Your Next Challenge
           </h1>
           <p className="text-primary-foreground/80 mb-8 text-lg">
-            Find local events, join communities, and connect with expert coaches to
-            elevate your fitness journey.
+            Find local events, join communities, and connect with expert coaches to elevate your
+            fitness journey.
           </p>
           <div className="flex flex-wrap gap-4">
             <button className="bg-background text-primary rounded-full px-6 py-3 font-bold transition-transform hover:scale-105">

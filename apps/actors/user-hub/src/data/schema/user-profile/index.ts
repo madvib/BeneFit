@@ -1,10 +1,10 @@
-import { profile, profileRelations } from './profile.js';
-import { userStats, userStatsRelations } from './user_stats.js';
-import { achievements, achievementsRelations } from './achievements.js';
+import { profile, profileRelations } from './profile';
+import { userStats, userStatsRelations } from './user_stats';
+import { achievements, achievementsRelations } from './achievements';
 
-export * from './profile.js';
-export * from './user_stats.js';
-export * from './achievements.js';
+export * from './profile';
+export * from './user_stats';
+export * from './achievements';
 
 export const user_profile_schema = {
   profile,

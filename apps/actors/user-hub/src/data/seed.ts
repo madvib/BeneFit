@@ -45,85 +45,44 @@ import {
   NewWorkoutTemplate,
 } from './schema/fitness-plan/workout_templates.js';
 
+import { SEED_USER_IDS, SEED_USERS } from '@bene/shared';
+
 const now = Math.floor(Date.now() / 1000);
 
-// Use your schema types for type safety
-const profilesData: NewProfile[] = [
-  {
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-    bio: 'Professional boxer turned fitness enthusiast',
-    location: 'New York, NY',
-    timezone: 'America/New_York',
-    createdAt: new Date((now - 86400) * 1000),
-    updatedAt: new Date(now * 1000),
-  },
-  {
-    userId: 'user_002',
-    displayName: 'Jane Doe',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-    bio: 'Marathon runner and coach',
-    location: 'San Francisco, CA',
-    timezone: 'America/Los_Angeles',
-    createdAt: new Date((now - 172800) * 1000),
-    updatedAt: new Date(now * 1000),
-  },
-  {
-    userId: 'user_003',
-    displayName: 'Dave Smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dave',
-    bio: 'Powerlifter and gym enthusiast',
-    location: 'Austin, TX',
-    timezone: 'America/Chicago',
-    createdAt: new Date((now - 259200) * 1000),
-    updatedAt: new Date(now * 1000),
-  },
-];
+// Map SEED_USERS to Profiles
+const profilesData: NewProfile[] = SEED_USERS.map((u, index) => ({
+  userId: u.id,
+  displayName: u.name,
+  avatarUrl: u.avatarUrl,
+  bio: index === 0
+    ? 'Professional boxer turned fitness enthusiast'
+    : index === 1
+      ? 'Marathon runner and coach'
+      : 'Powerlifter and gym enthusiast',
+  location: index === 0 ? 'New York, NY' : index === 1 ? 'San Francisco, CA' : 'Austin, TX',
+  timezone: index === 0 ? 'America/New_York' : index === 1 ? 'America/Los_Angeles' : 'America/Chicago',
+  createdAt: new Date((now - (86400 * (index + 1))) * 1000),
+  updatedAt: new Date(now * 1000),
+}));
 
-const userStatsData: NewUserStats[] = [
-  {
-    userId: 'user_001',
-    displayName: 'Mike Tyson',
-    currentStreakDays: 15,
-    longestStreakDays: 22,
-    totalWorkoutsCompleted: 45,
-    totalMinutesTrained: 2250, // 135000 seconds / 60
-    totalVolumeKg: 12500,
-    totalDistanceMeters: 0,
-    totalCaloriesBurned: 0,
-    updatedAt: new Date(now * 1000),
-  },
-  {
-    userId: 'user_002',
-    displayName: 'Jane Doe',
-    currentStreakDays: 8,
-    longestStreakDays: 14,
-    totalWorkoutsCompleted: 78,
-    totalMinutesTrained: 4267, // 256000 seconds / 60
-    totalVolumeKg: 0,
-    totalDistanceMeters: 420000, // 420km
-    totalCaloriesBurned: 0,
-    updatedAt: new Date(now * 1000),
-  },
-  {
-    userId: 'user_003',
-    displayName: 'Dave Smith',
-    currentStreakDays: 5,
-    longestStreakDays: 12,
-    totalWorkoutsCompleted: 62,
-    totalMinutesTrained: 3117, // 187000 seconds / 60
-    totalVolumeKg: 18700,
-    totalDistanceMeters: 0,
-    totalCaloriesBurned: 0,
-    updatedAt: new Date(now * 1000),
-  },
-];
+// Map SEED_USERS to User Stats
+const userStatsData: NewUserStats[] = SEED_USERS.map((u, index) => ({
+  userId: u.id,
+  displayName: u.name,
+  currentStreakDays: index === 0 ? 15 : index === 1 ? 8 : 5,
+  longestStreakDays: index === 0 ? 22 : index === 1 ? 14 : 12,
+  totalWorkoutsCompleted: index === 0 ? 45 : index === 1 ? 78 : 62,
+  totalMinutesTrained: index === 0 ? 2250 : index === 1 ? 4267 : 3117,
+  totalVolumeKg: index === 0 ? 12500 : index === 1 ? 0 : 18700,
+  totalDistanceMeters: index === 0 ? 0 : index === 1 ? 420000 : 0,
+  totalCaloriesBurned: 0,
+  updatedAt: new Date(now * 1000),
+}));
 
 const achievementsData: NewAchievement[] = [
   {
     id: 'ach_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     name: 'First Workout',
     description: 'Completed your first workout',
     achievementType: 'first_workout',
@@ -132,7 +91,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_002',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     name: 'Week Streak',
     description: 'Worked out for 7 consecutive days',
     achievementType: 'streak_7',
@@ -141,7 +100,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_003',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     name: 'Marathon Master',
     description: 'Completed a marathon',
     achievementType: 'pr_distance',
@@ -150,7 +109,7 @@ const achievementsData: NewAchievement[] = [
   },
   {
     id: 'ach_004',
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     name: 'Heavy Lifter',
     description: 'Lifted 1000kg total in a workout',
     achievementType: 'pr_strength',
@@ -162,7 +121,7 @@ const achievementsData: NewAchievement[] = [
 const completedWorkoutsData: NewCompletedWorkout[] = [
   {
     id: 'cw_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     workoutId: 'wo_001',
     planId: 'plan_001',
     workoutTemplateId: 'wt_001',
@@ -184,7 +143,7 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
   },
   {
     id: 'cw_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     workoutId: 'wo_002',
     planId: 'plan_002',
     workoutTemplateId: 'wt_002',
@@ -247,7 +206,7 @@ const workoutActivitiesData: NewWorkoutActivity[] = [
 const workoutMetadataData: NewWorkoutMetadata[] = [
   {
     id: 'wm_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     teamId: null,
     workoutType: 'strength',
     completedAt: new Date((now - 1800) * 1000),
@@ -260,7 +219,7 @@ const workoutMetadataData: NewWorkoutMetadata[] = [
   },
   {
     id: 'wm_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     teamId: 'team_001',
     workoutType: 'cardio',
     completedAt: new Date((now - 3600) * 1000),
@@ -277,7 +236,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
   {
     id: 'wr_001',
     workoutId: 'cw_001',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     userName: 'Jane Doe',
     reactionType: 'fire',
     createdAt: new Date((now - 1700) * 1000),
@@ -285,7 +244,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
   {
     id: 'wr_002',
     workoutId: 'cw_002',
-    userId: 'user_003',
+    userId: SEED_USER_IDS.USER_003,
     userName: 'Dave Smith',
     reactionType: 'strong',
     createdAt: new Date((now - 3500) * 1000),
@@ -295,7 +254,7 @@ const workoutReactionsData: NewWorkoutReaction[] = [
 const coachingConversationsData: NewCoachConversation[] = [
   {
     id: 'conv_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     contextJson: {
       currentStreak: 15,
       recentWorkouts: ['cw_001'],
@@ -309,7 +268,7 @@ const coachingConversationsData: NewCoachConversation[] = [
   },
   {
     id: 'conv_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     contextJson: {
       currentStreak: 8,
       recentWorkouts: ['cw_002'],
@@ -376,7 +335,7 @@ const checkInsData: NewCheckIn[] = [
 const connectedServicesData: NewConnectedService[] = [
   {
     id: 'cs_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     serviceType: 'strava',
     accessTokenEncrypted: 'encrypted_fake_token',
     refreshTokenEncrypted: 'encrypted_fake_refresh',
@@ -387,7 +346,7 @@ const connectedServicesData: NewConnectedService[] = [
   },
   {
     id: 'cs_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     serviceType: 'garmin',
     accessTokenEncrypted: 'encrypted_fake_token2',
     refreshTokenEncrypted: 'encrypted_fake_refresh2',
@@ -401,7 +360,7 @@ const connectedServicesData: NewConnectedService[] = [
 const integrationSyncLogsData: NewIntegrationSyncLog[] = [
   {
     id: 'isl_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     serviceType: 'strava',
     syncStartedAt: new Date((now - 7200) * 1000),
     syncCompletedAt: new Date((now - 7100) * 1000),
@@ -411,7 +370,7 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
   },
   {
     id: 'isl_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     serviceType: 'garmin',
     syncStartedAt: new Date((now - 3600) * 1000),
     syncCompletedAt: new Date((now - 3550) * 1000),
@@ -424,7 +383,7 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
 const activeFitnessPlansData: NewActiveFitnessPlan[] = [
   {
     id: 'afp_001',
-    userId: 'user_001',
+    userId: SEED_USER_IDS.USER_001,
     title: 'Strength Building Phase',
     description: 'Focus on compound lifts and progressive overload',
     planType: 'strength_program',
@@ -443,7 +402,7 @@ const activeFitnessPlansData: NewActiveFitnessPlan[] = [
   },
   {
     id: 'afp_002',
-    userId: 'user_002',
+    userId: SEED_USER_IDS.USER_002,
     title: 'Marathon Training Plan',
     description: '18-week plan to prepare for a marathon',
     planType: 'event_training',

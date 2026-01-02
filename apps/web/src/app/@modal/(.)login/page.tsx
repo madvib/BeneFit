@@ -1,13 +1,13 @@
 'use client';
 import { Suspense } from 'react';
-import { LoginForm } from '@/components/auth/login-form';
-import { Modal } from '@/components/common/ui-primitives/modal/modal';
+import { Modal } from '@/lib/components/ui-primitives/modal/modal';
+import { LoginForm } from '@/lib/components/auth';
 
 export default function LoginModal() {
   return (
     <Modal>
       <Suspense fallback={<div>Loading login form...</div>}>
-        <LoginForm isModal={true} />
+        <LoginForm isModal />
       </Suspense>
     </Modal>
   );

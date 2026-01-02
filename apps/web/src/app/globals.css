@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant hover (&:hover);
+
 :root {
   --background: #f0f8ff;
   --foreground: #0c2d48;
@@ -13,6 +15,10 @@
   --accent-foreground: #212529;
   --ring: #86b7fe;
   --error: #bf1616;
+  /* Theme gradient colors - more subtle for light theme to avoid overpowering text */
+  --gradient-start: #e6f2ff;
+  --gradient-middle: #b3d7ff;
+  --gradient-end: #80bfff;
 }
 
 .dark {
@@ -28,6 +34,10 @@
   --accent-foreground: #f9fafb;
   --ring: #6366f1;
   --error: #bf1616;
+  /* Theme gradient colors - your preferred dark theme colors */
+  --gradient-start: #034a95;
+  --gradient-middle: #7cff67;
+  --gradient-end: #b3d7ff;
 }
 
 @theme inline {
@@ -77,18 +87,4 @@ html {
   /* Chrome, Safari, Opera */
 }
 
-.btn {
-  @apply px-4 py-2 rounded-md font-bold transition-colors;
-}
 
-.btn-primary {
-  @apply bg-primary text-primary-foreground hover:bg-primary/90;
-}
-
-.btn-secondary {
-  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
-}
-
-.btn-ghost {
-  @apply hover:bg-accent hover:text-accent-foreground;
-}

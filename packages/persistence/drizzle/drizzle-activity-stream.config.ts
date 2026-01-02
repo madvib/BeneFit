@@ -1,4 +1,4 @@
-import { createDrizzleConfig } from './helpers/drizzle-config.factory.ts';
+import { createDrizzleConfig } from '../../../tools/drizzle/drizzle-config.factory.ts';
 
 const DB_NAME = 'DB_ACTIVITY_STREAM';
 

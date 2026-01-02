@@ -2,29 +2,41 @@
 
 import { useState } from 'react';
 import { History } from 'lucide-react';
-import HistoryModal from '@/components/user/dashboard/history/history-modal';
-import { useHistoryController } from '@/controllers';
-import { LoadingSpinner, ErrorPage } from '@/components';
+import { workouts } from '@bene/react-api-client';
+import { LoadingSpinner, ErrorPage } from '@/lib/components';
+import HistoryModal from './#components/history-modal';
+import { ROUTES } from '@/lib/constants';
 
 export default function HistoryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { workoutHistory, loading, error } = useHistoryController();
+  const workoutHistoryQuery = workouts.useWorkoutHistory({
+    json: {
+      limit: 50,
+      offset: 0,
+    },
+  });
 
-  if (loading) {
+  if (workoutHistoryQuery.isLoading) {
     return <LoadingSpinner variant="screen" text="Loading workout history..." />;
   }
 
-  if (error) {
+  if (workoutHistoryQuery.error) {
     return (
       <ErrorPage
         title="History Loading Error"
         message="Unable to load your workout history."
-        error={error instanceof Error ? error : new Error('Unknown error')}
-        backHref="/"
+        error={
+          workoutHistoryQuery.error instanceof Error
+            ? workoutHistoryQuery.error
+            : new Error('Unknown error')
+        }
+        backHref={ROUTES.HOME}
       />
     );
   }
+
+  const workoutHistory = workoutHistoryQuery.data?.workouts || [];
 
   return (
     <div className="flex h-[calc(100vh-200px)] flex-col items-center justify-center p-6 text-center">
@@ -34,8 +46,7 @@ export default function HistoryPage() {
       <h1 className="text-foreground mb-2 text-2xl font-bold">Workout History</h1>
       <p className="text-muted-foreground mb-8 max-w-md">
         View your past workouts, achievements, and progress logs in detail.
-        {workoutHistory.length > 0 &&
-          ` You have ${workoutHistory.length} workouts completed.`}
+        {workoutHistory.length > 0 && ` You have ${workoutHistory.length} workouts completed.`}
       </p>
       <button
         onClick={() => setIsModalOpen(true)}

@@ -7,9 +7,7 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "moduleResolution": "bundler",
     "module": "es2022",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "include": [
     "../../types/cloudflare-runtime.d.ts",
@@ -19,10 +17,7 @@
   ],
   "references": [
     {
-      "path": "../domain/training/application/tsconfig.lib.json"
-    },
-    {
-      "path": "../domain/training/core/tsconfig.lib.json"
+      "path": "../../apps/gateway"
     },
     {
       "path": "../shared/tsconfig.lib.json"

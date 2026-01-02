@@ -28,9 +28,6 @@
       "path": "./packages/persistence"
     },
     {
-      "path": "./packages/auth"
-    },
-    {
       "path": "./packages/react-api-client"
     },
     {

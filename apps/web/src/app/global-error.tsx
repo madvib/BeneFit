@@ -1,15 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { ErrorPage } from '@/components';
+import { ErrorPage } from '@/lib/components';
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
+export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Global error:', error);
@@ -21,7 +15,7 @@ export default function GlobalError({
         <ErrorPage
           title="Something went wrong!"
           message="We're sorry, but an unexpected error occurred. Our team has been notified."
-          error={error.message}
+          error={error}
           showBackButton={false}
           onRefresh={reset}
         />

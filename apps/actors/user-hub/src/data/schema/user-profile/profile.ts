@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { userStats } from './user_stats.js';
-import { achievements } from './achievements.js';
+import { userStats } from './user_stats';
+import { achievements } from './achievements';
 
 export const profile = sqliteTable('profile', {
   userId: text('user_id').primaryKey().notNull(),

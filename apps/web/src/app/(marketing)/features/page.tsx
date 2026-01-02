@@ -1,11 +1,8 @@
 import Link from 'next/link';
-import {
-  FeaturesHero,
-  FeatureCard,
-  ConnectionServicesSection,
-} from '@/components/marketing/features';
 import { ChartColumnBig, Gift, Zap } from 'lucide-react';
-import { Button } from '@/components';
+import { Button, LogoLoop } from '@/lib/components';
+import { FeaturesHero, FeatureCard } from './#components';
+import { ROUTES } from '@/lib/constants';
 
 export default function FeaturesPage() {
   const features = [
@@ -34,24 +31,24 @@ export default function FeaturesPage() {
 
   const connectionServices = [
     {
-      name: 'Apple Health',
-      logo: '/connection_logos/icons8-apple-fitness-48.png',
+      alt: 'Apple Health',
+      src: '/connection_logos/icons8-apple-fitness-48.png',
     },
     {
-      name: 'Google Fit',
-      logo: '/connection_logos/google-fit-svgrepo-com.svg',
+      alt: 'Google Fit',
+      src: '/connection_logos/google-fit-svgrepo-com.svg',
     },
     {
-      name: 'Strava',
-      logo: '/connection_logos/strava-svgrepo-com.svg',
+      alt: 'Strava',
+      src: '/connection_logos/strava-svgrepo-com.svg',
     },
     {
-      name: 'Fitbit',
-      logo: '/connection_logos/icons8-fitbit-48.png',
+      alt: 'Fitbit',
+      src: '/connection_logos/icons8-fitbit-48.png',
     },
     {
-      name: 'WHOOP',
-      logo: '/connection_logos/whoop.svg',
+      alt: 'WHOOP',
+      src: '/connection_logos/whoop.svg',
     },
   ];
 
@@ -74,15 +71,30 @@ export default function FeaturesPage() {
         ))}
       </div>
 
-      <ConnectionServicesSection
-        title="Connect with Your Favorite Apps"
-        subtitle="Seamlessly integrate with popular fitness and health platforms to get a complete picture of your wellness journey."
-        services={connectionServices}
+      <div className="bg-background rounded-xl p-8 shadow-md">
+        <h2 className="mb-6 text-center text-3xl font-bold">Connect with Your Favorite Apps</h2>
+        <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-center">
+          Seamlessly integrate with popular fitness and health platforms to get a complete picture
+          of your wellness journey.
+        </p>
+      </div>
+      <LogoLoop
+        className="my-16"
+        logos={connectionServices}
+        speed={50}
+        direction="left"
+        logoHeight={48}
+        gap={40}
+        hoverSpeed={10}
+        scaleOnHover
+        fadeOut
+        fadeOutColor="var(--background)"
+        ariaLabel="Integrations"
       />
 
       <div className="text-center">
         <Button size={'lg'}>
-          <Link href="/signup">Get Started Today</Link>
+          <Link href={ROUTES.MODAL.SIGNUP}>Get Started Today</Link>
         </Button>
       </div>
     </div>

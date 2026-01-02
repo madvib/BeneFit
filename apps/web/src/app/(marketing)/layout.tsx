@@ -1,8 +1,6 @@
 'use client';
 
-import { PageContainer } from '@/components';
-import UnifiedHeader from '@/components/common/header/unified-header';
-import Footer from '@/components/common/ui-primitives/footer/footer';
+import { PageContainer, Header, Aurora, Footer } from '@/lib/components';
 
 interface MarketingLayoutProperties {
   children: React.ReactNode;
@@ -10,12 +8,17 @@ interface MarketingLayoutProperties {
 
 export default function MarketingLayout({ children }: MarketingLayoutProperties) {
   return (
-    <PageContainer className="flex min-h-screen flex-col">
-      <UnifiedHeader variant="marketing" />
-      <main className="w-full grow">
-        <div className="container mx-auto px-4 py-8">{children}</div>
-      </main>
+    <div className="relative flex min-h-screen flex-col">
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Aurora blend={1.0} amplitude={0.8} speed={0.8} />
+      </div>
+      <Header variant="marketing" />
+      <PageContainer className="flex min-h-screen flex-col">
+        <main className="relative z-10 w-full grow">
+          <div className="container mx-auto px-4 py-8">{children}</div>
+        </main>
+      </PageContainer>
       <Footer />
-    </PageContainer>
+    </div>
   );
 }
