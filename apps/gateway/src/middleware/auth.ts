@@ -14,6 +14,11 @@ export const authMiddleware = async (c: Context, next: Next) => {
 
   // Set authenticated user in context
   c.set('user', session.user);
-  console.log(`CALLING AUTH MIDDLEWARE ${ session.user }`);
+
+  // Dev-only verbose logging
+  if (import.meta.env.DEV && import.meta.env.VERBOSE_LOGGING) {
+    console.log(`🔐 Auth: ${ session.user.email || session.user.id }`);
+  }
+
   await next();
 };

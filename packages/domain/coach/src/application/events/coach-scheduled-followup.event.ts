@@ -3,18 +3,14 @@ import { DomainEvent } from '@bene/shared';
 export interface CoachScheduledFollowupEventPayload {
   userId: string;
   details: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
-export class CoachScheduledFollowupEvent implements DomainEvent {
-  public readonly eventName = 'CoachScheduledFollowup';
+export class CoachScheduledFollowupEvent extends DomainEvent {
   public readonly payload: CoachScheduledFollowupEventPayload;
-  public readonly occurredAt: Date;
-  public readonly eventId: string;
 
   constructor(payload: CoachScheduledFollowupEventPayload) {
+    super('CoachScheduledFollowup');
     this.payload = payload;
-    this.occurredAt = new Date();
-    this.eventId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
   }
 }

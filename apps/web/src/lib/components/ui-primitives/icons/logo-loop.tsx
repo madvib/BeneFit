@@ -1,23 +1,29 @@
 'use client';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export type LogoItem =
-  | {
-      node: React.ReactNode;
-      href?: string;
-      title?: string;
-      ariaLabel?: string;
-    }
-  | {
-      src: string;
-      alt?: string;
-      href?: string;
-      title?: string;
-      srcSet?: string;
-      sizes?: string;
-      width?: number;
-      height?: number;
-    };
+export interface LogoItemNode {
+  node: React.ReactNode;
+  href?: string;
+  title?: string;
+  ariaLabel?: string;
+}
+
+export interface LogoItemImage {
+  src: string;
+  alt?: string;
+  href?: string;
+  title?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+}
+
+export type LogoItem = LogoItemNode | LogoItemImage;
+
+function isNodeItem(item: LogoItem): item is LogoItemNode {
+  return 'node' in item;
+}
 
 export interface LogoLoopProps {
   logos: LogoItem[];
@@ -31,7 +37,7 @@ export interface LogoLoopProps {
   fadeOut?: boolean;
   fadeOutColor?: string;
   scaleOnHover?: boolean;
-  renderItem?: (item: LogoItem, key: React.Key) => React.ReactNode;
+  renderItem?: (_item: LogoItem, _key: React.Key) => React.ReactNode;
   ariaLabel?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -52,10 +58,9 @@ const cx = (...parts: Array<string | false | null | undefined>) =>
 const useResizeObserver = (
   callback: () => void,
   elements: Array<React.RefObject<Element | null>>,
-  dependencies: React.DependencyList,
 ) => {
   useEffect(() => {
-    if (!window.ResizeObserver) {
+    if (!globalThis.ResizeObserver) {
       const handleResize = () => callback();
       window.addEventListener('resize', handleResize);
       callback();
@@ -72,15 +77,15 @@ const useResizeObserver = (
     callback();
 
     return () => {
-      observers.forEach((observer) => observer?.disconnect());
+      for (const observer of observers) observer?.disconnect();
     };
-  }, dependencies);
+  }, [callback, elements]);
 };
 
 const useImageLoader = (
   seqRef: React.RefObject<HTMLUListElement | null>,
   onLoad: () => void,
-  dependencies: React.DependencyList,
+  trigger: unknown,
 ) => {
   useEffect(() => {
     const images = seqRef.current?.querySelectorAll('img') ?? [];
@@ -98,7 +103,7 @@ const useImageLoader = (
       }
     };
 
-    images.forEach((img) => {
+    for (const img of images) {
       const htmlImg = img as HTMLImageElement;
       if (htmlImg.complete) {
         handleImageLoad();
@@ -106,15 +111,15 @@ const useImageLoader = (
         htmlImg.addEventListener('load', handleImageLoad, { once: true });
         htmlImg.addEventListener('error', handleImageLoad, { once: true });
       }
-    });
+    }
 
     return () => {
-      images.forEach((img) => {
+      for (const img of images) {
         img.removeEventListener('load', handleImageLoad);
         img.removeEventListener('error', handleImageLoad);
-      });
+      }
     };
-  }, dependencies);
+  }, [onLoad, seqRef, trigger]);
 };
 
 const useAnimationLoop = (
@@ -136,9 +141,9 @@ const useAnimationLoop = (
     if (!track) return;
 
     const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      globalThis.window !== undefined &&
+      globalThis.matchMedia &&
+      globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const seqSize = isVertical ? seqHeight : seqWidth;
 
@@ -151,7 +156,7 @@ const useAnimationLoop = (
     }
 
     if (prefersReduced) {
-      track.style.transform = isVertical ? 'translate3d(0, 0, 0)' : 'translate3d(0, 0, 0)';
+      track.style.transform = 'translate3d(0, 0, 0)';
       return () => {
         lastTimestampRef.current = null;
       };
@@ -193,7 +198,7 @@ const useAnimationLoop = (
       }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
+  }, [trackRef, targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
 };
 
 export const LogoLoop = React.memo<LogoLoopProps>(
@@ -226,7 +231,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
     const effectiveHoverSpeed = useMemo(() => {
       if (hoverSpeed !== undefined) return hoverSpeed;
       if (pauseOnHover === true) return 0;
-      if (pauseOnHover === false) return undefined;
+      if (pauseOnHover === false) return;
       return 0;
     }, [hoverSpeed, pauseOnHover]);
 
@@ -271,13 +276,11 @@ export const LogoLoop = React.memo<LogoLoopProps>(
       }
     }, [isVertical]);
 
-    useResizeObserver(
-      updateDimensions,
-      [containerRef, seqRef],
-      [logos, gap, logoHeight, isVertical],
-    );
+    const observerElements = useMemo(() => [containerRef, seqRef], [containerRef, seqRef]);
 
-    useImageLoader(seqRef, updateDimensions, [logos, gap, logoHeight, isVertical]);
+    useResizeObserver(updateDimensions, observerElements);
+
+    useImageLoader(seqRef, updateDimensions, logos);
 
     useAnimationLoop(
       trackRef,
@@ -339,9 +342,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           );
         }
 
-        const isNodeItem = 'node' in item;
-
-        const content = isNodeItem ? (
+        const content = isNodeItem(item) ? (
           <span
             className={cx(
               'inline-flex items-center',
@@ -349,9 +350,9 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120',
             )}
-            aria-hidden={!!(item as any).href && !(item as any).ariaLabel}
+            aria-hidden={!!item.href && !item.ariaLabel}
           >
-            {(item as any).node}
+            {item.node}
           </span>
         ) : (
           <img
@@ -363,24 +364,24 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120',
             )}
-            src={(item as any).src}
-            srcSet={(item as any).srcSet}
-            sizes={(item as any).sizes}
-            width={(item as any).width}
-            height={(item as any).height}
-            alt={(item as any).alt ?? ''}
-            title={(item as any).title}
+            src={item.src}
+            srcSet={item.srcSet}
+            sizes={item.sizes}
+            width={item.width}
+            height={item.height}
+            alt={item.alt ?? ''}
+            title={item.title}
             loading="lazy"
             decoding="async"
             draggable={false}
           />
         );
 
-        const itemAriaLabel = isNodeItem
-          ? ((item as any).ariaLabel ?? (item as any).title)
-          : ((item as any).alt ?? (item as any).title);
+        const itemAriaLabel = isNodeItem(item)
+          ? (item.ariaLabel ?? item.title)
+          : (item.alt ?? item.title);
 
-        const inner = (item as any).href ? (
+        const inner = item.href ? (
           <a
             className={cx(
               'inline-flex items-center rounded no-underline',
@@ -388,7 +389,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               'hover:opacity-80',
               'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-current',
             )}
-            href={(item as any).href}
+            href={item.href}
             aria-label={itemAriaLabel || 'logo link'}
             target="_blank"
             rel="noreferrer noopener"
@@ -432,18 +433,22 @@ export const LogoLoop = React.memo<LogoLoopProps>(
       [copyCount, logos, renderLogoItem, isVertical],
     );
 
-    const containerStyle = useMemo(
-      (): React.CSSProperties => ({
-        width: isVertical
-          ? toCssLength(width) === '100%'
-            ? undefined
-            : toCssLength(width)
-          : (toCssLength(width) ?? '100%'),
+    const containerStyle = useMemo((): React.CSSProperties => {
+      let widthStyle: string | undefined;
+      const cssWidth = toCssLength(width);
+
+      if (isVertical) {
+        widthStyle = cssWidth === '100%' ? undefined : cssWidth;
+      } else {
+        widthStyle = cssWidth ?? '100%';
+      }
+
+      return {
+        width: widthStyle,
         ...cssVariables,
         ...style,
-      }),
-      [width, cssVariables, style, isVertical],
-    );
+      };
+    }, [width, cssVariables, style, isVertical]);
 
     return (
       <div

@@ -14,7 +14,7 @@
     }
   },
   "peerDependencies": {
-    "@bene/gateway": "workspace:*",
+    "@bene/shared": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "agents": "catalog:",
     "better-auth": "catalog:",
@@ -24,6 +24,16 @@
     "zod": "catalog:"
   },
   "nx": {
+    "implicitDependencies": [
+      "@bene/gateway"
+    ],
+    "targets": {
+      "build": {
+        "dependsOn": [
+          "@bene/gateway:build-client"
+        ]
+      }
+    },
     "tags": [
       "scope:client",
       "type:library",

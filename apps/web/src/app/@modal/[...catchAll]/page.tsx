@@ -7,10 +7,13 @@ export default function ModalCatchAll() {
   switch (pathname) {
     case '/login':
       redirect('/auth/login');
+      break;
     case '/signup':
       redirect('/auth/signup');
+      break;
     case '/password-reset':
       redirect('/auth/password-reset');
+      break;
     default:
       return null;
   }

@@ -13,45 +13,33 @@ export default function EmailConfirmedPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+
   useEffect(() => {
     const verifyEmail = async () => {
-      try {
-        // Get token from URL (Better Auth sends this)
-        const token = searchParams.get('token');
+      const token = searchParams.get('token');
 
-        if (!token) {
-          setError('Verification token is missing');
-          setLoading(false);
-          return;
-        }
-
-        // Verify the email using Better Auth
-        const { error: verifyError } = await authClient.verifyEmail({
-          query: {
-            token,
-          },
-        });
-
-        if (verifyError) {
-          setError(verifyError.message || 'Failed to verify email');
-          setLoading(false);
-        } else {
-          setSuccess(true);
-          setLoading(false);
-
-          // Redirect to dashboard after showing success message
-          setTimeout(() => {
-            router.push(ROUTES.USER.ACTIVITIES);
-          }, 2000);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+      if (!token) {
+        setError('Verification token is missing');
         setLoading(false);
+        return;
+      }
+
+      const { error: verifyError } = await authClient.verifyEmail({
+        query: { token },
+      });
+
+      if (verifyError) {
+        setError(verifyError.message || 'Failed to verify email');
+        setLoading(false);
+      } else {
+        setSuccess(true);
+        setLoading(false);
+        setTimeout(() => router.push(ROUTES.USER.ACTIVITIES), 2000);
       }
     };
 
     verifyEmail();
-  }, [searchParams, authClient, router]);
+  }, [searchParams, router]);
 
   if (loading) {
     return <LoadingSpinner variant="screen" text="Verifying email confirmation..." />;
@@ -66,7 +54,7 @@ export default function EmailConfirmedPage() {
           </div>
           <h2 className="text-secondary-foreground mt-6 text-3xl font-bold">Email Confirmed!</h2>
           <p className="text-secondary-foreground mt-4">
-            Your email has been successfully confirmed. You{"'"}re now logged in and can access
+            Your email has been successfully confirmed. You&apos;re now logged in and can access
             all features.
           </p>
           <p className="text-secondary-foreground mt-2">Redirecting to your dashboard...</p>
@@ -87,11 +75,14 @@ export default function EmailConfirmedPage() {
           {error || "We couldn't confirm your email address. The link may have expired."}
         </p>
         <div className="mt-6 space-y-3">
-          <button onClick={() => router.push(ROUTES.MODAL.LOGIN)} className="btn btn-primary w-full">
+          <button
+            onClick={() => (globalThis.location.href = ROUTES.MODAL.LOGIN)}
+            className="btn btn-primary w-full"
+          >
             Go to Login
           </button>
           <button
-            onClick={() => router.push(ROUTES.AUTH.CONFIRM_EMAIL)}
+            onClick={() => (globalThis.location.href = ROUTES.AUTH.CONFIRM_EMAIL)}
             className="btn btn-secondary w-full"
           >
             Resend Verification Email

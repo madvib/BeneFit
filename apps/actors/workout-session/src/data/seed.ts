@@ -47,15 +47,17 @@ const sessions: NewSessionMetadata[] = [
   },
 ];
 
-const participantsData: NewParticipant[] = SEED_USERS.map((u, index) => ({
-  id: `part_00${ index + 1 }`,
-  userId: u.id,
-  displayName: u.name,
-  avatarUrl: u.avatarUrl,
-  joinedAt: new Date((now - (3600 - (index * 100))) * 1000),
-  lastHeartbeatAt: new Date((now - (60 * (index + 1))) * 1000),
-  status: 'active',
-}));
+const participantsData: NewParticipant[] = SEED_USERS
+  .filter(u => u.id !== SEED_USER_IDS.USER_003) // Exclude USER_003 (Empty State)
+  .map((u, index) => ({
+    id: `part_00${ index + 1 }`,
+    userId: u.id,
+    displayName: u.name,
+    avatarUrl: u.avatarUrl,
+    joinedAt: new Date((now - (3600 - (index * 100))) * 1000),
+    lastHeartbeatAt: new Date((now - (60 * (index + 1))) * 1000),
+    status: 'active',
+  }));
 
 const progress: NewActivityProgress[] = [
   {
@@ -83,19 +85,7 @@ const progress: NewActivityProgress[] = [
     startedAt: new Date((now - 1200) * 1000),
     updatedAt: new Date((now - 120) * 1000),
   },
-  {
-    id: 'ap_003',
-    participantId: 'part_003',
-    activityId: 'act_001',
-    activityName: 'Squats',
-    orderIndex: 0,
-    currentSet: 4,
-    currentRep: 5,
-    currentWeight: 95,
-    status: 'in_progress',
-    startedAt: new Date((now - 1500) * 1000),
-    updatedAt: new Date((now - 90) * 1000),
-  },
+  // Removed progress for part_003 (USER_003)
 ];
 
 const chat: NewSessionChat[] = [
@@ -111,24 +101,14 @@ const chat: NewSessionChat[] = [
     message: 'Absolutely! I brought my pre-workout!',
     createdAt: new Date((now - 3400) * 1000),
   },
-  {
-    id: 'chat_003',
-    participantId: 'part_003',
-    message: 'Where are we meeting?',
-    createdAt: new Date((now - 1800) * 1000),
-  },
+  // Removed chat from part_003
   {
     id: 'chat_004',
     participantId: 'part_001',
     message: "In the squat rack area, we'll start with warm-up sets",
     createdAt: new Date((now - 1750) * 1000),
   },
-  {
-    id: 'chat_005',
-    participantId: 'part_003',
-    message: 'Sounds good, on my way now',
-    createdAt: new Date((now - 1700) * 1000),
-  },
+  // Removed chat_005 from part_003
 ];
 
 /**

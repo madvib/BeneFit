@@ -65,50 +65,47 @@ export function SignupForm({ isModal = false }) {
         subtitle="Join thousands of users achieving their goals"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <form.AppField
-            name="name"
-            children={(field) => (
+          <form.AppField name="name">
+            {(field) => (
               <field.ControlledInput label="First Name" type="text" placeholder="John" />
             )}
-          />
+          </form.AppField>
 
-          <form.AppField
-            name="surname"
-            children={(field) => (
-              <field.ControlledInput label="Last Name" type="text" placeholder="Doe" />
-            )}
-          />
+          <form.AppField name="surname">
+            {(field) => <field.ControlledInput label="Last Name" type="text" placeholder="Doe" />}
+          </form.AppField>
         </div>
 
-        <form.AppField
-          name="email"
-          children={(field) => (
+        <form.AppField name="email">
+          {(field) => (
             <field.ControlledInput label="Email" type="email" placeholder="you@example.com" />
           )}
-        />
+        </form.AppField>
 
-        <form.AppField
-          name="password"
-          children={(field) => (
+        <form.AppField name="password">
+          {(field) => (
             <field.ControlledInput label="Password" type="password" placeholder="••••••••" />
           )}
-        />
+        </form.AppField>
 
-        <form.AppField
-          name="confirmPassword"
-          children={(field) => (
+        <form.AppField name="confirmPassword">
+          {(field) => (
             <field.ControlledInput
               label="Confirm Password"
               type="password"
               placeholder="••••••••"
             />
           )}
-        />
+        </form.AppField>
 
         <form.SubmissionError />
         <FormSuccessMessage message={authSubmit.success} />
 
-        <form.SubmitButton label="Create Account" submitLabel="Creating account..." />
+        <form.SubmitButton
+          label="Create Account"
+          submitLabel="Creating account..."
+          className="w-full"
+        />
 
         <div className="relative flex items-center py-2">
           <div className="border-border grow border-t"></div>

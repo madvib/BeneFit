@@ -43,10 +43,10 @@ export const workoutRoutes = new Hono<{
   })
   .get(
     '/upcoming',
-    zValidator('json', GetUpcomingWorkoutsRequestClientSchema),
+    zValidator('query', GetUpcomingWorkoutsRequestClientSchema),
     async (c) => {
       const user = c.get('user');
-      const clientInput = c.req.valid('json');
+      const clientInput = c.req.valid('query');
 
       const useCaseInput = {
         ...clientInput,
@@ -64,10 +64,10 @@ export const workoutRoutes = new Hono<{
   )
   .get(
     '/history',
-    zValidator('json', GetWorkoutHistoryRequestClientSchema),
+    zValidator('query', GetWorkoutHistoryRequestClientSchema),
     async (c) => {
       const user = c.get('user');
-      const clientInput = c.req.valid('json');
+      const clientInput = c.req.valid('query');
 
       const useCaseInput = {
         ...clientInput,

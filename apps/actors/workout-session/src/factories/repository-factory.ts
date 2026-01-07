@@ -1,16 +1,18 @@
+import { drizzle, type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
+
 import { WorkoutSessionRepository } from '@bene/training-application';
 import { DurableWorkoutSessionRepository } from '../repositories/durable-workout-session.repository';
-import { createDOClient, DOClient } from '@bene/persistence';
+import { workout_session_schema } from '../data/schema';
 
 /**
  * A factory responsible for instantiating all concrete Repository implementations.
  */
 export class RepositoryFactory {
   private _workoutSessionRepo?: WorkoutSessionRepository;
-  private db: DOClient<unknown>;
+  private db: DrizzleSqliteDODatabase<typeof workout_session_schema>;
 
   constructor(storage: DurableObjectStorage) {
-    this.db = createDOClient(storage);
+    this.db = drizzle(storage);
   }
 
   // --- Public Getters (Lazy-Loaded) ---

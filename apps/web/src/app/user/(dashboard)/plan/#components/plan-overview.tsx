@@ -9,7 +9,7 @@ type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
 
 interface PlanOverviewProps {
   currentPlan: PlanData | null;
-  onEditPlan: (id: string) => void;
+  onEditPlan: (_id: string) => void;
 }
 
 export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewProps) {

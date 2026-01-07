@@ -1,17 +1,10 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { WorkoutTemplateCommands } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { WorkoutSkippedEvent } from '../../events/workout-skipped.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SkipWorkoutRequest type instead */
-export interface SkipWorkoutRequest_Deprecated {
-  userId: string;
-  planId: string;
-  workoutId: string;
-  reason: string;
-}
+
 
 // Client-facing schema (what comes in the request body)
 export const SkipWorkoutRequestClientSchema = z.object({
@@ -30,13 +23,7 @@ export const SkipWorkoutRequestSchema = SkipWorkoutRequestClientSchema.extend({
 // Zod inferred type with original name
 export type SkipWorkoutRequest = z.infer<typeof SkipWorkoutRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SkipWorkoutResponse type instead */
-export interface SkipWorkoutResponse_Deprecated {
-  planId: string;
-  skippedWorkoutId: string;
-  message: string;
-}
+
 
 // Zod schema for response validation
 export const SkipWorkoutResponseSchema = z.object({
@@ -48,16 +35,18 @@ export const SkipWorkoutResponseSchema = z.object({
 // Zod inferred type with original name
 export type SkipWorkoutResponse = z.infer<typeof SkipWorkoutResponseSchema>;
 
-export class SkipWorkoutUseCase implements UseCase<
+export class SkipWorkoutUseCase extends BaseUseCase<
   SkipWorkoutRequest,
   SkipWorkoutResponse
 > {
   constructor(
     private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(request: SkipWorkoutRequest): Promise<Result<SkipWorkoutResponse>> {
+  protected async performExecution(request: SkipWorkoutRequest): Promise<Result<SkipWorkoutResponse>> {
     // 1. Load plan
     const planResult = await this.planRepository.findById(request.planId);
     if (planResult.isFailure) {

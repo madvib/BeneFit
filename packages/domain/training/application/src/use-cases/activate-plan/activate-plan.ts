@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { FitnessPlanCommands, FitnessPlanQueries } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { PlanActivatedEvent } from '../../events/plan-activated.event.js';
 
-// Client-facing schema (what comes in the request body)
 export const ActivatePlanRequestClientSchema = z.object({
   planId: z.string(),
   startDate: z.date().optional(), // Defaults to today
@@ -12,15 +11,12 @@ export const ActivatePlanRequestClientSchema = z.object({
 
 export type ActivatePlanRequestClient = z.infer<typeof ActivatePlanRequestClientSchema>;
 
-// Complete use case input schema (client data + server context)
 export const ActivatePlanRequestSchema = ActivatePlanRequestClientSchema.extend({
   userId: z.string(),
 });
 
-// Zod inferred type with original name
 export type ActivatePlanRequest = z.infer<typeof ActivatePlanRequestSchema>;
 
-// Zod schema for response validation
 export const ActivatePlanResponseSchema = z.object({
   planId: z.string(),
   status: z.string(),
@@ -34,19 +30,20 @@ export const ActivatePlanResponseSchema = z.object({
     .optional(),
 });
 
-// Zod inferred type with original name
 export type ActivatePlanResponse = z.infer<typeof ActivatePlanResponseSchema>;
 
-export class ActivatePlanUseCase implements UseCase<
+export class ActivatePlanUseCase extends BaseUseCase<
   ActivatePlanRequest,
   ActivatePlanResponse
 > {
   constructor(
     private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(request: ActivatePlanRequest): Promise<Result<ActivatePlanResponse>> {
+  protected async performExecution(request: ActivatePlanRequest): Promise<Result<ActivatePlanResponse>> {
     // 1. Load plan
     const planResult = await this.planRepository.findById(request.planId);
     if (planResult.isFailure) {
@@ -88,36 +85,15 @@ export class ActivatePlanUseCase implements UseCase<
       startDate: startDate,
       todaysWorkout: todaysWorkout
         ? {
-            workoutId: todaysWorkout.id,
-            type: todaysWorkout.type,
-            durationMinutes:
-              (todaysWorkout.activities as { duration?: number }[]).reduce(
-                (sum: number, a) => sum + (a.duration || 10),
-                0,
-              ) || 30,
-          }
+          workoutId: todaysWorkout.id,
+          type: todaysWorkout.type,
+          durationMinutes:
+            (todaysWorkout.activities as { duration?: number }[]).reduce(
+              (sum: number, a) => sum + (a.duration || 10),
+              0,
+            ) || 30,
+        }
         : undefined,
     });
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use ActivatePlanResponse type instead */
-export interface ActivatePlanResponse_Deprecated {
-  planId: string;
-  status: string;
-  startDate: Date;
-  todaysWorkout?: {
-    workoutId: string;
-    type: string;
-    durationMinutes: number;
-  };
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use ActivatePlanRequest type instead */
-export interface ActivatePlanRequest_Deprecated {
-  userId: string;
-  planId: string;
-  startDate?: Date; // Defaults to today
 }

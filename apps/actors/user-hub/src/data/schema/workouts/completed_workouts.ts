@@ -1,5 +1,7 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
+import { workoutActivities } from './workout_activities';
+import { workoutReactions } from './workout_reactions';
 
 export const completedWorkouts = sqliteTable(
   'completed_workouts',
@@ -75,3 +77,8 @@ export const completedWorkouts = sqliteTable(
 
 export type CompletedWorkout = typeof completedWorkouts.$inferSelect;
 export type NewCompletedWorkout = typeof completedWorkouts.$inferInsert;
+
+export const completedWorkoutsRelations = relations(completedWorkouts, ({ many }) => ({
+  activities: many(workoutActivities),
+  reactions: many(workoutReactions),
+}));

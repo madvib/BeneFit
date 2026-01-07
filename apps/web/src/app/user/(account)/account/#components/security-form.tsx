@@ -39,40 +39,37 @@ export default function SecurityForm() {
     <form.AppForm>
       <form.Root title="Security">
         <form.SubmissionError />
-        <FormSuccessMessage message={authSubmit.success} />;
+        <FormSuccessMessage message={authSubmit.success} />
         <div className="space-y-4">
-          <form.AppField
-            name="currentPassword"
-            children={(field) => (
+          <form.AppField name="currentPassword">
+            {(field) => (
               <field.ControlledInput
                 label="Current Password"
                 type="password"
                 placeholder="Enter current password"
               />
             )}
-          />
+          </form.AppField>
 
-          <form.AppField
-            name="newPassword"
-            children={(field) => (
+          <form.AppField name="newPassword">
+            {(field) => (
               <field.ControlledInput
                 label="New Password"
                 type="password"
                 placeholder="Enter new password"
               />
             )}
-          />
+          </form.AppField>
 
-          <form.AppField
-            name="confirmPassword"
-            children={(field) => (
+          <form.AppField name="confirmPassword">
+            {(field) => (
               <field.ControlledInput
                 label="Confirm New Password"
                 type="password"
                 placeholder="Confirm new password"
               />
             )}
-          />
+          </form.AppField>
         </div>
         <form.SubmitButton label="Change Password" submitLabel="Changing Password..." />
       </form.Root>

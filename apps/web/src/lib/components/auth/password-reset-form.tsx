@@ -20,7 +20,7 @@ export function PasswordResetForm({ isModal = false }) {
     onSubmit: async ({ value }) => {
       await authClient.requestPasswordReset({
         email: value.email,
-        redirectTo: `${window.location.origin}${ROUTES.AUTH.UPDATE_PASSWORD}`,
+        redirectTo: `${globalThis.location.origin}${ROUTES.AUTH.UPDATE_PASSWORD}`,
         fetchOptions: {
           onError(ctx) {
             authSubmit.onAuthError(ctx.error);
@@ -41,12 +41,11 @@ export function PasswordResetForm({ isModal = false }) {
   return (
     <form.AppForm>
       <form.Root title="Reset Password">
-        <form.AppField
-          name="email"
-          children={(field) => (
+        <form.AppField name="email">
+          {(field) => (
             <field.ControlledInput label="Email" type="email" placeholder="you@example.com" />
           )}
-        />
+        </form.AppField>
         <form.SubmissionError />
         <form.SubmitButton label="Send Reset Email" submitLabel="Sending..." />
         <div className="text-muted-foreground mt-4 text-center text-sm">

@@ -1,14 +1,9 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { CoachConversation } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetCoachHistoryRequest type instead */
-export interface GetCoachHistoryRequest_Deprecated {
-  userId: string;
-  limit?: number;
-}
+
 
 // Zod schema for request validation
 export const GetCoachHistoryRequestSchema = z.object({
@@ -19,30 +14,7 @@ export const GetCoachHistoryRequestSchema = z.object({
 // Zod inferred type with original name
 export type GetCoachHistoryRequest = z.infer<typeof GetCoachHistoryRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetCoachHistoryResponse type instead */
-export interface GetCoachHistoryResponse_Deprecated {
-  messages: Array<{
-    id: string;
-    role: 'user' | 'coach' | 'system';
-    content: string;
-    timestamp: Date;
-    actions?: Array<{
-      type: string;
-      details: string;
-    }>;
-  }>;
-  pendingCheckIns: Array<{
-    id: string;
-    question: string;
-    triggeredBy?: string;
-  }>;
-  stats: {
-    totalMessages: number;
-    totalCheckIns: number;
-    actionsApplied: number;
-  };
-}
+
 
 // Zod schema for response validation
 const ActionSchema = z.object({
@@ -79,20 +51,23 @@ export const GetCoachHistoryResponseSchema = z.object({
 // Zod inferred type with original name
 export type GetCoachHistoryResponse = z.infer<typeof GetCoachHistoryResponseSchema>;
 
-export class GetCoachHistoryUseCase implements UseCase<
+export class GetCoachHistoryUseCase extends BaseUseCase<
   GetCoachHistoryRequest,
   GetCoachHistoryResponse
 > {
-  constructor(private conversationRepository: CoachConversationRepository) {}
+  constructor(private conversationRepository: CoachConversationRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetCoachHistoryRequest,
   ): Promise<Result<GetCoachHistoryResponse>> {
     const conversationResult = await this.conversationRepository.findByUserId(
       request.userId,
     );
+
     if (conversationResult.isFailure) {
-      return Result.fail(new Error('No coaching history found'));
+      return Result.fail(conversationResult.error);
     }
 
     const conversation = conversationResult.value;

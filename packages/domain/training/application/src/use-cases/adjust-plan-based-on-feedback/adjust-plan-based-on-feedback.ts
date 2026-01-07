@@ -1,17 +1,15 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { AIPlanGenerator, AdjustPlanInput } from '../../services/ai-plan-generator.js';
 import { PlanAdjustedEvent } from '../../events/plan-adjusted.event.js';
 
-// Zod schema for request validation
 const RecentWorkoutSchema = z.object({
   perceivedExertion: z.number(),
   enjoyment: z.number(),
   difficultyRating: z.enum(['too_easy', 'just_right', 'too_hard']),
 });
 
-// Client-facing schema (what comes in the request body)
 export const AdjustPlanBasedOnFeedbackRequestClientSchema = z.object({
   planId: z.string(),
   feedback: z.string(), // "Too hard", "Loving it", "Need more rest", etc.
@@ -22,30 +20,26 @@ export type AdjustPlanBasedOnFeedbackRequestClient = z.infer<
   typeof AdjustPlanBasedOnFeedbackRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const AdjustPlanBasedOnFeedbackRequestSchema =
   AdjustPlanBasedOnFeedbackRequestClientSchema.extend({
     userId: z.string(),
   });
 
-// Zod inferred type with original name
 export type AdjustPlanBasedOnFeedbackRequest = z.infer<
   typeof AdjustPlanBasedOnFeedbackRequestSchema
 >;
 
-// Zod schema for response validation
 export const AdjustPlanBasedOnFeedbackResponseSchema = z.object({
   planId: z.string(),
   adjustmentsMade: z.array(z.string()),
   message: z.string(),
 });
 
-// Zod inferred type with original name
 export type AdjustPlanBasedOnFeedbackResponse = z.infer<
   typeof AdjustPlanBasedOnFeedbackResponseSchema
 >;
 
-export class AdjustPlanBasedOnFeedbackUseCase implements UseCase<
+export class AdjustPlanBasedOnFeedbackUseCase extends BaseUseCase<
   AdjustPlanBasedOnFeedbackRequest,
   AdjustPlanBasedOnFeedbackResponse
 > {
@@ -53,9 +47,11 @@ export class AdjustPlanBasedOnFeedbackUseCase implements UseCase<
     private planRepository: FitnessPlanRepository,
     private aiGenerator: AIPlanGenerator,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: AdjustPlanBasedOnFeedbackRequest,
   ): Promise<Result<AdjustPlanBasedOnFeedbackResponse>> {
     // 1. Load plan
@@ -81,7 +77,7 @@ export class AdjustPlanBasedOnFeedbackUseCase implements UseCase<
 
     if (adjustedPlanResult.isFailure) {
       return Result.fail(
-        new Error(`Failed to adjust plan: ${adjustedPlanResult.error}`),
+        new Error(`Failed to adjust plan: ${ adjustedPlanResult.error }`),
       );
     }
 
@@ -110,24 +106,4 @@ export class AdjustPlanBasedOnFeedbackUseCase implements UseCase<
       message: 'Your plan has been adjusted based on your feedback',
     });
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use AdjustPlanBasedOnFeedbackRequest type instead */
-export interface AdjustPlanBasedOnFeedbackRequest_Deprecated {
-  userId: string;
-  planId: string;
-  feedback: string; // "Too hard", "Loving it", "Need more rest", etc.
-  recentWorkouts: Array<{
-    perceivedExertion: number;
-    enjoyment: number;
-    difficultyRating: 'too_easy' | 'just_right' | 'too_hard';
-  }>;
-}
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use AdjustPlanBasedOnFeedbackResponse type instead */
-export interface AdjustPlanBasedOnFeedbackResponse_Deprecated {
-  planId: string;
-  adjustmentsMade: string[];
-  message: string;
 }

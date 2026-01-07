@@ -20,7 +20,7 @@ export function toDomainFitnessGoals(
   fitnessGoals: z.infer<typeof FitnessGoalsSchema>,
 ): FitnessGoals {
   return {
-    primary: fitnessGoals.primary,
+    primary: fitnessGoals.primary as FitnessGoals['primary'],
     secondary: fitnessGoals.secondary,
     targetWeight: fitnessGoals.targetWeight,
     targetBodyFat: fitnessGoals.targetBodyFat,
@@ -56,7 +56,7 @@ export function toDomainExperienceProfile(
 
 export function toDomainPlanGoals(goals: z.infer<typeof PlanGoalsSchema>): PlanGoals {
   return {
-    primary: goals.primary,
+    primary: goals.primary as PlanGoals['primary'],
     secondary: goals.secondary,
     targetMetrics: {
       targetWeights: goals.targetMetrics.targetWeights,
@@ -107,7 +107,7 @@ export function toDomainWorkoutVerification(
   // Handle different verification types based on the method
   let verificationData: any;
 
-  switch(verification.method) {
+  switch (verification.method) {
     case 'gps':
       // If we have GPS data in the schema, use it; otherwise create minimal GPS verification
       verificationData = {

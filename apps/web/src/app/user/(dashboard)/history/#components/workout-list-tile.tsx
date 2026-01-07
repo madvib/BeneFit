@@ -21,7 +21,7 @@ export default function HistoryRow(workout: WorkoutData) {
           <div
             className={`flex h-8 w-8 items-center justify-center rounded-md border ${getActivityColorClass(workout.type)}`}
           >
-            {getActivityIcon(workout.type as ActivityType)}
+            {getActivityIcon(workout.type)}
           </div>
           <div>
             <p className="text-foreground font-medium">{workout.type}</p>

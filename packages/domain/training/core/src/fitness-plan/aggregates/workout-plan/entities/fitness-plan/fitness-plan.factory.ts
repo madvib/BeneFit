@@ -9,6 +9,8 @@ import {
 } from '@/fitness-plan/value-objects/index.js';
 import { randomUUID } from 'crypto';
 
+import { WeeklySchedule } from '../weekly-schedule/index.js';
+
 interface CreateDraftParams {
   userId: string;
   title: string;
@@ -18,6 +20,7 @@ interface CreateDraftParams {
   progression: ProgressionStrategy;
   constraints: TrainingConstraints;
   startDate: string;
+  weeks?: WeeklySchedule[];
 }
 
 /**
@@ -49,7 +52,7 @@ export function createDraftFitnessPlan(params: CreateDraftParams): Result<Fitnes
     goals: params.goals,
     progression: params.progression,
     constraints: params.constraints,
-    weeks: [],
+    weeks: params.weeks || [],
     status: 'draft',
     currentPosition: initialPositionResult.value,
     startDate: params.startDate,

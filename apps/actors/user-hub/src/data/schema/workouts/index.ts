@@ -1,4 +1,4 @@
-import { completedWorkouts } from './completed_workouts';
+import { completedWorkouts, completedWorkoutsRelations } from './completed_workouts';
 import { workoutActivities, workoutActivitiesRelations } from './workout_activities';
 import { workoutMetadata } from './workout_metadata';
 import { workoutReactions, workoutReactionsRelations } from './workout_reactions';
@@ -10,6 +10,7 @@ export * from './workout_reactions';
 
 export const workouts_schema = {
   completedWorkouts,
+  completedWorkoutsRelations,
   workoutActivities,
   workoutActivitiesRelations,
   workoutMetadata,

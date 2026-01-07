@@ -2,7 +2,7 @@
 // Basic UI building blocks
 
 // Buttons
-export { Button } from './buttons/button';
+export { Button, type ButtonProps } from './buttons/button';
 export { ActionButton } from './buttons/action-button';
 
 // Cards
@@ -13,6 +13,7 @@ export { default as SpotlightCard } from './card/spotlight-card';
 
 // Forms
 export { default as Input } from './form/input';
+export { default as Label } from './form/label';
 export { default as Select } from './form/select';
 export { default as Checkbox } from './form/checkbox';
 export { default as FormSection } from './form/form-section';

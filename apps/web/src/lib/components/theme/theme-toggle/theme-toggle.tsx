@@ -1,18 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/lib/components';
+import { useHydrated } from '@/lib/hooks/use-hydrated';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const hydrated = useHydrated();
 
-  return mounted ? (
+  return hydrated ? (
     <Button
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       aria-label="Toggle theme"

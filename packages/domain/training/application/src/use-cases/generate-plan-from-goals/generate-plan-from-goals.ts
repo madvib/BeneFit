@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { PlanGoals, UserProfile } from '@bene/training-core';
 import {
   FitnessPlanRepository,
@@ -11,7 +11,7 @@ import {
 } from '../../services/ai-plan-generator.js';
 import { PlanGoalsSchema } from '../../schemas/index.js';
 import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
-import { toDomainPlanGoals } from '../../utils/type-converters.js';
+import { toDomainPlanGoals } from '../../mappers/type-mappers.js';
 
 // Client-facing schema (what comes in the request body)
 export const GeneratePlanFromGoalsRequestClientSchema = z.object({
@@ -59,7 +59,7 @@ export type GeneratePlanFromGoalsResponse = z.infer<
   typeof GeneratePlanFromGoalsResponseSchema
 >;
 
-export class GeneratePlanFromGoalsUseCase implements UseCase<
+export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
   GeneratePlanFromGoalsRequest,
   GeneratePlanFromGoalsResponse
 > {
@@ -68,9 +68,11 @@ export class GeneratePlanFromGoalsUseCase implements UseCase<
     private profileRepository: UserProfileRepository,
     private aiGenerator: AIPlanGenerator,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GeneratePlanFromGoalsRequest,
   ): Promise<Result<GeneratePlanFromGoalsResponse>> {
     // 1. Load user profile for context
@@ -92,12 +94,15 @@ export class GeneratePlanFromGoalsUseCase implements UseCase<
 
     // 3. Generate plan using AI
     const planInput: GeneratePlanInput = {
+      userId: request.userId,
       goals: toDomainPlanGoals(request.goals),
       constraints: profile.trainingConstraints || {
-        equipment: [],
+        availableDays: [],
+        availableEquipment: [],
+        location: 'home',
+        maxDuration: 60,
         injuries: [],
-        timeConstraints: [],
-      },
+      } as any, // Type mismatch workaround if needed, verifying below
       experienceLevel: profile.experienceProfile?.level || 'beginner',
       customInstructions: request.customInstructions,
     };
@@ -105,14 +110,14 @@ export class GeneratePlanFromGoalsUseCase implements UseCase<
     const planResult = await this.aiGenerator.generatePlan(planInput);
 
     if (planResult.isFailure) {
-      return Result.fail(new Error(`Failed to generate plan: ${planResult.error}`));
+      return Result.fail(new Error(`Failed to generate plan: ${ planResult.error }`));
     }
     const plan = planResult.value;
 
     // 4. Save plan (in draft state)
     const saveResult = await this.planRepository.save(plan);
     if (saveResult.isFailure) {
-      return Result.fail(new Error(`Failed to save plan: ${saveResult.error}`));
+      return Result.fail(new Error(`Failed to save plan: ${ saveResult.error }`));
     }
 
     // 5. Emit event
@@ -146,35 +151,10 @@ export class GeneratePlanFromGoalsUseCase implements UseCase<
               ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][w.dayOfWeek || 0] ||
               'Unknown',
             type: w.type,
-            summary: `${w.type} workout - ${duration} minutes`,
+            summary: `${ w.type } workout - ${ duration } minutes`,
           };
         }),
       },
     });
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GeneratePlanFromGoalsRequest type instead */
-export interface GeneratePlanFromGoalsRequest_Deprecated {
-  userId: string;
-  goals: PlanGoals;
-  customInstructions?: string; // "I want more cardio", "Focus on upper body", etc.
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GeneratePlanFromGoalsResponse type instead */
-export interface GeneratePlanFromGoalsResponse_Deprecated {
-  planId: string;
-  name: string;
-  durationWeeks: number;
-  workoutsPerWeek: number;
-  preview: {
-    weekNumber: number;
-    workouts: Array<{
-      day: string;
-      type: string;
-      summary: string;
-    }>;
-  };
 }

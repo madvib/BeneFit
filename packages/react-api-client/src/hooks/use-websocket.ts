@@ -1,13 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createWebSocketClient, BenefitWebSocketClient } from '../websocket';
 
-// Helper to get token (duplicated from client.ts, maybe shared lib?)
-const getToken = (): string => {
-  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-    return localStorage.getItem('token') || '';
-  }
-  return '';
-};
+import { getToken } from '../lib/auth/utils';
 
 export function useWebSocket(userId: string) {
   const [client, setClient] = useState<BenefitWebSocketClient | null>(null);
@@ -57,7 +51,7 @@ export function useWorkoutProgress(userId: string) {
     if (!connected) return;
 
     const unsubscribe = subscribe?.('workout.progress', (data) => {
-      setProgress(data && typeof data === 'object' && 'data' in data ? (data as {data: unknown}).data : null);
+      setProgress(data && typeof data === 'object' && 'data' in data ? (data as { data: unknown }).data : null);
     });
 
     return unsubscribe;
@@ -86,7 +80,7 @@ export function useStreamingChat(userId: string) {
 
     const unsubscribeChunk = subscribe?.('chat.chunk', (data) => {
       if (data && typeof data === 'object' && 'chunk' in data) {
-        setChunks((prev) => [...prev, (data as {chunk: string}).chunk]);
+        setChunks((prev) => [...prev, (data as { chunk: string }).chunk]);
       }
     });
 

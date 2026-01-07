@@ -34,7 +34,10 @@
         "options": {
           "command": "tsc --project tsconfig.client.json",
           "cwd": "apps/gateway"
-        }
+        },
+        "outputs": [
+          "{workspaceRoot}/packages/api-client/src/generated"
+        ]
       }
     },
     "tags": [

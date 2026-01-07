@@ -28,7 +28,7 @@ async function createNodesInternal(configFilePath: string) {
     return {};
   }
   const targets: Record<string, TargetConfiguration> = {
-    lint: { executor: '@nx/eslint:lint' },
+    lint: { executor: '@nx/eslint:lint', options: { eslintConfig: './eslint.config.mjs', fix: true } },
   };
 
   return {

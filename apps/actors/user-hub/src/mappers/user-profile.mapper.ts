@@ -30,10 +30,10 @@ export function toProfileDatabase(profile: UserProfile): NewProfile {
     timezone: profile.timezone,
 
     // Everything as JSON - no extraction needed
-    experienceProfileJson: profile.experienceProfile as any,
-    fitnessGoalsJson: profile.fitnessGoals as any,
-    trainingConstraintsJson: profile.trainingConstraints as any,
-    preferencesJson: profile.preferences as any,
+    experienceProfileJson: profile.experienceProfile as unknown,
+    fitnessGoalsJson: profile.fitnessGoals as unknown,
+    trainingConstraintsJson: profile.trainingConstraints as unknown,
+    preferencesJson: profile.preferences as unknown,
 
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
@@ -80,11 +80,32 @@ export function toDomain(row: ProfileWithRelations): UserProfile {
     location: row.location || undefined,
     timezone: row.timezone,
 
-    // Source of truth from JSON
-    experienceProfile: row.experienceProfileJson as ExperienceProfile,
-    fitnessGoals: row.fitnessGoalsJson as FitnessGoals,
-    trainingConstraints: row.trainingConstraintsJson as TrainingConstraints,
-    preferences: row.preferencesJson as UserPreferences,
+    // Source of truth from JSON (with fallbacks for nullable fields)
+    experienceProfile: (row.experienceProfileJson as ExperienceProfile) || {
+      level: 'beginner',
+      yearsTraining: 0,
+      sportBackground: [],
+      injuryHistory: [],
+      equipmentAccess: [],
+    },
+    fitnessGoals: (row.fitnessGoalsJson as FitnessGoals) || {
+      primary: 'general_fitness',
+      secondary: [],
+      targetBodyFat: null,
+      targetWeight: null,
+      deadlines: [],
+    },
+    trainingConstraints: (row.trainingConstraintsJson as TrainingConstraints) || {
+      daysPerWeek: 3,
+      minutesPerSession: 45,
+      preferredDays: [],
+      blackoutDates: [],
+    },
+    preferences: (row.preferencesJson as UserPreferences) || {
+      units: 'metric',
+      theme: 'light',
+      notifications: { email: true, push: true },
+    },
 
     stats: {
       totalWorkouts: stats.totalWorkoutsCompleted,

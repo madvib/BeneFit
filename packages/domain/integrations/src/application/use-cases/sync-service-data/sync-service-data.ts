@@ -1,47 +1,45 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { IntegrationClient } from '@app/ports/integration-client.js';
 import { ServiceSyncedEvent } from '@app/events/service-synced.event.js';
+import { ActivitiesSyncedEvent } from '@app/events/activities-synced.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SyncServiceDataRequest type instead */
-export interface SyncServiceDataRequest_Deprecated {
-  serviceId: string;
-}
+// Type for activity normalizer functions (Strava, Garmin, etc.)
+type ActivityNormalizer = (activities: any[]) => import('@core/normalized-activity.js').NormalizedActivity[];
 
 // Zod schema for request validation
 export const SyncServiceDataRequestSchema = z.object({
   serviceId: z.string(),
 });
 
-// Zod inferred type with original name
 export type SyncServiceDataRequest = z.infer<typeof SyncServiceDataRequestSchema>;
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use SyncServiceDataResponse type instead */
-export interface SyncServiceDataResponse_Deprecated {
-  serviceId: string;
-  success: boolean;
-  workoutsSynced: number;
-  activitiesSynced: number;
-  error?: string;
-}
 
 // Zod schema for response validation
 export const SyncServiceDataResponseSchema = z.object({
   serviceId: z.string(),
   success: z.boolean(),
-  workoutsSynced: z.number(),
   activitiesSynced: z.number(),
   error: z.string().optional(),
 });
 
-// Zod inferred type with original name
 export type SyncServiceDataResponse = z.infer<typeof SyncServiceDataResponseSchema>;
 
-export class SyncServiceDataUseCase implements UseCase<
+/**
+ * Use case for syncing data from external services.
+ * 
+ * RESPONSIBILITIES:
+ * - Fetch activities from external service
+ * - Normalize activities to common structure
+ * - Update sync status on ConnectedService
+ * - Emit ActivitiesSyncedEvent for other domains to consume
+ * 
+ * DOES NOT:
+ * - Map or persist domain-specific models (e.g., CompletedWorkout)
+ * - This is handled by event subscribers in the Training domain
+ */
+export class SyncServiceDataUseCase extends BaseUseCase<
   SyncServiceDataRequest,
   SyncServiceDataResponse
 > {
@@ -49,9 +47,12 @@ export class SyncServiceDataUseCase implements UseCase<
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,
     private eventBus: EventBus,
-  ) {}
+    private activityNormalizers?: Map<string, ActivityNormalizer>,
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: SyncServiceDataRequest,
   ): Promise<Result<SyncServiceDataResponse>> {
     // 1. Load service
@@ -70,7 +71,7 @@ export class SyncServiceDataUseCase implements UseCase<
     // 3. Get client
     const client = this.integrationClients.get(service.serviceType);
     if (!client) {
-      return Result.fail(new Error(`No client for ${service.serviceType}`));
+      return Result.fail(new Error(`No client for ${ service.serviceType }`));
     }
 
     // 4. Refresh credentials if needed
@@ -78,7 +79,7 @@ export class SyncServiceDataUseCase implements UseCase<
       const refreshResult = await this.refreshServiceCredentials(service, client);
       if (refreshResult.isFailure) {
         return Result.fail(
-          new Error(`Credential refresh failed: ${refreshResult.error}`),
+          new Error(`Credential refresh failed: ${ refreshResult.error }`),
         );
       }
       service = refreshResult.value;
@@ -118,36 +119,46 @@ export class SyncServiceDataUseCase implements UseCase<
       return Result.fail(activitiesResult.error);
     }
 
-    const activities = activitiesResult.value;
+    const rawActivities = activitiesResult.value;
 
-    // 7. Map to CompletedWorkouts and save
-    // (This would call CompletedWorkoutRepository in real implementation)
-    const workoutsSynced = (activities as { type: string }[]).filter(
-      (a) => a.type === 'workout',
-    ).length;
-    const activitiesSynced = activities.length;
+    // 7. Normalize activities using service-specific normalizer
+    const normalizer = this.activityNormalizers?.get(service.serviceType);
+    const normalizedActivities = normalizer ? normalizer(rawActivities) : [];
 
-    // 8. Record success
+    const activitiesSynced = rawActivities.length;
+
+    // 8. Record success (before emitting events)
     const syncSuccessService = ConnectedServiceCommands.recordSyncSuccess(service, {
-      workouts: workoutsSynced,
+      workouts: 0, // Will be updated by Training domain event handlers
       activities: activitiesSynced,
     });
 
     await this.serviceRepository.save(syncSuccessService);
 
-    // 9. Emit event
+    // 9. Emit ActivitiesSyncedEvent with normalized data
+    // Training domain will listen to this and create CompletedWorkouts
+    await this.eventBus.publish(
+      new ActivitiesSyncedEvent({
+        userId: service.userId,
+        serviceId: service.id,
+        serviceType: service.serviceType,
+        activities: normalizedActivities, // Normalized contract
+        syncedAt: new Date(),
+      }),
+    );
+
+    // 10. Emit service-level sync event (for UI updates, notifications, etc.)
     await this.eventBus.publish(
       new ServiceSyncedEvent({
         userId: service.userId,
         serviceId: service.id,
-        workoutsSynced,
+        workoutsSynced: 0, // Training domain will emit granular workout events
       }),
     );
 
     return Result.ok({
       serviceId: request.serviceId,
       success: true,
-      workoutsSynced,
       activitiesSynced,
     });
   }

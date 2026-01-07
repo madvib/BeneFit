@@ -1,12 +1,9 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { ConnectedServiceRepository } from '@app/index.js';
 
 // Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetConnectedServicesRequest type instead */
-export interface GetConnectedServicesRequest_Deprecated {
-  userId: string;
-}
+
 
 // Zod schema for request validation
 export const GetConnectedServicesRequestSchema = z.object({
@@ -17,19 +14,6 @@ export const GetConnectedServicesRequestSchema = z.object({
 export type GetConnectedServicesRequest = z.infer<
   typeof GetConnectedServicesRequestSchema
 >;
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetConnectedServicesResponse type instead */
-export interface GetConnectedServicesResponse_Deprecated {
-  services: Array<{
-    id: string;
-    serviceType: string;
-    isActive: boolean;
-    isPaused: boolean;
-    lastSyncAt?: Date;
-    syncStatus: string;
-  }>;
-}
 
 // Zod schema for response validation
 const ServiceSchema = z.object({
@@ -50,13 +34,15 @@ export type GetConnectedServicesResponse = z.infer<
   typeof GetConnectedServicesResponseSchema
 >;
 
-export class GetConnectedServicesUseCase implements UseCase<
+export class GetConnectedServicesUseCase extends BaseUseCase<
   GetConnectedServicesRequest,
   GetConnectedServicesResponse
 > {
-  constructor(private serviceRepository: ConnectedServiceRepository) {}
+  constructor(private serviceRepository: ConnectedServiceRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetConnectedServicesRequest,
   ): Promise<Result<GetConnectedServicesResponse>> {
     const servicesResult = await this.serviceRepository.findByUserId(request.userId);
@@ -73,7 +59,7 @@ export class GetConnectedServicesUseCase implements UseCase<
         isActive: s.isActive,
         isPaused: s.isPaused,
         lastSyncAt: s.lastSyncAt,
-        syncStatus: s.syncStatus.state,
+        syncStatus: s.syncStatus?.state || 'idle',
       })),
     });
   }

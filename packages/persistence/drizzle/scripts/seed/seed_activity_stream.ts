@@ -29,7 +29,7 @@ const feedItems: NewActivityFeedItem[] = [
   },
   {
     id: 'feed_002',
-    ownerId: SEED_USER_IDS.USER_003,
+    ownerId: SEED_USER_IDS.USER_004, // Changed from USER_003 to USER_004 (Yogi)
     creatorId: SEED_USER_IDS.USER_002,
     teamId: 'team_001',
     activityType: 'streak_milestone',
@@ -40,7 +40,7 @@ const feedItems: NewActivityFeedItem[] = [
   {
     id: 'feed_003',
     ownerId: SEED_USER_IDS.USER_001,
-    creatorId: SEED_USER_IDS.USER_003,
+    creatorId: SEED_USER_IDS.USER_004, // Changed from USER_003 to USER_004
     teamId: null,
     activityType: 'pr_achieved',
     contentJson: JSON.stringify({ exercise: 'Bench Press', weight: 100, unit: 'kg' }),
@@ -53,7 +53,7 @@ const reactions: NewActivityReaction[] = [
   {
     id: 'react_001',
     feedItemId: 'feed_001',
-    userId: SEED_USER_IDS.USER_003,
+    userId: SEED_USER_IDS.USER_004, // Changed from USER_003
     emoji: '🔥',
     createdAt: new Date((now + 100) * 1000), // Convert Unix timestamp to Date
   },
@@ -85,11 +85,11 @@ export async function seedActivityStream() {
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${feedItems.length} activity feed items...`);
+      console.log(`  - Inserting ${ feedItems.length } activity feed items...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityFeed).values(feedItems);
 
-      console.log(`  - Inserting ${reactions.length} reactions...`);
+      console.log(`  - Inserting ${ reactions.length } reactions...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activityReactions).values(reactions);
     });
@@ -102,7 +102,7 @@ export async function seedActivityStream() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${ process.argv[1] }`) {
   seedActivityStream().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

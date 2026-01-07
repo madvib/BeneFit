@@ -14,6 +14,8 @@ import {
   RespondToCheckInResponse,
   TriggerProactiveCheckInRequestSchema,
   TriggerProactiveCheckInResponse,
+  GetCoachHistoryRequestSchema,
+  GetCoachHistoryResponse,
 } from '@bene/coach-domain';
 import { handleResult } from '../lib/handle-result';
 
@@ -54,24 +56,20 @@ export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>
     const result = await stub.generateWeeklySummary(validated);
     return handleResult<GenerateWeeklySummaryResponse>(result, c);
   })
-  // .get('/history', async (c) => {
-  //   const userId = c.req.query('userId');
+  .get('/history', async (c) => {
+    const user = c.get('user');
 
-  //   if (!userId) {
-  //     throw new HTTPException(400, { message: 'UserId is required' });
-  //   }
+    const useCaseInput = {
+      userId: user.id,
+    };
 
-  //   const id = c.env.USER_HUB.idFromName(userId);
-  //   const stub = c.env.USER_HUB.get(id);
+    const validated = GetCoachHistoryRequestSchema.parse(useCaseInput);
 
-  //   try {
-  //     const result = await stub.coach.getHistory();
-  //     return c.json(result);
-  //   } catch (error) {
-  //     console.error('Error getting coaching history:', error);
-  //     throw new HTTPException(500, { message: 'Failed to get coaching history' });
-  //   }
-  // })
+    const stub = c.env.USER_HUB.getByName(user.id).coach();
+
+    const result = await stub.getHistory(validated);
+    return handleResult<GetCoachHistoryResponse>(result, c);
+  })
   .post(
     '/check-in/dismiss',
     zValidator('json', DismissCheckInRequestClientSchema),

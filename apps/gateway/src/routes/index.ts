@@ -3,3 +3,4 @@ export { coachRoutes } from './coach';
 export { fitnessPlanRoutes } from './fitness-plan';
 export { integrationRoutes } from './integrations';
 export { profileRoutes } from './profile';
+export { webhookRoutes } from './webhooks';

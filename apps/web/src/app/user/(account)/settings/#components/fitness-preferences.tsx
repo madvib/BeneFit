@@ -2,8 +2,8 @@
 
 import { Card, Select } from '@/lib/components';
 
-type PreferredUnits = 'Metric (kg, km)' | 'Imperial (lbs, miles)';
-type GoalFocus = 'Weight Loss' | 'Muscle Building' | 'General Fitness';
+type PreferredUnits = 'metric' | 'imperial';
+type GoalFocus = 'motivational' | 'casual' | 'professional' | 'tough_love';
 
 interface FitnessPreferencesProps {
   preferredUnits: PreferredUnits;
@@ -26,14 +26,10 @@ export default function FitnessPreferences({
           <label className="text-foreground mb-2 block">Preferred Units</label>
           <Select
             value={preferredUnits}
-            onChange={(e) =>
-              onPreferredUnitsChange(
-                e.target.value as 'Metric (kg, km)' | 'Imperial (lbs, miles)',
-              )
-            }
+            onChange={(e) => onPreferredUnitsChange(e.target.value as 'metric' | 'imperial')}
           >
-            <option value="Metric (kg, km)">Metric (kg, km)</option>
-            <option value="Imperial (lbs, miles)">Imperial (lbs, miles)</option>
+            <option value="metric">Metric (kg, km)</option>
+            <option value="imperial">Imperial (lbs, miles)</option>
           </Select>
         </div>
         <div>
@@ -42,13 +38,14 @@ export default function FitnessPreferences({
             value={goalFocus}
             onChange={(e) =>
               onGoalFocusChange(
-                e.target.value as 'Weight Loss' | 'Muscle Building' | 'General Fitness',
+                e.target.value as 'motivational' | 'casual' | 'professional' | 'tough_love',
               )
             }
           >
-            <option value="Weight Loss">Weight Loss</option>
-            <option value="Muscle Building">Muscle Building</option>
-            <option value="General Fitness">General Fitness</option>
+            <option value="motivational">Motivational</option>
+            <option value="casual">Casual</option>
+            <option value="professional">Professional</option>
+            <option value="tough_love">Tough Love</option>
           </Select>
         </div>
       </div>

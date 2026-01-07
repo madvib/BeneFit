@@ -17,7 +17,7 @@ type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
 
 interface WeeklyScheduleProps {
   plan: PlanData;
-  onWorkoutClick: (id: string) => void;
+  onWorkoutClick: (_id: string) => void;
 }
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -65,7 +65,7 @@ export default function WeeklySchedule({ plan, onWorkoutClick }: WeeklyScheduleP
               <div className="mb-3 flex items-center justify-between">
                 <span
                   className={`text-sm font-bold ${
-                    !isCompleted ? 'text-primary' : 'text-muted-foreground'
+                    isCompleted ? 'text-muted-foreground' : 'text-primary'
                   }`}
                 >
                   {dayName}
@@ -84,6 +84,7 @@ export default function WeeklySchedule({ plan, onWorkoutClick }: WeeklyScheduleP
                   <span className="flex items-center gap-1">
                     <Clock size={12} />
                     {workout.durationMinutes ? `${workout.durationMinutes}m` : '45m'}
+                    Aurora
                   </span>
                   <span className="flex items-center gap-1">
                     <Zap size={12} />

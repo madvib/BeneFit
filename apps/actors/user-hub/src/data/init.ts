@@ -22,7 +22,7 @@ export async function initializeUserHubDB(storage: DurableObjectStorage) {
   // Optionally seed the database if in local development
   if (import.meta.env.DEV && (await db.select().from(profile).limit(1)).length === 0) {
     console.log('🌱 Seeding database with initial data...');
-    await seedUserHub(storage);
+    await seedUserHub(db);
   }
 
   console.log('✅ User Base database initialized successfully');

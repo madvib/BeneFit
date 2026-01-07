@@ -1,23 +1,20 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
-// Client-facing schema (no userId needed - injected from auth)
 export const GetCurrentPlanRequestClientSchema = z.object({});
 
 export type GetCurrentPlanRequestClient = z.infer<
   typeof GetCurrentPlanRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const GetCurrentPlanRequestSchema = z.object({
   userId: z.string(),
 });
 
 export type GetCurrentPlanRequest = z.infer<typeof GetCurrentPlanRequestSchema>;
 
-// Zod schema for response validation - matches domain types
 const WorkoutSummarySchema = z.object({
   id: z.string(),
   type: z.string(), // WorkoutType from domain
@@ -56,19 +53,24 @@ export const GetCurrentPlanResponseSchema = z.object({
 
 export type GetCurrentPlanResponse = z.infer<typeof GetCurrentPlanResponseSchema>;
 
-export class GetCurrentPlanUseCase implements UseCase<
+export class GetCurrentPlanUseCase extends BaseUseCase<
   GetCurrentPlanRequest,
   GetCurrentPlanResponse
 > {
-  constructor(private planRepository: FitnessPlanRepository) {}
+  constructor(private planRepository: FitnessPlanRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetCurrentPlanRequest,
   ): Promise<Result<GetCurrentPlanResponse>> {
     // 1. Find active plan
     const planResult = await this.planRepository.findActiveByUserId(request.userId);
 
     if (planResult.isFailure) {
+      // Log explicitly why we failed finding a plan - this addresses the user's specific concern about disappearing plans
+      console.log(`[GetCurrentPlan] No active plan found for user ${ request.userId }. Reason: ${ planResult.error }`);
+
       return Result.ok({
         hasPlan: false,
         message: 'No active plan. Create a plan to get started!',
@@ -76,6 +78,7 @@ export class GetCurrentPlanUseCase implements UseCase<
     }
 
     const plan = planResult.value;
+    console.log(`[GetCurrentPlan] Found active plan ${ plan.id } for user ${ request.userId }`);
 
     // 2. Use entity queries to get data - business logic lives in the entity
     const currentWeek = plan.currentPosition.week;

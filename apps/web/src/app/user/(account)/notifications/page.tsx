@@ -15,6 +15,7 @@ export default function NotificationsPage() {
   });
 
   const toggle = (key: keyof typeof preferences) => {
+    // eslint-disable-next-line security/detect-object-injection
     setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 

@@ -4,7 +4,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface UIContextType {
   isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
+  setIsModalOpen: (_isOpen: boolean) => void;
 }
 
 const UIContext = createContext<UIContextType | undefined>(undefined);

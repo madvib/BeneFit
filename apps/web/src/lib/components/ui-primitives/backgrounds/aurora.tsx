@@ -139,7 +139,7 @@ export default function Aurora(props: AuroraProps) {
     colorStops,
     lightColorStops = ['#034a95', '#b3d7ff', '#7cff67'],
     darkColorStops = ['#b3d7ff', '#034a95', '#7cff67'],
-    amplitude = 1.0,
+    amplitude = 1,
     blend = 0.5,
   } = props;
   const propsRef = useRef<AuroraProps>(props);
@@ -167,6 +167,7 @@ export default function Aurora(props: AuroraProps) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.canvas.style.backgroundColor = 'transparent';
 
+    // eslint-disable-next-line prefer-const
     let program: Program | undefined;
 
     function resize() {
@@ -205,17 +206,17 @@ export default function Aurora(props: AuroraProps) {
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    ctn.appendChild(gl.canvas);
+    ctn.append(gl.canvas);
 
     let animateId = 0;
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
-      const { time = t * 0.01, speed = 1.0 } = propsRef.current;
+      const { time = t * 0.01, speed = 1 } = propsRef.current;
       if (program) {
         program.uniforms.uTime.value = time * speed * 0.1;
-        program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
+        program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1;
         program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
-        program.uniforms.uDarkMode.value = resolvedTheme === 'dark' ? 1.0 : 0.0;
+        program.uniforms.uDarkMode.value = resolvedTheme === 'dark' ? 1 : 0;
         // Get the color stops from props, falling back to the theme-based ones
         const stops = propsRef.current.colorStops || currentColorStops;
 
@@ -234,11 +235,11 @@ export default function Aurora(props: AuroraProps) {
       cancelAnimationFrame(animateId);
       window.removeEventListener('resize', resize);
       if (ctn && gl.canvas.parentNode === ctn) {
-        ctn.removeChild(gl.canvas);
+        gl.canvas.remove();
       }
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, [currentColorStops, amplitude]);
+  }, [currentColorStops, amplitude, blend, resolvedTheme]);
 
   return <div ref={ctnDom} className="absolute inset-0 z-0 h-full w-full" />;
 }

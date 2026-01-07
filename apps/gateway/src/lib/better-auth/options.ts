@@ -1,5 +1,5 @@
 import { BetterAuthOptions } from 'better-auth';
-import { nextCookies } from 'better-auth/next-js';
+import { strava } from './providers/strava.js';
 import { env } from 'cloudflare:workers';
 
 /**
@@ -10,8 +10,8 @@ import { env } from 'cloudflare:workers';
 export const betterAuthOptions: BetterAuthOptions = {
   trustedOrigins: ['http://localhost:3000', 'https://getbene.fit'],
   appName: 'BeneFit',
-  baseURL: env.BETTER_AUTH_URL,
-  secret: env.BETTER_AUTH_SECRET,
+  baseURL: env.BETTER_AUTH_URL || 'http://localhost:8787',
+  secret: env.BETTER_AUTH_SECRET || '',
 
   // Email & Password Authentication
   emailAndPassword: {
@@ -61,7 +61,11 @@ export const betterAuthOptions: BetterAuthOptions = {
 
   // Plugins
   plugins: [
-    nextCookies(),
+    strava({
+      clientId: env.STRAVA_CLIENT_ID || '',
+      clientSecret: env.STRAVA_CLIENT_SECRET || '',
+    }),
+    // nextCookies(),
     // TODO: Add email provider plugin when ready
     // Example with Resend:
     // resend({

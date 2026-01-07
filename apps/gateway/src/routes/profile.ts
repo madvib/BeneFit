@@ -109,7 +109,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
     return handleResult<GetUserStatsResponse>(result, c);
   })
   .post(
-    '/contraints',
+    '/constraints',
     zValidator('json', UpdateTrainingConstraintsRequestClientSchema),
     async (c) => {
       const user = c.get('user');

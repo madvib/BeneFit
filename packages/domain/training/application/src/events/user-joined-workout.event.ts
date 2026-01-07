@@ -6,15 +6,11 @@ export interface UserJoinedWorkoutEventPayload {
   userName: string;
 }
 
-export class UserJoinedWorkoutEvent implements DomainEvent {
-  public readonly eventName = 'UserJoinedWorkout';
+export class UserJoinedWorkoutEvent extends DomainEvent {
   public readonly payload: UserJoinedWorkoutEventPayload;
-  public readonly occurredAt: Date;
-  public readonly eventId: string;
 
   constructor(payload: UserJoinedWorkoutEventPayload) {
+    super('UserJoinedWorkout');
     this.payload = payload;
-    this.occurredAt = new Date();
-    this.eventId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
   }
 }

@@ -1,10 +1,16 @@
 import { AIError, ParseError, Result, parseJsonResponse } from '@bene/shared';
 import type { FitnessPlan, PlanGoals, TrainingConstraints } from '@bene/training-core';
-import { createDraftFitnessPlan } from '@bene/training-core';
+import {
+  createDraftFitnessPlan,
+  createWeeklySchedule,
+  type WorkoutTemplate,
+} from '@bene/training-core';
 import type { AICompletionRequest, AIProvider } from '@bene/shared';
 import { PromptBuilder } from './prompt-builder.js';
+import { randomUUID } from 'crypto';
 
 export interface GeneratePlanInput {
+  userId: string;
   goals: PlanGoals;
   constraints: TrainingConstraints;
   experienceLevel: string;
@@ -25,7 +31,7 @@ export interface AdjustPlanInput {
  * Uses the provider abstraction to support multiple AI models
  */
 export class AIPlanGenerator {
-  constructor(private provider: AIProvider) {}
+  constructor(private provider: AIProvider) { }
 
   async generatePlan(input: GeneratePlanInput): Promise<Result<FitnessPlan>> {
     try {
@@ -47,45 +53,77 @@ export class AIPlanGenerator {
       const response = await this.provider.complete(request);
 
       if (response.isFailure) {
-        return Result.fail(new AIError(`Failed to generate plan: ${response.error}`));
+        return Result.fail(new AIError(`Failed to generate plan: ${ response.error }`));
       }
 
       // Parse the AI response as JSON
       const planDataResult = parseJsonResponse<any>(response.value.content);
       if (planDataResult.isFailure) {
         return Result.fail(
-          new ParseError(`Failed to parse plan data: ${planDataResult.error}`),
+          new ParseError(`Failed to parse plan data: ${ planDataResult.error }`),
         );
       }
 
       // Convert AI-generated plan data to domain FitnessPlan
-      //TODO need to use response from AI to fill this out
+      const planData = planDataResult.value;
+      const tempPlanId = randomUUID(); // Generate plan ID first for weekly schedules
+
+      // Map weeks using the createWeeklySchedule factory
+      const weeksResults = (planData.weeks || []).map((week: any, index: number) => {
+        const weekStart = new Date(); // Start date calculation simplified for draft
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 7);
+
+        const workouts: WorkoutTemplate[] = (week.workouts || []).map((workout: any) => ({
+          id: randomUUID(),
+          name: workout.type,
+          dayOfWeek: workout.dayOfWeek,
+          type: workout.type,
+          activities: (workout.activities || []).map((activity: any) => ({
+            id: randomUUID(),
+            name: activity.activityType,
+            type: activity.activityType,
+            instructions: activity.instructions,
+            duration: 30, // Default or parse from activity
+            structure: activity.structure,
+          })),
+        }));
+
+        return createWeeklySchedule({
+          weekNumber: week.weekNumber,
+          planId: tempPlanId,
+          startDate: weekStart.toISOString(),
+          endDate: weekEnd.toISOString(),
+          focus: `Week ${ week.weekNumber }`,
+          targetWorkouts: workouts.length,
+          workouts,
+        });
+      });
+
+      // Check for any factory failures
+      const failedWeek = weeksResults.find((result: Result<any>) => result.isFailure);
+      if (failedWeek) {
+        return Result.fail(new Error(`Failed to create weekly schedule: ${ failedWeek.error }`));
+      }
+
+      const weeks = weeksResults.map((result: Result<any>) => result.value);
+
       return createDraftFitnessPlan({
-        userId: 'placeholder', // Set by use case
-        title: planDataResult.value.name,
-        description: '',
+        userId: input.userId,
+        title: planData.name,
+        description: `Custom generated plan for ${ input.goals.primary }`,
         planType: 'habit_building',
-        goals: {
-          primary: '',
-          secondary: [],
-          targetMetrics: {},
-          targetDate: new Date('asdfasdf'),
-        },
+        goals: input.goals,
         progression: { type: 'adaptive' },
-        constraints: {
-          availableDays: [],
-          availableEquipment: [],
-          location: 'gym',
-          maxDuration: 0,
-          injuries: [],
-        },
-        startDate: '',
+        constraints: input.constraints,
+        startDate: new Date().toISOString(),
+        weeks,
       });
     } catch (error) {
       console.error('Error generating plan:', error);
       return Result.fail(
         new AIError(
-          `Error generating plan: ${error instanceof Error ? error.message : String(error)}`,
+          `Error generating plan: ${ error instanceof Error ? error.message : String(error) }`,
           error instanceof Error ? error : undefined,
         ),
       );
@@ -112,14 +150,14 @@ export class AIPlanGenerator {
       const response = await this.provider.complete(request);
 
       if (response.isFailure) {
-        return Result.fail(new AIError(`Failed to adjust plan: ${response.error}`));
+        return Result.fail(new AIError(`Failed to adjust plan: ${ response.error }`));
       }
 
       // Parse the adjustment suggestions
       const adjustmentsResult = parseJsonResponse<any>(response.value.content);
       if (adjustmentsResult.isFailure) {
         return Result.fail(
-          new ParseError(`Failed to parse adjustments: ${adjustmentsResult.error}`),
+          new ParseError(`Failed to parse adjustments: ${ adjustmentsResult.error }`),
         );
       }
 
@@ -134,7 +172,7 @@ export class AIPlanGenerator {
       console.error('Error adjusting plan:', error);
       return Result.fail(
         new AIError(
-          `Error adjusting plan: ${error instanceof Error ? error.message : String(error)}`,
+          `Error adjusting plan: ${ error instanceof Error ? error.message : String(error) }`,
           error instanceof Error ? error : undefined,
         ),
       );
@@ -166,15 +204,15 @@ Output JSON with adjustments to apply.`;
   private buildPlanRequest(input: GeneratePlanInput): string {
     return `Create a workout plan for:
 
-Goal: ${input.goals.primary}
-Experience: ${input.experienceLevel}
-Available days: ${input.constraints.availableDays.join(', ')}
-Equipment: ${input.constraints.availableEquipment.join(', ')}
-Location: ${input.constraints.location}
-Max duration: ${input.constraints.maxDuration} minutes
-Injuries: ${input.constraints.injuries?.join(', ') || 'None'}
+Goal: ${ input.goals.primary }
+Experience: ${ input.experienceLevel }
+Available days: ${ input.constraints.availableDays.join(', ') }
+Equipment: ${ input.constraints.availableEquipment.join(', ') }
+Location: ${ input.constraints.location }
+Max duration: ${ input.constraints.maxDuration } minutes
+Injuries: ${ input.constraints.injuries?.join(', ') || 'None' }
 
-${input.customInstructions ? `Additional instructions: ${input.customInstructions}` : ''}
+${ input.customInstructions ? `Additional instructions: ${ input.customInstructions }` : '' }
 
 Generate a comprehensive plan in JSON format with this structure:
 {
@@ -225,15 +263,15 @@ Generate a comprehensive plan in JSON format with this structure:
 
     return `Adjust this plan:
 
-Current plan: ${input.currentPlan.title}
-Week ${input.currentPlan.currentPosition.week} of ${input.currentPlan.weeks.length}
+Current plan: ${ input.currentPlan.title }
+Week ${ input.currentPlan.currentPosition.week } of ${ input.currentPlan.weeks.length }
 
-Feedback: "${input.feedback}"
-Avg exertion: ${avgExertion.toFixed(1)}/10
-Avg enjoyment: ${avgEnjoyment.toFixed(1)}/5
+Feedback: "${ input.feedback }"
+Avg exertion: ${ avgExertion.toFixed(1) }/10
+Avg enjoyment: ${ avgEnjoyment.toFixed(1) }/5
 
 Recent difficulties:
-${input.recentPerformance.map((p, i) => `Workout ${i + 1}: ${p.difficultyRating}`).join('\n')}
+${ input.recentPerformance.map((p, i) => `Workout ${ i + 1 }: ${ p.difficultyRating }`).join('\n') }
 
 Suggest specific adjustments to future weeks.`;
   }

@@ -49,11 +49,11 @@ export function ControlledInput({
       <div className="mt-1 transition-all duration-200">
         {field.state.meta.errors.length > 0 ? (
           <p className="animate-in fade-in slide-in-from-top-1 text-xs text-red-500">
-            {field.state.meta.errors.map((err: any) => err?.message).join(', ')}
+            {field.state.meta.errors.map((err) => err?.message).join(', ')}
           </p>
-        ) : description ? (
-          <p className="text-muted-foreground text-xs">{description}</p>
-        ) : null}
+        ) : (
+          description && <p className="text-muted-foreground text-xs">{description}</p>
+        )}
       </div>
     </div>
   );

@@ -1,24 +1,12 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
-import { TrainingConstraints, UserProfileCommands } from '@bene/training-core';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
+import { UserProfileCommands } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/index.js';
 import { TrainingConstraintsSchema } from '../../schemas/index.js';
 import { TrainingConstraintsUpdatedEvent } from '../../events/index.js';
 import { toDomainTrainingConstraints } from '../../mappers/type-mappers.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use UpdateTrainingConstraintsRequest type instead */
-export interface UpdateTrainingConstraintsRequest_Deprecated {
-  userId: string;
-  constraints: TrainingConstraints;
-}
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use UpdateTrainingConstraintsResponse type instead */
-export interface UpdateTrainingConstraintsResponse_Deprecated {
-  userId: string;
-  constraints: TrainingConstraints;
-  shouldAdjustPlan: boolean;
-}
+
 
 export const UpdateTrainingConstraintsRequestClientSchema = z.object({
   constraints: TrainingConstraintsSchema, // Using proper schema instead of z.unknown()
@@ -46,16 +34,18 @@ export type UpdateTrainingConstraintsResponse = z.infer<
   typeof UpdateTrainingConstraintsResponseSchema
 >;
 
-export class UpdateTrainingConstraintsUseCase implements UseCase<
+export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
   UpdateTrainingConstraintsRequest,
   UpdateTrainingConstraintsResponse
 > {
   constructor(
     private profileRepository: UserProfileRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: UpdateTrainingConstraintsRequest,
   ): Promise<Result<UpdateTrainingConstraintsResponse>> {
     // 1. Load profile

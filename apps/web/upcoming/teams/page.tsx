@@ -1,7 +1,7 @@
 'use client';
 
 import { Users, Trophy, Hash, Plus, Settings } from 'lucide-react';
-import { Card } from '@/components/common/ui-primitives/card/card';
+import { Card } from '@/lib/components';
 
 const TEAMS = [
   {
@@ -66,9 +66,7 @@ export default function TeamsPage() {
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <p className="text-foreground truncate font-medium">{team.name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {team.members} members
-                    </p>
+                    <p className="text-muted-foreground text-xs">{team.members} members</p>
                   </div>
                 </button>
               ))}
@@ -145,8 +143,8 @@ export default function TeamsPage() {
                     <span className="text-muted-foreground text-xs">10:45 AM</span>
                   </div>
                   <p className="text-foreground/90">
-                    Nice work Sarah! I'm hitting the gym in an hour. Anyone want to join
-                    for leg day?
+                    Nice work Sarah! I&apos;m hitting the gym in an hour. Anyone want to join for
+                    leg day?
                   </p>
                 </div>
               </div>

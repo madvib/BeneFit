@@ -1,41 +1,13 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetTodaysWorkoutRequest type instead */
-export interface GetTodaysWorkoutRequest_Deprecated {
-  userId: string;
-}
-
-// Zod schema for request validation
 export const GetTodaysWorkoutRequestSchema = z.object({
   userId: z.string(),
 });
 
-// Zod inferred type with original name
 export type GetTodaysWorkoutRequest = z.infer<typeof GetTodaysWorkoutRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetTodaysWorkoutResponse type instead */
-export interface GetTodaysWorkoutResponse_Deprecated {
-  hasWorkout: boolean;
-  workout?: {
-    workoutId: string;
-    planId: string;
-    type: string;
-    durationMinutes: number;
-    activities: Array<{
-      type: 'warmup' | 'main' | 'cooldown';
-      instructions: string;
-      durationMinutes: number;
-    }>;
-  };
-  message?: string; // "Rest day!" or "No active plan"
-}
-
-// Zod schema for response validation
 const ActivitySchema = z.object({
   type: z.enum(['warmup', 'main', 'cooldown']),
   instructions: z.string(),
@@ -59,13 +31,15 @@ export const GetTodaysWorkoutResponseSchema = z.object({
 // Zod inferred type with original name
 export type GetTodaysWorkoutResponse = z.infer<typeof GetTodaysWorkoutResponseSchema>;
 
-export class GetTodaysWorkoutUseCase implements UseCase<
+export class GetTodaysWorkoutUseCase extends BaseUseCase<
   GetTodaysWorkoutRequest,
   GetTodaysWorkoutResponse
 > {
-  constructor(private planRepository: FitnessPlanRepository) {}
+  constructor(private planRepository: FitnessPlanRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetTodaysWorkoutRequest,
   ): Promise<Result<GetTodaysWorkoutResponse>> {
     // 1. Find active plan

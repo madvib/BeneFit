@@ -1,7 +1,5 @@
 import { Result } from '@bene/shared';
-import type { ConnectedService } from '@bene/integrations-domain';
-import { OAuth2Client, HttpClient } from './base/index.js';
-import { TokenManager, IntegrationMapper } from './utils/index.js';
+import { HttpClient } from './base/index.js';
 
 /**
  * Strava activity response
@@ -59,198 +57,132 @@ export interface StravaActivity {
 }
 
 /**
- * Strava authentication response
+ * Strava athlete profile
  */
-interface StravaAuthResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_at: number;
-  athlete: {
-    id: number;
-    username: string;
-    resource_state: number;
-    firstname: string;
-    lastname: string;
-    city: string;
-    state: string;
-    country: string;
-    sex: string;
-    premium: boolean;
-    created_at: string;
-    updated_at: string;
-    badge_type_id: number;
-    weight: number;
-    profile_medium: string;
-    profile: string;
-    friend: string | null;
-    follower: string | null;
-  };
+export interface StravaAthlete {
+  id: number;
+  username: string;
+  resource_state: number;
+  firstname: string;
+  lastname: string;
+  city: string;
+  state: string;
+  country: string;
+  sex: string;
+  premium: boolean;
+  created_at: string;
+  updated_at: string;
+  badge_type_id: number;
+  weight: number;
+  profile_medium: string;
+  profile: string;
+  friend: string | null;
+  follower: string | null;
 }
 
 /**
- * Strava API client
- * Extends OAuth2Client for authentication and uses HttpClient for API calls
+ * Options for fetching activities
  */
-export class StravaClient extends OAuth2Client {
+export interface GetActivitiesOptions {
+  accessToken: string;
+  after?: Date | number; // Unix timestamp or Date
+  before?: Date | number;
+  page?: number;
+  perPage?: number;
+}
+
+/**
+ * Options for fetching a single activity
+ */
+export interface GetActivityOptions {
+  accessToken: string;
+  activityId: number;
+  includeAllEfforts?: boolean;
+}
+
+/**
+ * Strava API client for data operations
+ * 
+ * OAuth is handled by Better Auth - this client only handles data retrieval
+ * All methods require an access token from Better Auth's account table
+ */
+export class StravaClient {
   private http: HttpClient;
 
-  constructor(clientId: string, clientSecret: string) {
-    super(clientId, clientSecret, 'https://www.strava.com/oauth/token');
+  constructor() {
     this.http = new HttpClient('https://www.strava.com/api/v3');
   }
 
   /**
-   * Get authorization URL for OAuth flow
+   * Get authenticated athlete's profile
    */
-  getAuthorizationUrl(redirectUri: string, state?: string): string {
-    const params = new URLSearchParams({
-      client_id: this.clientId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      scope: 'read_all,activity:read',
-      ...(state && { state }),
+  async getAthlete(accessToken: string): Promise<Result<StravaAthlete>> {
+    return this.http.get<StravaAthlete>('/athlete', accessToken);
+  }
+
+  /**
+   * Get a list of activities for the authenticated athlete
+   */
+  async getActivities(
+    options: GetActivitiesOptions
+  ): Promise<Result<StravaActivity[]>> {
+    const params = new URLSearchParams();
+
+    if (options.after) {
+      const afterTimestamp = options.after instanceof Date
+        ? Math.floor(options.after.getTime() / 1000)
+        : options.after;
+      params.append('after', String(afterTimestamp));
+    }
+
+    if (options.before) {
+      const beforeTimestamp = options.before instanceof Date
+        ? Math.floor(options.before.getTime() / 1000)
+        : options.before;
+      params.append('before', String(beforeTimestamp));
+    }
+
+    if (options.page) {
+      params.append('page', String(options.page));
+    }
+
+    if (options.perPage) {
+      params.append('per_page', String(options.perPage));
+    }
+
+    const url = `/athlete/activities${ params.toString() ? `?${ params.toString() }` : '' }`;
+    return this.http.get<StravaActivity[]>(url, options.accessToken);
+  }
+
+  /**
+   * Get a specific activity by ID
+   */
+  async getActivity(
+    options: GetActivityOptions
+  ): Promise<Result<StravaActivity>> {
+    const params = new URLSearchParams();
+
+    if (options.includeAllEfforts) {
+      params.append('include_all_efforts', 'true');
+    }
+
+    const url = `/activities/${ options.activityId }${ params.toString() ? `?${ params.toString() }` : '' }`;
+    return this.http.get<StravaActivity>(url, options.accessToken);
+  }
+
+  /**
+   * Get activities since a specific date (convenience method)
+   * Useful for webhook-triggered syncs and background jobs
+   */
+  async getActivitiesSince(
+    accessToken: string,
+    since: Date,
+    perPage = 30
+  ): Promise<Result<StravaActivity[]>> {
+    return this.getActivities({
+      accessToken,
+      after: since,
+      perPage,
     });
-
-    return `https://www.strava.com/oauth/authorize?${params.toString()}`;
-  }
-
-  /**
-   * Authenticate with Strava and create ConnectedService
-   */
-  async authenticate(authCode: string): Promise<Result<ConnectedService>> {
-    try {
-      // Exchange auth code for tokens
-      const tokenResult = await this.exchangeAuthCode(authCode, '');
-      if (tokenResult.isFailure) {
-        return Result.fail(tokenResult.error);
-      }
-
-      const tokens = tokenResult.value;
-
-      // Fetch the full response to get athlete data
-      const response = await fetch(this.tokenUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          client_id: this.clientId,
-          client_secret: this.clientSecret,
-          code: authCode,
-          grant_type: 'authorization_code',
-        }),
-      });
-
-      if (!response.ok) {
-        return Result.fail(new Error('Failed to get athlete data'));
-      }
-
-      const data: StravaAuthResponse = (await response.json()) as StravaAuthResponse;
-
-      // Create connected service
-      const connectedService = IntegrationMapper.toConnectedService(
-        'strava',
-        {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          expiresAt: tokens.expiresAt,
-        },
-        {
-          athleteId: data.athlete.id,
-          athleteName: `${data.athlete.firstname} ${data.athlete.lastname}`,
-          profileUrl: data.athlete.profile,
-        },
-        {
-          read: ['activities', 'profile'],
-          write: ['activities'],
-        },
-      );
-
-      return Result.ok(connectedService);
-    } catch (error) {
-      return Result.fail(
-        new Error(
-          `Failed to authenticate with Strava: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-      );
-    }
-  }
-
-  /**
-   * Get recent activities for a user
-   */
-  async getRecentActivities(
-    userId: string,
-    limit = 10,
-  ): Promise<Result<StravaActivity[]>> {
-    if (!this.accessToken || this.needsRefresh()) {
-      return Result.fail(
-        new Error('Access token expired and no refresh token available'),
-      );
-    }
-
-    return this.http.get<StravaActivity[]>(
-      `/athlete/activities?per_page=${limit}`,
-      this.accessToken,
-    );
-  }
-
-  /**
-   * Sync activities from Strava
-   */
-  async syncActivities(
-    connectedService: ConnectedService,
-  ): Promise<Result<StravaActivity[]>> {
-    if (connectedService.serviceType !== 'strava') {
-      return Result.fail(new Error('Service is not Strava'));
-    }
-
-    // Load tokens from connected service
-    this.loadTokensFromCredentials(connectedService.credentials);
-
-    // Refresh token if needed
-    if (this.needsRefresh() && this.refreshToken) {
-      const refreshResult = await this.refreshAccessToken(this.refreshToken);
-      if (refreshResult.isFailure) {
-        IntegrationMapper.markSyncError(
-          connectedService,
-          refreshResult.error instanceof Error
-            ? refreshResult.error.message
-            : String(refreshResult.error),
-        );
-        return Result.fail(refreshResult.error);
-      }
-
-      // Update credentials in connected service
-      // Cast to mutable to update readonly properties
-      const mutableService = connectedService as { credentials: any };
-      mutableService.credentials = {
-        ...connectedService.credentials,
-        accessToken: this.accessToken!,
-        refreshToken: this.refreshToken,
-        expiresAt: this.expiresAt ? new Date(this.expiresAt * 1000) : undefined,
-      };
-    }
-
-    // Get activities since last sync
-    const afterDate = connectedService.lastSyncAt
-      ? Math.floor(connectedService.lastSyncAt.getTime() / 1000)
-      : Math.floor(Date.now() / 1000) - 30 * 24 * 60 * 60; // Default to last 30 days
-
-    const result = await this.http.get<StravaActivity[]>(
-      `/athlete/activities?after=${afterDate}&per_page=50`,
-      this.accessToken!,
-    );
-
-    if (result.isSuccess) {
-      IntegrationMapper.markSyncSuccess(connectedService);
-    } else {
-      IntegrationMapper.markSyncError(
-        connectedService,
-        result.error instanceof Error ? result.error.message : String(result.error),
-      );
-    }
-
-    return result;
   }
 }

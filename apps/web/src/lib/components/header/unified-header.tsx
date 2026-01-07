@@ -1,18 +1,18 @@
 'use client';
 import { X } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '@bene/react-api-client';
-import { HeaderLeft, HeaderRight } from './primitives/sections';
-import HeaderRoot from './primitives/header-root';
-import { BeneLogo } from '../theme/logo/logo';
-import { ThemeToggle } from '@/lib/components/theme/theme-toggle/theme-toggle';
-import UserAccountMenu from '@/lib/components/navigation/account-dropdown/account-dropdown';
-import AuthCTA from '../navigation/auth-cta';
-import DashboardLink from '../navigation/dashboard-link';
-import MobileMenuToggle from '../navigation/mobile-menu-toggle';
-import NavigationLinks from '../navigation/navigation-links';
-import DashboardNavigation from '@/lib/components/navigation/dashboard-navigation';
+import { useSession } from '@bene/react-api-client';
 import { useUI } from '@/lib/providers/ui-context';
+import { BeneLogo, ThemeToggle } from '@/lib/components';
+import UserAccountMenu from '../navigation/account-dropdown/account-dropdown';
+import {
+  AuthCTA,
+  DashboardLink,
+  MobileMenuToggle,
+  NavigationLinks,
+  DashboardNavigation,
+} from '../navigation';
+import { HeaderRoot, HeaderLeft, HeaderRight } from './primitives';
 
 export default function UnifiedHeader({
   variant,
@@ -20,7 +20,7 @@ export default function UnifiedHeader({
   variant: 'marketing' | 'application' | 'auth';
 }) {
   const [mobileMenuOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSession();
   const { isModalOpen } = useUI();
   const dashboardLink = () => {
     return variant === 'application' ? null : <DashboardLink />;

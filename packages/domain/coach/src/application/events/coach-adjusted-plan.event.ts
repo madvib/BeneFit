@@ -4,18 +4,14 @@ export interface CoachAdjustedPlanEventPayload {
   userId: string;
   details: string;
   planChangeId?: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
-export class CoachAdjustedPlanEvent implements DomainEvent {
-  public readonly eventName = 'CoachAdjustedPlan';
+export class CoachAdjustedPlanEvent extends DomainEvent {
   public readonly payload: CoachAdjustedPlanEventPayload;
-  public readonly occurredAt: Date;
-  public readonly eventId: string;
 
   constructor(payload: CoachAdjustedPlanEventPayload) {
+    super('CoachAdjustedPlan');
     this.payload = payload;
-    this.occurredAt = new Date();
-    this.eventId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
   }
 }

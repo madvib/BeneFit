@@ -5,7 +5,7 @@ import {
   AboutTestimonials,
   AboutBenefits,
   AboutCallToAction,
-} from '@/app/(marketing)/about/#components';
+} from './#components';
 
 export default function AboutPage() {
   return (

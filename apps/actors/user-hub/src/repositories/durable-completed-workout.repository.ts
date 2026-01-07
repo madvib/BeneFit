@@ -1,5 +1,4 @@
 import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
-
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
 import { Result, EntityNotFoundError, QueryError, SaveError } from '@bene/shared';
 import type { CompletedWorkout } from '@bene/training-core';
@@ -9,7 +8,7 @@ import { toDomain, toDatabase } from '../mappers/completed-workout.mapper';
 import { completedWorkouts, user_do_schema, workoutReactions } from '../data/schema';
 
 export class DurableCompletedWorkoutRepository implements CompletedWorkoutRepository {
-  constructor(private db: DrizzleSqliteDODatabase<typeof user_do_schema>) {}
+  constructor(private db: DrizzleSqliteDODatabase<typeof user_do_schema>) { }
 
   async findById(workoutId: string): Promise<Result<CompletedWorkout>> {
     try {

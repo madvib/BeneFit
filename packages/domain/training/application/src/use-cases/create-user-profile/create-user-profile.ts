@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
   createUserProfile,
   ExperienceProfile,
@@ -19,21 +19,7 @@ import {
   toDomainTrainingConstraints,
 } from '../../mappers/type-mappers.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use CreateUserProfileRequest type instead */
-export interface CreateUserProfileRequest_Deprecated {
-  userId: string;
-  displayName: string;
-  timezone: string;
-  experienceProfile: ExperienceProfile;
-  fitnessGoals: FitnessGoals;
-  trainingConstraints: TrainingConstraints;
-  avatar?: string;
-  bio?: string;
-  location?: string;
-}
 
-// Client-facing schema (what comes in the request body)
 export const CreateUserProfileRequestClientSchema = z.object({
   displayName: z.string(),
   timezone: z.string(),
@@ -49,43 +35,33 @@ export type CreateUserProfileRequestClient = z.infer<
   typeof CreateUserProfileRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const CreateUserProfileRequestSchema =
   CreateUserProfileRequestClientSchema.extend({
     userId: z.string(),
   });
 
-// Zod inferred type with original name
 export type CreateUserProfileRequest = z.infer<typeof CreateUserProfileRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use CreateUserProfileResponse type instead */
-export interface CreateUserProfileResponse_Deprecated {
-  userId: string;
-  displayName: string;
-  profileComplete: boolean;
-}
-
-// Zod schema for response validation
 export const CreateUserProfileResponseSchema = z.object({
   userId: z.string(),
   displayName: z.string(),
   profileComplete: z.boolean(),
 });
 
-// Zod inferred type with original name
 export type CreateUserProfileResponse = z.infer<typeof CreateUserProfileResponseSchema>;
 
-export class CreateUserProfileUseCase implements UseCase<
+export class CreateUserProfileUseCase extends BaseUseCase<
   CreateUserProfileRequest,
   CreateUserProfileResponse
 > {
   constructor(
     private profileRepository: UserProfileRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: CreateUserProfileRequest,
   ): Promise<Result<CreateUserProfileResponse>> {
     // 1. Check if profile already exists

@@ -70,12 +70,11 @@ export default function PersonalInfoForm({ initialData }: PersonalInfoFormProps)
           <nameForm.SubmissionError />
           <FormSuccessMessage message={nameAuthSubmit.success} />
 
-          <nameForm.AppField
-            name="name"
-            children={(field) => (
+          <nameForm.AppField name="name">
+            {(field) => (
               <field.ControlledInput label="Full Name" type="text" placeholder="John Doe" />
             )}
-          />
+          </nameForm.AppField>
 
           <nameForm.SubmitButton label="Update Name" submitLabel="Saving..." />
         </nameForm.Root>
@@ -89,16 +88,15 @@ export default function PersonalInfoForm({ initialData }: PersonalInfoFormProps)
 
           {emailVerified ? (
             <>
-              <emailForm.AppField
-                name="email"
-                children={(field) => (
+              <emailForm.AppField name="email">
+                {(field) => (
                   <field.ControlledInput
                     label="Email"
                     type="email"
                     placeholder="you@example.com"
                   />
                 )}
-              />
+              </emailForm.AppField>
 
               <emailForm.SubmitButton label="Update Email" submitLabel="Saving..." />
             </>

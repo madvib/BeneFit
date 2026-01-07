@@ -1,24 +1,13 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase, ValidationError, UseCaseError } from '@bene/shared';
 import {
   createConnectedService,
   OAuthCredentials,
-  ServicePermissions,
 } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { IntegrationClient } from '@app/ports/integration-client.js';
 import { ServiceConnectedEvent } from '@app/events/service-connected.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use ConnectServiceRequest type instead */
-export interface ConnectServiceRequest_Deprecated {
-  userId: string;
-  serviceType: 'strava' | 'garmin';
-  authorizationCode: string;
-  redirectUri: string;
-}
-
-// Client-facing schema (what comes in the request body)
 export const ConnectServiceRequestClientSchema = z.object({
   serviceType: z.enum(['strava', 'garmin']),
   authorizationCode: z.string(),
@@ -29,22 +18,12 @@ export type ConnectServiceRequestClient = z.infer<
   typeof ConnectServiceRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const ConnectServiceRequestSchema = ConnectServiceRequestClientSchema.extend({
   userId: z.string(),
 });
 
 // Zod inferred type with original name
 export type ConnectServiceRequest = z.infer<typeof ConnectServiceRequestSchema>;
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use ConnectServiceResponse type instead */
-export interface ConnectServiceResponse_Deprecated {
-  serviceId: string;
-  serviceType: string;
-  connected: boolean;
-  permissions: ServicePermissions;
-}
 
 // Zod schema for response validation
 export const ConnectServiceResponseSchema = z.object({
@@ -57,7 +36,7 @@ export const ConnectServiceResponseSchema = z.object({
 // Zod inferred type with original name
 export type ConnectServiceResponse = z.infer<typeof ConnectServiceResponseSchema>;
 
-export class ConnectServiceUseCase implements UseCase<
+export class ConnectServiceUseCase extends BaseUseCase<
   ConnectServiceRequest,
   ConnectServiceResponse
 > {
@@ -65,15 +44,17 @@ export class ConnectServiceUseCase implements UseCase<
     private serviceRepository: ConnectedServiceRepository,
     private integrationClients: Map<string, IntegrationClient>,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: ConnectServiceRequest,
   ): Promise<Result<ConnectServiceResponse>> {
     // 1. Get appropriate integration client
     const client = this.integrationClients.get(request.serviceType);
     if (!client) {
-      return Result.fail(new Error(`Unsupported service type: ${request.serviceType}`));
+      return Result.fail(new ValidationError(`Unsupported service type: ${ request.serviceType }`, 'UNSUPPORTED_SERVICE', { serviceType: request.serviceType }));
     }
 
     // 2. Exchange authorization code for access token
@@ -83,7 +64,7 @@ export class ConnectServiceUseCase implements UseCase<
     );
 
     if (tokenResult.isFailure) {
-      return Result.fail(new Error(`OAuth exchange failed: ${tokenResult.error}`));
+      return Result.fail(new UseCaseError(`OAuth exchange failed: ${ tokenResult.error }`, 'OAUTH_EXCHANGE_FAILED', { serviceType: request.serviceType }, tokenResult.error));
     }
 
     const tokens = tokenResult.value;
@@ -92,7 +73,7 @@ export class ConnectServiceUseCase implements UseCase<
     const profileResult = await client.getUserProfile(tokens.accessToken);
     if (profileResult.isFailure) {
       return Result.fail(
-        new Error(`Failed to get user profile: ${profileResult.error}`),
+        new UseCaseError(`Failed to get user profile: ${ profileResult.error }`, 'PROFILE_FETCH_FAILED', { serviceType: request.serviceType }, profileResult.error),
       );
     }
 

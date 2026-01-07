@@ -49,7 +49,6 @@ export function ProtectedRoute({
     if (requireEmailVerified && !isEmailVerified) {
       const email = session?.user?.email;
       router.replace(buildRoute(ROUTES.AUTH.CONFIRM_EMAIL, { email: email || '' }));
-      return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPending]); // Only depend on loading state

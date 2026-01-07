@@ -1,22 +1,26 @@
+
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAuthErrorContext, getAuthErrorMessage } from '@bene/react-api-client';
+import { getAuthErrorContext, getAuthErrorMessage, AuthError } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants/routes';
 import { useFormSubmitFeedback } from './use-form-submit-feedback';
 import { AnyFormApi } from '@tanstack/react-form';
+import { SubmitErrorResolution } from '../components';
+
 
 export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
   const router = useRouter();
   const feedback = useFormSubmitFeedback(formApi);
 
   const onAuthError = useCallback(
-    (err: any) => {
-      const code = err.body?.message || err.code || 'UNKNOWN_ERROR';
-      const message = getAuthErrorMessage(code) || err.message || 'Something went wrong';
+    (err: unknown) => {
+      const authError = err as AuthError;
+      const code = authError.code || 'UNKNOWN_ERROR';
+      const message = getAuthErrorMessage(code) || authError.message || 'Something went wrong';
       const context = getAuthErrorContext(code);
 
       // Build resolution from context
-      const resolutions = [];
+      const resolutions: SubmitErrorResolution[] = [];
 
       if (context.showSignupLink) {
         resolutions.push({

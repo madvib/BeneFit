@@ -92,7 +92,8 @@
   },
   "pnpm": {
     "overrides": {
-      "drizzle-orm": "catalog:"
+      "drizzle-orm": "catalog:",
+      "better-auth": "catalog:"
     },
     "onlyBuiltDependencies": [
       "esbuild"

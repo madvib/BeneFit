@@ -5,6 +5,8 @@ export const SEED_USER_IDS = {
   USER_001: 'user_seed_001',
   USER_002: 'user_seed_002',
   USER_003: 'user_seed_003',
+  USER_004: 'user_seed_004',
+  USER_005: 'user_seed_005',
 } as const;
 
 /**
@@ -30,7 +32,7 @@ export const SEED_USERS: SeedUser[] = [
     password: 'Password123!',
     name: 'Test User',
     handle: '@test_user',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Test',
+    avatarUrl: 'https://ui-avatars.com/api/?name=Test+User&background=0D8ABC&color=fff&size=128',
     emailVerified: true,
   },
   {
@@ -39,7 +41,7 @@ export const SEED_USERS: SeedUser[] = [
     password: 'Password123!',
     name: 'John Doe',
     handle: '@john_doe',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
+    avatarUrl: 'https://ui-avatars.com/api/?name=John+Doe&background=6366F1&color=fff&size=128',
     emailVerified: true,
   },
   {
@@ -48,7 +50,56 @@ export const SEED_USERS: SeedUser[] = [
     password: 'Password123!',
     name: 'Jane Smith',
     handle: '@jane_smith',
-    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
+    avatarUrl: 'https://ui-avatars.com/api/?name=Jane+Smith&background=EC4899&color=fff&size=128',
     emailVerified: false,
   },
+  {
+    id: SEED_USER_IDS.USER_004,
+    email: 'bob@example.com',
+    password: 'Password123!',
+    name: 'Bob Wilson',
+    handle: '@bob_wilson',
+    avatarUrl: 'https://ui-avatars.com/api/?name=Bob+Wilson&background=10B981&color=fff&size=128',
+    emailVerified: true,
+  },
+  {
+    id: SEED_USER_IDS.USER_005,
+    email: 'alice@example.com',
+    password: 'Password123!',
+    name: 'Alice Brown',
+    handle: '@alice_brown',
+    avatarUrl: 'https://ui-avatars.com/api/?name=Alice+Brown&background=F59E0B&color=fff&size=128',
+    emailVerified: true,
+  },
 ];
+
+/**
+ * Enforceable Persona Definitions
+ */
+export const SEED_PERSONAS = {
+  [SEED_USER_IDS.USER_001]: {
+    role: 'Strength Athlete',
+    plan: { type: 'strength_program', status: 'active', title: 'Strength Building Phase' },
+    sync: 'strava',
+  },
+  [SEED_USER_IDS.USER_002]: {
+    role: 'Marathon Runner',
+    plan: { type: 'event_training', status: 'active', title: 'Marathon Training Plan' },
+    sync: 'garmin',
+  },
+  [SEED_USER_IDS.USER_003]: {
+    role: 'Powerlifter',
+    plan: null, // Intentionally no plan
+    sync: null,
+  },
+  [SEED_USER_IDS.USER_004]: {
+    role: 'Yogi',
+    plan: { type: 'recovery_plan', status: 'paused', title: 'Yoga for Recovery' },
+    sync: null,
+  },
+  [SEED_USER_IDS.USER_005]: {
+    role: 'Challenger',
+    plan: { type: 'hiit_program', status: 'completed', title: '30-Day Shred Challenge' },
+    sync: null,
+  },
+} as const;

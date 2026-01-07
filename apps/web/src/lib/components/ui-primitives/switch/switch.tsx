@@ -15,7 +15,7 @@ const switchVariants = cva(
     defaultVariants: {
       checked: false,
     },
-  }
+  },
 );
 
 const thumbVariants = cva(
@@ -30,14 +30,15 @@ const thumbVariants = cva(
     defaultVariants: {
       checked: false,
     },
-  }
+  },
 );
 
 export interface SwitchProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>,
     VariantProps<typeof switchVariants> {
   checked?: boolean;
-  onCheckedChange?: (checked: boolean) => void;
+  onCheckedChange?: (_checked: boolean) => void;
 }
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
@@ -63,7 +64,7 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         <span className={thumbVariants({ checked })} />
       </button>
     );
-  }
+  },
 );
 
 Switch.displayName = 'Switch';

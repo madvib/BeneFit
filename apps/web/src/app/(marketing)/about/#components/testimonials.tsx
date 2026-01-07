@@ -44,7 +44,8 @@ export default function AboutTestimonials() {
         <div className="text-center">
           <h2 className="text-foreground text-3xl font-bold md:text-4xl">What Our Users Say</h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-2xl">
-            Don't just take our word for it - hear from real users who transformed their lives
+            Don&apos;t just take our word for it - hear from real users who transformed their
+            lives
           </p>
         </div>
 
@@ -52,7 +53,7 @@ export default function AboutTestimonials() {
           {testimonials.map((testimonial) => (
             <SpotlightCard key={testimonial.id} className="p-6">
               <div className="mb-4 flex items-center">
-                {[...Array(5)].map((_, i) => (
+                {Array.from({ length: 5 }).map((_, i) => (
                   <svg
                     key={i}
                     className={`h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}`}
@@ -63,7 +64,7 @@ export default function AboutTestimonials() {
                   </svg>
                 ))}
               </div>
-              <p className="text-foreground mb-6 italic">"{testimonial.content}"</p>
+              <p className="text-foreground mb-6 italic">&quot;{testimonial.content}&quot;</p>
               <div>
                 <p className="font-semibold">{testimonial.name}</p>
                 <p className="text-muted-foreground text-sm">{testimonial.role}</p>

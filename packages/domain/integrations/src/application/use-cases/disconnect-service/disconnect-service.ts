@@ -1,17 +1,9 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use DisconnectServiceRequest type instead */
-export interface DisconnectServiceRequest_Deprecated {
-  userId: string;
-  serviceId: string;
-}
-
-// Client-facing schema (what comes in the request body)
 export const DisconnectServiceRequestClientSchema = z.object({
   serviceId: z.string(),
 });
@@ -26,17 +18,8 @@ export const DisconnectServiceRequestSchema =
     userId: z.string(),
   });
 
-// Zod inferred type with original name
 export type DisconnectServiceRequest = z.infer<typeof DisconnectServiceRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use DisconnectServiceResponse type instead */
-export interface DisconnectServiceResponse_Deprecated {
-  serviceId: string;
-  disconnected: boolean;
-}
-
-// Zod schema for response validation
 export const DisconnectServiceResponseSchema = z.object({
   serviceId: z.string(),
   disconnected: z.boolean(),
@@ -45,16 +28,18 @@ export const DisconnectServiceResponseSchema = z.object({
 // Zod inferred type with original name
 export type DisconnectServiceResponse = z.infer<typeof DisconnectServiceResponseSchema>;
 
-export class DisconnectServiceUseCase implements UseCase<
+export class DisconnectServiceUseCase extends BaseUseCase<
   DisconnectServiceRequest,
   DisconnectServiceResponse
 > {
   constructor(
     private serviceRepository: ConnectedServiceRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: DisconnectServiceRequest,
   ): Promise<Result<DisconnectServiceResponse>> {
     // 1. Load service

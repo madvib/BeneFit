@@ -1,19 +1,12 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { AICoachService } from '@app/services/index.js';
 import { CheckInRespondedEvent, CoachActionPerformedEvent } from '@app/events/index.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use RespondToCheckInRequest type instead */
-export interface RespondToCheckInRequest_Deprecated {
-  userId: string;
-  checkInId: string;
-  response: string;
-}
 
-// Client-facing schema (what comes in the request body)
+
 export const RespondToCheckInRequestClientSchema = z.object({
   checkInId: z.string(),
   response: z.string(),
@@ -23,28 +16,14 @@ export type RespondToCheckInRequestClient = z.infer<
   typeof RespondToCheckInRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const RespondToCheckInRequestSchema = RespondToCheckInRequestClientSchema.extend(
   {
     userId: z.string(),
   },
 );
 
-// Zod inferred type with original name
 export type RespondToCheckInRequest = z.infer<typeof RespondToCheckInRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use RespondToCheckInResponse type instead */
-export interface RespondToCheckInResponse_Deprecated {
-  conversationId: string;
-  coachAnalysis: string;
-  actions: Array<{
-    type: string;
-    details: string;
-  }>;
-}
-
-// Zod schema for response validation
 const ActionSchema = z.object({
   type: z.string(),
   details: z.string(),
@@ -59,7 +38,7 @@ export const RespondToCheckInResponseSchema = z.object({
 // Zod inferred type with original name
 export type RespondToCheckInResponse = z.infer<typeof RespondToCheckInResponseSchema>;
 
-export class RespondToCheckInUseCase implements UseCase<
+export class RespondToCheckInUseCase extends BaseUseCase<
   RespondToCheckInRequest,
   RespondToCheckInResponse
 > {
@@ -67,9 +46,11 @@ export class RespondToCheckInUseCase implements UseCase<
     private conversationRepository: CoachConversationRepository,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: RespondToCheckInRequest,
   ): Promise<Result<RespondToCheckInResponse>> {
     // 1. Load conversation
@@ -156,7 +137,7 @@ export class RespondToCheckInUseCase implements UseCase<
         userId,
         actionType: action.type,
         details: action.details,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }),
     );
   }

@@ -16,12 +16,12 @@ declare namespace Cloudflare {
 		EVENT_BUS: Service<typeof import("../../services/event-bus/src/index").default>;
 	}
 }
-interface Env extends Cloudflare.Env {}
+interface Env extends Cloudflare.Env { }
 type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "VITE_API_BASE_URL" | "CLOUDFLARE_ACCOUNT_ID" | "CLOUDFLARE_USER_AUTH_DATABASE_ID" | "CLOUDFLARE_D1_TOKEN">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "VITE_API_BASE_URL" | "CLOUDFLARE_ACCOUNT_ID" | "CLOUDFLARE_USER_AUTH_DATABASE_ID" | "CLOUDFLARE_D1_TOKEN">> { }
 }
 declare module "*.sql" {
 	const value: string;

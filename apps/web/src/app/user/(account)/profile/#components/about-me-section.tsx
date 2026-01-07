@@ -2,7 +2,7 @@
 
 interface AboutMeSectionProps {
   aboutMe: string;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
 }
 
 export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProps) {

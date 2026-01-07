@@ -2,20 +2,6 @@
   "name": "@bene/web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "test": "nx test",
-    "test:ui": "nx test --ui",
-    "test:run": "nx test run",
-    "test:coverage": "nx test run --coverage",
-    "cf-build": "opennextjs-cloudflare build",
-    "cf-deploy": "opennextjs-cloudflare deploy",
-    "deploy": "pnpm run cf-build && pnpm run cf-deploy",
-    "preview": "pnpm run cf-build && opennextjs-cloudflare preview"
-  },
   "dependencies": {
     "@bene/react-api-client": "workspace:*",
     "@bene/shared": "workspace:*",
@@ -24,7 +10,6 @@
     "@tanstack/react-query": "catalog:",
     "better-auth": "catalog:",
     "class-variance-authority": "^0.7.1",
-    "date-fns": "^4.1.0",
     "lucide-react": "^0.546.0",
     "next": "16.0.3",
     "next-themes": "^0.4.6",
@@ -37,6 +22,83 @@
     "@tanstack/react-query-devtools": "5.91.1"
   },
   "nx": {
+    "targets": {
+      "typecheck": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "tsc -p tsconfig.json --noEmit",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next dev",
+          "cwd": "{projectRoot}"
+        },
+        "continuous": true,
+        "dependsOn": [
+          "@bene/gateway:dev"
+        ]
+      },
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next build",
+          "cwd": "{projectRoot}"
+        },
+        "outputs": [
+          "{projectRoot}/.next"
+        ]
+      },
+      "start": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "next start",
+          "cwd": "{projectRoot}"
+        }
+      },
+      "cf-build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "opennextjs-cloudflare build",
+          "cwd": "{projectRoot}"
+        },
+        "outputs": [
+          "{projectRoot}/.open-next"
+        ]
+      },
+      "cf-deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "opennextjs-cloudflare deploy",
+          "cwd": "{projectRoot}"
+        },
+        "dependsOn": [
+          "cf-build"
+        ]
+      },
+      "deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx cf-build web",
+            "nx cf-deploy web"
+          ],
+          "parallel": false
+        }
+      },
+      "preview": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "nx cf-build web",
+            "opennextjs-cloudflare preview"
+          ],
+          "parallel": false
+        }
+      }
+    },
     "tags": [
       "scope:frontend",
       "type:app",

@@ -3,9 +3,6 @@ import { MessageSquare, Plus, Settings } from 'lucide-react';
 interface ChatData {
   id: number | string;
   title: string;
-  lastMessage: string;
-  timestamp: string;
-  unread: boolean;
 }
 interface SavedChatsProps {
   isOpen: boolean;
@@ -13,12 +10,7 @@ interface SavedChatsProps {
   chats: ChatData[];
   onNewChat: () => void;
 }
-export default function SavedChatsView({
-  isOpen,
-  onClose,
-  chats,
-  onNewChat,
-}: SavedChatsProps) {
+export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: SavedChatsProps) {
   return (
     <>
       {/* Mobile Overlay */}

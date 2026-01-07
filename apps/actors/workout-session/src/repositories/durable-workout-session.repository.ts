@@ -1,4 +1,5 @@
 import { eq, and } from 'drizzle-orm';
+import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
 import {
   Result,
   QueryError,
@@ -9,18 +10,15 @@ import {
 import type { WorkoutSession } from '@bene/training-core';
 import type { WorkoutSessionRepository } from '@bene/training-application';
 
-import {
-  type DOClient,
-  workout_session_schema,
-  sessionMetadata as sessionMetadataTable,
-} from '@bene/persistence';
+
 import { toDatabase, toDomain } from '../mappers/workout-session.mapper.js';
+import { sessionMetadata as sessionMetadataTable, workout_session_schema } from '../data/schema/index.js';
 
 /**
  * WorkoutSession repository - uses Drizzle with Durable Object SQLite
  */
 export class DurableWorkoutSessionRepository implements WorkoutSessionRepository {
-  constructor(private db: DOClient<typeof workout_session_schema>) {}
+  constructor(private db: DrizzleSqliteDODatabase<typeof workout_session_schema>) { }
 
   async findById(sessionId: string): Promise<Result<WorkoutSession>> {
     try {
@@ -58,7 +56,7 @@ export class DurableWorkoutSessionRepository implements WorkoutSessionRepository
         return Result.fail(
           new EntityNotFoundError(
             'WorkoutSession',
-            `active session for user ${userId}`,
+            `active session for user ${ userId }`,
           ),
         );
       }

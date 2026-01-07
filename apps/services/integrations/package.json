@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "@bene/shared": "workspace:*",
-    "@bene/integrations-domain": "workspace:*"
+    "@bene/integrations-domain": "workspace:*",
+    "@bene/training-core": "workspace:*"
   },
   "nx": {
     "tags": [

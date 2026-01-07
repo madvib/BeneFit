@@ -1,7 +1,7 @@
-import { MessageData } from '@/deprecated/coach';
 import { Bot, User } from 'lucide-react';
+import type { MessageData } from './types';
 
-export default function ChatMessage({ message }: MessageData) {
+export default function ChatMessage({ message }: { message: MessageData }) {
   const isUser = message.role === 'user';
 
   return (
@@ -28,7 +28,7 @@ export default function ChatMessage({ message }: MessageData) {
             {message.content}
           </div>
           <span className="text-muted-foreground mt-1 px-1 text-[10px]">
-            {message.timestamp}
+            {message.timestamp.toLocaleTimeString()}
           </span>
         </div>
       </div>

@@ -1,12 +1,7 @@
 /**
- * Integration clients for third-party fitness services
- *
- * This file re-exports the individual client implementations for backward compatibility.
- * Each client extends OAuth2Client and uses HttpClient for common functionality.
+ * Integration Service - Strava Client
+ * 
+ * OAuth is handled by Better Auth in the gateway.
+ * This service only fetches data using access tokens.
  */
-
-// Re-export Strava client
 export * from './strava-client.js';
-
-// Re-export Garmin client
-export * from './garmin-client.js';

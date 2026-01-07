@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { Button } from '@/lib/components';
+import { authClient } from '@bene/react-api-client';
 
-type OAuthProvider = 'google';
+type OAuthProvider = 'google' | 'strava';
 
 interface OAuthButtonProps {
   provider: OAuthProvider;
@@ -23,21 +24,15 @@ export function OAuthButton({
   const handleClick = async () => {
     setIsLoading(true);
     try {
-      const { authClient } = await import('@bene/react-api-client');
-
-      if (mode === 'link') {
-        // Link social account
-        await authClient.linkSocial({
-          provider,
-          callbackURL: `${window.location.origin}/user/account`,
-        });
-      } else {
-        // Sign in with social account
-        await authClient.signIn.social({
-          provider,
-          callbackURL: `${window.location.origin}${callbackURL}`,
-        });
-      }
+      await (mode === 'link'
+        ? authClient.linkSocial({
+            provider,
+            callbackURL: `${globalThis.location.origin}/user/account`,
+          })
+        : authClient.signIn.social({
+            provider,
+            callbackURL: `${globalThis.location.origin}${callbackURL}`,
+          }));
       // Note: Better Auth will handle the redirect, so we don't set isLoading to false
     } catch (error) {
       console.error(`OAuth with ${provider} failed`, error);
@@ -68,6 +63,25 @@ export function OAuthButton({
     );
   };
 
+  const getStravaIcon = () => {
+    return (
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#FC4C02">
+        <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+      </svg>
+    );
+  };
+
+  const getIcon = () => {
+    switch (provider) {
+      case 'google':
+        return getGoogleIcon();
+      case 'strava':
+        return getStravaIcon();
+      default:
+        return null;
+    }
+  };
+
   return (
     <Button
       variant="outline"
@@ -75,7 +89,7 @@ export function OAuthButton({
       onClick={handleClick}
       disabled={isLoading}
     >
-      {getGoogleIcon()}
+      {getIcon()}
       <span>{text}</span>
     </Button>
   );

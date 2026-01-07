@@ -1,4 +1,5 @@
-import { drizzle } from 'drizzle-orm/durable-sqlite';
+/// <reference path="../../../../../types/cloudflare-runtime.d.ts" />
+
 import { profile, NewProfile } from './schema/user-profile/profile.js';
 import { userStats, NewUserStats } from './schema/user-profile/user_stats.js';
 import { achievements, NewAchievement } from './schema/user-profile/achievements.js';
@@ -45,39 +46,104 @@ import {
   NewWorkoutTemplate,
 } from './schema/fitness-plan/workout_templates.js';
 
-import { SEED_USER_IDS, SEED_USERS } from '@bene/shared';
+import { SEED_USER_IDS, SEED_USERS, SEED_PERSONAS } from '@bene/shared';
 
-const now = Math.floor(Date.now() / 1000);
+// Fixed reference time for deterministic seeding (Jan 1, 2024 12:00:00 UTC)
+const now = 1704110400;
+
+// User state mappings to avoid verbose ternaries
+const USER_PROFILES: Record<string, Partial<NewProfile>> = {
+  [SEED_USER_IDS.USER_001]: {
+    bio: 'Professional boxer turned fitness enthusiast',
+    location: 'New York, NY',
+    timezone: 'America/New_York',
+  },
+  [SEED_USER_IDS.USER_002]: {
+    bio: 'Marathon runner and coach',
+    location: 'San Francisco, CA',
+    timezone: 'America/Los_Angeles',
+  },
+  [SEED_USER_IDS.USER_003]: {
+    bio: 'Powerlifter and gym enthusiast',
+    location: 'Austin, TX',
+    timezone: 'America/Chicago',
+  },
+  [SEED_USER_IDS.USER_004]: {
+    bio: 'Yoga instructor',
+    location: 'Seattle, WA',
+    timezone: 'America/Los_Angeles',
+  },
+  [SEED_USER_IDS.USER_005]: {
+    bio: 'Cycling enthusiast',
+    location: 'Denver, CO',
+    timezone: 'America/Denver',
+  },
+};
+
+const USER_STATS: Record<string, Partial<NewUserStats>> = {
+  [SEED_USER_IDS.USER_001]: {
+    currentStreakDays: 15,
+    longestStreakDays: 22,
+    totalWorkoutsCompleted: 45,
+    totalMinutesTrained: 2250,
+    totalVolumeKg: 12500,
+  },
+  [SEED_USER_IDS.USER_002]: {
+    currentStreakDays: 8,
+    longestStreakDays: 14,
+    totalWorkoutsCompleted: 78,
+    totalMinutesTrained: 4267,
+    totalDistanceMeters: 420000,
+  },
+  [SEED_USER_IDS.USER_003]: {
+    currentStreakDays: 5,
+    longestStreakDays: 12,
+    totalWorkoutsCompleted: 62,
+    totalMinutesTrained: 3117,
+    totalVolumeKg: 18700,
+  },
+  [SEED_USER_IDS.USER_004]: {
+    currentStreakDays: 3,
+    longestStreakDays: 5,
+    totalWorkoutsCompleted: 10,
+    totalMinutesTrained: 600,
+  },
+  [SEED_USER_IDS.USER_005]: {
+    currentStreakDays: 20,
+    longestStreakDays: 25,
+    totalWorkoutsCompleted: 40,
+    totalMinutesTrained: 2400,
+  },
+};
 
 // Map SEED_USERS to Profiles
 const profilesData: NewProfile[] = SEED_USERS.map((u, index) => ({
   userId: u.id,
   displayName: u.name,
   avatarUrl: u.avatarUrl,
-  bio: index === 0
-    ? 'Professional boxer turned fitness enthusiast'
-    : index === 1
-      ? 'Marathon runner and coach'
-      : 'Powerlifter and gym enthusiast',
-  location: index === 0 ? 'New York, NY' : index === 1 ? 'San Francisco, CA' : 'Austin, TX',
-  timezone: index === 0 ? 'America/New_York' : index === 1 ? 'America/Los_Angeles' : 'America/Chicago',
-  createdAt: new Date((now - (86400 * (index + 1))) * 1000),
+  bio: USER_PROFILES[u.id]?.bio || 'Fitness Enthusiast',
+  location: USER_PROFILES[u.id]?.location || 'Planet Earth',
+  timezone: USER_PROFILES[u.id]?.timezone || 'UTC',
+  createdAt: new Date((now - 86400 * (index + 1)) * 1000),
   updatedAt: new Date(now * 1000),
 }));
 
 // Map SEED_USERS to User Stats
-const userStatsData: NewUserStats[] = SEED_USERS.map((u, index) => ({
-  userId: u.id,
-  displayName: u.name,
-  currentStreakDays: index === 0 ? 15 : index === 1 ? 8 : 5,
-  longestStreakDays: index === 0 ? 22 : index === 1 ? 14 : 12,
-  totalWorkoutsCompleted: index === 0 ? 45 : index === 1 ? 78 : 62,
-  totalMinutesTrained: index === 0 ? 2250 : index === 1 ? 4267 : 3117,
-  totalVolumeKg: index === 0 ? 12500 : index === 1 ? 0 : 18700,
-  totalDistanceMeters: index === 0 ? 0 : index === 1 ? 420000 : 0,
-  totalCaloriesBurned: 0,
-  updatedAt: new Date(now * 1000),
-}));
+const userStatsData: NewUserStats[] = SEED_USERS.map((u) => {
+  const stats = USER_STATS[u.id] || {};
+  return {
+    userId: u.id,
+    displayName: u.name,
+    currentStreakDays: stats.currentStreakDays || 0,
+    longestStreakDays: stats.longestStreakDays || 0,
+    totalWorkoutsCompleted: stats.totalWorkoutsCompleted || 0,
+    totalMinutesTrained: stats.totalMinutesTrained || 0,
+    totalVolumeKg: stats.totalVolumeKg || 0,
+    totalDistanceMeters: stats.totalDistanceMeters || 0,
+    totalCaloriesBurned: 0,
+    updatedAt: new Date(now * 1000),
+  };
+});
 
 const achievementsData: NewAchievement[] = [
   {
@@ -139,29 +205,73 @@ const completedWorkoutsData: NewCompletedWorkout[] = [
       rpeAverage: 8.5,
       exertionScore: 7.8,
     },
-    createdAt: new Date((now - 1800) * 1000),
+    createdAt: new Date((now - 3600) * 1000),
   },
   {
     id: 'cw_002',
     userId: SEED_USER_IDS.USER_002,
     workoutId: 'wo_002',
-    planId: 'plan_002',
+    planId: 'afp_002',
     workoutTemplateId: 'wt_002',
     workoutType: 'cardio',
-    completedAt: new Date((now - 3600) * 1000),
-    recordedAt: new Date((now - 3600) * 1000),
+    completedAt: new Date((now - 7000) * 1000),
+    recordedAt: new Date((now - 7000) * 1000),
     durationSeconds: 3600,
-    notes: 'Morning Run',
+    notes: 'Long run, felt good',
     totalVolume: 0,
-    distanceMeters: 10000, // 10km
-    caloriesBurned: 0,
+    distanceMeters: 10000,
+    caloriesBurned: 800,
     performanceJson: {
       totalReps: 0,
       totalSets: 0,
       rpeAverage: 7.0,
       exertionScore: 6.5,
     },
-    createdAt: new Date((now - 3600) * 1000),
+    createdAt: new Date((now - 7200) * 1000),
+  },
+  {
+    id: 'cw_004',
+    userId: SEED_USER_IDS.USER_004,
+    workoutId: 'wo_004',
+    planId: 'afp_004',
+    workoutTemplateId: 'wt_004',
+    workoutType: 'rest',
+    completedAt: new Date((now - 172800) * 1000),
+    recordedAt: new Date((now - 172800) * 1000),
+    durationSeconds: 1200,
+    notes: 'Feeling a bit stiff in the shoulders.',
+    totalVolume: 0,
+    distanceMeters: 0,
+    caloriesBurned: 150,
+    performanceJson: {
+      totalReps: 0,
+      totalSets: 0,
+      rpeAverage: 4.0,
+      exertionScore: 3.5,
+    },
+    createdAt: new Date((now - 172800) * 1000),
+  },
+  {
+    id: 'cw_005',
+    userId: SEED_USER_IDS.USER_005,
+    workoutId: 'wo_005',
+    planId: 'afp_005',
+    workoutTemplateId: 'wt_005',
+    workoutType: 'cardio',
+    completedAt: new Date((now - 86400) * 1000),
+    recordedAt: new Date((now - 86400) * 1000),
+    durationSeconds: 2400,
+    notes: 'Last workout of the challenge! Emptied the tank.',
+    totalVolume: 0,
+    distanceMeters: 0,
+    caloriesBurned: 450,
+    performanceJson: {
+      totalReps: 120,
+      totalSets: 8,
+      rpeAverage: 9.5,
+      exertionScore: 9.8,
+    },
+    createdAt: new Date((now - 86400) * 1000),
   },
 ];
 
@@ -249,6 +359,14 @@ const workoutReactionsData: NewWorkoutReaction[] = [
     reactionType: 'strong',
     createdAt: new Date((now - 3500) * 1000),
   },
+  {
+    id: 'wr_003',
+    workoutId: 'cw_005',
+    userId: SEED_USER_IDS.USER_001,
+    userName: 'Test User',
+    reactionType: 'clap', // Fix: 'celebrate' was a hallucination, not in enum
+    createdAt: new Date((now - 86000) * 1000),
+  },
 ];
 
 const coachingConversationsData: NewCoachConversation[] = [
@@ -279,6 +397,34 @@ const coachingConversationsData: NewCoachConversation[] = [
     totalCoachMessages: 1,
     lastMessageAt: new Date((now - 3600) * 1000),
     startedAt: new Date((now - 14400) * 1000),
+  },
+  {
+    id: 'conv_003',
+    userId: SEED_USER_IDS.USER_003,
+    contextJson: {
+      currentStreak: 5,
+      recentWorkouts: [],
+      goals: ['get_started'],
+    },
+    totalMessages: 0,
+    totalUserMessages: 0,
+    totalCoachMessages: 0,
+    lastMessageAt: null,
+    startedAt: new Date(now * 1000),
+  },
+  {
+    id: 'conv_005',
+    userId: SEED_USER_IDS.USER_005,
+    contextJson: {
+      currentStreak: 20,
+      recentWorkouts: ['cw_005'],
+      goals: ['maintain_results'],
+    },
+    totalMessages: 12,
+    totalUserMessages: 6,
+    totalCoachMessages: 6,
+    lastMessageAt: new Date((now - 3600) * 1000),
+    startedAt: new Date((now - 2592000) * 1000),
   },
 ];
 
@@ -330,6 +476,29 @@ const checkInsData: NewCheckIn[] = [
     createdAt: new Date((now - 10800) * 1000),
     respondedAt: null,
   },
+  {
+    id: 'ci_003',
+    conversationId: 'conv_003',
+    type: 'proactive',
+    triggeredBy: 'onboarding',
+    question: "Welcome to BeneFit! What's your primary goal for the next 30 days?",
+    userResponse: null,
+    status: 'pending',
+    createdAt: new Date(now * 1000),
+    respondedAt: null,
+  },
+  {
+    id: 'ci_005',
+    conversationId: 'conv_005',
+    type: 'proactive',
+    triggeredBy: 'completion_survey',
+    question:
+      'Congratulations on finishing the Shred Challenge! How would you rate your experience?',
+    userResponse: 'It was tough but rewarding. Loved it!',
+    status: 'responded',
+    createdAt: new Date((now - 82800) * 1000),
+    respondedAt: new Date((now - 82000) * 1000),
+  },
 ];
 
 const connectedServicesData: NewConnectedService[] = [
@@ -380,46 +549,48 @@ const integrationSyncLogsData: NewIntegrationSyncLog[] = [
   },
 ];
 
-const activeFitnessPlansData: NewActiveFitnessPlan[] = [
-  {
-    id: 'afp_001',
-    userId: SEED_USER_IDS.USER_001,
-    title: 'Strength Building Phase',
-    description: 'Focus on compound lifts and progressive overload',
-    planType: 'strength_program',
-    templateId: 'plan_001',
-    goalsJson: { focus: 'strength', target: 'increase_5rm' },
-    progressionJson: { type: 'linear_periodization', intensity: 'progressive' },
-    constraintsJson: { availability: ['Mon', 'Wed', 'Fri'], maxHoursPerWeek: 6 },
-    currentPositionJson: { week: 3, day: 2 },
-    status: 'active',
-    completedWorkouts: 12,
-    totalScheduledWorkouts: 36,
-    startDate: new Date((now - 172800) * 1000),
-    endDate: new Date((now + 1209600) * 1000), // 2 weeks in the future
-    createdAt: new Date((now - 172800) * 1000),
-    updatedAt: new Date((now - 3600) * 1000),
-  },
-  {
-    id: 'afp_002',
-    userId: SEED_USER_IDS.USER_002,
-    title: 'Marathon Training Plan',
-    description: '18-week plan to prepare for a marathon',
-    planType: 'event_training',
-    templateId: 'plan_002',
-    goalsJson: { focus: 'endurance', target: 'finish_under_4_hours' },
-    progressionJson: { type: 'pyramidal', intensity: 'periodized' },
-    constraintsJson: { availability: ['Tue', 'Thu', 'Sat'], maxHoursPerWeek: 10 },
-    currentPositionJson: { week: 8, day: 4 },
-    status: 'active',
-    completedWorkouts: 52,
-    totalScheduledWorkouts: 144,
-    startDate: new Date((now - 259200) * 1000),
-    endDate: new Date((now + 604800) * 1000), // 1 week in the future
-    createdAt: new Date((now - 259200) * 1000),
-    updatedAt: new Date((now - 7200) * 1000),
-  },
-];
+const activeFitnessPlansData: NewActiveFitnessPlan[] = SEED_USERS.map((u) => {
+  const persona = SEED_PERSONAS[u.id as keyof typeof SEED_PERSONAS];
+  if (!persona.plan) return null;
+
+  const isActive = persona.plan.status === 'active';
+  const isPaused = persona.plan.status === 'paused';
+  const isCompleted = persona.plan.status === 'completed';
+
+  // Deterministic dates based on status
+  let startDate = new Date((now - 172800) * 1000); // Default 2 days ago
+  let endDate = new Date((now + 1209600) * 1000); // Default 2 weeks future
+
+  if (isCompleted) {
+    startDate = new Date((now - 2592000) * 1000); // 30 days ago
+    endDate = new Date((now - 86400) * 1000); // Ended yesterday
+  } else if (isPaused) {
+    startDate = new Date((now - 604800) * 1000); // Started 1 week ago
+    endDate = new Date((now + 604800) * 1000); // Ends 1 week future
+  }
+
+  const activePlan: NewActiveFitnessPlan = {
+    id: `afp_${ u.id.split('_').pop() }`,
+    userId: u.id,
+    title: persona.plan.title as string,
+    description: `${ persona.role } training plan`,
+    planType: persona.plan.type as string,
+    templateId: `plan_${ u.id.split('_').pop() }`,
+    goalsJson: { focus: 'general', target: 'improve' },
+    progressionJson: { type: 'standard', intensity: 'moderate' },
+    constraintsJson: { availability: ['Mon', 'Wed', 'Fri'], maxHoursPerWeek: 5 },
+    currentPositionJson: { week: 1, day: 1 },
+    status: persona.plan.status as 'active' | 'paused' | 'completed',
+    completedWorkouts: isCompleted ? 20 : 5,
+    totalScheduledWorkouts: 20,
+    startDate,
+    endDate,
+    createdAt: startDate,
+    updatedAt: new Date(now * 1000),
+  };
+
+  return activePlan;
+}).filter((plan): plan is NewActiveFitnessPlan => plan !== null);
 
 const weeklySchedulesData: NewWeeklySchedule[] = [
   {
@@ -490,6 +661,33 @@ const weeklySchedulesData: NewWeeklySchedule[] = [
     createdAt: new Date((now - 172800) * 1000),
     updatedAt: new Date((now - 172800) * 1000),
   },
+  {
+    id: 'ws_004',
+    planId: 'afp_004',
+    weekNumber: 2,
+    startDate: new Date((now - 172800) * 1000),
+    endDate: new Date((now + 432000) * 1000),
+    focus: 'Flexibility',
+    targetWorkouts: 2,
+    workoutsJson: [
+      {
+        id: 'wt_004_1',
+        dayOfWeek: 1,
+        title: 'Morning Yoga',
+        workoutType: 'recovery',
+        exercises: [{ name: 'Sun Salutations', duration: 15 }, { name: 'Deep Stretching', duration: 25 }],
+      },
+      {
+        id: 'wt_004_2',
+        dayOfWeek: 4,
+        title: 'Evening Flow',
+        workoutType: 'recovery',
+        exercises: [{ name: 'Cat-Cow', duration: 10 }, { name: 'Childs Pose', duration: 10 }],
+      },
+    ],
+    createdAt: new Date((now - 172800) * 1000),
+    updatedAt: new Date((now - 172800) * 1000),
+  },
 ];
 
 const workoutTemplatesData: NewWorkoutTemplate[] = [
@@ -532,17 +730,37 @@ const workoutTemplatesData: NewWorkoutTemplate[] = [
     createdAt: new Date((now - 172800) * 1000),
     updatedAt: new Date((now - 172400) * 1000),
   },
+  {
+    id: 'wt_004_1',
+    planId: 'afp_004',
+    weekId: 'ws_004',
+    weekNumber: 2,
+    dayOfWeek: 1,
+    scheduledDate: new Date(now * 1000 - 86400000).toISOString(),
+    title: 'Morning Yoga',
+    type: 'recovery',
+    category: 'recovery',
+    status: 'completed',
+    importance: 'key',
+    activitiesJson: [{ name: 'Sun Salutations', duration: 15 }, { name: 'Deep Stretching', duration: 25 }],
+    createdAt: new Date((now - 86400) * 1000),
+    updatedAt: new Date((now - 86000) * 1000),
+  },
 ];
 
 /**
  * Seeds the User Base database using Drizzle ORM and Durable Object Storage.
  * @param storage - The DurableObjectStorage instance to seed
  */
-export async function seedUserHub(storage: DurableObjectStorage) {
+import { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
+
+/**
+ * Seeds the User Base database using Drizzle ORM.
+ * @param db - The Drizzle database instance to seed
+ */
+export async function seedUserHub(db: BaseSQLiteDatabase<any, any>) {
   console.log('🌱 Seeding User Hub database with Drizzle ORM...');
 
-  // Create the Drizzle client using the provided storage
-  const db = drizzle(storage);
 
   try {
     console.log('  - Clearing existing data...');

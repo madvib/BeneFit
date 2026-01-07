@@ -10,25 +10,78 @@ export abstract class BaseUseCase<TInput, TOutput> implements UseCase<TInput, TO
   // Enforces that concrete classes must implement this method
   protected abstract performExecution(input: TInput): Promise<Result<TOutput>>;
 
+  // Logging configuration
+  private static readonly isDevelopment = process.env.NODE_ENV !== 'production';
+  private static readonly isVerbose = process.env.VERBOSE_LOGGING === 'true';
+
   public async execute(input: TInput): Promise<Result<TOutput>> {
-    // 1. Common Pre-Execution Logic (e.g., Logging, Auth Check)
-    console.log(`[USE_CASE] Executing ${this.constructor.name}`);
+    const startTime = Date.now();
+    const useCaseName = this.constructor.name;
 
-    // 2. Perform Validation (If needed, using the Guard class)
-    // const validationResult = this.validate(input);
-    // if (validationResult.isFailure) return validationResult;
+    // Start Logging (development only)
+    if (BaseUseCase.isDevelopment) {
+      this.logStart(useCaseName, input);
+    }
 
-    // 3. Delegate to the concrete implementation
     try {
-      return await this.performExecution(input);
+      // Perform Execution
+      const result = await this.performExecution(input);
+
+      // End Logging (development only)
+      if (BaseUseCase.isDevelopment) {
+        const duration = Date.now() - startTime;
+        this.logEnd(useCaseName, result, duration);
+      }
+
+      return result;
     } catch (error) {
-      // Catch unexpected system errors (e.g., database connection failure)
+      // Error Logging (always log errors, even in production)
+      const duration = Date.now() - startTime;
+      this.logError(useCaseName, error, duration);
+
       return Result.fail(
         new Error(
-          `System error in ${this.constructor.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          `System error in ${ useCaseName }: ${ error instanceof Error ? error.message : 'Unknown error' }`,
         ),
       );
     }
+  }
+
+  // Pretty logging methods
+  private logStart(useCaseName: string, input: TInput): void {
+    console.log(`\n🚀 ${ useCaseName }`);
+
+    if (BaseUseCase.isVerbose) {
+      console.log('📥 Input:', JSON.stringify(this.sanitizeInput(input), null, 2));
+    }
+
+    console.log(`⏱️  Started at ${ new Date().toISOString() }`);
+  }
+
+  private logEnd(useCaseName: string, result: Result<TOutput>, duration: number): void {
+    const icon = result.isSuccess ? '✅' : '⚠️';
+    const status = result.isSuccess ? 'SUCCESS' : 'FAILURE';
+
+    console.log(`${ icon } ${ useCaseName } - ${ status } (${ duration }ms)`);
+
+    if (BaseUseCase.isVerbose && result.isFailure) {
+      console.log('❌ Error:', result.error);
+    }
+  }
+
+  private logError(useCaseName: string, error: unknown, duration: number): void {
+    console.error(`\n💥 ${ useCaseName } - ERROR (${ duration }ms)`);
+    console.error('❌ Message:', error instanceof Error ? error.message : 'Unknown error');
+
+    if (BaseUseCase.isDevelopment && error instanceof Error && error.stack) {
+      console.error('📚 Stack trace:\n', error.stack);
+    }
+  }
+
+  // Helper to prevent logging sensitive data like passwords
+  // Child classes can override this if needed
+  protected sanitizeInput(input: TInput): unknown {
+    return input;
   }
 
   // You could define an abstract validate method here for consistency

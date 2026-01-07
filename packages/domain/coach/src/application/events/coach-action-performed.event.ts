@@ -4,19 +4,16 @@ export interface CoachActionPerformedEventPayload {
   userId: string;
   actionType: string;
   details: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
-export class CoachActionPerformedEvent implements DomainEvent {
-  public readonly eventName: string;
+export class CoachActionPerformedEvent extends DomainEvent {
   public readonly payload: CoachActionPerformedEventPayload;
-  public readonly occurredAt: Date;
-  public readonly eventId: string;
 
   constructor(payload: CoachActionPerformedEventPayload) {
+    // Dynamic event name based on action type
+    const eventName = `Coach${ payload.actionType.charAt(0).toUpperCase() + payload.actionType.slice(1) }`;
+    super(eventName);
     this.payload = payload;
-    this.eventName = `Coach${payload.actionType.charAt(0).toUpperCase() + payload.actionType.slice(1)}`;
-    this.occurredAt = new Date();
-    this.eventId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
   }
 }

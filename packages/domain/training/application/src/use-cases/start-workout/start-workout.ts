@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
   createWorkoutSession,
   WorkoutActivity,
@@ -26,24 +26,7 @@ const WorkoutActivitySchema = z
   })
   .readonly();
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use StartWorkoutRequest type instead */
-export interface StartWorkoutRequest_Deprecated {
-  userId: string;
-  userName: string;
-  userAvatar?: string;
 
-  // Option 1: From active plan
-  fromPlan?: boolean;
-
-  // Option 2: Custom workout
-  workoutType?: string;
-  activities?: WorkoutActivity[];
-
-  // Multiplayer options
-  isMultiplayer?: boolean;
-  isPublic?: boolean;
-}
 
 // Client-facing schema (what comes in the request body)
 export const StartWorkoutRequestClientSchema = z.object({
@@ -72,18 +55,7 @@ export const StartWorkoutRequestSchema = StartWorkoutRequestClientSchema.extend(
 // Zod inferred type with original name
 export type StartWorkoutRequest = z.infer<typeof StartWorkoutRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use StartWorkoutResponse type instead */
-export interface StartWorkoutResponse_Deprecated {
-  sessionId: string;
-  workoutType: string;
-  totalActivities: number;
-  estimatedDurationMinutes: number;
-  currentActivity: {
-    type: string;
-    instructions: string[];
-  };
-}
+
 
 // Zod schema for response validation
 export const StartWorkoutResponseSchema = z.object({
@@ -100,7 +72,7 @@ export const StartWorkoutResponseSchema = z.object({
 // Zod inferred type with original name
 export type StartWorkoutResponse = z.infer<typeof StartWorkoutResponseSchema>;
 
-export class StartWorkoutUseCase implements UseCase<
+export class StartWorkoutUseCase extends BaseUseCase<
   StartWorkoutRequest,
   StartWorkoutResponse
 > {
@@ -108,9 +80,11 @@ export class StartWorkoutUseCase implements UseCase<
     private sessionRepository: WorkoutSessionRepository,
     // private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(request: StartWorkoutRequest): Promise<Result<StartWorkoutResponse>> {
+  protected async performExecution(request: StartWorkoutRequest): Promise<Result<StartWorkoutResponse>> {
     // 1. Validate custom workout request
     if (!request.workoutType || !request.activities) {
       return Result.fail(
@@ -135,7 +109,7 @@ export class StartWorkoutUseCase implements UseCase<
       });
 
       if (activityResult.isFailure) {
-        throw new Error(`Failed to create workout activity: ${activityResult.error}`);
+        throw new Error(`Failed to create workout activity: ${ activityResult.error }`);
       }
 
       return activityResult.value;

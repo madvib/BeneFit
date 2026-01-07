@@ -13,6 +13,7 @@
     "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "lib": ["es2022", "dom", "dom.iterable"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
   "exclude": [
@@ -42,7 +43,7 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../apps/gateway"
+      "path": "../shared/tsconfig.lib.json"
     }
   ]
 }

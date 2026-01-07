@@ -1,15 +1,10 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { CheckInDismissedEvent } from '@app/events/check-in-dismissed.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use DismissCheckInRequest type instead */
-export interface DismissCheckInRequest_Deprecated {
-  userId: string;
-  checkInId: string;
-}
+
 
 // Client-facing schema (what comes in the request body)
 export const DismissCheckInRequestClientSchema = z.object({
@@ -28,12 +23,7 @@ export const DismissCheckInRequestSchema = DismissCheckInRequestClientSchema.ext
 // Zod inferred type with original name
 export type DismissCheckInRequest = z.infer<typeof DismissCheckInRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use DismissCheckInResponse type instead */
-export interface DismissCheckInResponse_Deprecated {
-  conversationId: string;
-  dismissed: boolean;
-}
+
 
 // Zod schema for response validation
 export const DismissCheckInResponseSchema = z.object({
@@ -44,16 +34,18 @@ export const DismissCheckInResponseSchema = z.object({
 // Zod inferred type with original name
 export type DismissCheckInResponse = z.infer<typeof DismissCheckInResponseSchema>;
 
-export class DismissCheckInUseCase implements UseCase<
+export class DismissCheckInUseCase extends BaseUseCase<
   DismissCheckInRequest,
   DismissCheckInResponse
 > {
   constructor(
     private conversationRepository: CoachConversationRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: DismissCheckInRequest,
   ): Promise<Result<DismissCheckInResponse>> {
     const conversationResult = await this.conversationRepository.findByUserId(

@@ -6,7 +6,6 @@
     "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
   },
   "dependencies": {
-    "@bene/persistence": "workspace:*",
     "@bene/shared": "workspace:*",
     "@bene/training-application": "workspace:*",
     "@bene/training-core": "workspace:*",

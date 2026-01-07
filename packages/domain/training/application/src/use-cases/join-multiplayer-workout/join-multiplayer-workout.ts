@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { WorkoutSessionCommands } from '@bene/training-core';
 import { UserJoinedWorkoutEvent } from '../../events/index.js';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
@@ -50,16 +50,18 @@ export type JoinMultiplayerWorkoutResponse = z.infer<
   typeof JoinMultiplayerWorkoutResponseSchema
 >;
 
-export class JoinMultiplayerWorkoutUseCase implements UseCase<
+export class JoinMultiplayerWorkoutUseCase extends BaseUseCase<
   JoinMultiplayerWorkoutRequest,
   JoinMultiplayerWorkoutResponse
 > {
   constructor(
     private sessionRepository: WorkoutSessionRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: JoinMultiplayerWorkoutRequest,
   ): Promise<Result<JoinMultiplayerWorkoutResponse>> {
     // 1. Load session
@@ -130,26 +132,4 @@ export class JoinMultiplayerWorkoutUseCase implements UseCase<
     });
   }
 }
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use JoinMultiplayerWorkoutRequest type instead */
-export interface JoinMultiplayerWorkoutRequest_Deprecated {
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  sessionId: string;
-}
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use JoinMultiplayerWorkoutResponse type instead */
-export interface JoinMultiplayerWorkoutResponse_Deprecated {
-  sessionId: string;
-  workoutType: string;
-  participants: Array<{
-    userId: string;
-    userName: string;
-    status: string;
-  }>;
-  currentActivity: {
-    type: string;
-    instructions: string[];
-  };
-}
+

@@ -2,7 +2,7 @@
 
 import { FormSection, Select, Checkbox } from '@/lib/components';
 
-type ProfileVisibility = 'Public' | 'Friends Only' | 'Private';
+type ProfileVisibility = 'Public' | 'Private';
 
 interface PrivacySettingsProps {
   profileVisibility: ProfileVisibility;
@@ -27,12 +27,9 @@ export default function PrivacySettings({
           </div>
           <Select
             value={profileVisibility}
-            onChange={(e) =>
-              onProfileVisibilityChange(e.target.value as 'Public' | 'Friends Only' | 'Private')
-            }
+            onChange={(e) => onProfileVisibilityChange(e.target.value as 'Public' | 'Private')}
           >
             <option value="Public">Public</option>
-            <option value="Friends Only">Friends Only</option>
             <option value="Private">Private</option>
           </Select>
         </div>

@@ -12,9 +12,6 @@ catalogs:
     agents:
       specifier: 0.2.32
       version: 0.2.32
-    better-auth:
-      specifier: 1.4.7
-      version: 1.4.7
     react:
       specifier: ^19.2.3
       version: 19.2.3
@@ -27,6 +24,7 @@ catalogs:
 
 overrides:
   drizzle-orm: 0.45.1
+  better-auth: 1.4.7
 
 importers:
 
@@ -252,9 +250,6 @@ importers:
 
   apps/actors/workout-session:
     dependencies:
-      '@bene/persistence':
-        specifier: workspace:*
-        version: link:../../../packages/persistence
       '@bene/shared':
         specifier: workspace:*
         version: link:../../../packages/shared
@@ -289,7 +284,7 @@ importers:
         specifier: 0.7.5
         version: 0.7.5(hono@4.11.1)(zod@4.2.1)
       better-auth:
-        specifier: 'catalog:'
+        specifier: 1.4.7
         version: 1.4.7(@tanstack/react-start@1.142.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(@swc/core@1.15.7(@swc/helpers@0.5.17))(esbuild@0.25.12)))(better-sqlite3@12.5.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251218.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)(kysely@0.28.9))(next@16.0.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vitest@4.0.16)
       drizzle-orm:
         specifier: 0.45.1
@@ -323,6 +318,9 @@ importers:
       '@bene/shared':
         specifier: workspace:*
         version: link:../../../packages/shared
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../../packages/domain/training/core
 
   apps/web:
     dependencies:
@@ -342,14 +340,11 @@ importers:
         specifier: 'catalog:'
         version: 5.90.12(react@19.2.3)
       better-auth:
-        specifier: 'catalog:'
+        specifier: 1.4.7
         version: 1.4.7(@tanstack/react-start@1.142.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(@swc/core@1.15.7(@swc/helpers@0.5.17))(esbuild@0.25.12)))(better-sqlite3@12.5.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251218.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)(kysely@0.28.9))(next@16.0.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vitest@4.0.16)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
       lucide-react:
         specifier: ^0.546.0
         version: 0.546.0(react@19.2.3)
@@ -445,9 +440,9 @@ importers:
 
   packages/react-api-client:
     dependencies:
-      '@bene/gateway':
+      '@bene/shared':
         specifier: workspace:*
-        version: link:../../apps/gateway
+        version: link:../shared
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.90.12(react@19.2.3)
@@ -455,7 +450,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.0)(react@19.2.3)(typescript@5.9.3)
       better-auth:
-        specifier: 'catalog:'
+        specifier: 1.4.7
         version: 1.4.7(@tanstack/react-start@1.142.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(@swc/core@1.15.7(@swc/helpers@0.5.17))(esbuild@0.25.12)))(better-sqlite3@12.5.0)(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20251218.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)(kysely@0.28.9))(next@16.0.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)(vitest@4.0.16)
       hono:
         specifier: 4.11.0
@@ -6413,9 +6408,6 @@ packages:
   data-view-byte-offset@1.0.1:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
-
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   date-format@4.0.14:
     resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}
@@ -18877,8 +18869,6 @@ snapshots:
       call-bound: 1.0.4
       es-errors: 1.3.0
       is-data-view: 1.0.2
-
-  date-fns@4.1.0: {}
 
   date-format@4.0.14: {}
 

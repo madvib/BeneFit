@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Paperclip, Send, Mic } from 'lucide-react';
-import { MessageData } from '@/deprecated/coach';
 import ChatMessage from './chat-message';
+import type { MessageData } from './types';
 
 interface ChatViewProps {
   messages: MessageData[];
@@ -40,10 +40,25 @@ export default function ChatView({ messages, onSendMessage }: ChatViewProps) {
       {/* Messages List (Scrollable) */}
       <div className="no-scrollbar flex-1 overflow-y-auto scroll-smooth p-4 md:p-6">
         <div className="mx-auto flex max-w-3xl flex-col">
-          {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} />
-          ))}
-          <div ref={messagesEndRef} className="h-4" />
+          {messages.length === 0 ? (
+            <div className="flex flex-1 flex-col items-center justify-center py-12 text-center">
+              <div className="bg-accent/20 text-muted-foreground mb-6 rounded-full p-6">
+                <Mic size={48} />
+              </div>
+              <h2 className="text-foreground mb-2 text-2xl font-bold">Start a Conversation</h2>
+              <p className="text-muted-foreground mb-8 max-w-md">
+                Your AI coach is here to help you with training advice, motivation, and
+                personalized guidance. Ask anything!
+              </p>
+            </div>
+          ) : (
+            <>
+              {messages.map((msg) => (
+                <ChatMessage key={msg.id} message={msg} />
+              ))}
+              <div ref={messagesEndRef} className="h-4" />
+            </>
+          )}
         </div>
       </div>
 

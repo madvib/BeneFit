@@ -1,14 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetWorkoutHistoryRequest type instead */
-export interface GetWorkoutHistoryRequest_Deprecated {
-  userId: string;
-  limit?: number;
-  offset?: number;
-}
+
 
 // Client-facing schema (what comes in the request body)
 export const GetWorkoutHistoryRequestClientSchema = z.object({
@@ -29,21 +23,7 @@ export const GetWorkoutHistoryRequestSchema =
 // Zod inferred type with original name
 export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetWorkoutHistoryResponse type instead */
-export interface GetWorkoutHistoryResponse_Deprecated {
-  workouts: Array<{
-    id: string;
-    type: string;
-    date: Date;
-    durationMinutes: number;
-    perceivedExertion: number;
-    enjoyment: number;
-    verified: boolean;
-    reactionCount: number;
-  }>;
-  total: number;
-}
+
 
 // Zod schema for response validation
 const WorkoutSchema = z.object({
@@ -65,13 +45,15 @@ export const GetWorkoutHistoryResponseSchema = z.object({
 // Zod inferred type with original name
 export type GetWorkoutHistoryResponse = z.infer<typeof GetWorkoutHistoryResponseSchema>;
 
-export class GetWorkoutHistoryUseCase implements UseCase<
+export class GetWorkoutHistoryUseCase extends BaseUseCase<
   GetWorkoutHistoryRequest,
   GetWorkoutHistoryResponse
 > {
-  constructor(private completedWorkoutRepository: CompletedWorkoutRepository) {}
+  constructor(private completedWorkoutRepository: CompletedWorkoutRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetWorkoutHistoryRequest,
   ): Promise<Result<GetWorkoutHistoryResponse>> {
     const workoutsResult = await this.completedWorkoutRepository.findByUserId(
@@ -94,7 +76,7 @@ export class GetWorkoutHistoryUseCase implements UseCase<
         durationMinutes: w.performance.durationMinutes,
         perceivedExertion: w.performance.perceivedExertion,
         enjoyment: w.performance.enjoyment,
-        verified: w.verification.verified,
+        verified: w.verification?.verified || false,
         reactionCount: w.reactions.length,
       })),
       total: workouts.length,

@@ -1,36 +1,54 @@
 'use client';
 
-import { LoadingSpinner, ErrorPage } from '@/lib';
-import { ServiceCard } from '@/app/user/(account)/connections/#components';
+import { useState } from 'react';
+import { LoadingSpinner, ErrorPage } from '@/lib/components';
+import { ServiceCard } from './#components';
 import { integrations } from '@bene/react-api-client';
-import { PageHeader } from '@/app/user/(account)/#shared/page-header';
+import { PageHeader } from '../#shared/page-header';
 import { ROUTES } from '@/lib/constants';
+import { OAuthButton } from '@/lib/components/auth/oauth-button';
+
+// Available services that can be connected
+const AVAILABLE_SERVICES = [
+  {
+    id: 'strava',
+    serviceType: 'strava',
+    displayName: 'Strava',
+    description: 'Connect your Strava account to sync activities',
+    icon: 'https://cdn.simpleicons.org/strava/FC4C02',
+  },
+] as const;
 
 export default function ConnectionsClient() {
+  const [syncingServiceId, setSyncingServiceId] = useState<string | null>(null);
+
   const connectedServicesQuery = integrations.useConnectedServices();
-  const connectMutation = integrations.useConnect();
   const disconnectMutation = integrations.useDisconnect();
+  const syncMutation = integrations.useSync();
 
-  const loading =
-    connectedServicesQuery.isLoading || connectMutation.isPending || disconnectMutation.isPending;
-  const error = connectedServicesQuery.error || connectMutation.error || disconnectMutation.error;
-  const services = connectedServicesQuery.data || [];
-
-  const handleConnect = async (id: string) => {
-    // Note: Defaulting to 'strava' as a placeholder for the service type
-    await connectMutation.mutateAsync({
-      json: {
-        serviceType: 'strava',
-        authorizationCode: '',
-        redirectUri: '',
-      },
-    });
-  };
+  const loading = connectedServicesQuery.isLoading || disconnectMutation.isPending;
+  const error = connectedServicesQuery.error || disconnectMutation.error;
+  const services = connectedServicesQuery.data;
 
   const handleDisconnect = async (id: string) => {
     await disconnectMutation.mutateAsync({
       json: { serviceId: id },
     });
+  };
+
+  const handleSync = async (serviceId: string) => {
+    try {
+      setSyncingServiceId(serviceId);
+      await syncMutation.mutateAsync({
+        json: { serviceId },
+      });
+      // Invalidate connected services to show new sync time
+      await connectedServicesQuery.refetch();
+    } catch (err) {
+      console.error('Sync failed', err);
+    } finally {
+      setSyncingServiceId(null);
+    }
   };
 
   if (loading) {
@@ -48,19 +66,16 @@ export default function ConnectionsClient() {
     );
   }
 
-  const connectedServices = services.filter((service) => service.connected);
-  const availableServices = services.filter((service) => !service.connected);
+  const servicesList = services?.services || [];
+  const connectedServices = servicesList.filter(
+    (service: integrations.ConnectedService) => service.isActive,
+  );
 
-  const serviceCards = (services: any[]) => {
-    return services.map((service) => (
-      <ServiceCard
-        key={service.id}
-        service={service}
-        onConnect={handleConnect}
-        onDisconnect={handleDisconnect}
-      />
-    ));
-  };
+  // Filter available services to only show those not already connected
+  const connectedServiceTypes = new Set(connectedServices.map((s) => s.serviceType));
+  const availableServices = AVAILABLE_SERVICES.filter(
+    (service) => !connectedServiceTypes.has(service.serviceType),
+  );
 
   return (
     <div className="space-y-6">
@@ -75,7 +90,15 @@ export default function ConnectionsClient() {
           <h3 className="text-xl font-semibold">Connected Services</h3>
           <div className="flex flex-col gap-4">
             {connectedServices.length > 0 ? (
-              serviceCards(connectedServices)
+              connectedServices.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onDisconnect={handleDisconnect}
+                  onSync={handleSync}
+                  isSyncing={syncingServiceId === service.id}
+                />
+              ))
             ) : (
               <div className="text-muted-foreground py-8 text-center">
                 No services connected yet
@@ -84,19 +107,38 @@ export default function ConnectionsClient() {
           </div>
         </div>
 
-        {/* Available Services - Right Column (Smaller, Scrollable) */}
+        {/* Available Services - Right Column (Smaller) */}
         <div className="space-y-4 lg:col-span-1">
           <h3 className="text-xl font-semibold">Available Services</h3>
-          <div className="lg:scrollbar-thin lg:scrollbar-thumb-muted lg:scrollbar-track-transparent lg:h-[600px] lg:overflow-y-auto lg:pr-2">
-            <div className="flex flex-col gap-4">
-              {availableServices.length > 0 ? (
-                serviceCards(availableServices)
-              ) : (
-                <div className="text-muted-foreground col-span-full py-8 text-center">
-                  All available services are connected
+          <div className="flex flex-col gap-4">
+            {availableServices.length > 0 ? (
+              availableServices.map((service) => (
+                <div
+                  key={service.id}
+                  className="border-border flex flex-col gap-4 rounded-lg border p-6 shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-muted rounded-full p-3">
+                      <img src={service.icon} alt={service.displayName} className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold">{service.displayName}</h4>
+                      <p className="text-muted-foreground text-sm">{service.description}</p>
+                    </div>
+                  </div>
+                  <OAuthButton
+                    provider={service.serviceType}
+                    text={`Connect ${service.displayName}`}
+                    mode="link"
+                    callbackURL="/user/connections"
+                  />
                 </div>
-              )}
-            </div>
+              ))
+            ) : (
+              <div className="text-muted-foreground col-span-full py-8 text-center">
+                All available services are connected
+              </div>
+            )}
           </div>
         </div>
       </div>

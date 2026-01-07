@@ -21,18 +21,16 @@ import {
  * A factory responsible for instantiating all concrete Repository implementations.
  */
 export class RepositoryFactory {
-  // Private properties for lazy caching
   private _userProfileRepo?: UserProfileRepository;
   private _completedWorkoutRepo?: CompletedWorkoutRepository;
   private _fitnessPlanRepo?: FitnessPlanRepository;
-  // New repos
   private _coachConversationRepo?: CoachConversationRepository;
   private _connectedServiceRepo?: ConnectedServiceRepository;
 
   private db: DrizzleSqliteDODatabase<typeof user_do_schema>;
 
   constructor(storage: DurableObjectStorage) {
-    this.db = drizzle(storage);
+    this.db = drizzle(storage, { schema: user_do_schema });
   }
 
   // --- Public Getters (Lazy-Loaded) ---

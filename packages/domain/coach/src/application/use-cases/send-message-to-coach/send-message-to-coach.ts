@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
@@ -46,7 +46,7 @@ export type SendMessageToCoachResponse = z.infer<
   typeof SendMessageToCoachResponseSchema
 >;
 
-export class SendMessageToCoachUseCase implements UseCase<
+export class SendMessageToCoachUseCase extends BaseUseCase<
   SendMessageToCoachRequest,
   SendMessageToCoachResponse
 > {
@@ -55,9 +55,11 @@ export class SendMessageToCoachUseCase implements UseCase<
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: SendMessageToCoachRequest,
   ): Promise<Result<SendMessageToCoachResponse>> {
     // 1. Get or create conversation
@@ -70,7 +72,7 @@ export class SendMessageToCoachUseCase implements UseCase<
       const contextResult = await this.contextBuilder.buildContext(request.userId);
       if (contextResult.isFailure) {
         return Result.fail(
-          new Error(`Failed to build coaching context: ${contextResult.error}`),
+          new Error(`Failed to build coaching context: ${ contextResult.error }`),
         );
       }
 
@@ -112,7 +114,7 @@ export class SendMessageToCoachUseCase implements UseCase<
 
     if (aiResponseResult.isFailure) {
       const error = aiResponseResult.error;
-      return Result.fail(new Error(`Coach unavailable: ${error}`));
+      return Result.fail(new Error(`Coach unavailable: ${ error }`));
     }
 
     const aiResponse = aiResponseResult.value;
@@ -173,7 +175,7 @@ export class SendMessageToCoachUseCase implements UseCase<
               userId,
               details: action.details,
               planChangeId: action.planChangeId,
-              timestamp: new Date(),
+              timestamp: new Date().toISOString(),
             }),
           );
           break;
@@ -183,7 +185,7 @@ export class SendMessageToCoachUseCase implements UseCase<
             new CoachScheduledFollowupEvent({
               userId,
               details: action.details,
-              timestamp: new Date(),
+              timestamp: new Date().toISOString(),
             }),
           );
           break;

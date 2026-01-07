@@ -8,7 +8,7 @@ import {
 import { env } from 'cloudflare:workers';
 
 export class AIServiceAdapter implements AIProvider {
-  constructor(private aiService: typeof env.AI_SERVICE) {}
+  constructor(private aiService: typeof env.AI_SERVICE) { }
 
   async complete(request: AICompletionRequest): Promise<Result<AICompletionResponse>> {
     // Call AI service worker via RPC
@@ -21,7 +21,7 @@ export class AIServiceAdapter implements AIProvider {
   ): AsyncGenerator<AIStreamChunk, void, unknown> {
     // Call AI service worker via RPC with streaming
     const streamResponse = await this.aiService.streamChat(request);
-    yield* streamResponse;
+    yield* streamResponse as any;
   }
 
   getName(): string {

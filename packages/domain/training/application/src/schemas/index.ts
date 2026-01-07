@@ -1,17 +1,8 @@
 import { z } from 'zod';
+import { SUPPORTED_EQUIPMENT, FITNESS_GOALS } from '@bene/shared';
 
 // Fitness Goals Schemas
-export const PrimaryFitnessGoalSchema = z.enum([
-  'strength',
-  'hypertrophy',
-  'endurance',
-  'weight_loss',
-  'weight_gain',
-  'general_fitness',
-  'sport_specific',
-  'mobility',
-  'rehabilitation'
-]);
+export const PrimaryFitnessGoalSchema = z.enum(FITNESS_GOALS as unknown as [string, ...string[]]);
 
 export const TargetWeightSchema = z.object({
   current: z.number(),
@@ -49,7 +40,7 @@ export const TrainingConstraintsSchema = z.object({
   availableDays: z.array(z.string()), // ['Monday', 'Wednesday', 'Friday']
   preferredTime: PreferredTimeSchema.optional(),
   maxDuration: z.number().optional(), // minutes per workout
-  availableEquipment: z.array(z.string()),
+  availableEquipment: z.array(z.enum(SUPPORTED_EQUIPMENT as unknown as [string, ...string[]])),
   location: TrainingLocationSchema,
 });
 
@@ -104,7 +95,7 @@ export const TargetMetricsSchema = z.object({
 });
 
 export const PlanGoalsSchema = z.object({
-  primary: z.string(),
+  primary: PrimaryFitnessGoalSchema,
   secondary: z.array(z.string()),
   targetMetrics: TargetMetricsSchema,
   targetDate: z.string().optional(), // Date serialized as ISO string

@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { Heart, MessageCircle, Filter, TrendingUp, Activity, Calendar } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import { workouts, profile } from '@bene/react-api-client';
 import { Card, LoadingSpinner, ErrorPage } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
+import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 
 export default function ActivityFeedPage() {
   const [visibleCount, setVisibleCount] = useState(5);
 
-  const historyQuery = workouts.useWorkoutHistory({});
+  const historyQuery = workouts.useWorkoutHistory({ query: {} });
   const profileQuery = profile.useProfile();
 
   if (historyQuery.isLoading || profileQuery.isLoading) {
@@ -32,23 +32,29 @@ export default function ActivityFeedPage() {
   // Note: For now, the API only returns 'my-activity'. 'friends' and 'teams' will show empty state
   const rawItems = historyQuery.data || { workouts: [] };
 
+  interface ActivityItem {
+    id: string;
+    completedAt?: string;
+    date?: string;
+    notes?: string;
+    activityType?: string;
+    type?: string;
+    durationMinutes?: number;
+  }
+
   const mappedItems =
-    rawItems.workouts?.map((item: any) => ({
+    rawItems.workouts?.map((item: ActivityItem) => ({
       id: item.id,
       user: {
-        name: profileQuery.data?.name || 'Me',
-        avatar: profileQuery.data?.name?.charAt(0) || 'U',
+        name: profileQuery.data?.displayName || 'Me',
+        avatar: profileQuery.data?.displayName?.charAt(0) || 'U',
         color: 'bg-primary',
       },
       action: 'completed a workout',
-      time: formatDistanceToNow(new Date(item.completedAt), { addSuffix: true }),
-      content: item.notes || `Completed ${item.activityType} session.`,
+      time: safeFormatTimeAgo(item.completedAt || item.date || new Date().toISOString()),
+      content: item.notes || `Completed ${item.activityType || item.type} session.`,
       stats: {
-        distance: item.metrics?.distance ? `${item.metrics.distance} km` : undefined,
-        duration: item.metrics?.duration
-          ? `${Math.floor(item.metrics.duration / 60)} min`
-          : undefined,
-        calories: item.metrics?.calories ? `${item.metrics.calories} kcal` : undefined,
+        duration: item.durationMinutes ? `${item.durationMinutes} min` : undefined,
       },
       likes: 0,
       comments: 0,
@@ -71,7 +77,7 @@ export default function ActivityFeedPage() {
 
           {/* Feed List */}
           <div className="space-y-3">
-            {displayedItems.map((item: any) => (
+            {displayedItems.map((item) => (
               <Card
                 key={item.id}
                 className="group border-border bg-card hover:border-primary/30 transition-all hover:shadow-sm"
@@ -154,17 +160,27 @@ export default function ActivityFeedPage() {
               headerClassName="border-b border-border"
             >
               <div className="flex h-40 items-end justify-between gap-2">
-                {[40, 70, 30, 85, 50, 90, 60].map((height, i) => (
-                  <div key={i} className="group relative flex w-full flex-col items-center gap-2">
+                {/* Weekly Progress Chart */}
+                {(() => {
+                  const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                  return [40, 70, 30, 85, 50, 90, 60].map((height, i) => (
                     <div
-                      className="bg-primary/20 group-hover:bg-primary w-full rounded-t-lg transition-all duration-500"
-                      style={{ height: `${height}%` }}
-                    />
-                    <span className="text-muted-foreground text-[10px] font-medium">
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}
-                    </span>
-                  </div>
-                ))}
+                      key={i}
+                      className="group relative flex w-full flex-col items-center gap-2"
+                    >
+                      <div
+                        className="bg-primary/20 group-hover:bg-primary w-full rounded-t-lg transition-all duration-500"
+                        style={{ height: `${height}%` }}
+                      />
+                      <span className="text-muted-foreground text-[10px] font-medium">
+                        {
+                          // eslint-disable-next-line security/detect-object-injection
+                          DAYS[i]
+                        }
+                      </span>
+                    </div>
+                  ));
+                })()}
               </div>
             </Card>
 

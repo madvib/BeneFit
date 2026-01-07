@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Check, AlertCircle, ChevronDown, ChevronUp, Link } from 'lucide-react';
 import { authClient } from '@bene/react-api-client';
-import { Card, Button } from '@/lib/components';
+import { Card } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function SessionInfo() {

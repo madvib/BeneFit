@@ -10,16 +10,16 @@ export const ROUTES = {
     CONFIRM_EMAIL: '/auth/confirm-email',
     EMAIL_CONFIRMED: '/auth/email-confirmed',
     LOGIN: '/auth/login',
-    PASSWORD_RESET: '/auth/password-reset',
+    PASSWORD_RESET: '/auth/password-reset', // eslint-disable-line sonarjs/no-hardcoded-passwords
     SIGNUP: '/auth/signup',
-    UPDATE_PASSWORD: '/auth/update-password',
+    UPDATE_PASSWORD: '/auth/update-password', // eslint-disable-line sonarjs/no-hardcoded-passwords
   },
 
   // Modal routes (intercepting routes)
   MODAL: {
     LOGIN: '/login',
     SIGNUP: '/signup',
-    PASSWORD_RESET: '/password-reset',
+    PASSWORD_RESET: '/password-reset', // eslint-disable-line sonarjs/no-hardcoded-passwords
   },
 
   // Protected routes
@@ -44,12 +44,12 @@ export function buildRoute(route: string, params?: Record<string, string | numbe
   if (!params) return route;
 
   const searchParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
+  for (const [key, value] of Object.entries(params)) {
     if (value !== undefined) searchParams.set(key, String(value));
-  });
+  }
 
   const query = searchParams.toString();
-  return query ? `${route}?${query}` : route;
+  return query ? `${ route }?${ query }` : route;
 }
 
 // Usage examples:

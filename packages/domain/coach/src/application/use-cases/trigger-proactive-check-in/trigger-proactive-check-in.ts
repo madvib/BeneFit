@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { Injury } from '@bene/training-core';
 import {
   CoachConversationCommands,
@@ -11,43 +11,26 @@ import { CoachConversationRepository } from '@app/ports/coach-conversation-repos
 import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
 import { ProactiveCheckInTriggeredEvent } from '@app/events/proactive-check-in-triggered.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use TriggerProactiveCheckInRequest type instead */
-export interface TriggerProactiveCheckInRequest_Deprecated {
-  userId: string;
-}
 
-// Zod schema for request validation
 export const TriggerProactiveCheckInRequestSchema = z.object({
   userId: z.string(),
 });
 
-// Zod inferred type with original name
 export type TriggerProactiveCheckInRequest = z.infer<
   typeof TriggerProactiveCheckInRequestSchema
 >;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use TriggerProactiveCheckInResponse type instead */
-export interface TriggerProactiveCheckInResponse_Deprecated {
-  checkInId: string;
-  question: string;
-  triggeredBy: string;
-}
-
-// Zod schema for response validation
 export const TriggerProactiveCheckInResponseSchema = z.object({
   checkInId: z.string(),
   question: z.string(),
   triggeredBy: z.string(),
 });
 
-// Zod inferred type with original name
 export type TriggerProactiveCheckInResponse = z.infer<
   typeof TriggerProactiveCheckInResponseSchema
 >;
 
-export class TriggerProactiveCheckInUseCase implements UseCase<
+export class TriggerProactiveCheckInUseCase extends BaseUseCase<
   TriggerProactiveCheckInRequest,
   TriggerProactiveCheckInResponse
 > {
@@ -56,9 +39,11 @@ export class TriggerProactiveCheckInUseCase implements UseCase<
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: TriggerProactiveCheckInRequest,
   ): Promise<Result<TriggerProactiveCheckInResponse>> {
     // 1. Build current context

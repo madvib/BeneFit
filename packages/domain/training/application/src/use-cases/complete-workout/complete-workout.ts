@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase, EntityNotFoundError, UseCaseError } from '@bene/shared';
 import {
   createCompletedWorkout,
   type WorkoutPerformance,
-  type WorkoutVerification,
   type CompletedWorkout,
   UserProfileCommands,
   WorkoutType,
@@ -87,7 +86,7 @@ export const CompleteWorkoutResponseSchema = z.object({
 // Zod inferred type with original name
 export type CompleteWorkoutResponse = z.infer<typeof CompleteWorkoutResponseSchema>;
 
-export class CompleteWorkoutUseCase implements UseCase<
+export class CompleteWorkoutUseCase extends BaseUseCase<
   CompleteWorkoutRequest,
   CompleteWorkoutResponse
 > {
@@ -97,26 +96,28 @@ export class CompleteWorkoutUseCase implements UseCase<
     private profileRepository: UserProfileRepository,
     private fitnessPlanRepository: FitnessPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: CompleteWorkoutRequest,
   ): Promise<Result<CompleteWorkoutResponse>> {
     // 1. Load session
     const sessionResult = await this.sessionRepository.findById(request.sessionId);
     if (sessionResult.isFailure) {
-      return Result.fail(new Error('Session not found'));
+      return Result.fail(new EntityNotFoundError('WorkoutSession', request.sessionId));
     }
     const session = sessionResult.value;
 
     // Verify ownership
     if (session.ownerId !== request.userId) {
-      return Result.fail(new Error('Not authorized'));
+      return Result.fail(new UseCaseError('Not authorized to complete this workout', 'UNAUTHORIZED', { sessionId: request.sessionId, userId: request.userId }));
     }
 
     if (session.state !== 'in_progress' && session.state !== 'paused') {
       return Result.fail(
-        new Error(`Cannot complete workout in ${session.state} state`),
+        new UseCaseError(`Cannot complete workout in ${ session.state } state`, 'INVALID_STATE', { sessionId: request.sessionId, currentState: session.state }),
       );
     }
     // 2. Create CompletedWorkout
@@ -204,10 +205,10 @@ export class CompleteWorkoutUseCase implements UseCase<
       achievementsEarned: achievements,
       stats: stats
         ? {
-            totalWorkouts: stats.totalWorkouts,
-            totalVolume: stats.totalVolume,
-            totalMinutes: stats.totalMinutes,
-          }
+          totalWorkouts: stats.totalWorkouts,
+          totalVolume: stats.totalVolume,
+          totalMinutes: stats.totalMinutes,
+        }
         : { totalWorkouts: 0, totalVolume: 0, totalMinutes: 0 },
     });
   }
@@ -248,14 +249,4 @@ export class CompleteWorkoutUseCase implements UseCase<
 
     return achievements;
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use CompleteWorkoutRequest type instead */
-export interface CompleteWorkoutRequest_Deprecated {
-  userId: string;
-  sessionId: string;
-  performance: WorkoutPerformance;
-  verification: WorkoutVerification;
-  shareToFeed?: boolean;
 }

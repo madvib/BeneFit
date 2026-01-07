@@ -1,3 +1,2 @@
-// Base classes
-export * from './oauth2-client.js';
+// Shared utilities for integration clients
 export * from './http-client.js';

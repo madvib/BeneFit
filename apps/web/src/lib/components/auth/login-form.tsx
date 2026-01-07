@@ -44,21 +44,19 @@ export function LoginForm({ isModal = false }) {
     <form.AppForm>
       <form.Root title="Sign in">
         <div className="grid grid-cols-1 gap-4">
-          <form.AppField
-            name="email"
-            children={(field) => (
+          <form.AppField name="email">
+            {(field) => (
               <field.ControlledInput label="Email" type="email" placeholder="you@example.com" />
             )}
-          />
-          <form.AppField
-            name="password"
-            children={(field) => (
+          </form.AppField>
+          <form.AppField name="password">
+            {(field) => (
               <field.ControlledInput label="Password" type="password" placeholder="••••••••" />
             )}
-          />
+          </form.AppField>
         </div>
         <form.SubmissionError />
-        <form.SubmitButton label="Sign in" submitLabel="Signing in..." />
+        <form.SubmitButton label="Sign in" submitLabel="Signing in..." className="w-full" />
 
         <div className="relative flex items-center py-2">
           <div className="border-border grow border-t"></div>

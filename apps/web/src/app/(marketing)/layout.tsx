@@ -10,7 +10,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProperties)
   return (
     <div className="relative flex min-h-screen flex-col">
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <Aurora blend={1.0} amplitude={0.8} speed={0.8} />
+        <Aurora blend={1} amplitude={0.8} speed={0.8} />
       </div>
       <Header variant="marketing" />
       <PageContainer className="flex min-h-screen flex-col">

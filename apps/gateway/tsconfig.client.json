@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
+    "outDir": "../../packages/react-api-client/src/generated",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -14,6 +14,7 @@
     ],
     "types": [
       "../../types/cloudflare-runtime.d.ts",
+      "../../types/vite-env.d.ts",
       "./worker-env.client.d.ts",
       "node"
     ]
@@ -35,8 +36,5 @@
     {
       "path": "../../packages/shared/tsconfig.lib.json"
     },
-    {
-      "path": "../../packages/persistence/tsconfig.lib.json"
-    }
   ]
 }

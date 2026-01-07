@@ -14,6 +14,9 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
+  define: {
+    'import.meta.vitest': 'undefined',
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],
@@ -73,6 +76,7 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'jsdom',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    includeSource: ['src/**/*.{ts,tsx}'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './test-output/vitest/coverage',

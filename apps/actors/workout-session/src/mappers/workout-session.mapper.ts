@@ -8,7 +8,7 @@ import {
   SessionFeedItem,
   WorkoutActivity
 } from '@bene/training-core';
-import type { SessionMetadata, NewSessionMetadata } from '@bene/persistence';
+import { NewSessionMetadata, SessionMetadata } from '../data/schema/session_metadata';
 
 export function toDatabase(session: WorkoutSession): NewSessionMetadata {
   return {

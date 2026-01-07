@@ -57,7 +57,7 @@ const teams: NewTeamPublic[] = [
 const rosters: NewTeamRoster[] = [
   { teamId: 'team_001', userId: SEED_USER_IDS.USER_002, role: 'admin' },
   { teamId: 'team_001', userId: SEED_USER_IDS.USER_001, role: 'member' },
-  { teamId: 'team_001', userId: SEED_USER_IDS.USER_003, role: 'member' },
+  // USER_003 is excluded to maintain "Empty State" persona
   { teamId: 'team_002', userId: SEED_USER_IDS.USER_001, role: 'admin' },
   { teamId: 'team_002', userId: SEED_USER_IDS.USER_002, role: 'member' },
 ];
@@ -107,19 +107,19 @@ export async function seedDiscoveryIndex() {
 
       // --- 2. Insert Data ---
 
-      console.log(`  - Inserting ${users.length} users...`);
+      console.log(`  - Inserting ${ users.length } users...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(usersPublic).values(users);
 
-      console.log(`  - Inserting ${teams.length} teams...`);
+      console.log(`  - Inserting ${ teams.length } teams...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(teamsPublic).values(teams);
 
-      console.log(`  - Inserting ${rosters.length} team rosters...`);
+      console.log(`  - Inserting ${ rosters.length } team rosters...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(teamRosters).values(rosters);
 
-      console.log(`  - Inserting ${sessions.length} active workout sessions...`);
+      console.log(`  - Inserting ${ sessions.length } active workout sessions...`);
       // Use Drizzle ORM for batch insertion
       await db.insert(activeWorkoutSessions).values(sessions);
     });
@@ -132,7 +132,7 @@ export async function seedDiscoveryIndex() {
 }
 
 // This block makes the script runnable directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${ process.argv[1] }`) {
   seedDiscoveryIndex().catch((error) => {
     console.error('Failed to seed database:', error);
     process.exit(1);

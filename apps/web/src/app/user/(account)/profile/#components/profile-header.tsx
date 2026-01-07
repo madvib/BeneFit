@@ -6,7 +6,7 @@ import Image from 'next/image';
 interface ProfileHeaderProps {
   name: string;
   bio: string;
-  profilePicture: string;
+  profilePicture?: string;
   totalWorkouts: number;
   currentStreak: number;
   totalAchievements: number;
@@ -16,7 +16,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({
   name,
   bio,
-  profilePicture,
+  profilePicture = '/default-avatar.png', // Added default value
   totalWorkouts,
   currentStreak,
   totalAchievements,
@@ -26,7 +26,7 @@ export default function ProfileHeader({
     <div className="mb-6 flex flex-col items-center gap-6">
       <div className="relative">
         <Image
-          src={profilePicture}
+          src={profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366F1&color=fff&size=128`}
           alt="Profile picture"
           width={120}
           height={120}

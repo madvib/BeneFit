@@ -1,15 +1,10 @@
 import { z } from 'zod';
-import { Result, type UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { UserProfile } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetUserStatsRequest type instead */
-export interface GetUserStatsRequest_Deprecated {
-  userId: string;
-}
 
-// Zod schema for request validation
+
 export const GetUserStatsRequestSchema = z.object({
   userId: z.string(),
 });
@@ -39,13 +34,15 @@ export const GetUserStatsResponseSchema = z.object({
 // Zod inferred type with original name
 export type GetUserStatsResponse = z.infer<typeof GetUserStatsResponseSchema>;
 
-export class GetUserStatsUseCase implements UseCase<
+export class GetUserStatsUseCase extends BaseUseCase<
   GetUserStatsRequest,
   GetUserStatsResponse
 > {
-  constructor(private profileRepository: UserProfileRepository) {}
+  constructor(private profileRepository: UserProfileRepository) {
+    super();
+  }
 
-  async execute(request: GetUserStatsRequest): Promise<Result<GetUserStatsResponse>> {
+  protected async performExecution(request: GetUserStatsRequest): Promise<Result<GetUserStatsResponse>> {
     // 1. Load profile
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isFailure) {
@@ -108,22 +105,4 @@ export class GetUserStatsUseCase implements UseCase<
       (today.getTime() - lastWorkout.getTime()) / (1000 * 60 * 60 * 24),
     );
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetUserStatsResponse type instead */
-export interface GetUserStatsResponse_Deprecated {
-  totalWorkouts: number;
-  totalMinutes: number;
-  totalVolume: number;
-  currentStreak: number;
-  longestStreak: number;
-  lastWorkoutDate?: Date;
-  achievements: Array<{
-    id: string;
-    name: string;
-    earnedAt: Date;
-  }>;
-  streakActive: boolean;
-  daysSinceLastWorkout: number | null;
 }

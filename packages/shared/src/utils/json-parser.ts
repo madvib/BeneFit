@@ -1,4 +1,4 @@
-import { Result } from '@bene/shared';
+import { Result } from '../core/index.js';
 
 /**
  * Extract JSON from text that may contain markdown code blocks or other formatting
@@ -42,7 +42,7 @@ export function parseJsonResponse<T>(text: string): Result<T> {
   } catch (error) {
     return Result.fail(
       new Error(
-        `Failed to parse JSON response: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to parse JSON response: ${ error instanceof Error ? error.message : String(error) }`,
       ),
     );
   }

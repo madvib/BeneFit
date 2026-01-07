@@ -2,19 +2,19 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAuth } from '@bene/react-api-client';
+import { useSession } from '@bene/react-api-client';
 import { LoadingSpinner, ImageCard } from '@/lib/components';
 import { HomeHero, FeaturesSection } from './#components';
 import { ROUTES } from '@/lib/constants';
 
 export default function LandingPage() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (isLoading) return;
     const isDirectNavigation =
-      window.performance.getEntriesByType('navigation')[0]?.entryType === 'navigate';
+      globalThis.performance.getEntriesByType('navigation')[0]?.entryType === 'navigate';
     if (isDirectNavigation && isAuthenticated) router.replace(ROUTES.USER.ACTIVITIES);
   }, [isAuthenticated, isLoading, router]);
 

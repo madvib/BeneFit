@@ -1,18 +1,22 @@
 'use client';
 
-import { Zap, Plus, Share2, Download, Save } from 'lucide-react';
+import { Zap, Plus, Share2, Download, Save, Pause } from 'lucide-react';
 import { Card } from '@/lib/components';
 
 interface QuickActionsProps {
   onCreatePlan: () => void;
   onSavePlan: () => void;
   onExportPlan: () => void;
+  onPausePlan?: () => void;
+  isLoading?: boolean;
 }
 
 export default function QuickActions({
   onCreatePlan,
   onSavePlan,
   onExportPlan,
+  onPausePlan,
+  isLoading,
 }: QuickActionsProps) {
   const actions = [
     {
@@ -36,6 +40,17 @@ export default function QuickActions({
       color: 'text-green-500',
       onClick: onExportPlan,
     },
+    ...(onPausePlan
+      ? [
+          {
+            id: 'pause',
+            label: 'Pause Plan',
+            icon: <Pause size={20} />,
+            color: 'text-yellow-500',
+            onClick: onPausePlan,
+          },
+        ]
+      : []),
     {
       id: 'share',
       label: 'Share',
@@ -57,7 +72,8 @@ export default function QuickActions({
           <button
             key={action.id}
             onClick={action.onClick}
-            className="group border-border bg-background hover:border-primary/50 hover:bg-accent/50 flex flex-col items-center justify-center gap-2 rounded-xl border p-4 transition-all hover:shadow-sm active:scale-95"
+            disabled={isLoading}
+            className="group border-border bg-background hover:border-primary/50 hover:bg-accent/50 flex flex-col items-center justify-center gap-2 rounded-xl border p-4 transition-all hover:shadow-sm active:scale-95 disabled:pointer-events-none disabled:opacity-50"
           >
             <div
               className={`bg-accent group-hover:bg-background flex h-10 w-10 items-center justify-center rounded-full transition-colors group-hover:shadow-sm ${action.color}`}

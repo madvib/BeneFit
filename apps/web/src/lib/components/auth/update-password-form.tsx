@@ -44,22 +44,20 @@ export function UpdatePasswordForm({ onPasswordUpdated }: UpdatePasswordFormProp
       <form.Root title="Update Password">
         <form.SubmissionError />
         <FormSuccessMessage message={authSubmit.success} />;
-        <form.AppField
-          name="password"
-          children={(field) => (
+        <form.AppField name="password">
+          {(field) => (
             <field.ControlledInput label="New Password" type="password" placeholder="••••••••" />
           )}
-        />
-        <form.AppField
-          name="confirmPassword"
-          children={(field) => (
+        </form.AppField>
+        <form.AppField name="confirmPassword">
+          {(field) => (
             <field.ControlledInput
               label="Confirm New Password"
               type="password"
               placeholder="••••••••"
             />
           )}
-        />
+        </form.AppField>
         <form.SubmitButton label="Update Password" submitLabel="Updating Password..." />
       </form.Root>
     </form.AppForm>

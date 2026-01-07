@@ -1,13 +1,9 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { AICoachService, CoachContextBuilder } from '@app/services/index.js';
 import { WeeklySummaryGeneratedEvent } from '@app/events/weekly-summary-generated.event.js';
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GenerateWeeklySummaryRequest type instead */
-export interface GenerateWeeklySummaryRequest_Deprecated {
-  userId: string;
-}
+
 
 // Zod schema for request validation
 export const GenerateWeeklySummaryRequestSchema = z.object({
@@ -19,13 +15,7 @@ export type GenerateWeeklySummaryRequest = z.infer<
   typeof GenerateWeeklySummaryRequestSchema
 >;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GenerateWeeklySummaryResponse type instead */
-export interface GenerateWeeklySummaryResponse_Deprecated {
-  summary: string;
-  highlights: string[];
-  suggestions: string[];
-}
+
 
 // Zod schema for response validation
 export const GenerateWeeklySummaryResponseSchema = z.object({
@@ -39,7 +29,7 @@ export type GenerateWeeklySummaryResponse = z.infer<
   typeof GenerateWeeklySummaryResponseSchema
 >;
 
-export class GenerateWeeklySummaryUseCase implements UseCase<
+export class GenerateWeeklySummaryUseCase extends BaseUseCase<
   GenerateWeeklySummaryRequest,
   GenerateWeeklySummaryResponse
 > {
@@ -47,9 +37,11 @@ export class GenerateWeeklySummaryUseCase implements UseCase<
     private contextBuilder: CoachContextBuilder,
     private aiCoach: AICoachService,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GenerateWeeklySummaryRequest,
   ): Promise<Result<GenerateWeeklySummaryResponse>> {
     // 1. Build context for the week

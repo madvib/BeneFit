@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useHydrated } from '@/lib/hooks/use-hydrated';
 
 interface Position {
   x: number;
@@ -26,8 +27,11 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   const [opacity, setOpacity] = useState<number>(0);
   const { resolvedTheme } = useTheme();
 
-  // Determine the spotlight color based on the current theme
-  const spotlightColor = resolvedTheme === 'dark' ? darkSpotlightColor : lightSpotlightColor;
+  const hydrated = useHydrated();
+
+  // Determine the spotlight color based on the current theme (avoid hydration mismatch)
+  const spotlightColor =
+    hydrated && resolvedTheme === 'dark' ? darkSpotlightColor : lightSpotlightColor;
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (!divRef.current || isFocused) return;

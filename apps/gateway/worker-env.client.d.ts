@@ -5,22 +5,24 @@ declare namespace Cloudflare {
     mainModule: typeof import('./src/index');
   }
   interface Env {
-    NODE_ENV: string;
-    BETTER_AUTH_SECRET: string;
-    BETTER_AUTH_URL: string;
+    VITE_API_BASE_URL: string;
     CLOUDFLARE_ACCOUNT_ID: string;
     CLOUDFLARE_USER_AUTH_DATABASE_ID: string;
     CLOUDFLARE_D1_TOKEN: string;
+    BETTER_AUTH_SECRET: string;
+    BETTER_AUTH_URL: string;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
     USER_HUB: DurableObjectNamespace<any>;
     WORKOUT_SESSION: DurableObjectNamespace<any>;
     DB_USER_AUTH: D1Database;
   }
 }
-interface Env extends Cloudflare.Env {}
+interface Env extends Cloudflare.Env { }
 type StringifyValues<EnvType extends Record<string, unknown>> = {
   [Binding in keyof EnvType]: EnvType[Binding] extends string
-    ? EnvType[Binding]
-    : string;
+  ? EnvType[Binding]
+  : string;
 };
 declare namespace NodeJS {
   interface ProcessEnv extends StringifyValues<
@@ -33,5 +35,5 @@ declare namespace NodeJS {
       | 'CLOUDFLARE_USER_AUTH_DATABASE_ID'
       | 'CLOUDFLARE_D1_TOKEN'
     >
-  > {}
+  > { }
 }

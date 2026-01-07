@@ -1,4 +1,4 @@
-import { createClient } from '@bene/gateway/client';
+import { createClient } from './generated/client';
 
 class ApiError extends Error {
   constructor(
@@ -32,7 +32,7 @@ export const client = createClient(import.meta.env.VITE_API_BASE_URL, {
         res.statusText,
         typeof error === 'object' && error !== null && 'error' in error
           ? (error as { error: string }).error
-          : `Request failed with status ${res.status}`,
+          : `Request failed with status ${ res.status }`,
       );
     }
 

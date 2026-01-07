@@ -3,7 +3,7 @@ import { createFormHookContexts, createFormHook } from '@tanstack/react-form';
 import { ControlledInput } from './controlled-input';
 import { Root } from './form-root';
 import { SubmissionError } from './submission-error';
-import { SubmitButton } from './subscribe-button';
+import { SubmitButton } from './submit-button';
 
 export interface SubmitErrorAction {
   label: string; // button/link text
@@ -23,7 +23,7 @@ export interface SubmitError {
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
 
-export const { useAppForm } = createFormHook({
+export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: { ControlledInput },

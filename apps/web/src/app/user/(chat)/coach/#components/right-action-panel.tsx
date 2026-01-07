@@ -34,11 +34,15 @@ interface RightActionPanelProps {
   isOpen: boolean;
   onClose: () => void;
   recommendations: RecommendationData[];
+  onGenerateSummary?: () => void;
+  isGeneratingSummary?: boolean;
 }
 export default function RightActionPanel({
   isOpen,
   onClose,
   recommendations,
+  onGenerateSummary,
+  isGeneratingSummary,
 }: RightActionPanelProps) {
   return (
     <aside
@@ -50,10 +54,7 @@ export default function RightActionPanel({
             <Sparkles size={16} className="text-primary" />
             Suggestions
           </h3>
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
-          >
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <PanelRightClose size={16} />
           </button>
         </div>
@@ -72,6 +73,24 @@ export default function RightActionPanel({
           </h4>
 
           <div className="grid gap-3">
+            <button
+              disabled={isGeneratingSummary}
+              onClick={onGenerateSummary}
+              className="border-muted hover:border-primary/50 hover:bg-accent/50 group flex items-start gap-3 rounded-lg border p-3 text-left transition-all hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <div className="bg-background border-muted group-hover:border-primary/30 text-muted-foreground group-hover:text-primary mt-1 rounded border p-1.5 transition-colors">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div>
+                <div className="text-foreground group-hover:text-primary text-sm font-medium transition-colors">
+                  Generate Weekly Summary
+                </div>
+                <div className="text-muted-foreground mt-0.5 text-xs">
+                  Get an AI analysis of your progress
+                </div>
+              </div>
+            </button>
+
             {recommendations.map((rec, idx) => (
               <button
                 key={idx}
@@ -84,9 +103,7 @@ export default function RightActionPanel({
                   <div className="text-foreground group-hover:text-primary text-sm font-medium transition-colors">
                     {rec.title}
                   </div>
-                  <div className="text-muted-foreground mt-0.5 text-xs">
-                    {rec.description}
-                  </div>
+                  <div className="text-muted-foreground mt-0.5 text-xs">{rec.description}</div>
                 </div>
               </button>
             ))}

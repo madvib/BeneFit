@@ -1,1 +1,1 @@
-export * from './domain_error.js';
+export * from './errors.js';

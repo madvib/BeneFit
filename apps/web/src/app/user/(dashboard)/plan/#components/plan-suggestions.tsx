@@ -1,11 +1,22 @@
 'use client';
 
+import React from 'react';
 import { Sparkles, Clock, Users, Star, ArrowRight, LayoutTemplate } from 'lucide-react';
 import { Card } from '@/lib/components';
 
+export interface PlanSuggestionItem {
+  id: string;
+  title: string;
+  category: string;
+  rating: number;
+  duration: string;
+  users: string;
+  image: React.ReactNode;
+}
+
 interface PlanSuggestionsProps {
-  suggestions: PlanSuggestion[];
-  onSelectPlan: (planId: string) => void;
+  suggestions: PlanSuggestionItem[];
+  onSelectPlan: (_planId: string) => void;
 }
 
 export default function PlanSuggestions({ suggestions, onSelectPlan }: PlanSuggestionsProps) {

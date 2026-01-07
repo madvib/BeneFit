@@ -27,12 +27,12 @@
       "plugin": "@nx/vite/plugin",
       "include": ["apps/**", "packages/**"],
       "options": {
-        "buildTargetName": "build:vite",
+        "buildTargetName": "build",
         "serveTargetName": "serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
         "serveStaticTargetName": "serve-static",
-        "typecheckTargetName": "typecheck",
+        "typecheckTargetName": "vite:typecheck",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
@@ -54,7 +54,7 @@
       "inputs": ["default", "^default"],
       "cache": true,
       "options": {
-        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"],
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,tsx,js,jsx}"],
         "exclude": ["{projectRoot}/dist/**/*", "{projectRoot}/node_modules/**/*"],
         "fix": true
       }

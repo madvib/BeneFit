@@ -32,6 +32,9 @@
     },
     {
       "path": "./apps/actors/user-hub"
+    },
+    {
+      "path": "./apps/gateway"
     }
   ]
 }

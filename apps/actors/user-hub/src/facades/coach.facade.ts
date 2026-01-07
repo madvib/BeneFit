@@ -6,6 +6,7 @@ import {
   GenerateWeeklySummaryRequest,
   RespondToCheckInRequest,
   TriggerProactiveCheckInRequest,
+  GetCoachHistoryRequest,
 } from '@bene/coach-domain';
 
 export class CoachFacade extends RpcTarget {
@@ -38,6 +39,10 @@ export class CoachFacade extends RpcTarget {
   async triggerProactiveCheckIn(input: TriggerProactiveCheckInRequest) {
     const result = await this.useCaseFactory.getTriggerProactiveCheckInUseCase().execute(input);
     return result.serialize();
+  }
 
+  async getHistory(input: GetCoachHistoryRequest) {
+    const result = await this.useCaseFactory.getGetCoachHistoryUseCase().execute(input);
+    return result.serialize();
   }
 }

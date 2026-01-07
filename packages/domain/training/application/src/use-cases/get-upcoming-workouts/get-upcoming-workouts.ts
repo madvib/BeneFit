@@ -1,14 +1,7 @@
 import { z } from 'zod';
 import { FitnessPlanQueries } from '@bene/training-core';
-import { Result, UseCase } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetUpcomingWorkoutsRequest type instead */
-export interface GetUpcomingWorkoutsRequest_Deprecated {
-  userId: string;
-  days?: number; // Default to 7
-}
 
 // Client-facing schema (what comes in the request body)
 export const GetUpcomingWorkoutsRequestClientSchema = z.object({
@@ -30,18 +23,6 @@ export type GetUpcomingWorkoutsRequest = z.infer<
   typeof GetUpcomingWorkoutsRequestSchema
 >;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use GetUpcomingWorkoutsResponse type instead */
-export interface GetUpcomingWorkoutsResponse_Deprecated {
-  workouts: Array<{
-    workoutId: string;
-    day: string;
-    type: string;
-    durationMinutes: number;
-    status: string;
-  }>;
-}
-
 // Zod schema for response validation
 const WorkoutSchema = z.object({
   workoutId: z.string(),
@@ -60,13 +41,15 @@ export type GetUpcomingWorkoutsResponse = z.infer<
   typeof GetUpcomingWorkoutsResponseSchema
 >;
 
-export class GetUpcomingWorkoutsUseCase implements UseCase<
+export class GetUpcomingWorkoutsUseCase extends BaseUseCase<
   GetUpcomingWorkoutsRequest,
   GetUpcomingWorkoutsResponse
 > {
-  constructor(private planRepository: FitnessPlanRepository) {}
+  constructor(private planRepository: FitnessPlanRepository) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: GetUpcomingWorkoutsRequest,
   ): Promise<Result<GetUpcomingWorkoutsResponse>> {
     // 1. Find active plan

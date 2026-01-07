@@ -1,16 +1,8 @@
 import { z } from 'zod';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { FitnessPlanCommands } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { PlanPausedEvent } from '../../events/plan-paused.event.js';
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use PausePlanRequest type instead */
-export interface PausePlanRequest_Deprecated {
-  userId: string;
-  planId: string;
-  reason?: string;
-}
 
 // Client-facing schema (what comes in the request body)
 export const PausePlanRequestClientSchema = z.object({
@@ -28,13 +20,6 @@ export const PausePlanRequestSchema = PausePlanRequestClientSchema.extend({
 // Zod inferred type with original name
 export type PausePlanRequest = z.infer<typeof PausePlanRequestSchema>;
 
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use PausePlanResponse type instead */
-export interface PausePlanResponse_Deprecated {
-  planId: string;
-  status: string;
-  pausedAt: Date;
-}
 
 // Zod schema for response validation
 export const PausePlanResponseSchema = z.object({
@@ -46,13 +31,15 @@ export const PausePlanResponseSchema = z.object({
 // Zod inferred type with original name
 export type PausePlanResponse = z.infer<typeof PausePlanResponseSchema>;
 
-export class PausePlanUseCase implements UseCase<PausePlanRequest, PausePlanResponse> {
+export class PausePlanUseCase extends BaseUseCase<PausePlanRequest, PausePlanResponse> {
   constructor(
     private planRepository: FitnessPlanRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(request: PausePlanRequest): Promise<Result<PausePlanResponse>> {
+  protected async performExecution(request: PausePlanRequest): Promise<Result<PausePlanResponse>> {
     const planResult = await this.planRepository.findById(request.planId);
     if (planResult.isFailure) {
       return Result.fail(new Error('Plan not found'));

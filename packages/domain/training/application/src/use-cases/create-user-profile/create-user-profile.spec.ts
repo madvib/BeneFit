@@ -112,7 +112,7 @@ describe('CreateUserProfileUseCase', () => {
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'ProfileCreated',
+        eventName: 'ProfileCreated',
         userId,
       }),
     );

@@ -1,11 +1,10 @@
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Result, type UseCase, type EventBus } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { CompletedWorkoutCommands } from '@bene/training-core';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { WorkoutReactionAddedEvent } from '../../events/workout-reaction-added.event.js';
 
-// Client-facing schema (what comes in the request body)
 export const AddWorkoutReactionRequestClientSchema = z.object({
   workoutId: z.string(),
   reactionType: z.enum(['fire', 'strong', 'clap', 'heart', 'smile']),
@@ -15,37 +14,35 @@ export type AddWorkoutReactionRequestClient = z.infer<
   typeof AddWorkoutReactionRequestClientSchema
 >;
 
-// Complete use case input schema (client data + server context)
 export const AddWorkoutReactionRequestSchema =
   AddWorkoutReactionRequestClientSchema.extend({
     userId: z.string(),
     userName: z.string(),
   });
 
-// Zod inferred type with original name
 export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;
 
-// Zod schema for response validation
 export const AddWorkoutReactionResponseSchema = z.object({
   workoutId: z.string(),
   totalReactions: z.number(),
 });
 
-// Zod inferred type with original name
 export type AddWorkoutReactionResponse = z.infer<
   typeof AddWorkoutReactionResponseSchema
 >;
 
-export class AddWorkoutReactionUseCase implements UseCase<
+export class AddWorkoutReactionUseCase extends BaseUseCase<
   AddWorkoutReactionRequest,
   AddWorkoutReactionResponse
 > {
   constructor(
     private completedWorkoutRepository: CompletedWorkoutRepository,
     private eventBus: EventBus,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
+  protected async performExecution(
     request: AddWorkoutReactionRequest,
   ): Promise<Result<AddWorkoutReactionResponse>> {
     // 1. Load workout
@@ -98,19 +95,4 @@ export class AddWorkoutReactionUseCase implements UseCase<
       totalReactions: updatedWorkoutResult.value.reactions.length,
     });
   }
-}
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use AddWorkoutReactionRequest type instead */
-export interface AddWorkoutReactionRequest_Deprecated {
-  userId: string;
-  userName: string;
-  workoutId: string;
-  reactionType: 'fire' | 'strong' | 'clap' | 'heart' | 'smile';
-}
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use AddWorkoutReactionResponse type instead */
-export interface AddWorkoutReactionResponse_Deprecated {
-  workoutId: string;
-  totalReactions: number;
 }

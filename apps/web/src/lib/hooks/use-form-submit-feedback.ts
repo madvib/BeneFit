@@ -1,16 +1,19 @@
-import { useStore, AnyFormApi } from '@tanstack/react-form';
-import { useEffect, useCallback, useState } from 'react';
+import { AnyFormApi } from '@tanstack/react-form';
+import { useCallback, useEffect, useState } from 'react';
 import { SubmitError } from '../components';
 
 export function useFormSubmitFeedback(form: AnyFormApi) {
   const [success, setSuccess] = useState<string | null>(null);
-  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
+
   useEffect(() => {
-    if (isSubmitting) {
-      setSuccess(null);
-    }
-    return setSuccess(null);
-  }, [isSubmitting]);
+    const unsub = form.store.subscribe((state) => {
+      if (!state.currentVal.isSubmitting) {
+        setSuccess(null);
+      }
+    });
+    return unsub;
+  }, [form])
+
 
   const submitError = useCallback(
     (error: SubmitError) => {
