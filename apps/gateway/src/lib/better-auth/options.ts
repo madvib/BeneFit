@@ -65,7 +65,6 @@ export const betterAuthOptions: BetterAuthOptions = {
       clientId: env.STRAVA_CLIENT_ID || '',
       clientSecret: env.STRAVA_CLIENT_SECRET || '',
     }),
-    // nextCookies(),
     // TODO: Add email provider plugin when ready
     // Example with Resend:
     // resend({

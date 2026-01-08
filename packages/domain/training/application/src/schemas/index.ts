@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SUPPORTED_EQUIPMENT, FITNESS_GOALS } from '@bene/shared';
+import { EQUIPMENT_OPTIONS, FITNESS_GOALS } from '@bene/shared';
 
 // Fitness Goals Schemas
 export const PrimaryFitnessGoalSchema = z.enum(FITNESS_GOALS as unknown as [string, ...string[]]);
@@ -40,7 +40,7 @@ export const TrainingConstraintsSchema = z.object({
   availableDays: z.array(z.string()), // ['Monday', 'Wednesday', 'Friday']
   preferredTime: PreferredTimeSchema.optional(),
   maxDuration: z.number().optional(), // minutes per workout
-  availableEquipment: z.array(z.enum(SUPPORTED_EQUIPMENT as unknown as [string, ...string[]])),
+  availableEquipment: z.array(z.enum(EQUIPMENT_OPTIONS as unknown as [string, ...string[]])),
   location: TrainingLocationSchema,
 });
 

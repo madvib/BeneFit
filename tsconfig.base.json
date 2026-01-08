@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "es2022",
@@ -15,10 +14,7 @@
     "emitDeclarationOnly": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": [
-      "es2022"
-    ],
-    /* Strictness */
+    "lib": ["es2022"],
     "strict": true,
     "importHelpers": false,
     "noUncheckedIndexedAccess": true,
@@ -28,9 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "paths": {
-      "@/tools/*": [
-        "./tools/*"
-      ]
+      "@/tools/*": ["./tools/*"]
     }
   }
 }

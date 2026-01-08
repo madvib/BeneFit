@@ -4,10 +4,10 @@ import { useState, useCallback } from 'react';
 import { coach } from '@bene/react-api-client';
 import { useChatUI } from '@/lib/hooks/use-chat-ui';
 import { LoadingSpinner, ErrorPage } from '@/lib/components';
-import { ChatView, SavedChatsView, RightActionPanel } from './#components';
-import CheckInModal from './#components/check-in-modal';
+import { ChatView, SavedChatsView, RightActionPanel } from './_components';
+import CheckInModal from './_components/check-in-modal';
 import { ROUTES } from '@/lib/constants';
-import type { MessageData } from './#components/types';
+import type { MessageData } from './_components/types';
 
 interface Recommendation {
   id: string;

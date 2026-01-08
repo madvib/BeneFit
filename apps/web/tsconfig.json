@@ -40,6 +40,15 @@
     },
     {
       "path": "../../packages/react-api-client"
+    },
+    {
+      "path": "./tsconfig.storybook.json"
     }
+  ],
+  "exclude": [
+    "**/*.stories.ts",
+    "**/*.stories.js",
+    "**/*.stories.jsx",
+    "**/*.stories.tsx"
   ]
 }

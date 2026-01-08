@@ -1,6 +1,6 @@
 import { ChatUIProvider } from '@/lib/hooks/use-chat-ui';
 import { PageContainer } from '@/lib/components';
-import ChatHeader from './#components/chat-header';
+import ChatHeader from './_components/chat-header';
 
 interface CoachChatLayoutProperties {
   children: React.ReactNode;

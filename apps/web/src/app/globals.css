@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant hover (&:hover);
 
@@ -15,10 +15,11 @@
   --accent-foreground: #212529;
   --ring: #86b7fe;
   --error: #bf1616;
-  /* Theme gradient colors - more subtle for light theme to avoid overpowering text */
-  --gradient-start: #e6f2ff;
-  --gradient-middle: #b3d7ff;
-  --gradient-end: #80bfff;
+  --error: #bf1616;
+  /* Brand gradient: blue to purple (Light Theme - slightly brighter) */
+  --gradient-start: #2563eb;
+  --gradient-middle: #4f46e5;
+  --gradient-end: #7c3aed;
 }
 
 .dark {
@@ -34,10 +35,11 @@
   --accent-foreground: #f9fafb;
   --ring: #6366f1;
   --error: #bf1616;
-  /* Theme gradient colors - your preferred dark theme colors */
-  --gradient-start: #034a95;
-  --gradient-middle: #7cff67;
-  --gradient-end: #b3d7ff;
+  --error: #bf1616;
+  /* Brand gradient: blue to purple (Dark Theme - neon/vibrant) */
+  --gradient-start: #3b82f6;
+  --gradient-middle: #818cf8;
+  --gradient-end: #a855f7;
 }
 
 @theme inline {
@@ -59,32 +61,55 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Hide scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 /* For Firefox */
-html {
-  scrollbar-width: none;
-  /* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) var(--muted);
 }
 
-/* For hiding scrollbars in specific elements if needed */
+/* Utility to hide legacy if needed */
 .no-scrollbar {
   -ms-overflow-style: none;
-  /* IE and Edge */
   scrollbar-width: none;
-  /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-  /* Chrome, Safari, Opera */
 }
 
+/* Shiny Text Animation Support */
+.animate-shine {
+  animation-name: shine;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
 
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}

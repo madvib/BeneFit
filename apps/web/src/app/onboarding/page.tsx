@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import OnboardingWizard from './#components/onboarding-wizard';
+import OnboardingWizard from './_components/onboarding-wizard';
 
 export const metadata: Metadata = {
   title: 'Setup Your Profile - BeneFit',

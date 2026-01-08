@@ -5,9 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { workouts } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
-import WorkoutSummary from './#components/workout-summary';
-import PerformanceForm from './#components/performance-form';
-import AchievementPopup from './#components/achievement-popup';
+import WorkoutSummary from './_components/workout-summary';
+import PerformanceForm from './_components/performance-form';
+import AchievementPopup from './_components/achievement-popup';
 import { CheckCircle } from 'lucide-react';
 
 export default function CompleteWorkoutPage() {
@@ -27,7 +27,7 @@ export default function CompleteWorkoutPage() {
   const completeMutation = workouts.useCompleteWorkout();
 
   const handleComplete = async (
-    data: import('./#components/performance-form').PerformanceFormData,
+    data: import('./_components/performance-form').PerformanceFormData,
   ) => {
     const result = await completeMutation.mutateAsync({
       param: { sessionId },

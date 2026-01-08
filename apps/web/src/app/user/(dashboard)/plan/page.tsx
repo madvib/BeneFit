@@ -3,12 +3,12 @@
 import { AlertCircle, PauseCircle } from 'lucide-react';
 import { fitnessPlan, workouts } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage, Button } from '@/lib/components';
-import ModernDashboardLayout from './#components/modern-dashboard-layout';
-import PlanOverview from './#components/plan-overview';
-import QuickActions from './#components/quick-actions';
-import WeeklySchedule from './#components/weekly-schedule';
-import PlanOnboarding from './#components/plan-onboarding';
-import PlanPreview from './#components/plan-preview';
+import ModernDashboardLayout from './_components/modern-dashboard-layout';
+import PlanOverview from './_components/plan-overview';
+import QuickActions from './_components/quick-actions';
+import WeeklySchedule from './_components/weekly-schedule';
+import PlanOnboarding from './_components/plan-onboarding';
+import PlanPreview from './_components/plan-preview';
 import { ROUTES } from '@/lib/constants';
 
 export default function PlanClient() {

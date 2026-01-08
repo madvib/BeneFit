@@ -9,7 +9,7 @@ export interface LogoItemNode {
 }
 
 export interface LogoItemImage {
-  src: string;
+  src: string | { src: string; width: number; height: number };
   alt?: string;
   href?: string;
   title?: string;
@@ -364,7 +364,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120',
             )}
-            src={item.src}
+            src={typeof item.src === 'string' ? item.src : item.src.src}
             srcSet={item.srcSet}
             sizes={item.sizes}
             width={item.width}

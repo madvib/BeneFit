@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ChartColumnBig, Gift, Zap } from 'lucide-react';
 import { Button, LogoLoop } from '@/lib/components';
-import { FeaturesHero, FeatureCard } from './#components';
+import { FeaturesHero, FeatureCard } from './_components';
 import { ROUTES } from '@/lib/constants';
 
 export default function FeaturesPage() {

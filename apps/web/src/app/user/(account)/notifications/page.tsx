@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Bell, Mail, MessageSquare } from 'lucide-react';
 import { Switch } from '@/lib/components';
-import { PageHeader } from '../#shared/page-header';
-import { SettingRow } from '../#shared/setting-row';
+import { PageHeader } from '../_shared/page-header';
+import { SettingRow } from '../_shared/setting-row';
 
 export default function NotificationsPage() {
   const [preferences, setPreferences] = useState({

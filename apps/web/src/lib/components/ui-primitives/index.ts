@@ -3,7 +3,7 @@
 
 // Buttons
 export { Button, type ButtonProps } from './buttons/button';
-export { ActionButton } from './buttons/action-button';
+
 
 // Cards
 export { Card } from './card/card';
@@ -23,6 +23,7 @@ export { FormSuccessMessage } from './form/form-success-message';
 export { default as Alert } from './alert/alert';
 export { Badge } from './badges/badge';
 export { LoadingSpinner } from './loading/loading-spinner';
+export { Skeleton } from './loading/skeleton';
 
 // Layout & Structure
 export { default as Spacer } from './spacer/spacer';
@@ -32,7 +33,9 @@ export { default as Footer } from './footer/footer';
 // Icons & Visual Elements
 export { default as Aurora } from './backgrounds/aurora';
 export { ShinyText } from './text/shiny-text';
+export { default as CountUp } from './text/count-up';
 export { default as LogoLoop } from './icons/logo-loop';
+export * from './icons/service-logos';
 
 // Interactive Elements
 export { Switch } from './switch/switch';

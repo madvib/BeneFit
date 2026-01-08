@@ -5,7 +5,7 @@ import {
   AboutTestimonials,
   AboutBenefits,
   AboutCallToAction,
-} from './#components';
+} from './_components';
 
 export default function AboutPage() {
   return (

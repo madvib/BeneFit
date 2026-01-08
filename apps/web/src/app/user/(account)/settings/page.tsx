@@ -2,10 +2,15 @@
 
 import { profile } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage } from '@/lib/components';
-import { PageHeader } from '../#shared/page-header';
-import { PrivacySettings, FitnessPreferences } from './#components';
-import { FitnessGoalsForm } from './#components/fitness-goals-form';
-import { TrainingConstraintsForm } from './#components/training-constraints-form';
+import { PageHeader } from '../_shared/page-header';
+import {
+  PrivacySettings,
+  FitnessPreferences,
+  AccountSettingsForm,
+  NotificationPreferences,
+} from './_components';
+import { FitnessGoalsForm } from './_components/fitness-goals-form';
+import { TrainingConstraintsForm } from './_components/training-constraints-form';
 import { ROUTES } from '@/lib/constants';
 
 function SettingsContent({
@@ -77,8 +82,16 @@ function SettingsContent({
       />
 
       <section>
-        <h2 className="mb-4 text-xl font-bold">Preferences</h2>
+        <h2 className="mb-4 text-xl font-bold">Account & Security</h2>
         <div className="space-y-4">
+          <AccountSettingsForm
+            initialName={userProfile.name}
+            initialEmail={userProfile.email}
+            onSave={async (data) => {
+              // TODO: Implement account update mutation
+              console.log('Update account:', data);
+            }}
+          />
           <PrivacySettings
             profileVisibility={preferences.privacy?.profileVisible ? 'Public' : 'Private'}
             activitySharing={preferences.privacy?.workoutsPublic || false}
@@ -88,6 +101,20 @@ function SettingsContent({
             onActivitySharingChange={(checked) =>
               handlePrivacyChange({ privacy: { workoutsPublic: checked } })
             }
+          />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-xl font-bold">Preferences</h2>
+        <div className="space-y-4">
+          <NotificationPreferences
+            emailNotifications={true} // TODO: Add to schema
+            pushNotifications={false}
+            workoutReminders={true}
+            onEmailNotificationsChange={() => {}}
+            onPushNotificationsChange={() => {}}
+            onWorkoutRemindersChange={() => {}}
           />
           <FitnessPreferences
             preferredUnits={(preferences.units as 'metric' | 'imperial') || 'metric'}

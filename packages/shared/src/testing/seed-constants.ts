@@ -20,6 +20,8 @@ export interface SeedUser {
   handle: string;
   avatarUrl: string;
   emailVerified: boolean;
+  bio?: string;
+  location?: string;
 }
 
 /**
@@ -34,6 +36,8 @@ export const SEED_USERS: SeedUser[] = [
     handle: '@test_user',
     avatarUrl: 'https://ui-avatars.com/api/?name=Test+User&background=0D8ABC&color=fff&size=128',
     emailVerified: true,
+    bio: 'Fitness enthusiast and weekend warrior.',
+    location: 'New York, USA',
   },
   {
     id: SEED_USER_IDS.USER_002,
@@ -43,6 +47,8 @@ export const SEED_USERS: SeedUser[] = [
     handle: '@john_doe',
     avatarUrl: 'https://ui-avatars.com/api/?name=John+Doe&background=6366F1&color=fff&size=128',
     emailVerified: true,
+    bio: 'Dedicated runner training for my first marathon.',
+    location: 'London, UK',
   },
   {
     id: SEED_USER_IDS.USER_003,
@@ -52,6 +58,8 @@ export const SEED_USERS: SeedUser[] = [
     handle: '@jane_smith',
     avatarUrl: 'https://ui-avatars.com/api/?name=Jane+Smith&background=EC4899&color=fff&size=128',
     emailVerified: false,
+    bio: 'Powerlifting is my passion.',
+    location: 'Austin, TX',
   },
   {
     id: SEED_USER_IDS.USER_004,
@@ -61,6 +69,8 @@ export const SEED_USERS: SeedUser[] = [
     handle: '@bob_wilson',
     avatarUrl: 'https://ui-avatars.com/api/?name=Bob+Wilson&background=10B981&color=fff&size=128',
     emailVerified: true,
+    bio: 'Finding balance through yoga and meditation.',
+    location: 'San Francisco, CA',
   },
   {
     id: SEED_USER_IDS.USER_005,
@@ -70,6 +80,8 @@ export const SEED_USERS: SeedUser[] = [
     handle: '@alice_brown',
     avatarUrl: 'https://ui-avatars.com/api/?name=Alice+Brown&background=F59E0B&color=fff&size=128',
     emailVerified: true,
+    bio: 'Challenging myself every day with HIIT.',
+    location: 'Toronto, Canada',
   },
 ];
 

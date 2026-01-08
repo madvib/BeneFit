@@ -13,6 +13,8 @@ declare namespace Cloudflare {
     BETTER_AUTH_URL: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
+    STRAVA_CLIENT_ID: string;
+    STRAVA_CLIENT_SECRET: string;
     USER_HUB: DurableObjectNamespace<any>;
     WORKOUT_SESSION: DurableObjectNamespace<any>;
     DB_USER_AUTH: D1Database;

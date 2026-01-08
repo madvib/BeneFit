@@ -13,6 +13,8 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        gradient:
+          'bg-gradient-to-r from-[var(--gradient-start)] via-[var(--gradient-middle)] to-[var(--gradient-end)] text-white font-semibold shadow-md hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5',
       },
       size: {
         sm: 'h-8 rounded-md px-2 text-xs',

@@ -30,7 +30,8 @@
     "targets": {
       "build": {
         "dependsOn": [
-          "@bene/gateway:build-client"
+          "@bene/gateway:build-client",
+          "default"
         ]
       }
     },
