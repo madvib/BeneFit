@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
-import Alert from '@/lib/components/ui-primitives/alert/alert';
+import { LoadingSpinner, ErrorPage, ErrorDisplay } from '@/lib/components';
 import { integrations } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import ConnectionsView from './connections-view';
@@ -66,11 +65,11 @@ export default function ConnectionsClient() {
   return (
     <div className="space-y-4">
       {mutationError && (
-        <Alert
-          type="error"
+        <ErrorDisplay
+          variant="inline"
           title="Action Failed"
-          description={mutationError.message}
-          onClose={() => setMutationError(null)}
+          message={mutationError.message}
+          error={mutationError}
           className="mb-4"
         />
       )}
@@ -80,9 +79,7 @@ export default function ConnectionsClient() {
         onSync={handleSync}
         syncingServiceId={syncingServiceId}
       />
-      {disconnectMutation.isPending && (
-        <LoadingSpinner text="Disconnecting..." variant="overlay" />
-      )}
+      {disconnectMutation.isPending && <LoadingSpinner text="Disconnecting..." />}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export { Card } from './card/card';
 export { default as ImageCard } from './card/image-card';
 export { default as DataCard } from './card/data-card';
 export { default as SpotlightCard } from './card/spotlight-card';
+export { default as ElectricBorder } from './card/electric-border';
 
 // Forms
 export { default as Input } from './form/input';

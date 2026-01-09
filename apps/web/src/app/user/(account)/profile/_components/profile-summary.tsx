@@ -1,5 +1,5 @@
 import { Camera } from 'lucide-react';
-import { CountUp, ShinyText } from '@/lib/components';
+import { CountUp } from '@/lib/components';
 
 interface ProfileSummaryProps {
   name: string;
@@ -51,9 +51,7 @@ export default function ProfileSummary({
       </div>
 
       <div className="text-center">
-        <h3 className="mb-1 text-2xl font-bold sm:text-3xl">
-          <ShinyText text={name} speed={3} className="justify-center" />
-        </h3>
+        <h3 className="mb-1 text-2xl font-bold sm:text-3xl">{name}</h3>
         <p className="text-muted-foreground mb-4">{bio}</p>
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
           <div className="bg-background min-w-24 rounded-lg p-3 text-center shadow-sm sm:min-w-28">
