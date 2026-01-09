@@ -7,20 +7,15 @@ import { CheckInRespondedEvent, CoachActionPerformedEvent } from '@app/events/in
 
 
 
-export const RespondToCheckInRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const RespondToCheckInRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   checkInId: z.string(),
   response: z.string(),
 });
-
-export type RespondToCheckInRequestClient = z.infer<
-  typeof RespondToCheckInRequestClientSchema
->;
-
-export const RespondToCheckInRequestSchema = RespondToCheckInRequestClientSchema.extend(
-  {
-    userId: z.string(),
-  },
-);
 
 export type RespondToCheckInRequest = z.infer<typeof RespondToCheckInRequestSchema>;
 

@@ -4,17 +4,14 @@ import { FitnessPlanCommands } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { PlanPausedEvent } from '../../events/plan-paused.event.js';
 
-// Client-facing schema (what comes in the request body)
-export const PausePlanRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const PausePlanRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   planId: z.string(),
   reason: z.string().optional(),
-});
-
-export type PausePlanRequestClient = z.infer<typeof PausePlanRequestClientSchema>;
-
-// Complete use case input schema (client data + server context)
-export const PausePlanRequestSchema = PausePlanRequestClientSchema.extend({
-  userId: z.string(),
 });
 
 // Zod inferred type with original name

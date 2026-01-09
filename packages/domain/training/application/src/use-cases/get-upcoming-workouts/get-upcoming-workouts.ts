@@ -1,45 +1,31 @@
 import { z } from 'zod';
 import { FitnessPlanQueries } from '@bene/training-core';
-import { Result, BaseUseCase } from '@bene/shared';
+import { Result, BaseUseCase, UpcomingWorkoutSchema } from '@bene/shared';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
-// Client-facing schema (what comes in the request body)
-export const GetUpcomingWorkoutsRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const GetUpcomingWorkoutsRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   days: z.number().optional(), // Default to 7
 });
-
-export type GetUpcomingWorkoutsRequestClient = z.infer<
-  typeof GetUpcomingWorkoutsRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const GetUpcomingWorkoutsRequestSchema =
-  GetUpcomingWorkoutsRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 // Zod inferred type with original name
 export type GetUpcomingWorkoutsRequest = z.infer<
   typeof GetUpcomingWorkoutsRequestSchema
 >;
 
-// Zod schema for response validation
-const WorkoutSchema = z.object({
-  workoutId: z.string(),
-  day: z.string(),
-  type: z.string(),
-  durationMinutes: z.number(),
-  status: z.string(),
-});
-
 export const GetUpcomingWorkoutsResponseSchema = z.object({
-  workouts: z.array(WorkoutSchema),
+  workouts: z.array(UpcomingWorkoutSchema),
 });
 
 // Zod inferred type with original name
 export type GetUpcomingWorkoutsResponse = z.infer<
   typeof GetUpcomingWorkoutsResponseSchema
 >;
+
 
 export class GetUpcomingWorkoutsUseCase extends BaseUseCase<
   GetUpcomingWorkoutsRequest,

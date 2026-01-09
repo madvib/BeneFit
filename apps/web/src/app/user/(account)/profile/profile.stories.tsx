@@ -1,55 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProfileView from './profile-view';
-import { SEED_USERS } from '@bene/shared';
 import { Skeleton } from '@/lib/components';
-
-// Helper to map seed user to profile format
-const toProfile = (seedUser: (typeof SEED_USERS)[0]) => ({
-  id: seedUser.id,
-  email: seedUser.email,
-  displayName: seedUser.name,
-  bio: 'Fitness enthusiast and weekend warrior.',
-  avatar: seedUser.avatarUrl,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  emailVerified: seedUser.emailVerified,
-});
-
-const DEFAULT_USER = toProfile(SEED_USERS[0]); // User 001
-
-const MOCK_STATS = {
-  totalWorkouts: 42,
-  totalMinutes: 1250,
-  totalVolume: 15_400,
-  lastWorkoutDate: new Date().toISOString(),
-  daysSinceLastWorkout: 2,
-  currentStreak: 5,
-  longestStreak: 12,
-  streakActive: true,
-  achievements: [
-    {
-      id: '1',
-      name: 'Early Bird',
-      description: 'Complete a workout before 6am',
-      unlockedAt: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      name: 'Marathoner',
-      description: 'Run 42km in total',
-      unlockedAt: new Date().toISOString(),
-    },
-  ],
-  weeklyActivity: [
-    { date: '2023-10-01', minutes: 30, calories: 300 },
-    { date: '2023-10-02', minutes: 45, calories: 450 },
-    { date: '2023-10-03', minutes: 0, calories: 0 },
-    { date: '2023-10-04', minutes: 60, calories: 600 },
-    { date: '2023-10-05', minutes: 30, calories: 300 },
-    { date: '2023-10-06', minutes: 0, calories: 0 },
-    { date: '2023-10-07', minutes: 90, calories: 900 },
-  ],
-};
+import { mockUserProfile, mockUserStats } from '@/lib/testing/fixtures';
 
 const meta: Meta = {
   title: 'Pages/Account/Profile',
@@ -62,12 +14,12 @@ const meta: Meta = {
 export default meta;
 
 export const Default: StoryObj<typeof ProfileView> = {
-  render: () => <ProfileView userProfile={DEFAULT_USER} userStats={MOCK_STATS} />,
+  render: () => <ProfileView userProfile={mockUserProfile} userStats={mockUserStats} />,
 };
 
 export const EmptyBio: StoryObj<typeof ProfileView> = {
   render: () => (
-    <ProfileView userProfile={{ ...DEFAULT_USER, bio: undefined }} userStats={MOCK_STATS} />
+    <ProfileView userProfile={{ ...mockUserProfile, bio: undefined }} userStats={mockUserStats} />
   ),
 };
 

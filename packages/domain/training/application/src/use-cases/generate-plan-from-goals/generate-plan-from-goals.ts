@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { PlanGoals, UserProfile } from '@bene/training-core';
+import { UserProfile, TrainingConstraints } from '@bene/training-core';
 import {
   FitnessPlanRepository,
   UserProfileRepository,
@@ -9,25 +9,19 @@ import {
   AIPlanGenerator,
   GeneratePlanInput,
 } from '../../services/ai-plan-generator.js';
-import { PlanGoalsSchema } from '../../schemas/index.js';
+import { PlanGoalsSchema } from '@bene/shared';
 import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
-import { toDomainPlanGoals } from '../../mappers/type-mappers.js';
+import { toDomainPlanGoals } from '../../mappers/index.js';
 
-// Client-facing schema (what comes in the request body)
-export const GeneratePlanFromGoalsRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const GeneratePlanFromGoalsRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   goals: PlanGoalsSchema,
-  customInstructions: z.string().optional(), // "I want more cardio", "Focus on upper body", etc.
+  customInstructions: z.string().optional(),
 });
-
-export type GeneratePlanFromGoalsRequestClient = z.infer<
-  typeof GeneratePlanFromGoalsRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const GeneratePlanFromGoalsRequestSchema =
-  GeneratePlanFromGoalsRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 // Zod inferred type with original name
 export type GeneratePlanFromGoalsRequest = z.infer<
@@ -102,7 +96,7 @@ export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
         location: 'home',
         maxDuration: 60,
         injuries: [],
-      } as any, // Type mismatch workaround if needed, verifying below
+      } as TrainingConstraints,
       experienceLevel: profile.experienceProfile?.level || 'beginner',
       customInstructions: request.customInstructions,
     };

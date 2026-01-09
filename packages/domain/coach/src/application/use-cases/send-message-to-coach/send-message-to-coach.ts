@@ -9,21 +9,15 @@ import {
   CoachScheduledFollowupEvent,
 } from '@app/events/index.js';
 
-// Client-facing schema (what comes in the request body)
-export const SendMessageToCoachRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const SendMessageToCoachRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   message: z.string(),
-  checkInId: z.string().optional(), // If responding to a check-in
+  checkInId: z.string().optional(),
 });
-
-export type SendMessageToCoachRequestClient = z.infer<
-  typeof SendMessageToCoachRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const SendMessageToCoachRequestSchema =
-  SendMessageToCoachRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 // Zod inferred type with original name
 export type SendMessageToCoachRequest = z.infer<typeof SendMessageToCoachRequestSchema>;

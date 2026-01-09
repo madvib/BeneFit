@@ -1,10 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import {
-  ConnectServiceRequestClientSchema,
   ConnectServiceRequestSchema,
   ConnectServiceResponse,
-  DisconnectServiceRequestClientSchema,
   DisconnectServiceRequestSchema,
   DisconnectServiceResponse,
   GetConnectedServicesRequestSchema,
@@ -17,7 +15,7 @@ import { handleResult } from '../lib/handle-result';
 export const integrationRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .post(
     '/connect',
-    zValidator('json', ConnectServiceRequestClientSchema),
+    zValidator('json', ConnectServiceRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -38,7 +36,7 @@ export const integrationRoutes = new Hono<{ Bindings: Env; Variables: { user: an
   )
   .post(
     '/disconnect',
-    zValidator('json', DisconnectServiceRequestClientSchema),
+    zValidator('json', DisconnectServiceRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

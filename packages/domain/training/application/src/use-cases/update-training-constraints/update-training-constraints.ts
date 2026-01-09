@@ -2,25 +2,25 @@ import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { UserProfileCommands } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/index.js';
-import { TrainingConstraintsSchema } from '../../schemas/index.js';
+import { TrainingConstraintsSchema, type TrainingConstraints } from '@bene/shared';
 import { TrainingConstraintsUpdatedEvent } from '../../events/index.js';
-import { toDomainTrainingConstraints } from '../../mappers/type-mappers.js';
+import { toDomainTrainingConstraints } from '../../mappers/index.js';
 
 
 
-export const UpdateTrainingConstraintsRequestClientSchema = z.object({
-  constraints: TrainingConstraintsSchema, // Using proper schema instead of z.unknown()
+// Single request schema with ALL fields
+export const UpdateTrainingConstraintsRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
+  constraints: TrainingConstraintsSchema,
 });
-// Zod schema for request validation
-export const UpdateTrainingConstraintsRequestSchema =
-  UpdateTrainingConstraintsRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
-// Zod inferred type with original name
-export type UpdateTrainingConstraintsRequest = z.infer<
-  typeof UpdateTrainingConstraintsRequestSchema
->;
+export type UpdateTrainingConstraintsRequest = {
+  userId: string;
+  constraints: TrainingConstraints;
+};
 
 // Zod schema for response validation
 export const UpdateTrainingConstraintsResponseSchema = z.object({

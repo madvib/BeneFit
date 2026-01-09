@@ -1,25 +1,18 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import {
-  GetUpcomingWorkoutsRequestClientSchema,
   GetUpcomingWorkoutsRequestSchema,
   GetUpcomingWorkoutsResponse,
-  GetWorkoutHistoryRequestClientSchema,
   GetWorkoutHistoryRequestSchema,
   GetWorkoutHistoryResponse,
-  SkipWorkoutRequestClientSchema,
   SkipWorkoutRequestSchema,
   SkipWorkoutResponse,
-  StartWorkoutRequestClientSchema,
   StartWorkoutRequestSchema,
   StartWorkoutResponse,
-  CompleteWorkoutRequestClientSchema,
   CompleteWorkoutRequestSchema,
   CompleteWorkoutResponse,
-  JoinMultiplayerWorkoutRequestClientSchema,
   JoinMultiplayerWorkoutRequestSchema,
   JoinMultiplayerWorkoutResponse,
-  AddWorkoutReactionRequestClientSchema,
   AddWorkoutReactionRequestSchema,
   AddWorkoutReactionResponse,
   GetTodaysWorkoutResponse,
@@ -43,7 +36,7 @@ export const workoutRoutes = new Hono<{
   })
   .get(
     '/upcoming',
-    zValidator('query', GetUpcomingWorkoutsRequestClientSchema),
+    zValidator('query', GetUpcomingWorkoutsRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('query');
@@ -64,7 +57,7 @@ export const workoutRoutes = new Hono<{
   )
   .get(
     '/history',
-    zValidator('query', GetWorkoutHistoryRequestClientSchema),
+    zValidator('query', GetWorkoutHistoryRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('query');
@@ -82,7 +75,7 @@ export const workoutRoutes = new Hono<{
       return handleResult<GetWorkoutHistoryResponse>(result, c);
     },
   )
-  .post('/skip', zValidator('json', SkipWorkoutRequestClientSchema), async (c) => {
+  .post('/skip', zValidator('json', SkipWorkoutRequestSchema.omit({ userId: true })), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 
@@ -100,7 +93,7 @@ export const workoutRoutes = new Hono<{
   })
   .post(
     '/:sessionId/start',
-    zValidator('json', StartWorkoutRequestClientSchema),
+    zValidator('json', StartWorkoutRequestSchema.omit({ userId: true, userName: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -123,7 +116,7 @@ export const workoutRoutes = new Hono<{
   )
   .post(
     '/:sessionId/complete',
-    zValidator('json', CompleteWorkoutRequestClientSchema),
+    zValidator('json', CompleteWorkoutRequestSchema.omit({ userId: true })),
     async (c) => {
       const sessionId = c.req.param('sessionId');
       const clientInput = c.req.valid('json');
@@ -145,7 +138,7 @@ export const workoutRoutes = new Hono<{
   )
   .post(
     '/:sessionId/join',
-    zValidator('json', JoinMultiplayerWorkoutRequestClientSchema),
+    zValidator('json', JoinMultiplayerWorkoutRequestSchema.omit({ userId: true, userName: true })),
     async (c) => {
       const user = c.get('user');
       const sessionId = c.req.param('sessionId');
@@ -167,7 +160,7 @@ export const workoutRoutes = new Hono<{
   )
   .post(
     '/:sessionId/reaction',
-    zValidator('json', AddWorkoutReactionRequestClientSchema),
+    zValidator('json', AddWorkoutReactionRequestSchema.omit({ userId: true, userName: true })),
     async (c) => {
       const user = c.get('user');
       const sessionId = c.req.param('sessionId');

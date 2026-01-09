@@ -10,20 +10,16 @@ const RecentWorkoutSchema = z.object({
   difficultyRating: z.enum(['too_easy', 'just_right', 'too_hard']),
 });
 
-export const AdjustPlanBasedOnFeedbackRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const AdjustPlanBasedOnFeedbackRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   planId: z.string(),
-  feedback: z.string(), // "Too hard", "Loving it", "Need more rest", etc.
+  feedback: z.string(),
   recentWorkouts: z.array(RecentWorkoutSchema),
 });
-
-export type AdjustPlanBasedOnFeedbackRequestClient = z.infer<
-  typeof AdjustPlanBasedOnFeedbackRequestClientSchema
->;
-
-export const AdjustPlanBasedOnFeedbackRequestSchema =
-  AdjustPlanBasedOnFeedbackRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 export type AdjustPlanBasedOnFeedbackRequest = z.infer<
   typeof AdjustPlanBasedOnFeedbackRequestSchema

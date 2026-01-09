@@ -4,16 +4,17 @@ import { Label } from '@/lib/components';
 import { Check } from 'lucide-react';
 import { onboardingFormOpts } from './form-options';
 
-type Equipment = (typeof EQUIPMENT_OPTIONS)[number];
+// Use indexed access type directly in component props
+// type Equipment = (typeof EQUIPMENT_OPTIONS)[number];
 
 function EquipmentButton({
   equipment,
   selectedValues,
   onChange,
 }: {
-  equipment: Equipment;
-  selectedValues: Equipment[];
-  onChange: (_val: Equipment[]) => void;
+  equipment: (typeof EQUIPMENT_OPTIONS)[number];
+  selectedValues: (typeof EQUIPMENT_OPTIONS)[number][];
+  onChange: (_val: (typeof EQUIPMENT_OPTIONS)[number][]) => void;
 }) {
   const isSelected = selectedValues.includes(equipment);
 
@@ -102,7 +103,9 @@ export const ConstraintsStep = withForm({
                   <EquipmentButton
                     key={eq}
                     equipment={eq}
-                    selectedValues={field.state.value || []}
+                    selectedValues={
+                      (field.state.value || []) as (typeof EQUIPMENT_OPTIONS)[number][]
+                    }
                     onChange={field.handleChange}
                   />
                 ))}

@@ -1,3 +1,4 @@
+'use client';
 import { useInView, useMotionValue, useSpring } from 'motion/react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -43,7 +44,7 @@ export default function CountUp({
     const str = num.toString();
     if (str.includes('.')) {
       const decimals = str.split('.')[1];
-      if (Number.parseInt(decimals) !== 0) {
+      if (decimals && Number.parseInt(decimals, 10) !== 0) {
         return decimals.length;
       }
     }
@@ -99,6 +100,7 @@ export default function CountUp({
         clearTimeout(durationTimeoutId);
       };
     }
+    return;
   }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {

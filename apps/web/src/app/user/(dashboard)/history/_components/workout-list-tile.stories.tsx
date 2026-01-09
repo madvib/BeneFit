@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import {
+  mockCompletedWorkout,
+  mockWorkoutSession,
+  mockAbandonedSession,
+} from '@/lib/testing/fixtures';
+import type { WorkoutSession, CompletedWorkout } from '@bene/shared';
 import WorkoutListTile from './workout-list-tile';
-import type { WorkoutData } from './workout-list';
 
 const meta: Meta<typeof WorkoutListTile> = {
   title: 'Pages/Dashboard/History/WorkoutListTile',
@@ -24,49 +29,32 @@ type Story = StoryObj<typeof WorkoutListTile>;
 
 // --- Mock Data ---
 
-const COMPLETED_STRENGTH: WorkoutData = {
-  id: '1',
-  type: 'strength',
-  date: '2026-01-07',
-  duration: '45 min',
-  calories: '320',
-  status: 'completed',
-};
+const COMPLETED_STRENGTH: CompletedWorkout = mockCompletedWorkout;
 
-const COMPLETED_CARDIO: WorkoutData = {
+const COMPLETED_CARDIO: CompletedWorkout = {
+  ...mockCompletedWorkout,
   id: '2',
-  type: 'cardio',
-  date: '2026-01-06',
-  duration: '30 min',
-  calories: '280',
-  status: 'completed',
+  workoutType: 'Cardio Run',
+  performance: {
+    ...mockCompletedWorkout.performance,
+    durationMinutes: 30,
+    caloriesBurned: 280,
+  },
 };
 
-const IN_PROGRESS_YOGA: WorkoutData = {
-  id: '3',
-  type: 'yoga',
-  date: '2026-01-07',
-  duration: '20 min',
-  calories: undefined,
-  status: 'in progress',
-};
+const IN_PROGRESS_YOGA: WorkoutSession = mockWorkoutSession;
 
-const SKIPPED_HIIT: WorkoutData = {
-  id: '4',
-  type: 'hiit',
-  date: '2026-01-05',
-  duration: undefined,
-  calories: undefined,
-  status: 'skipped',
-};
+const ABANDONED_HIIT: WorkoutSession = mockAbandonedSession;
 
-const NO_CALORIES: WorkoutData = {
+const NO_CALORIES: CompletedWorkout = {
+  ...mockCompletedWorkout,
   id: '5',
-  type: 'flexibility',
-  date: '2026-01-04',
-  duration: '15 min',
-  calories: undefined,
-  status: 'completed',
+  workoutType: 'Flexibility',
+  performance: {
+    ...mockCompletedWorkout.performance,
+    durationMinutes: 15,
+    caloriesBurned: undefined,
+  },
 };
 
 // --- Stories ---
@@ -86,9 +74,9 @@ export const InProgress: Story = {
   args: IN_PROGRESS_YOGA,
 };
 
-export const Skipped: Story = {
-  name: 'Skipped Workout',
-  args: SKIPPED_HIIT,
+export const Abandoned: Story = {
+  name: 'Abandoned Workout',
+  args: ABANDONED_HIIT,
 };
 
 export const NoCalories: Story = {
@@ -99,12 +87,14 @@ export const NoCalories: Story = {
 export const LongDuration: Story = {
   name: 'Long Duration Workout',
   args: {
+    ...mockCompletedWorkout,
     id: '6',
-    type: 'endurance',
-    date: '2026-01-03',
-    duration: '2h 15min',
-    calories: '850',
-    status: 'completed',
+    workoutType: 'Endurance Event',
+    performance: {
+      ...mockCompletedWorkout.performance,
+      durationMinutes: 135,
+      caloriesBurned: 850,
+    },
   },
 };
 
@@ -125,7 +115,7 @@ export const MultipleRows: Story = {
         <WorkoutListTile {...COMPLETED_STRENGTH} />
         <WorkoutListTile {...COMPLETED_CARDIO} />
         <WorkoutListTile {...IN_PROGRESS_YOGA} />
-        <WorkoutListTile {...SKIPPED_HIIT} />
+        <WorkoutListTile {...ABANDONED_HIIT} />
       </tbody>
     </table>
   ),

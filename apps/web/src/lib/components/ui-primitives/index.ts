@@ -24,6 +24,7 @@ export { default as Alert } from './alert/alert';
 export { Badge } from './badges/badge';
 export { LoadingSpinner } from './loading/loading-spinner';
 export { Skeleton } from './loading/skeleton';
+export { default as ProgressBar } from './progress-bar/progress-bar';
 
 // Layout & Structure
 export { default as Spacer } from './spacer/spacer';

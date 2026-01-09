@@ -26,9 +26,8 @@ const getCategoryIcon = (category: string) => {
 interface RecommendationData {
   id: number | string;
   title: string;
-  description: string;
-  category: string;
-  createdAt: string;
+  reason: string;
+  type: string;
 }
 interface RightActionPanelProps {
   isOpen: boolean;
@@ -97,13 +96,13 @@ export default function RightActionPanel({
                 className="border-muted hover:border-primary/50 hover:bg-accent/50 group flex items-start gap-3 rounded-lg border p-3 text-left transition-all hover:shadow-sm"
               >
                 <div className="bg-background border-muted group-hover:border-primary/30 text-muted-foreground group-hover:text-primary mt-1 rounded border p-1.5 transition-colors">
-                  {getCategoryIcon(rec.category)}
+                  {getCategoryIcon(rec.type)}
                 </div>
                 <div>
                   <div className="text-foreground group-hover:text-primary text-sm font-medium transition-colors">
                     {rec.title}
                   </div>
-                  <div className="text-muted-foreground mt-0.5 text-xs">{rec.description}</div>
+                  <div className="text-muted-foreground mt-0.5 text-xs">{rec.reason}</div>
                 </div>
               </button>
             ))}

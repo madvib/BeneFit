@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { mockFitnessGoals, mockUserProfile } from '@/lib/testing/fixtures';
 import { FitnessGoalsForm } from './fitness-goals-form';
 import { AccountSettingsForm } from './account-settings-form';
-import { PrivacySettings } from './privacy-settings';
-import { NotificationPreferences } from './notification-preferences';
-import { FitnessPreferences } from './fitness-preferences';
+import PrivacySettings from './privacy-settings';
+import NotificationPreferences from './notification-preferences';
+import FitnessPreferences from './fitness-preferences';
 
 const meta: Meta = {
   title: 'Pages/Account/SettingsForms',
@@ -26,11 +27,8 @@ export default meta;
 export const AccountSettings: StoryObj<typeof AccountSettingsForm> = {
   render: () => (
     <AccountSettingsForm
-      initialData={{
-        name: 'John Doe',
-        handle: '@johndoe',
-        email: 'john@example.com',
-      }}
+      initialName={mockUserProfile.displayName}
+      initialEmail="john@example.com"
       onSave={async (data) => {
         console.log('Account settings saved:', data);
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -42,8 +40,8 @@ export const AccountSettings: StoryObj<typeof AccountSettingsForm> = {
 export const FitnessGoals: StoryObj<typeof FitnessGoalsForm> = {
   render: () => (
     <FitnessGoalsForm
-      initialPrimary="strength"
-      initialSecondary={['consistency', 'mobility']}
+      initialPrimary={mockFitnessGoals.primary}
+      initialSecondary={mockFitnessGoals.secondary}
       onSave={async (data) => {
         console.log('Goals saved:', data);
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -55,14 +53,10 @@ export const FitnessGoals: StoryObj<typeof FitnessGoalsForm> = {
 export const Privacy: StoryObj<typeof PrivacySettings> = {
   render: () => (
     <PrivacySettings
-      initialSettings={{
-        profileVisibility: 'public',
-        activityVisibility: 'friends',
-      }}
-      onSave={async (data) => {
-        console.log('Privacy saved:', data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }}
+      profileVisibility="Public"
+      activitySharing={true}
+      onProfileVisibilityChange={(val) => console.log('Visibility:', val)}
+      onActivitySharingChange={(val) => console.log('Sharing:', val)}
     />
   ),
 };
@@ -70,15 +64,12 @@ export const Privacy: StoryObj<typeof PrivacySettings> = {
 export const Notifications: StoryObj<typeof NotificationPreferences> = {
   render: () => (
     <NotificationPreferences
-      initialPreferences={{
-        emailUpdates: true,
-        pushNotifications: false,
-        marketingEmails: false,
-      }}
-      onSave={async (data) => {
-        console.log('Notifications saved:', data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }}
+      emailNotifications={true}
+      pushNotifications={false}
+      workoutReminders={false}
+      onEmailNotificationsChange={(val) => console.log('Email:', val)}
+      onPushNotificationsChange={(val) => console.log('Push:', val)}
+      onWorkoutRemindersChange={(val) => console.log('Workout:', val)}
     />
   ),
 };
@@ -86,14 +77,10 @@ export const Notifications: StoryObj<typeof NotificationPreferences> = {
 export const FitnessPrefs: StoryObj<typeof FitnessPreferences> = {
   render: () => (
     <FitnessPreferences
-      initialPreferences={{
-        measurementSystem: 'imperial',
-        weeklyWorkoutDays: 4,
-      }}
-      onSave={async (data) => {
-        console.log('Fitness preferences saved:', data);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }}
+      preferredUnits="imperial"
+      goalFocus="motivational"
+      onPreferredUnitsChange={(val) => console.log('Units:', val)}
+      onGoalFocusChange={(val) => console.log('Focus:', val)}
     />
   ),
 };

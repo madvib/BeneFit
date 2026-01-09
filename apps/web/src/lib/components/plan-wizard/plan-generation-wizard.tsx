@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { profileSchemas } from '@bene/react-api-client';
+import { UpdateTrainingConstraintsFormSchema } from '@bene/shared';
 import { Button } from '@/lib/components/ui-primitives';
 import { Modal } from '@/lib/components/ui-primitives/modal/modal';
 import { Target, Dumbbell, Calendar, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -25,7 +25,7 @@ const STEPS = [
 ] as const;
 
 const EQUIPMENT_OPTIONS =
-  profileSchemas.UpdateTrainingConstraintsSchema.shape.availableEquipment.element.options;
+  UpdateTrainingConstraintsFormSchema.shape.availableEquipment.element.options;
 
 export default function PlanGenerationWizard({
   onComplete,

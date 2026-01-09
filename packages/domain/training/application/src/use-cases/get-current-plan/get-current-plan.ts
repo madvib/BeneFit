@@ -1,13 +1,8 @@
 import { z } from 'zod';
-import { Result, BaseUseCase } from '@bene/shared';
+import { Result, BaseUseCase, FitnessPlanSchema } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
+import type { Injury } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-
-export const GetCurrentPlanRequestClientSchema = z.object({});
-
-export type GetCurrentPlanRequestClient = z.infer<
-  typeof GetCurrentPlanRequestClientSchema
->;
 
 export const GetCurrentPlanRequestSchema = z.object({
   userId: z.string(),
@@ -15,39 +10,9 @@ export const GetCurrentPlanRequestSchema = z.object({
 
 export type GetCurrentPlanRequest = z.infer<typeof GetCurrentPlanRequestSchema>;
 
-const WorkoutSummarySchema = z.object({
-  id: z.string(),
-  type: z.string(), // WorkoutType from domain
-  dayOfWeek: z.number(),
-  status: z.enum(['scheduled', 'in_progress', 'completed', 'skipped', 'rescheduled']), // Matches WorkoutStatus
-  durationMinutes: z.number().optional(),
-});
-
-const WeekSchema = z.object({
-  weekNumber: z.number(),
-  workouts: z.array(WorkoutSummarySchema),
-});
-
-const PlanSummarySchema = z.object({
-  total: z.number(),
-  completed: z.number(),
-});
-
 export const GetCurrentPlanResponseSchema = z.object({
   hasPlan: z.boolean(),
-  plan: z
-    .object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string().optional(),
-      durationWeeks: z.number(),
-      currentWeek: z.number(),
-      status: z.enum(['draft', 'active', 'paused', 'completed', 'abandoned']),
-      startedAt: z.string().optional(), // ISO date string
-      weeks: z.array(WeekSchema),
-      summary: PlanSummarySchema,
-    })
-    .optional(),
+  plan: FitnessPlanSchema.optional(),
   message: z.string().optional(),
 });
 
@@ -81,12 +46,18 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
     console.log(`[GetCurrentPlan] Found active plan ${ plan.id } for user ${ request.userId }`);
 
     // 2. Use entity queries to get data - business logic lives in the entity
-    const currentWeek = plan.currentPosition.week;
     const summary = FitnessPlanQueries.getWorkoutSummary(plan);
 
-    // 3. Map weeks to response format
+    // 3. Map weeks to enriched response format
     const weeks = plan.weeks.map((week, index) => ({
+      id: week.id,
       weekNumber: index + 1,
+      startDate: week.startDate,
+      endDate: week.endDate,
+      focus: week.focus || `Week ${ index + 1 }`,
+      targetWorkouts: week.workouts.length,
+      workoutsCompleted: week.workouts.filter(w => w.status === 'completed').length,
+      notes: week.notes,
       workouts: week.workouts.map((w) => {
         const duration =
           w.activities?.reduce((sum, a) => sum + (a.duration || 0), 0) || 30;
@@ -101,19 +72,56 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
       }),
     }));
 
-    // 4. Return plan details
+    // 4. Return enriched plan details
     return Result.ok({
       hasPlan: true,
       plan: {
         id: plan.id,
         title: plan.title,
         description: plan.description,
+        planType: plan.planType,
         durationWeeks: plan.weeks.length,
-        currentWeek,
+        currentWeek: plan.currentPosition.week,
+        currentPosition: {
+          week: plan.currentPosition.week,
+          day: plan.currentPosition.day,
+        },
         status: plan.status,
+        startDate: plan.startDate,
+        endDate: plan.endDate,
         startedAt: plan.startDate,
         weeks,
         summary,
+        goals: {
+          primary: plan.goals.primary,
+          secondary: [...plan.goals.secondary],
+          targetMetrics: {
+            ...plan.goals.targetMetrics,
+            targetWeights: plan.goals.targetMetrics.targetWeights
+              ? [...plan.goals.targetMetrics.targetWeights]
+              : undefined,
+          },
+          targetDate: plan.goals.targetDate ? plan.goals.targetDate.toISOString() : undefined,
+        },
+        progression: {
+          type: plan.progression.type,
+          weeklyIncrease: plan.progression.weeklyIncrease,
+          deloadWeeks: plan.progression.deloadWeeks ? [...plan.progression.deloadWeeks] : undefined,
+          maxIncrease: plan.progression.maxIncrease,
+          minIncrease: plan.progression.minIncrease,
+          testWeeks: plan.progression.testWeeks ? [...plan.progression.testWeeks] : undefined,
+        },
+        constraints: {
+          availableDays: [...plan.constraints.availableDays],
+          preferredTime: plan.constraints.preferredTime,
+          maxDuration: plan.constraints.maxDuration,
+          location: plan.constraints.location,
+          availableEquipment: [...plan.constraints.availableEquipment],
+          injuries: plan.constraints.injuries ? plan.constraints.injuries.map((inj: Injury) => ({
+            ...inj,
+            avoidExercises: [...inj.avoidExercises],
+          })) : [],
+        },
       },
     });
   }

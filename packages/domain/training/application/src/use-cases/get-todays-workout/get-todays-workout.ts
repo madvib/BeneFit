@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, BaseUseCase } from '@bene/shared';
+import { Result, BaseUseCase, DailyWorkoutSchema } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 export const GetTodaysWorkoutRequestSchema = z.object({
@@ -8,28 +8,15 @@ export const GetTodaysWorkoutRequestSchema = z.object({
 
 export type GetTodaysWorkoutRequest = z.infer<typeof GetTodaysWorkoutRequestSchema>;
 
-const ActivitySchema = z.object({
-  type: z.enum(['warmup', 'main', 'cooldown']),
-  instructions: z.string(),
-  durationMinutes: z.number(),
-});
-
-const WorkoutSchema = z.object({
-  workoutId: z.string(),
-  planId: z.string(),
-  type: z.string(),
-  durationMinutes: z.number(),
-  activities: z.array(ActivitySchema),
-});
-
 export const GetTodaysWorkoutResponseSchema = z.object({
   hasWorkout: z.boolean(),
-  workout: WorkoutSchema.optional(),
+  workout: DailyWorkoutSchema.optional(),
   message: z.string().optional(), // "Rest day!" or "No active plan"
 });
 
 // Zod inferred type with original name
 export type GetTodaysWorkoutResponse = z.infer<typeof GetTodaysWorkoutResponseSchema>;
+
 
 export class GetTodaysWorkoutUseCase extends BaseUseCase<
   GetTodaysWorkoutRequest,

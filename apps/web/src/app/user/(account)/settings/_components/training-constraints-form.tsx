@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { Calendar, Clock, Dumbbell, AlertTriangle } from 'lucide-react';
-import { profileSchemas } from '@bene/react-api-client';
+import { UpdateTrainingConstraintsFormSchema } from '@bene/shared';
 import { useAppForm } from '@/lib/components/app-form';
 import { Button, Input } from '@/lib/components';
 
 const EQUIPMENT_OPTIONS =
-  profileSchemas.UpdateTrainingConstraintsSchema.shape.availableEquipment.element.options;
+  UpdateTrainingConstraintsFormSchema.shape.availableEquipment.element.options;
 
 interface TrainingConstraintsFormProps {
   initialConstraints: {

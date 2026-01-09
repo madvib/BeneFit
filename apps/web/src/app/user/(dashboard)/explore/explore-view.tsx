@@ -1,23 +1,22 @@
 'use client';
 
-import { Calendar, Users, Trophy, ChevronRight, MapPin } from 'lucide-react';
+import { Calendar, Users, ChevronRight } from 'lucide-react';
 import { Card } from '@/lib/components';
 
 export interface Event {
   id: string;
   title: string;
   date: string;
-  location: string;
-  attendees: number;
   image: string;
-  category: string;
+  participants: number;
 }
 
 export interface Team {
   id: string;
   name: string;
   members: number;
-  category: string;
+  activityType: string;
+  image: string;
 }
 
 interface ExploreViewProps {
@@ -68,26 +67,19 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
               image={undefined}
             >
               <div className="bg-accent/50 -mx-6 -mt-6 mb-6 flex aspect-video w-[calc(100%+3rem)] items-center justify-center text-6xl">
-                {event.image}
+                {/* Fallback image if needed since we removed category logic for placeholder */}
+                <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
               </div>
-              <div className="mb-4 flex items-center gap-2">
-                <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
-                  {event.category}
-                </span>
-              </div>
+
               <h3 className="text-foreground mb-2 text-xl font-bold">{event.title}</h3>
               <div className="text-muted-foreground space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <Calendar size={16} />
-                  <span>{event.date}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin size={16} />
-                  <span>{event.location}</span>
+                  <span>{new Date(event.date).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users size={16} />
-                  <span>{event.attendees} attending</span>
+                  <span>{event.participants} participating</span>
                 </div>
               </div>
             </Card>
@@ -109,11 +101,11 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
               key={team.id}
               className="border-border bg-card hover:border-primary/50 flex flex-col items-center text-center transition-all hover:shadow-md"
             >
-              <div className="bg-accent mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-                <Trophy size={32} className="text-muted-foreground" />
+              <div className="bg-accent mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
+                <img src={team.image} alt={team.name} className="h-full w-full object-cover" />
               </div>
               <h3 className="text-foreground mb-1 text-lg font-bold">{team.name}</h3>
-              <p className="text-muted-foreground mb-4 text-sm">{team.category}</p>
+              <p className="text-muted-foreground mb-4 text-sm">{team.activityType}</p>
               <div className="text-muted-foreground mt-auto flex items-center gap-2 text-xs font-medium">
                 <Users size={14} />
                 <span>{team.members} members</span>

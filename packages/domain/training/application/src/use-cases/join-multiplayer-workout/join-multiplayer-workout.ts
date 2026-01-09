@@ -4,22 +4,16 @@ import { WorkoutSessionCommands } from '@bene/training-core';
 import { UserJoinedWorkoutEvent } from '../../events/index.js';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 
-// Client-facing schema (what comes in the request body)
-export const JoinMultiplayerWorkoutRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const JoinMultiplayerWorkoutRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   userName: z.string(),
   userAvatar: z.string().optional(),
   sessionId: z.string(),
 });
-
-export type JoinMultiplayerWorkoutRequestClient = z.infer<
-  typeof JoinMultiplayerWorkoutRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const JoinMultiplayerWorkoutRequestSchema =
-  JoinMultiplayerWorkoutRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 // Zod inferred type with original name
 export type JoinMultiplayerWorkoutRequest = z.infer<

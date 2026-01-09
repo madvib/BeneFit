@@ -8,18 +8,16 @@ import { ConnectedServiceRepository } from '@app/ports/connected-service-reposit
 import { IntegrationClient } from '@app/ports/integration-client.js';
 import { ServiceConnectedEvent } from '@app/events/service-connected.event.js';
 
-export const ConnectServiceRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const ConnectServiceRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
+
   serviceType: z.enum(['strava', 'garmin']),
   authorizationCode: z.string(),
   redirectUri: z.string(),
-});
-
-export type ConnectServiceRequestClient = z.infer<
-  typeof ConnectServiceRequestClientSchema
->;
-
-export const ConnectServiceRequestSchema = ConnectServiceRequestClientSchema.extend({
-  userId: z.string(),
 });
 
 // Zod inferred type with original name
@@ -64,7 +62,8 @@ export class ConnectServiceUseCase extends BaseUseCase<
     );
 
     if (tokenResult.isFailure) {
-      return Result.fail(new UseCaseError(`OAuth exchange failed: ${ tokenResult.error }`, 'OAUTH_EXCHANGE_FAILED', { serviceType: request.serviceType }, tokenResult.error));
+      const error = Array.isArray(tokenResult.error) ? tokenResult.error[0] : tokenResult.error;
+      return Result.fail(new UseCaseError(`OAuth exchange failed: ${ error }`, 'OAUTH_EXCHANGE_FAILED', { serviceType: request.serviceType }, error));
     }
 
     const tokens = tokenResult.value;
@@ -72,8 +71,9 @@ export class ConnectServiceUseCase extends BaseUseCase<
     // 3. Get user profile from service
     const profileResult = await client.getUserProfile(tokens.accessToken);
     if (profileResult.isFailure) {
+      const error = Array.isArray(profileResult.error) ? profileResult.error[0] : profileResult.error;
       return Result.fail(
-        new UseCaseError(`Failed to get user profile: ${ profileResult.error }`, 'PROFILE_FETCH_FAILED', { serviceType: request.serviceType }, profileResult.error),
+        new UseCaseError(`Failed to get user profile: ${ error }`, 'PROFILE_FETCH_FAILED', { serviceType: request.serviceType }, error),
       );
     }
 

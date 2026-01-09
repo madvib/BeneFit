@@ -5,20 +5,16 @@ import { CompletedWorkoutCommands } from '@bene/training-core';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { WorkoutReactionAddedEvent } from '../../events/workout-reaction-added.event.js';
 
-export const AddWorkoutReactionRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const AddWorkoutReactionRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+  userName: z.string(),
+
+  // Client data
   workoutId: z.string(),
   reactionType: z.enum(['fire', 'strong', 'clap', 'heart', 'smile']),
 });
-
-export type AddWorkoutReactionRequestClient = z.infer<
-  typeof AddWorkoutReactionRequestClientSchema
->;
-
-export const AddWorkoutReactionRequestSchema =
-  AddWorkoutReactionRequestClientSchema.extend({
-    userId: z.string(),
-    userName: z.string(),
-  });
 
 export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;
 

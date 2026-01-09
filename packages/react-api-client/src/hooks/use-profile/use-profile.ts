@@ -37,7 +37,7 @@ export function useCreateProfile() {
   });
 }
 
-const $updateGoals = client.api.profile.goals.$post;
+const $updateGoals = client.api.profile.goals.$patch;
 export type UpdateGoalsRequest = InferRequestType<typeof $updateGoals>;
 
 export function useUpdateGoals() {
@@ -51,7 +51,7 @@ export function useUpdateGoals() {
   });
 }
 
-const $updatePreferences = client.api.profile.preferences.$post;
+const $updatePreferences = client.api.profile.preferences.$patch;
 export type UpdatePreferencesRequest = InferRequestType<typeof $updatePreferences>;
 
 export function useUpdatePreferences() {
@@ -75,7 +75,7 @@ export function useUserStats() {
   });
 }
 
-const $updateConstraints = client.api.profile.constraints.$post;
+const $updateConstraints = client.api.profile.constraints.$patch;
 export type UpdateConstraintsRequest = InferRequestType<typeof $updateConstraints>;
 
 export function useUpdateConstraints() {

@@ -37,7 +37,7 @@ export const Buttons: StoryObj = {
       </div>
       <div className="flex flex-wrap items-center gap-4">
         <Button size="sm">Small</Button>
-        <Button size="default">Default</Button>
+        <Button size="md">Default</Button>
         <Button size="lg">Large</Button>
         <Button size="icon">
           <Mail size={16} />
@@ -67,7 +67,7 @@ export const Badges: StoryObj = {
     <div className="flex flex-wrap gap-4">
       <Badge variant="default">Default</Badge>
       <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="destructive">Destructive</Badge>
+      <Badge variant="error">Destructive</Badge>
       <Badge variant="outline">Outline</Badge>
       <Badge className="bg-blue-500 hover:bg-blue-600">Custom Color</Badge>
     </div>
@@ -77,20 +77,8 @@ export const Badges: StoryObj = {
 export const Alerts: StoryObj = {
   render: () => (
     <div className="max-w-lg space-y-4">
-      <Alert variant="default">
-        <Info className="h-4 w-4" />
-        <div className="ml-2">
-          <h5 className="mb-1 leading-none font-medium">Information</h5>
-          <div className="text-sm opacity-90">This is a standard alert message.</div>
-        </div>
-      </Alert>
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <div className="ml-2">
-          <h5 className="mb-1 leading-none font-medium">Error</h5>
-          <div className="text-sm opacity-90">Something went wrong! Please try again.</div>
-        </div>
-      </Alert>
+      <Alert title="Information" description="This is a standard alert message." type="info" />
+      <Alert title="Error" description="Something went wrong! Please try again." type="error" />
       <div className="flex gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-green-700 dark:text-green-400">
         <CheckCircle className="h-5 w-5" />
         <div>

@@ -13,6 +13,8 @@ interface Recommendation {
   id: string;
   title: string;
   description: string;
+  reason: string;
+  type: string;
   category: string;
   createdAt: string;
 }
@@ -74,6 +76,8 @@ function CoachPageContent({ historyData }: CoachPageContentProps) {
               .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
               .join(' '),
             description: action.details,
+            reason: action.details,
+            type: action.type,
             category: 'Wellness',
             createdAt: new Date(
               msg.sentAt || msg.createdAt || new Date().toISOString(),

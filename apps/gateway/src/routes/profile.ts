@@ -8,15 +8,11 @@ import {
   UpdatePreferencesResponse,
   GetUserStatsResponse,
   UpdateTrainingConstraintsResponse,
-  CreateUserProfileRequestClientSchema,
   CreateUserProfileRequestSchema,
-  UpdateFitnessGoalsRequestClientSchema,
   UpdateFitnessGoalsRequestSchema,
   UpdatePreferencesRequestSchema,
   GetUserStatsRequestSchema,
   UpdateTrainingConstraintsRequestSchema,
-  UpdatePreferencesRequestClientSchema,
-  UpdateTrainingConstraintsRequestClientSchema,
 } from '@bene/training-application';
 import { handleResult } from '../lib/handle-result';
 
@@ -36,7 +32,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     return handleResult<GetProfileResponse>(result, c);
   })
-  .post('/', zValidator('json', CreateUserProfileRequestClientSchema), async (c) => {
+  .post('/', zValidator('json', CreateUserProfileRequestSchema.omit({ userId: true })), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 
@@ -52,9 +48,9 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
     const result = await stub.create(validated);
     return handleResult<CreateUserProfileResponse>(result, c);
   })
-  .post(
+  .patch(
     '/goals',
-    zValidator('json', UpdateFitnessGoalsRequestClientSchema),
+    zValidator('json', UpdateFitnessGoalsRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -73,14 +69,16 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
       return handleResult<UpdateFitnessGoalsResponse>(result, c);
     },
   )
-  .post(
+  .patch(
     '/preferences',
-    zValidator('json', UpdatePreferencesRequestClientSchema),
+    zValidator('json', UpdatePreferencesRequestSchema.omit({ userId: true })),
 
     async (c) => {
       const user = c.get('user');
+      const clientInput = c.req.valid('json');
 
       const useCaseInput = {
+        ...clientInput,
         userId: user.id,
       };
 
@@ -108,9 +106,9 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     return handleResult<GetUserStatsResponse>(result, c);
   })
-  .post(
+  .patch(
     '/constraints',
-    zValidator('json', UpdateTrainingConstraintsRequestClientSchema),
+    zValidator('json', UpdateTrainingConstraintsRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

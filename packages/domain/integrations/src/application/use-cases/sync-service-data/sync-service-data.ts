@@ -143,7 +143,7 @@ export class SyncServiceDataUseCase extends BaseUseCase<
         serviceId: service.id,
         serviceType: service.serviceType,
         activities: normalizedActivities, // Normalized contract
-        syncedAt: new Date(),
+        syncedAt: new Date().toISOString(),
       }),
     );
 

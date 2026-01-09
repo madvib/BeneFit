@@ -1,15 +1,12 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import {
-  SendMessageToCoachRequestClientSchema,
   SendMessageToCoachRequestSchema,
   SendMessageToCoachResponse,
   GenerateWeeklySummaryRequestSchema,
   GenerateWeeklySummaryResponse,
-  DismissCheckInRequestClientSchema,
   DismissCheckInRequestSchema,
   DismissCheckInResponse,
-  RespondToCheckInRequestClientSchema,
   RespondToCheckInRequestSchema,
   RespondToCheckInResponse,
   TriggerProactiveCheckInRequestSchema,
@@ -22,7 +19,7 @@ import { handleResult } from '../lib/handle-result';
 export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .post(
     '/message',
-    zValidator('json', SendMessageToCoachRequestClientSchema),
+    zValidator('json', SendMessageToCoachRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -72,7 +69,7 @@ export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>
   })
   .post(
     '/check-in/dismiss',
-    zValidator('json', DismissCheckInRequestClientSchema),
+    zValidator('json', DismissCheckInRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -94,7 +91,7 @@ export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>
 
   .post(
     '/check-in/respond',
-    zValidator('json', RespondToCheckInRequestClientSchema),
+    zValidator('json', RespondToCheckInRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

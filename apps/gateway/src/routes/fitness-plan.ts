@@ -1,16 +1,12 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import {
-  GeneratePlanFromGoalsRequestClientSchema,
   GeneratePlanFromGoalsRequestSchema,
   GeneratePlanFromGoalsResponse,
-  ActivatePlanRequestClientSchema,
   ActivatePlanRequestSchema,
   ActivatePlanResponse,
-  AdjustPlanBasedOnFeedbackRequestClientSchema,
   AdjustPlanBasedOnFeedbackRequestSchema,
   AdjustPlanBasedOnFeedbackResponse,
-  PausePlanRequestClientSchema,
   PausePlanRequestSchema,
   PausePlanResponse,
   GetCurrentPlanRequestSchema,
@@ -36,7 +32,7 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
   })
   .post(
     '/generate',
-    zValidator('json', GeneratePlanFromGoalsRequestClientSchema),
+    zValidator('json', GeneratePlanFromGoalsRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -55,7 +51,7 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
       return handleResult<GeneratePlanFromGoalsResponse>(result, c);
     },
   )
-  .post('/activate', zValidator('json', ActivatePlanRequestClientSchema), async (c) => {
+  .post('/activate', zValidator('json', ActivatePlanRequestSchema.omit({ userId: true })), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 
@@ -74,7 +70,7 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
   })
   .post(
     '/adjust',
-    zValidator('json', AdjustPlanBasedOnFeedbackRequestClientSchema),
+    zValidator('json', AdjustPlanBasedOnFeedbackRequestSchema.omit({ userId: true })),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -93,7 +89,7 @@ export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: an
       return handleResult<AdjustPlanBasedOnFeedbackResponse>(result, c);
     },
   )
-  .post('/pause', zValidator('json', PausePlanRequestClientSchema), async (c) => {
+  .post('/pause', zValidator('json', PausePlanRequestSchema.omit({ userId: true })), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 

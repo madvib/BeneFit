@@ -28,28 +28,19 @@ const WorkoutActivitySchema = z
 
 
 
-// Client-facing schema (what comes in the request body)
-export const StartWorkoutRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const StartWorkoutRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   userName: z.string(),
   userAvatar: z.string().optional(),
-
-  // Option 1: From active plan
   fromPlan: z.boolean().optional(),
-
-  // Option 2: Custom workout
   workoutType: z.string().optional(),
   activities: z.array(WorkoutActivitySchema).optional(),
-
-  // Multiplayer options
   isMultiplayer: z.boolean().optional(),
   isPublic: z.boolean().optional(),
-});
-
-export type StartWorkoutRequestClient = z.infer<typeof StartWorkoutRequestClientSchema>;
-
-// Complete use case input schema (client data + server context)
-export const StartWorkoutRequestSchema = StartWorkoutRequestClientSchema.extend({
-  userId: z.string(),
 });
 
 // Zod inferred type with original name

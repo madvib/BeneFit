@@ -75,17 +75,42 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
         {/* Current Phase */}
         <div className="bg-background/50 ring-border/50 rounded-xl p-4 ring-1 backdrop-blur-sm">
           <div className="mb-3 flex items-center justify-between">
-            <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
-              Current Week
-            </span>
+            <div className="flex gap-2">
+              <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
+                Week {currentPlan.currentWeek}
+              </span>
+              {currentPlan.planType && (
+                <span className="bg-secondary/10 text-secondary-foreground border-secondary/20 rounded-full border px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase">
+                  {currentPlan.planType}
+                </span>
+              )}
+            </div>
             <span className="text-muted-foreground text-xs font-medium">
-              Week {currentPlan.currentWeek} of {currentPlan.durationWeeks}
+              {currentPlan.durationWeeks} Weeks Total
             </span>
           </div>
           <h3 className="text-foreground mb-1 text-xl font-bold">{currentPlan.title}</h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground mb-3 text-sm">
             {currentPlan.description || 'Keep up the great work!'}
           </p>
+
+          {currentPlan.startDate && currentPlan.endDate && (
+            <div className="text-muted-foreground border-border/50 mt-3 flex items-center gap-2 border-t pt-3 text-xs">
+              <Timer size={14} />
+              <span>
+                {new Date(currentPlan.startDate).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+                {' - '}
+                {new Date(currentPlan.endDate).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Stats Grid */}
@@ -119,6 +144,51 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
               Status
             </div>
           </div>
+        </div>
+        {/* Goals Section */}
+        <div className="bg-background/40 rounded-xl border border-dashed p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs font-bold tracking-wider uppercase">
+                Primary Goal
+              </p>
+              <p className="text-foreground font-semibold capitalize">
+                {currentPlan.goals?.primary.replaceAll('_', ' ') || 'Get Fit'}
+              </p>
+            </div>
+            {currentPlan.goals?.targetDate && (
+              <div className="text-right">
+                <p className="text-muted-foreground mb-1 text-xs font-bold tracking-wider uppercase">
+                  Target Date
+                </p>
+                <p className="text-foreground font-semibold">
+                  {new Date(currentPlan.goals.targetDate).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {currentPlan.goals?.secondary && currentPlan.goals.secondary.length > 0 && (
+            <div className="mt-3 border-t border-dashed pt-3">
+              <p className="text-muted-foreground mb-1 text-xs font-bold tracking-wider uppercase">
+                Focus Areas
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {currentPlan.goals.secondary.map((goal) => (
+                  <span
+                    key={goal}
+                    className="bg-primary/5 text-primary border-primary/20 rounded-md border px-2 py-0.5 text-xs font-medium capitalize"
+                  >
+                    {goal.replaceAll('_', ' ')}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Card>

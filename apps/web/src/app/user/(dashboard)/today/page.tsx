@@ -35,7 +35,7 @@ export default function TodaysWorkoutPage() {
     if (todaysWorkout?.workoutId && userProfile) {
       await startWorkoutMutation.mutateAsync({
         param: { sessionId: todaysWorkout.workoutId },
-        json: { userName: userProfile.displayName || 'User' },
+        json: {},
       });
       router.push(`/user/workout/${todaysWorkout.workoutId}`);
     }

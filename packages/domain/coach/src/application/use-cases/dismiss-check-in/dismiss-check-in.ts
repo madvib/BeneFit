@@ -7,17 +7,15 @@ import { CheckInDismissedEvent } from '@app/events/check-in-dismissed.event.js';
 
 
 // Client-facing schema (what comes in the request body)
-export const DismissCheckInRequestClientSchema = z.object({
-  checkInId: z.string(),
-});
-
-export type DismissCheckInRequestClient = z.infer<
-  typeof DismissCheckInRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const DismissCheckInRequestSchema = DismissCheckInRequestClientSchema.extend({
+// Single request schema with ALL fields
+export const DismissCheckInRequestSchema = z.object({
+  // Server context
   userId: z.string(),
+
+  // Client data
+
+  checkInId: z.string(),
+
 });
 
 // Zod inferred type with original name

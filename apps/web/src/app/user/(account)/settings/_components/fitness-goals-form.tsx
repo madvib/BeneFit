@@ -1,9 +1,8 @@
 'use client';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
-import { profileSchemas } from '@bene/react-api-client';
+import { UpdateFitnessGoalsFormSchema } from '@bene/shared';
 import {
-  PrimaryGoalGrid,
   SecondaryGoalsList,
   CategorizedGoalSelection,
 } from '../../../_shared/goals/goal-selection-ui';
@@ -27,7 +26,7 @@ export function FitnessGoalsForm({
       secondary: initialSecondary || [],
     },
     validators: {
-      onDynamic: profileSchemas.UpdateFitnessGoalsSchema,
+      onDynamic: UpdateFitnessGoalsFormSchema,
     },
     validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {

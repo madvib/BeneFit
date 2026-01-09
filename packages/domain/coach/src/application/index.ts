@@ -5,11 +5,9 @@ export { SendMessageToCoachUseCase } from './use-cases/send-message-to-coach/sen
 export type {
   SendMessageToCoachRequest,
   SendMessageToCoachResponse,
-  SendMessageToCoachRequestClient,
 } from './use-cases/send-message-to-coach/send-message-to-coach.js';
 export {
   SendMessageToCoachRequestSchema,
-  SendMessageToCoachRequestClientSchema,
   SendMessageToCoachResponseSchema,
 } from './use-cases/send-message-to-coach/send-message-to-coach.js';
 
@@ -27,11 +25,9 @@ export { RespondToCheckInUseCase } from './use-cases/respond-to-check-in/respond
 export type {
   RespondToCheckInRequest,
   RespondToCheckInResponse,
-  RespondToCheckInRequestClient,
 } from './use-cases/respond-to-check-in/respond-to-check-in.js';
 export {
   RespondToCheckInRequestSchema,
-  RespondToCheckInRequestClientSchema,
   RespondToCheckInResponseSchema,
 } from './use-cases/respond-to-check-in/respond-to-check-in.js';
 
@@ -39,11 +35,9 @@ export { DismissCheckInUseCase } from './use-cases/dismiss-check-in/dismiss-chec
 export type {
   DismissCheckInRequest,
   DismissCheckInResponse,
-  DismissCheckInRequestClient,
 } from './use-cases/dismiss-check-in/dismiss-check-in.js';
 export {
   DismissCheckInRequestSchema,
-  DismissCheckInRequestClientSchema,
   DismissCheckInResponseSchema,
 } from './use-cases/dismiss-check-in/dismiss-check-in.js';
 

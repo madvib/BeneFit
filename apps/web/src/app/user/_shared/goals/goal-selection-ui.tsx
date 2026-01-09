@@ -1,5 +1,5 @@
 import { FITNESS_GOALS, SECONDARY_GOALS } from '@bene/shared';
-import { GOAL_UI_CONFIG, SECONDARY_GOAL_LABELS } from '@/config/training-ui';
+import { GOAL_UI_CONFIG, SECONDARY_GOAL_LABELS } from '@/lib/constants/training-ui';
 
 // Backward compatibility exports if needed, but components should use config directly
 export const GOAL_METADATA = GOAL_UI_CONFIG;

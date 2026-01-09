@@ -1,24 +1,25 @@
 import { withForm } from '@/lib/components/app-form/app-form';
-import { FITNESS_GOALS } from '@bene/shared';
+import { FITNESS_GOALS, SECONDARY_GOALS } from '@bene/shared';
 import { Label } from '@/lib/components';
 import { onboardingFormOpts } from './form-options';
 
 function GoalToggleButton({
-  goal,
+  value,
+  label,
   selectedValues,
   onChange,
 }: {
-  goal: string;
+  value: string;
+  label: string;
   selectedValues: string[];
   onChange: (_val: string[]) => void;
 }) {
-  const id = goal.toLowerCase();
-  const isSelected = selectedValues.includes(id);
+  const isSelected = selectedValues.includes(value);
 
   const handleClick = () => {
     const createNew = isSelected
-      ? selectedValues.filter((g) => g !== id)
-      : [...selectedValues, id];
+      ? selectedValues.filter((g) => g !== value)
+      : [...selectedValues, value];
     onChange(createNew);
   };
 
@@ -30,7 +31,7 @@ function GoalToggleButton({
         isSelected ? 'bg-accent text-accent-foreground border-accent' : 'hover:bg-muted'
       }`}
     >
-      {goal}
+      {label}
     </button>
   );
 }
@@ -71,11 +72,14 @@ export const GoalsStep = withForm({
             <>
               <Label className="mb-3 block text-base">Secondary Goals</Label>
               <div className="flex flex-wrap gap-2">
-                {/* TODO should these be hardcoded?  better than 22 plan_secondary_goals but still should be defined elsewhere */}
-                {['Consistency', 'Flexibility', 'Mobility', 'Recovery'].map((goal) => (
+                {(SECONDARY_GOALS as readonly string[]).slice(0, 10).map((goal) => (
                   <GoalToggleButton
                     key={goal}
-                    goal={goal}
+                    value={goal}
+                    label={goal
+                      .split('_')
+                      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                      .join(' ')}
                     selectedValues={field.state.value || []}
                     onChange={field.handleChange}
                   />

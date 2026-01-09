@@ -1,6 +1,6 @@
 'use client';
 
-import { profile } from '@bene/react-api-client';
+import { profile, authClient } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage } from '@/lib/components';
 import { PageHeader } from '../_shared/page-header';
 import {
@@ -21,6 +21,7 @@ function SettingsContent({
   const updatePreferencesMutation = profile.useUpdatePreferences();
   const updateGoalsMutation = profile.useUpdateGoals();
   const updateConstraintsMutation = profile.useUpdateConstraints();
+  const { data: session } = authClient.useSession();
 
   const preferences = userProfile.preferences;
 
@@ -85,8 +86,8 @@ function SettingsContent({
         <h2 className="mb-4 text-xl font-bold">Account & Security</h2>
         <div className="space-y-4">
           <AccountSettingsForm
-            initialName={userProfile.name}
-            initialEmail={userProfile.email}
+            initialName={userProfile.displayName}
+            initialEmail={session?.user?.email || ''}
             onSave={async (data) => {
               // TODO: Implement account update mutation
               console.log('Update account:', data);

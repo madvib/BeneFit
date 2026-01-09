@@ -15,7 +15,7 @@ export type GetConnectedServicesRequest = z.infer<
   typeof GetConnectedServicesRequestSchema
 >;
 
-// Zod schema for response validation
+// Response-only DTO schemas (not shared - specific to this use case)
 const ServiceSchema = z.object({
   id: z.string(),
   serviceType: z.string(),

@@ -1,25 +1,23 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { FitnessGoals, UserProfileCommands } from '@bene/training-core';
+import { Result, type EventBus, BaseUseCase, FitnessGoalsSchema, type FitnessGoals } from '@bene/shared';
+import { UserProfileCommands } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
-import { FitnessGoalsSchema } from '../../schemas/index.js';
 import { FitnessGoalsUpdatedEvent } from '../../events/fitness-goals-updated.event.js';
-import { toDomainFitnessGoals } from '../../mappers/type-mappers.js';
+import { toDomainFitnessGoals } from '../../mappers/index.js';
 
-export const UpdateFitnessGoalsRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const UpdateFitnessGoalsRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   goals: FitnessGoalsSchema,
 });
 
-export type UpdateFitnessGoalsRequestClient = z.infer<
-  typeof UpdateFitnessGoalsRequestClientSchema
->;
-
-export const UpdateFitnessGoalsRequestSchema =
-  UpdateFitnessGoalsRequestClientSchema.extend({
-    userId: z.string(),
-  });
-
-export type UpdateFitnessGoalsRequest = z.infer<typeof UpdateFitnessGoalsRequestSchema>;
+export type UpdateFitnessGoalsRequest = {
+  userId: string;
+  goals: FitnessGoals;
+};
 
 
 export const UpdateFitnessGoalsResponseSchema = z.object({

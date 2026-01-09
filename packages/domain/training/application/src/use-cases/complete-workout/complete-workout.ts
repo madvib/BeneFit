@@ -17,50 +17,36 @@ import type {
 import {
   WorkoutPerformanceSchema,
   WorkoutVerificationSchema,
-} from '../../schemas/index.js';
+  type WorkoutPerformance as WorkoutPerformanceType,
+  type WorkoutVerification as WorkoutVerificationType,
+} from '@bene/shared';
 import { WorkoutCompletedEvent } from '../../events/index.js';
 import {
   toDomainWorkoutPerformance,
   toDomainWorkoutVerification,
 } from '../../mappers/index.js';
 
-// Client-facing schema (what comes in the request body)
-export const CompleteWorkoutRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const CompleteWorkoutRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   sessionId: z.string(),
   performance: WorkoutPerformanceSchema,
   verification: WorkoutVerificationSchema,
   shareToFeed: z.boolean().optional(),
 });
 
-export type CompleteWorkoutRequestClient = z.infer<
-  typeof CompleteWorkoutRequestClientSchema
->;
+export type CompleteWorkoutRequest = {
+  userId: string;
+  sessionId: string;
+  performance: WorkoutPerformanceType;
+  verification: WorkoutVerificationType;
+  shareToFeed?: boolean;
+};
 
-// Complete use case input schema (client data + server context)
-export const CompleteWorkoutRequestSchema = CompleteWorkoutRequestClientSchema.extend({
-  userId: z.string(),
-});
 
-// Zod inferred type with original name
-export type CompleteWorkoutRequest = z.infer<typeof CompleteWorkoutRequestSchema>;
-
-// Deprecated original interface - preserve for potential rollback
-/** @deprecated Use CompleteWorkoutResponse type instead */
-export interface CompleteWorkoutResponse_Deprecated {
-  workoutId: string;
-  // planUpdated: boolean;
-  newStreak?: number;
-  achievementsEarned: Array<{
-    id: string;
-    name: string;
-    description: string;
-  }>;
-  stats: {
-    totalWorkouts: number;
-    totalVolume: number;
-    totalMinutes: number;
-  };
-}
 
 // Zod schema for response validation
 const AchievementSchema = z.object({

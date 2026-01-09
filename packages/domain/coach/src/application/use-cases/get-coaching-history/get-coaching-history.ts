@@ -16,7 +16,7 @@ export type GetCoachHistoryRequest = z.infer<typeof GetCoachHistoryRequestSchema
 
 
 
-// Zod schema for response validation
+// Response-only DTO schemas (not shared - specific to this use case)
 const ActionSchema = z.object({
   type: z.string(),
   details: z.string(),

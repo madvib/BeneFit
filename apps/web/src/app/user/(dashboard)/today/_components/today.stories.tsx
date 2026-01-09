@@ -9,10 +9,10 @@ const MOCK_WORKOUT_TODAY = {
   type: 'Upper Body Power',
   durationMinutes: 45,
   activities: [
-    { type: 'Warmup', instructions: '5 min light jogging', durationMinutes: 5 },
-    { type: 'Bench Press', instructions: '3 sets of 8 reps @ RPE 8', durationMinutes: 15 },
-    { type: 'Pull Ups', instructions: '3 sets to failure', durationMinutes: 10 },
-    { type: 'Cooldown', instructions: 'Static stretching', durationMinutes: 15 },
+    { type: 'warmup' as const, instructions: '5 min light jogging', durationMinutes: 5 },
+    { type: 'main' as const, instructions: '3 sets of 8 reps @ RPE 8', durationMinutes: 15 },
+    { type: 'main' as const, instructions: '3 sets to failure', durationMinutes: 10 },
+    { type: 'cooldown' as const, instructions: 'Static stretching', durationMinutes: 15 },
   ],
 };
 

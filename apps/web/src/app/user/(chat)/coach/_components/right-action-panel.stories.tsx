@@ -23,36 +23,9 @@ type Story = StoryObj<typeof RightActionPanel>;
 
 // --- Mock Data ---
 
-const MOCK_RECOMMENDATIONS = [
-  {
-    id: '1',
-    title: 'Increase Protein Intake',
-    description: 'Based on your goals, aim for 150g daily',
-    category: 'Nutrition',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    title: 'Add Mobility Work',
-    description: '10 min daily hip mobility routine',
-    category: 'Flexibility',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    title: 'Progressive Overload',
-    description: 'Increase weight by 5% this week',
-    category: 'Workout',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    title: 'Sleep Optimization',
-    description: 'Aim for 8 hours to improve recovery',
-    category: 'Wellness',
-    createdAt: new Date().toISOString(),
-  },
-];
+import { mockRecommendations } from '@/lib/testing/fixtures';
+
+const MOCK_RECOMMENDATIONS = mockRecommendations;
 
 // --- Stories ---
 

@@ -1,26 +1,29 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
-  createUserProfile,
-  ExperienceProfile,
-  FitnessGoals,
-  TrainingConstraints,
+  createUserProfile
+
 } from '@bene/training-core';
 import {
   ExperienceProfileSchema,
   FitnessGoalsSchema,
   TrainingConstraintsSchema,
-} from '../../schemas/index.js';
+} from '@bene/shared';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { ProfileCreatedEvent } from '../../events/profile-created.event.js';
 import {
   toDomainExperienceProfile,
   toDomainFitnessGoals,
   toDomainTrainingConstraints,
-} from '../../mappers/type-mappers.js';
+} from '../../mappers/index.js';
 
 
-export const CreateUserProfileRequestClientSchema = z.object({
+// Single request schema with ALL fields (client data + server context)
+export const CreateUserProfileRequestSchema = z.object({
+  // Server context (injected by gateway)
+  userId: z.string(),
+
+  // Client data
   displayName: z.string(),
   timezone: z.string(),
   experienceProfile: ExperienceProfileSchema,
@@ -30,15 +33,6 @@ export const CreateUserProfileRequestClientSchema = z.object({
   bio: z.string().optional(),
   location: z.string().optional(),
 });
-
-export type CreateUserProfileRequestClient = z.infer<
-  typeof CreateUserProfileRequestClientSchema
->;
-
-export const CreateUserProfileRequestSchema =
-  CreateUserProfileRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 export type CreateUserProfileRequest = z.infer<typeof CreateUserProfileRequestSchema>;
 

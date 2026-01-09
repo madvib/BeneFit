@@ -19,34 +19,20 @@ type Story = StoryObj<typeof ChatView>;
 
 // --- Mock Data ---
 
-const MOCK_MESSAGES: MessageData[] = [
-  {
-    id: '1',
-    role: 'user',
-    content: 'Hi coach, I feel a bit tired today. Should I skip my workout?',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 mins ago
-  },
-  {
-    id: '2',
-    role: 'assistant',
-    content:
-      "It depends on how tired you are. If it's just general fatigue, a light recovery session might actually help! But if you're feeling exhausted or sick, rest is better. How would you rate your energy level from 1-10?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 4),
-  },
-  {
-    id: '3',
-    role: 'user',
-    content: 'Probably a 4. just stressful day at work.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 2),
-  },
-  {
-    id: '4',
-    role: 'assistant',
-    content:
-      "Got it. Stress fatigue is real. Let's modify today's plan. instead of the HIIT session, let's do 20 mins of Zone 2 cardio and some stretching. Does that sound manageable?",
-    timestamp: new Date(Date.now() - 1000 * 30),
-  },
-];
+import { mockCoachHistory } from '@/lib/testing/fixtures';
+
+const MOCK_MESSAGES: MessageData[] = mockCoachHistory.messages.map((msg) => ({
+  id: msg.id,
+  role: msg.role as 'user' | 'assistant', // Map 'coach' -> 'assistant' if needed, or fix fixture
+  content: msg.content,
+  timestamp: new Date(msg.timestamp),
+}));
+
+// Fix role mapping if fixture uses 'coach' but UI uses 'assistant'
+// The fixture says 'coach', UI says 'assistant'.
+// Let's map 'coach' to 'assistant'
+const mapRole = (role: string) => (role === 'coach' ? 'assistant' : role);
+for (const m of MOCK_MESSAGES) m.role = mapRole(m.role) as MessageData['role'];
 
 // --- Stories ---
 

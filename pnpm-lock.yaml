@@ -264,7 +264,7 @@ importers:
         version: link:../../../packages/domain/training/core
       agents:
         specifier: 'catalog:'
-        version: 0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.0)(react@19.2.3)(typescript@5.9.3)
+        version: 0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.1)(react@19.2.3)(typescript@5.9.3)
       drizzle-orm:
         specifier: 0.45.1
         version: 0.45.1(@cloudflare/workers-types@4.20251218.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)(kysely@0.28.9)
@@ -282,7 +282,7 @@ importers:
         version: link:../../../packages/domain/training/core
       agents:
         specifier: 'catalog:'
-        version: 0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.0)(react@19.2.3)(typescript@5.9.3)
+        version: 0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.1)(react@19.2.3)(typescript@5.9.3)
       drizzle-orm:
         specifier: 0.45.1
         version: 0.45.1(@cloudflare/workers-types@4.20251218.0)(@libsql/client@0.15.15)(@opentelemetry/api@1.9.0)(better-sqlite3@12.5.0)(kysely@0.28.9)
@@ -494,6 +494,9 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
 
   tools/nx-plugin:
     dependencies:
@@ -14313,6 +14316,10 @@ snapshots:
     dependencies:
       hono: 4.11.0
 
+  '@hono/node-server@1.19.7(hono@4.11.1)':
+    dependencies:
+      hono: 4.11.1
+
   '@hono/zod-validator@0.7.5(hono@4.11.1)(zod@4.2.1)':
     dependencies:
       hono: 4.11.1
@@ -14860,6 +14867,30 @@ snapshots:
   '@modelcontextprotocol/sdk@1.25.1(@cfworker/json-schema@4.1.1)(hono@4.11.0)(zod@3.25.76)':
     dependencies:
       '@hono/node-server': 1.19.7(hono@4.11.0)
+      ajv: 8.17.1
+      ajv-formats: 3.0.1(ajv@8.17.1)
+      content-type: 1.0.5
+      cors: 2.8.5
+      cross-spawn: 7.0.6
+      eventsource: 3.0.7
+      eventsource-parser: 3.0.6
+      express: 5.2.1
+      express-rate-limit: 7.5.1(express@5.2.1)
+      jose: 6.1.3
+      json-schema-typed: 8.0.2
+      pkce-challenge: 5.0.1
+      raw-body: 3.0.2
+      zod: 3.25.76
+      zod-to-json-schema: 3.25.0(zod@3.25.76)
+    optionalDependencies:
+      '@cfworker/json-schema': 4.1.1
+    transitivePeerDependencies:
+      - hono
+      - supports-color
+
+  '@modelcontextprotocol/sdk@1.25.1(@cfworker/json-schema@4.1.1)(hono@4.11.1)(zod@3.25.76)':
+    dependencies:
+      '@hono/node-server': 1.19.7(hono@4.11.1)
       ajv: 8.17.1
       ajv-formats: 3.0.1(ajv@8.17.1)
       content-type: 1.0.5
@@ -17987,6 +18018,7 @@ snapshots:
       magic-string: 0.30.21
     optionalDependencies:
       vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
+    optional: true
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -18022,7 +18054,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.3.0)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
+      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.4.2)(jsdom@27.3.0)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -18309,6 +18341,29 @@ snapshots:
       '@ai-sdk/openai': 2.0.73(zod@3.25.76)
       '@cfworker/json-schema': 4.1.1
       '@modelcontextprotocol/sdk': 1.25.1(@cfworker/json-schema@4.1.1)(hono@4.11.0)(zod@3.25.76)
+      ai: 5.0.103(zod@3.25.76)
+      cron-schedule: 6.0.0
+      json-schema: 0.4.0
+      json-schema-to-typescript: 15.0.4
+      mimetext: 3.0.27
+      nanoid: 5.1.6
+      partyserver: 0.0.75(@cloudflare/workers-types@4.20251218.0)
+      partysocket: 1.1.6
+      react: 19.2.3
+      yargs: 18.0.0
+      zod: 3.25.76
+      zod-to-ts: 2.0.0(typescript@5.9.3)(zod@3.25.76)
+    transitivePeerDependencies:
+      - '@cloudflare/workers-types'
+      - hono
+      - supports-color
+      - typescript
+
+  agents@0.2.32(@cloudflare/workers-types@4.20251218.0)(hono@4.11.1)(react@19.2.3)(typescript@5.9.3):
+    dependencies:
+      '@ai-sdk/openai': 2.0.73(zod@3.25.76)
+      '@cfworker/json-schema': 4.1.1
+      '@modelcontextprotocol/sdk': 1.25.1(@cfworker/json-schema@4.1.1)(hono@4.11.1)(zod@3.25.76)
       ai: 5.0.103(zod@3.25.76)
       cron-schedule: 6.0.0
       json-schema: 0.4.0
@@ -24839,6 +24894,7 @@ snapshots:
       terser: 5.44.1
       tsx: 4.21.0
       yaml: 2.8.2
+    optional: true
 
   vitefu@1.1.1(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.30.2)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)):
     optionalDependencies:
@@ -24926,6 +24982,7 @@ snapshots:
       - terser
       - tsx
       - yaml
+    optional: true
 
   vscode-uri@3.1.0: {}
 

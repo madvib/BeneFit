@@ -45,7 +45,7 @@ export default function TodayView({
       <ErrorPage
         title="Workout Error"
         message="Unable to load your workout for today."
-        error={error}
+        error={error as Error}
       />
     );
   }

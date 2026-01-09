@@ -4,19 +4,14 @@ import { ConnectedServiceCommands } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
 
-export const DisconnectServiceRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const DisconnectServiceRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   serviceId: z.string(),
 });
-
-export type DisconnectServiceRequestClient = z.infer<
-  typeof DisconnectServiceRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const DisconnectServiceRequestSchema =
-  DisconnectServiceRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 export type DisconnectServiceRequest = z.infer<typeof DisconnectServiceRequestSchema>;
 

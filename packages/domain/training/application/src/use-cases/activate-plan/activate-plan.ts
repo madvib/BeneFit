@@ -4,15 +4,14 @@ import { FitnessPlanCommands, FitnessPlanQueries } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { PlanActivatedEvent } from '../../events/plan-activated.event.js';
 
-export const ActivatePlanRequestClientSchema = z.object({
-  planId: z.string(),
-  startDate: z.date().optional(), // Defaults to today
-});
-
-export type ActivatePlanRequestClient = z.infer<typeof ActivatePlanRequestClientSchema>;
-
-export const ActivatePlanRequestSchema = ActivatePlanRequestClientSchema.extend({
+// Single request schema with ALL fields
+export const ActivatePlanRequestSchema = z.object({
+  // Server context
   userId: z.string(),
+
+  // Client data
+  planId: z.string(),
+  startDate: z.date().optional(),
 });
 
 export type ActivatePlanRequest = z.infer<typeof ActivatePlanRequestSchema>;
@@ -67,12 +66,14 @@ export class ActivatePlanUseCase extends BaseUseCase<
     await this.planRepository.save(activatedPlan);
 
     // 5. Emit event
-    const startDate = request.startDate || new Date();
+    const startDateStr = request.startDate
+      ? request.startDate.toISOString()
+      : new Date().toISOString();
     await this.eventBus.publish(
       new PlanActivatedEvent({
         userId: request.userId,
         planId: plan.id,
-        startDate,
+        startDate: startDateStr,
       }),
     );
 
@@ -82,7 +83,7 @@ export class ActivatePlanUseCase extends BaseUseCase<
     return Result.ok({
       planId: activatedPlan.id,
       status: activatedPlan.status,
-      startDate: startDate,
+      startDate: new Date(startDateStr),
       todaysWorkout: todaysWorkout
         ? {
           workoutId: todaysWorkout.id,

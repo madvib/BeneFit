@@ -5,8 +5,6 @@ import Checkbox from './form/checkbox';
 import Label from './form/label';
 import FormSection from './form/form-section';
 import { FormSuccessMessage } from './form/form-success-message';
-import { SubmitButton } from '../app-form/submit-button';
-import { SubmissionError } from '../app-form/submission-error';
 
 const meta: Meta = {
   title: 'Components/Primitives/Form',
@@ -30,15 +28,11 @@ export const SelectInput: StoryObj<typeof Select> = {
   render: () => (
     <div className="w-64 space-y-2">
       <Label htmlFor="role">Role</Label>
-      <Select
-        id="role"
-        options={[
-          { value: 'admin', label: 'Admin' },
-          { value: 'user', label: 'User' },
-          { value: 'guest', label: 'Guest' },
-        ]}
-        placeholder="Select a role"
-      />
+      <Select id="role">
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+        <option value="guest">Guest</option>
+      </Select>
     </div>
   ),
 };
@@ -69,16 +63,4 @@ export const Section: StoryObj<typeof FormSection> = {
 
 export const SuccessMessage: StoryObj<typeof FormSuccessMessage> = {
   render: () => <FormSuccessMessage message="Profile updated successfully!" />,
-};
-
-export const SubmitBtn: StoryObj<typeof SubmitButton> = {
-  render: () => <SubmitButton>Save Changes</SubmitButton>,
-};
-
-export const LoadingSubmitBtn: StoryObj<typeof SubmitButton> = {
-  render: () => <SubmitButton isLoading>Saving...</SubmitButton>,
-};
-
-export const ErrorMessage: StoryObj<typeof SubmissionError> = {
-  render: () => <SubmissionError message="Failed to save changes. Please try again." />,
 };

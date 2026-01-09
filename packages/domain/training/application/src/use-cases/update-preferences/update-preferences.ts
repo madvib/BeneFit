@@ -5,20 +5,14 @@ import { UserProfileRepository } from '../../repositories/user-profile-repositor
 
 
 
-// Client-facing schema (what comes in the request body)
-export const UpdatePreferencesRequestClientSchema = z.object({
-  preferences: z.record(z.string(), z.unknown()).optional(), // Using record for partial preferences update with string keys
+// Single request schema with ALL fields
+export const UpdatePreferencesRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
+  preferences: z.record(z.string(), z.unknown()).optional(),
 });
-
-export type UpdatePreferencesRequestClient = z.infer<
-  typeof UpdatePreferencesRequestClientSchema
->;
-
-// Complete use case input schema (client data + server context)
-export const UpdatePreferencesRequestSchema =
-  UpdatePreferencesRequestClientSchema.extend({
-    userId: z.string(),
-  });
 
 // Zod inferred type with original name
 export type UpdatePreferencesRequest = z.infer<typeof UpdatePreferencesRequestSchema>;

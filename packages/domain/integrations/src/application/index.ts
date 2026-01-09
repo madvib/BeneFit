@@ -1,24 +1,22 @@
+// Connect Service
 export { ConnectServiceUseCase } from './use-cases/connect-service/connect-service.js';
 export type {
   ConnectServiceRequest,
   ConnectServiceResponse,
-  ConnectServiceRequestClient,
 } from './use-cases/connect-service/connect-service.js';
 export {
   ConnectServiceRequestSchema,
-  ConnectServiceRequestClientSchema,
   ConnectServiceResponseSchema,
 } from './use-cases/connect-service/connect-service.js';
 
+// Disconnect Service
 export { DisconnectServiceUseCase } from './use-cases/disconnect-service/disconnect-service.js';
 export type {
   DisconnectServiceRequest,
   DisconnectServiceResponse,
-  DisconnectServiceRequestClient,
 } from './use-cases/disconnect-service/disconnect-service.js';
 export {
   DisconnectServiceRequestSchema,
-  DisconnectServiceRequestClientSchema,
   DisconnectServiceResponseSchema,
 } from './use-cases/disconnect-service/disconnect-service.js';
 

@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const accountSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
 });
 
 interface AccountSettingsFormProps {
@@ -40,7 +40,7 @@ export function AccountSettingsForm({
     <form.AppForm>
       <form.Root title="Account Details" subtitle="Manage your personal information.">
         <div className="grid gap-6 md:grid-cols-2">
-          <form.AppField name="name" label="Display Name">
+          <form.AppField name="name">
             {(field) => (
               <input
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -51,7 +51,7 @@ export function AccountSettingsForm({
             )}
           </form.AppField>
 
-          <form.AppField name="email" label="Email Address">
+          <form.AppField name="email">
             {(field) => (
               <input
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"

@@ -33,8 +33,6 @@ const ENERGY_CHECK_IN = {
 
 // --- Stories ---
 
-import { CheckInContent } from './check-in-modal';
-
 // ... (Imports and mock data remain)
 
 export const Gallery: Story = {
@@ -43,40 +41,14 @@ export const Gallery: Story = {
     layout: 'padded',
   },
   render: () => (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <div className="bg-card rounded-lg border shadow-sm">
-        <CheckInContent
-          checkIn={ROUTINE_CHECK_IN}
-          isOpen={true}
-          onRespond={() => {}}
-          onDismiss={() => {}}
-          isLoading={false}
-          response=""
-          setResponse={() => {}}
-        />
-      </div>
-      <div className="bg-card rounded-lg border shadow-sm">
-        <CheckInContent
-          checkIn={TRIGGERED_CHECK_IN}
-          isOpen={true}
-          onRespond={() => {}}
-          onDismiss={() => {}}
-          isLoading={false}
-          response="I've been feeling a bit under the weather."
-          setResponse={() => {}}
-        />
-      </div>
-      <div className="bg-card rounded-lg border shadow-sm">
-        <CheckInContent
-          checkIn={ENERGY_CHECK_IN}
-          isOpen={true}
-          onRespond={() => {}}
-          onDismiss={() => {}}
-          isLoading={true}
-          response="8"
-          setResponse={() => {}}
-        />
-      </div>
+    <div className="grid gap-8">
+      <CheckInModal
+        checkIn={ROUTINE_CHECK_IN}
+        isOpen={true}
+        onRespond={async () => {}}
+        onDismiss={() => {}}
+        isLoading={false}
+      />
     </div>
   ),
 };

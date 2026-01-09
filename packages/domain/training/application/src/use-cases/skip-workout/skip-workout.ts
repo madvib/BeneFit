@@ -6,18 +6,15 @@ import { WorkoutSkippedEvent } from '../../events/workout-skipped.event.js';
 
 
 
-// Client-facing schema (what comes in the request body)
-export const SkipWorkoutRequestClientSchema = z.object({
+// Single request schema with ALL fields
+export const SkipWorkoutRequestSchema = z.object({
+  // Server context
+  userId: z.string(),
+
+  // Client data
   planId: z.string(),
   workoutId: z.string(),
   reason: z.string(),
-});
-
-export type SkipWorkoutRequestClient = z.infer<typeof SkipWorkoutRequestClientSchema>;
-
-// Complete use case input schema (client data + server context)
-export const SkipWorkoutRequestSchema = SkipWorkoutRequestClientSchema.extend({
-  userId: z.string(),
 });
 
 // Zod inferred type with original name

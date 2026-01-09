@@ -33,7 +33,15 @@ export default function ServiceCard({
 
   const handleDisconnect = () => onDisconnect(service.id);
   const handleSync = () => onSync(service.id);
-
+  // Format sync time without Date.now() to avoid impure function call
+  const formattedSyncTime = service.lastSyncAt
+    ? new Date(service.lastSyncAt).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      })
+    : null;
   return (
     <div className="group bg-card text-card-foreground relative overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md">
       {/* Spotlight Effect */}
@@ -70,19 +78,10 @@ export default function ServiceCard({
             </div>
           </div>
 
-          {service.lastSyncAt && (
+          {formattedSyncTime && (
             <div className="text-right">
               <p className="text-muted-foreground text-xs">Last Synced</p>
-              <p className="text-xs font-medium">
-                {(new Date(service.lastSyncAt).getTime() > Date.now() - 86_400_000)
-                  ? 'Just now' // Simplified for demo, really implies recently
-                  : new Date(service.lastSyncAt).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    })}
-              </p>
+              <p className="text-xs font-medium">{formattedSyncTime}</p>
             </div>
           )}
         </div>

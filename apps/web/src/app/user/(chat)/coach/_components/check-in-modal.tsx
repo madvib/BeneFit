@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card } from '@/lib/components';
-import { planningSchemas } from '@bene/react-api-client';
+import { CheckInFormSchema } from '@bene/shared';
 import { MessageSquare, X } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
@@ -32,7 +32,7 @@ export default function CheckInModal({
       response: '',
     },
     validators: {
-      onDynamic: planningSchemas.CheckInSchema,
+      onDynamic: CheckInFormSchema,
     },
     validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {

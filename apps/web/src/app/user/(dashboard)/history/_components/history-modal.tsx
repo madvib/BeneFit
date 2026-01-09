@@ -1,20 +1,12 @@
 'use client';
 
 import { X, Calendar, Clock, Trophy, Flame, Activity } from 'lucide-react';
-
-interface WorkoutDetail {
-  id: string;
-  date: string;
-  workout: string;
-  duration: string;
-  calories: string;
-  type: string;
-}
+import type { CompletedWorkout } from '@bene/shared';
 
 interface WorkoutDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  workout: WorkoutDetail | null;
+  workout: CompletedWorkout | null;
 }
 
 export default function WorkoutDetailModal({
@@ -23,6 +15,16 @@ export default function WorkoutDetailModal({
   workout,
 }: WorkoutDetailModalProps) {
   if (!isOpen || !workout) return null;
+
+  // Format date
+  const date = new Date(workout.recordedAt).toLocaleDateString(undefined, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
 
   return (
     <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm duration-200">
@@ -44,9 +46,9 @@ export default function WorkoutDetailModal({
             <div className="bg-primary/10 text-primary mb-4 flex h-20 w-20 items-center justify-center rounded-3xl">
               <Trophy size={40} />
             </div>
-            <h1 className="mb-2 text-2xl font-bold">{workout.workout}</h1>
-            <p className="text-muted-foreground font-medium tracking-wide uppercase">
-              {workout.type}
+            <h1 className="mb-2 text-2xl font-bold">{workout.workoutType}</h1>
+            <p className="text-muted-foreground font-medium tracking-wide">
+              {workout.description || 'No description provided.'}
             </p>
           </div>
 
@@ -54,22 +56,28 @@ export default function WorkoutDetailModal({
             <div className="bg-accent/30 flex flex-col items-center justify-center rounded-2xl p-4 text-center">
               <Calendar className="text-primary mb-2" size={24} />
               <span className="text-muted-foreground text-xs uppercase">Date</span>
-              <span className="font-semibold">{workout.date}</span>
+              <span className="font-semibold">
+                <span className="font-semibold">{date}</span>
+              </span>
             </div>
             <div className="bg-accent/30 flex flex-col items-center justify-center rounded-2xl p-4 text-center">
               <Clock className="text-primary mb-2" size={24} />
               <span className="text-muted-foreground text-xs uppercase">Duration</span>
-              <span className="font-semibold">{workout.duration}</span>
+              <span className="font-semibold">{workout.performance.durationMinutes} min</span>
             </div>
             <div className="bg-accent/30 flex flex-col items-center justify-center rounded-2xl p-4 text-center">
               <Flame className="text-primary mb-2" size={24} />
               <span className="text-muted-foreground text-xs uppercase">Calories</span>
-              <span className="font-semibold">{workout.calories}</span>
+              <span className="font-semibold">
+                {workout.performance.caloriesBurned || '-'} kcal
+              </span>
             </div>
             <div className="bg-accent/30 flex flex-col items-center justify-center rounded-2xl p-4 text-center">
               <Activity className="text-primary mb-2" size={24} />
               <span className="text-muted-foreground text-xs uppercase">Intensity</span>
-              <span className="font-semibold">High</span>
+              <span className="font-semibold capitalize">
+                {workout.performance.difficultyRating?.replace('_', ' ') || 'N/A'}
+              </span>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { formOptions } from '@tanstack/react-form';
-import { profileSchemas } from '@bene/react-api-client';
+import { OnboardingFormSchema, type OnboardingFormValues } from '@bene/shared';
 import { revalidateLogic } from '@tanstack/react-form';
 
 export const onboardingFormOpts = formOptions({
@@ -13,9 +13,9 @@ export const onboardingFormOpts = formOptions({
     daysPerWeek: 3,
     minutesPerWorkout: 45,
     equipment: [],
-  } as profileSchemas.OnboardingFormValues,
+  } as OnboardingFormValues,
   validators: {
-    onDynamic: profileSchemas.OnboardingSchema,
+    onDynamic: OnboardingFormSchema,
   },
   validationLogic: revalidateLogic(),
 });

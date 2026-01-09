@@ -2,20 +2,13 @@ import { useState, useMemo } from 'react';
 import { Filter } from 'lucide-react';
 import HistoryRow from './workout-list-tile';
 
-export interface WorkoutData {
-  id: string;
-  date: string; // ISO string
-  type: string;
-  duration: string;
-  calories: number;
-  distance?: string;
-  sets?: number;
-  laps?: number;
-  status?: 'completed' | 'in progress';
-}
+import type { CompletedWorkout, WorkoutSession } from '@bene/shared';
+
+// Union type for any item that can appear in the history list
+export type HistoryItem = CompletedWorkout | WorkoutSession;
 
 interface WorkoutListProps {
-  workouts: WorkoutData[];
+  workouts: HistoryItem[];
   loading?: boolean;
   onEdit?: (_id: string) => void;
   onDelete?: (_id: string) => void;
@@ -29,8 +22,8 @@ export default function WorkoutList(data: WorkoutListProps) {
   const filteredData = useMemo(() => {
     const workouts = data.workouts;
     return workouts.filter((item) => {
-      const matchesSearch = item.type.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = selectedFilter === 'all' || item.type === selectedFilter;
+      const matchesSearch = item.workoutType.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = selectedFilter === 'all' || item.workoutType === selectedFilter;
       return matchesSearch && matchesFilter;
     });
   }, [data.workouts, searchTerm, selectedFilter]);

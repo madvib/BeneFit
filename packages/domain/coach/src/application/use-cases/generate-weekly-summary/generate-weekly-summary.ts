@@ -16,7 +16,6 @@ export type GenerateWeeklySummaryRequest = z.infer<
 >;
 
 
-
 // Zod schema for response validation
 export const GenerateWeeklySummaryResponseSchema = z.object({
   summary: z.string(),

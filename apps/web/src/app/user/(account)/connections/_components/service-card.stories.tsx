@@ -25,32 +25,22 @@ export const GridExample: Story = {
         {...args}
         service={{
           id: '1',
-          userId: 'user1',
           serviceType: 'strava',
-          accessToken: 'token',
-          refreshToken: 'refresh',
-          expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
-          isActive: true, // Connected
-          syncStatus: 'idle',
+          isActive: true,
+          isPaused: false,
           lastSyncAt: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          syncStatus: 'success',
         }}
       />
       <ServiceCard
         {...args}
         service={{
           id: '2',
-          userId: 'user1',
           serviceType: 'garmin',
-          accessToken: 'token',
-          refreshToken: 'refresh',
-          expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
           isActive: false, // Disconnected
+          isPaused: false,
+          // lastSyncAt intentionally undefined
           syncStatus: 'idle',
-          lastSyncAt: undefined,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
         }}
       />
     </div>
@@ -61,16 +51,11 @@ export const StravaConnected: Story = {
   args: {
     service: {
       id: '1',
-      userId: 'user1',
       serviceType: 'strava',
-      accessToken: 'token',
-      refreshToken: 'refresh',
-      expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
       isActive: true,
-      syncStatus: 'idle',
+      isPaused: false,
       lastSyncAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      syncStatus: 'success',
     },
   },
 };
@@ -80,16 +65,11 @@ export const StravaSyncing: Story = {
     isSyncing: true,
     service: {
       id: '1',
-      userId: 'user1',
       serviceType: 'strava',
-      accessToken: 'token',
-      refreshToken: 'refresh',
-      expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
       isActive: true,
-      syncStatus: 'syncing',
+      isPaused: false,
       lastSyncAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      syncStatus: 'in_progress',
     },
   },
 };
@@ -98,16 +78,10 @@ export const GarminAvailable: Story = {
   args: {
     service: {
       id: '2',
-      userId: 'user1',
       serviceType: 'garmin',
-      accessToken: 'token',
-      refreshToken: 'refresh',
-      expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
       isActive: false,
+      isPaused: false,
       syncStatus: 'idle',
-      lastSyncAt: undefined,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     },
   },
 };

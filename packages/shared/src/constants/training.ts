@@ -33,3 +33,38 @@ export const SECONDARY_GOAL_CATEGORIES = {
 export const SECONDARY_GOALS = Object.values(SECONDARY_GOAL_CATEGORIES).flat();
 
 export type SecondaryGoal = (typeof SECONDARY_GOALS)[number];
+
+// Experience Levels
+export const EXPERIENCE_LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
+export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number];
+
+// Injury Severity
+export const INJURY_SEVERITY_LEVELS = ['minor', 'moderate', 'serious'] as const;
+export type InjurySeverity = (typeof INJURY_SEVERITY_LEVELS)[number];
+
+// Preferred Training Times
+export const PREFERRED_TIMES = ['morning', 'afternoon', 'evening'] as const;
+export type PreferredTime = (typeof PREFERRED_TIMES)[number];
+
+// Training Locations
+export const TRAINING_LOCATIONS = ['home', 'gym', 'outdoor', 'mixed'] as const;
+export type TrainingLocation = (typeof TRAINING_LOCATIONS)[number];
+
+// Activity Difficulty Ratings
+export const DIFFICULTY_RATINGS = ['too_easy', 'just_right', 'too_hard'] as const;
+export type DifficultyRating = (typeof DIFFICULTY_RATINGS)[number];
+
+// Verification Methods
+export const VERIFICATION_METHODS = [
+  'gps',
+  'photo',
+  'wearable',
+  'witness',
+  'gym_checkin',
+  'manual',
+] as const;
+export type VerificationMethod = (typeof VERIFICATION_METHODS)[number];
+
+// Weight Units
+export const WEIGHT_UNITS = ['kg', 'lbs'] as const;
+export type WeightUnit = (typeof WEIGHT_UNITS)[number];
