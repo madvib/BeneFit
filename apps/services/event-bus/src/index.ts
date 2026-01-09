@@ -8,10 +8,11 @@ export default class QueueService extends WorkerEntrypoint<Env> {
     event: DomainEvent;
     queue?: string; // Optional: specific queue, otherwise auto-route
   }): Promise<void> {
+    const eventType = (input.event as any).eventType || input.event.constructor.name;
     const queue = this.routeEvent(input.event, input.queue);
 
     await queue.send({
-      type: input.event.constructor.name,
+      type: eventType,
       data: input.event,
       timestamp: new Date().toISOString(),
       metadata: {
@@ -33,7 +34,7 @@ export default class QueueService extends WorkerEntrypoint<Env> {
         return queue.sendBatch(
           events.map((e) => ({
             body: {
-              type: e.constructor.name,
+              type: (e as any).eventType || e.constructor.name,
               data: e,
               timestamp: new Date().toISOString(),
             },
@@ -59,7 +60,7 @@ export default class QueueService extends WorkerEntrypoint<Env> {
     }
 
     // Auto-route based on event type
-    const eventType = event.constructor.name;
+    const eventType = (event as any).eventType || event.constructor.name;
 
     // Most domain events go to main queue
     if (eventType.endsWith('Event')) {
@@ -86,7 +87,7 @@ export default class QueueService extends WorkerEntrypoint<Env> {
       case 'integration-sync':
         return this.env.INTEGRATION_SYNC_QUEUE;
       default:
-        throw new Error(`Unknown queue: ${name}`);
+        throw new Error(`Unknown queue: ${ name }`);
     }
   }
 
