@@ -112,7 +112,7 @@ export default function PlanClient() {
 
   if (plan.status === 'paused') {
     return (
-      <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center p-6 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-yellow-500/10 text-yellow-500 ring-1 ring-yellow-500/20">
           <PauseCircle size={48} />
         </div>
@@ -146,7 +146,7 @@ export default function PlanClient() {
 
   if (plan.status === 'completed') {
     return (
-      <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center p-6 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
           <AlertCircle size={48} />
         </div>

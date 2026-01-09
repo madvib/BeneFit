@@ -5,8 +5,8 @@ import { ReactNode, forwardRef } from 'react';
 const cardVariants = cva('flex flex-col overflow-hidden rounded-xl shadow-sm', {
   variants: {
     variant: {
-      default: 'bg-background border border-muted',
-      borderless: 'bg-background',
+      default: 'bg-background-muted border border-muted',
+      borderless: 'bg-background-muted',
     },
   },
   defaultVariants: {

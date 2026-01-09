@@ -170,16 +170,24 @@ export default function Aurora(props: AuroraProps) {
     // eslint-disable-next-line prefer-const
     let program: Program | undefined;
 
-    function resize() {
+    function resize(entries?: ResizeObserverEntry[]) {
       if (!ctn) return;
-      const width = ctn.offsetWidth;
-      const height = ctn.offsetHeight;
+      let width, height;
+      if (entries?.[0]) {
+        width = entries[0].contentRect.width;
+        height = entries[0].contentRect.height;
+      } else {
+        width = ctn.offsetWidth;
+        height = ctn.offsetHeight;
+      }
       renderer.setSize(width, height);
       if (program) {
         program.uniforms.uResolution.value = [width, height];
       }
     }
-    window.addEventListener('resize', resize);
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(ctn);
 
     const geometry = new Triangle(gl);
     if (geometry.attributes.uv) {
@@ -233,7 +241,7 @@ export default function Aurora(props: AuroraProps) {
 
     return () => {
       cancelAnimationFrame(animateId);
-      window.removeEventListener('resize', resize);
+      resizeObserver.disconnect();
       if (ctn && gl.canvas.parentNode === ctn) {
         gl.canvas.remove();
       }

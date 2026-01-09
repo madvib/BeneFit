@@ -18,7 +18,8 @@ export default function HeaderRoot({
 
   return (
     <header
-      className={`fixed top-0 right-0 left-0 z-50 border-b transition-all duration-300 ${scrolled ? 'bg-background/80 border-muted py-3 shadow-sm backdrop-blur-xl' : 'bg-background border-transparent py-5'} ${className} `}
+      className={`fixed top-0 right-0 left-0 z-50 flex items-center border-b transition-all duration-300 ${scrolled ? 'bg-background-muted/80 border-muted shadow-sm backdrop-blur-xl' : 'bg-background-muted border-transparent'} ${className} `}
+      style={{ height: 'var(--header-height)' }}
     >
       <div className="relative flex w-full items-center justify-between px-4 md:px-6">
         {children}

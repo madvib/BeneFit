@@ -5,6 +5,7 @@ const pageContainerVariants = cva('w-full font-sans', {
     variant: {
       default: 'px-2 pt-16 md:px-6',
       noPadding: '',
+      fullViewport: 'px-2 md:px-6 flex flex-col',
     },
   },
   defaultVariants: {
@@ -22,5 +23,19 @@ export default function PageContainer({
   className = '',
   variant,
 }: PageContainerProperties) {
-  return <div className={`${pageContainerVariants({ variant })} ${className}`}>{children}</div>;
+  return (
+    <div
+      className={`${pageContainerVariants({ variant })} ${className}`}
+      style={
+        variant === 'fullViewport'
+          ? {
+              minHeight: 'calc(100vh - var(--header-height))',
+              paddingTop: 'var(--header-height)',
+            }
+          : {}
+      }
+    >
+      {children}
+    </div>
+  );
 }

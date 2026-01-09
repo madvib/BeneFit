@@ -44,9 +44,9 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-120px)] flex-col items-center justify-center px-4 py-12">
+    <div className="flex flex-1 flex-col items-center justify-center px-4 py-6">
       {/* Hero Section */}
-      <div className="relative mb-16 text-center">
+      <div className="relative mb-6 text-center">
         <div className="bg-primary/20 absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full blur-3xl" />
 
         <div className="bg-background border-muted mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium shadow-sm">
@@ -131,7 +131,7 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
       </div>
 
       {/* Social Proof / Footer info */}
-      <p className="text-muted-foreground mt-12 text-sm">
+      <p className="text-muted-foreground mt-8 text-sm">
         Join over <span className="text-foreground font-bold">10,000+</span> athletes reaching
         their potential.
       </p>
