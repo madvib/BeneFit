@@ -26,6 +26,8 @@ export default function UnifiedHeader({
     return variant === 'application' ? null : <DashboardLink />;
   };
 
+  const logoHref = isAuthenticated ? '/user/activities' : '/';
+
   const mobileMenu = () => {
     return (
       <div className="fixed inset-0 z-50 md:hidden">
@@ -35,7 +37,7 @@ export default function UnifiedHeader({
         />
         <div className="bg-background border-muted animate-in slide-in-from-right absolute top-0 right-0 bottom-0 flex w-75 flex-col border-l p-6">
           <div className="mb-8 flex items-center justify-between">
-            <BeneLogo href={variant === 'application' ? '/user/activities' : '/'} />
+            <BeneLogo href={logoHref} />
             <button onClick={() => setMobileOpen(false)}>
               <X className="text-muted-foreground h-6 w-6" />
             </button>
@@ -70,7 +72,7 @@ export default function UnifiedHeader({
       >
         <HeaderLeft>
           <div className="flex items-center gap-3 md:gap-6">
-            <BeneLogo href={variant === 'application' ? '/user/activities' : '/'} />
+            <BeneLogo href={logoHref} />
             {variant !== 'application' && (
               <nav className="text-muted-foreground ml-4 hidden items-center gap-8 text-sm font-medium md:flex">
                 <NavigationLinks mobile={false} variant={variant} />

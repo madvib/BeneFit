@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowLeft, Bug, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button, Card } from '@/lib/components';
 
 interface PageErrorProps {
@@ -26,13 +26,22 @@ export default function ErrorPage({
   showReportButton = true,
   onReportClick,
   onRefresh,
-  backHref = '/',
+  backHref,
   className = '',
 }: PageErrorProps) {
+  const router = useRouter();
   const handleRefresh = () => {
     if (onRefresh) {
       globalThis.location.reload();
       onRefresh();
+    }
+  };
+
+  const handleBack = () => {
+    if (backHref) {
+      router.push(backHref);
+    } else {
+      router.back();
     }
   };
 
@@ -57,12 +66,10 @@ export default function ErrorPage({
 
           <div className="mt-4 flex w-full flex-wrap justify-center gap-3">
             {showBackButton && (
-              <Link href={backHref}>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <ArrowLeft size={16} />
-                  Go Back
-                </Button>
-              </Link>
+              <Button variant="outline" onClick={handleBack} className="flex items-center gap-2">
+                <ArrowLeft size={16} />
+                Go Back
+              </Button>
             )}
 
             {showRefreshButton && (
