@@ -41,3 +41,10 @@ export * from './icons/service-logos';
 
 // Interactive Elements
 export { Switch } from './switch/switch';
+export { Modal } from './modal/modal';
+
+// Navigation & Headers
+export * from './header';
+
+// Multi-step Flows
+export * from './stepper/stepper';

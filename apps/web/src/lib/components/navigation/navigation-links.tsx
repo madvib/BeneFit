@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { HEADER_CONFIG, type NavItem } from '../header/primitives/header-config';
+import { HEADER_CONFIG, type NavItem } from '@/lib/components';
 
 export default function NavigationLinks({
   mobile,

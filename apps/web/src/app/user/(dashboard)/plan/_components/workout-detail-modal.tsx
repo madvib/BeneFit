@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { X, Clock, Zap, PlayCircle, SkipForward, BarChart2 } from 'lucide-react';
 import { Button } from '@/lib/components';
 import { fitnessPlan } from '@bene/react-api-client';

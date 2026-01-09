@@ -3,18 +3,9 @@ import { PlanGoalsSchema } from './plan-goals.js';
 import { ProgressionStrategySchema } from './progression-strategy.js';
 import { TrainingConstraintsSchema } from './training-constraints.js';
 
-export const WorkoutSummarySchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  dayOfWeek: z.number(),
-  status: z.enum(['scheduled', 'in_progress', 'completed', 'skipped', 'rescheduled']),
-  durationMinutes: z.number().optional(),
-});
+import { WeeklyScheduleSchema } from './weekly-schedule.js';
 
-export const WeekSchema = z.object({
-  weekNumber: z.number(),
-  workouts: z.array(WorkoutSummarySchema),
-});
+export const WeekSchema = WeeklyScheduleSchema; // Alias for backward compatibility if needed, or just use WeeklyScheduleSchema
 
 export const PlanSummarySchema = z.object({
   total: z.number(),
@@ -45,15 +36,14 @@ export const FitnessPlanSchema = z.object({
   startDate: z.string(), // ISO date string
   endDate: z.string().optional(), // ISO date string
   startedAt: z.string().optional(), // ISO date string (when user started)
-  weeks: z.array(WeekSchema),
+  weeks: z.array(WeeklyScheduleSchema),
   summary: PlanSummarySchema,
   goals: PlanGoalsSchema,
   progression: ProgressionStrategySchema,
   constraints: TrainingConstraintsSchema,
 });
 
-export type WorkoutSummary = z.infer<typeof WorkoutSummarySchema>;
-export type Week = z.infer<typeof WeekSchema>;
+export type Week = z.infer<typeof WeeklyScheduleSchema>;
 export type PlanSummary = z.infer<typeof PlanSummarySchema>;
 export type PlanType = z.infer<typeof PlanTypeSchema>;
 export type PlanPosition = z.infer<typeof PlanPositionSchema>;

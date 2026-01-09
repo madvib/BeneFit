@@ -6,7 +6,7 @@ import { workouts } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import WorkoutSummary from './_components/workout-summary';
-import PerformanceForm from './_components/performance-form';
+import PerformanceForm, { type PerformanceFormData } from './_components/performance-form';
 import AchievementPopup from './_components/achievement-popup';
 import { CheckCircle } from 'lucide-react';
 
@@ -21,50 +21,8 @@ export default function CompleteWorkoutPage() {
   const [showAchievements, setShowAchievements] = useState(false);
 
   // TODO: Replace useTodaysWorkout with useWorkoutSession(sessionId) once implemented
-  // See implementation_plan.md for details on adding GET /:sessionId endpoint
   const sessionQuery = workouts.useTodaysWorkout();
-
   const completeMutation = workouts.useCompleteWorkout();
-
-  const handleComplete = async (
-    data: import('./_components/performance-form').PerformanceFormData,
-  ) => {
-    const result = await completeMutation.mutateAsync({
-      param: { sessionId },
-      json: {
-        sessionId,
-        performance: {
-          completedAt: new Date().toISOString(),
-          durationMinutes: data.performance.durationActual,
-          perceivedExertion: data.performance.rpe,
-          enjoyment: Math.round(data.performance.rpe / 2), // Derive enjoyment from RPE
-          activities: [], // No detailed activity tracking in this simplified form
-          notes: data.performance.feedback,
-        },
-        verification: {
-          method: 'manual' as const,
-          verified: true,
-          data: {
-            timestamp: new Date().toISOString(),
-          },
-          verifiedAt: new Date().toISOString(),
-        },
-        shareToFeed: data.shareToFeed,
-      },
-    });
-
-    if (result.achievementsEarned && result.achievementsEarned.length > 0) {
-      setEarnedAchievements(result.achievementsEarned);
-      setShowAchievements(true);
-    } else {
-      router.push(ROUTES.USER.HISTORY);
-    }
-  };
-
-  const handleCloseAchievements = () => {
-    setShowAchievements(false);
-    router.push(ROUTES.USER.HISTORY);
-  };
 
   if (sessionQuery.isLoading) {
     return <LoadingSpinner variant="screen" text="Loading session..." />;
@@ -80,8 +38,44 @@ export default function CompleteWorkoutPage() {
     );
   }
 
-  // Fallback if no active workout found or ID mismatch (simplified logic)
   const workout = sessionQuery.data?.workout;
+
+  const handleComplete = async (data: PerformanceFormData) => {
+    const now = new Date().toISOString();
+    const result = await completeMutation.mutateAsync({
+      param: { sessionId },
+      json: {
+        sessionId,
+        performance: {
+          startedAt: new Date(
+            Date.now() - data.performance.durationMinutes * 60_000,
+          ).toISOString(),
+          completedAt: now,
+          durationMinutes: data.performance.durationMinutes,
+          perceivedExertion: data.performance.perceivedExertion,
+          energyLevel: 'medium',
+          enjoyment: Math.round(data.performance.perceivedExertion / 2) || 1,
+          difficultyRating: 'just_right',
+          activities: [],
+          notes: data.performance.notes,
+        },
+        verification: {
+          verified: true,
+          verifications: [{ method: 'manual', data: null }],
+          sponsorEligible: false,
+          verifiedAt: now,
+        },
+        shareToFeed: data.shareToFeed,
+      },
+    });
+
+    if (result.achievementsEarned?.length) {
+      setEarnedAchievements(result.achievementsEarned);
+      setShowAchievements(true);
+    } else {
+      router.push(ROUTES.USER.HISTORY);
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-3xl p-6">
@@ -94,19 +88,25 @@ export default function CompleteWorkoutPage() {
       </div>
 
       <div className="grid gap-8">
-        {workout && <WorkoutSummary workout={workout} />}
-
-        <PerformanceForm
-          workout={workout || {}}
-          onSubmit={handleComplete}
-          isLoading={completeMutation.isPending}
-        />
+        {workout && (
+          <>
+            <WorkoutSummary workout={workout} />
+            <PerformanceForm
+              workout={workout}
+              onSubmit={handleComplete}
+              isLoading={completeMutation.isPending}
+            />
+          </>
+        )}
       </div>
 
       <AchievementPopup
         achievements={earnedAchievements}
         isOpen={showAchievements}
-        onClose={handleCloseAchievements}
+        onClose={() => {
+          setShowAchievements(false);
+          router.push(ROUTES.USER.HISTORY);
+        }}
       />
     </div>
   );

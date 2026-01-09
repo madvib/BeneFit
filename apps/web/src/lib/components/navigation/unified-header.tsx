@@ -3,16 +3,13 @@ import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from '@bene/react-api-client';
 import { useUI } from '@/lib/providers/ui-context';
-import { BeneLogo, ThemeToggle } from '@/lib/components';
-import UserAccountMenu from '../navigation/account-dropdown/account-dropdown';
-import {
-  AuthCTA,
-  DashboardLink,
-  MobileMenuToggle,
-  NavigationLinks,
-  DashboardNavigation,
-} from '../navigation';
-import { HeaderRoot, HeaderLeft, HeaderRight } from './primitives';
+import { BeneLogo, ThemeToggle, HeaderRoot, HeaderLeft, HeaderRight } from '@/lib/components';
+import UserAccountMenu from './account-dropdown/account-dropdown';
+import AuthCTA from './auth-cta';
+import DashboardLink from './dashboard-link';
+import MobileMenuToggle from './mobile-menu-toggle';
+import NavigationLinks from './navigation-links';
+import DashboardNavigation from './dashboard-navigation';
 
 export default function UnifiedHeader({
   variant,

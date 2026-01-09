@@ -1,8 +1,8 @@
 'use client';
 
-import { HEADER_CONFIG } from '@/lib/components/header/primitives/header-config';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { HEADER_CONFIG, type NavItem } from '@/lib/components';
 
 export default function DashboardNavigation() {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ export default function DashboardNavigation() {
     <nav className="bg-background/50 border-border/50 hover:border-primary/20 hover:shadow-primary/5 relative flex items-center gap-1 rounded-full border p-1 shadow-sm backdrop-blur-md transition-all">
       {HEADER_CONFIG.navItems.application
         .filter((item) => !item.disabled)
-        .map((item) => {
+        .map((item: NavItem) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 

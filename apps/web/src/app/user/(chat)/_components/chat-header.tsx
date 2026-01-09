@@ -8,7 +8,7 @@ import {
   HeaderLeft,
   HeaderCenter,
   HeaderRight,
-} from '@/lib/components/header/primitives';
+} from '@/lib/components/ui-primitives/header';
 import { DashboardNavigation } from '@/lib/components/navigation';
 import UserAccountMenu from '@/lib/components/navigation/account-dropdown/account-dropdown';
 import { BeneLogo } from '@/lib/components/theme';

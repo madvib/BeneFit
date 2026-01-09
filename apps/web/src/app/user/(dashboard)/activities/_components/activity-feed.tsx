@@ -5,23 +5,11 @@ import { workouts } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import { getActivityColorClass, getActivityIcon } from '../../_shared/activity-styles';
 
-export interface ActivityFeedItem {
-  id: string;
-  type: string;
-  title: string;
-  description: string;
-  timestamp: string;
-  duration?: string;
-}
+export default function ActivityFeed() {
+  const historyQuery = workouts.useWorkoutHistory({ query: { limit: '5' } });
 
-interface ActivityFeedViewProps {
-  activities?: ActivityFeedItem[];
-  isLoading?: boolean;
-}
-
-export function ActivityFeedView({ activities = [], isLoading = false }: ActivityFeedViewProps) {
   const renderContent = () => {
-    if (isLoading) {
+    if (historyQuery.isLoading) {
       return (
         <div className="flex flex-col gap-4 p-6">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -37,7 +25,20 @@ export function ActivityFeedView({ activities = [], isLoading = false }: Activit
       );
     }
 
-    if (activities.length === 0) {
+    if (historyQuery.error) {
+      return (
+        <div className="flex flex-col gap-4 p-6">
+          <div className="text-destructive flex flex-col items-center justify-center py-12 text-center">
+            <Activity size={32} className="mb-3 opacity-20" />
+            <p>Failed to load recent activity.</p>
+          </div>
+        </div>
+      );
+    }
+
+    const workoutsData = historyQuery.data?.workouts || [];
+
+    if (workoutsData.length === 0) {
       return (
         <div className="flex flex-col gap-4 p-6">
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
@@ -50,34 +51,33 @@ export function ActivityFeedView({ activities = [], isLoading = false }: Activit
 
     return (
       <div className="flex flex-col gap-4 p-6">
-        {activities.map((activity) => (
+        {workoutsData.map((workout) => (
           <div
-            key={activity.id}
+            key={workout.id}
             className="group border-muted bg-card hover:border-primary/40 relative flex gap-4 rounded-xl border p-4 transition-all duration-200 hover:shadow-md"
           >
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${getActivityColorClass(activity.type)}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${getActivityColorClass('workout')}`}
             >
-              {getActivityIcon(activity.type)}
+              {getActivityIcon('workout')}
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               <div className="flex items-start justify-between gap-4">
                 <h4 className="text-foreground group-hover:text-primary truncate text-sm font-bold transition-colors">
-                  {activity.title}
+                  {workout.workoutType.charAt(0).toUpperCase() + workout.workoutType.slice(1)}{' '}
+                  Workout
                 </h4>
                 <span className="text-muted-foreground shrink-0 font-mono text-[10px]">
-                  {safeFormatTimeAgo(activity.timestamp)}
+                  {safeFormatTimeAgo(workout.recordedAt)}
                 </span>
               </div>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {activity.description}
+                Completed {workout.performance.durationMinutes} min workout
               </p>
               <div className="mt-2 flex items-center gap-2">
-                {activity.duration && (
-                  <span className="text-muted-foreground bg-muted rounded px-2 py-0.5 text-[10px] font-medium">
-                    {activity.duration}
-                  </span>
-                )}
+                <span className="text-muted-foreground bg-muted rounded px-2 py-0.5 text-[10px] font-medium">
+                  {workout.performance.durationMinutes} min
+                </span>
               </div>
             </div>
           </div>
@@ -101,23 +101,4 @@ export function ActivityFeedView({ activities = [], isLoading = false }: Activit
       {renderContent()}
     </div>
   );
-}
-
-export default function ActivityFeed() {
-  const historyQuery = workouts.useWorkoutHistory({ query: { limit: '5' } });
-
-  const isLoading = historyQuery.isLoading;
-
-  const activities: ActivityFeedItem[] = (historyQuery.data?.workouts || []).map(
-    (w: { id: string; type: string; durationMinutes: number; date: string }) => ({
-      id: w.id,
-      type: w.type,
-      title: `${w.type.charAt(0).toUpperCase() + w.type.slice(1)} Workout`,
-      description: `Completed ${w.durationMinutes} min workout`,
-      timestamp: w.date,
-      duration: `${w.durationMinutes} min`,
-    }),
-  );
-
-  return <ActivityFeedView activities={activities} isLoading={isLoading} />;
 }

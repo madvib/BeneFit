@@ -40,9 +40,12 @@
   --error: #bf1616;
   --error: #bf1616;
   /* Brand gradient: blue to purple (Dark Theme - neon/vibrant) */
-  --gradient-start: #3b82f6;
+  --gradient-start: #2563eb;
+  --gradient-middle: #4f46e5;
+  --gradient-end: #7c3aed;
+  /* --gradient-start: #3b82f6;
   --gradient-middle: #818cf8;
-  --gradient-end: #a855f7;
+  --gradient-end: #a855f7; */
 }
 
 @theme inline {

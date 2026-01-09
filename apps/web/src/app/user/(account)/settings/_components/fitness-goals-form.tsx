@@ -2,10 +2,7 @@
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
 import { UpdateFitnessGoalsFormSchema } from '@bene/shared';
-import {
-  SecondaryGoalsList,
-  CategorizedGoalSelection,
-} from '../../../_shared/goals/goal-selection-ui';
+import { SecondaryGoalsList, PrimaryGoalGrid } from '@/lib/components/fitness/goal-selection-ui';
 
 interface FitnessGoalsFormProps {
   initialPrimary: string;
@@ -43,7 +40,7 @@ export function FitnessGoalsForm({
             {(field) => (
               <div>
                 <label className="mb-3 block text-base font-medium">Primary Goal</label>
-                <CategorizedGoalSelection
+                <PrimaryGoalGrid
                   selected={field.state.value}
                   onChange={field.handleChange}
                   isLoading={isLoading}

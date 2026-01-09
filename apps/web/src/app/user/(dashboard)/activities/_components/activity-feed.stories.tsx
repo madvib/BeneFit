@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ActivityFeedView, ActivityFeedItem } from './activity-feed';
+import ActivityFeed from './activity-feed';
 
-const meta: Meta<typeof ActivityFeedView> = {
+const meta: Meta<typeof ActivityFeed> = {
   title: 'Pages/Dashboard/ActivityFeed',
-  component: ActivityFeedView,
+  component: ActivityFeed,
   parameters: {
     layout: 'centered',
   },
@@ -17,11 +17,11 @@ const meta: Meta<typeof ActivityFeedView> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ActivityFeedView>;
+type Story = StoryObj<typeof ActivityFeed>;
 
 // --- Mock Data ---
 
-const MOCK_ACTIVITIES: ActivityFeedItem[] = [
+const MOCK_ACTIVITIES = [
   {
     id: '1',
     type: 'strength',

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { Result, BaseUseCase, CompletedWorkoutSummarySchema } from '@bene/shared';
+import { Result, BaseUseCase, CompletedWorkoutSchema } from '@bene/shared';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import { CompletedWorkoutMapper } from '../../mappers/completed-workout.mapper.js';
 
 
 
@@ -20,7 +21,7 @@ export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSc
 
 
 export const GetWorkoutHistoryResponseSchema = z.object({
-  workouts: z.array(CompletedWorkoutSummarySchema),
+  workouts: z.array(CompletedWorkoutSchema),
   total: z.number(),
 });
 
@@ -52,16 +53,7 @@ export class GetWorkoutHistoryUseCase extends BaseUseCase<
     const workouts = workoutsResult.value;
 
     return Result.ok({
-      workouts: workouts.map((w) => ({
-        id: w.id,
-        type: w.workoutType,
-        date: w.recordedAt,
-        durationMinutes: w.performance.durationMinutes,
-        perceivedExertion: w.performance.perceivedExertion,
-        enjoyment: w.performance.enjoyment,
-        verified: w.verification?.verified || false,
-        reactionCount: w.reactions.length,
-      })),
+      workouts: workouts.map(CompletedWorkoutMapper.toResponse),
       total: workouts.length,
     });
   }

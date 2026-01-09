@@ -40,24 +40,22 @@ export default function HistoryPage() {
   const workoutHistoryRaw = workoutHistoryQuery.data?.workouts || [];
   const isEmpty = workoutHistoryRaw.length === 0;
 
-  const workoutHistory = workoutHistoryRaw.map(
-    (w: workouts.GetWorkoutHistoryResponse['workouts'][number]) => ({
-      id: w.id,
-      date: safeFormatDateTime(w.date, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-      }),
-      workout: w.type.charAt(0).toUpperCase() + w.type.slice(1) + ' Workout', // Derive title
-      duration: `${w.durationMinutes} min`,
-      calories: '320 kcal', // Hardcoded fallback until API supports it
-      type: w.type,
+  const workoutHistory = workoutHistoryRaw.map((w) => ({
+    id: w.id,
+    date: safeFormatDateTime(w.recordedAt, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     }),
-  );
+    workout: w.workoutType.charAt(0).toUpperCase() + w.workoutType.slice(1) + ' Workout', // Derive title
+    duration: `${w.performance.durationMinutes} min`,
+    calories: `${w.performance.caloriesBurned || '---'} kcal`,
+    type: w.workoutType,
+  }));
 
-  const selectedWorkout = workoutHistory.find((w) => w.id === selectedWorkoutId) || null;
+  const selectedWorkout = workoutHistoryRaw.find((w) => w.id === selectedWorkoutId) || null;
 
   if (isEmpty) {
     return (

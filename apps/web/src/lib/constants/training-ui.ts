@@ -1,11 +1,11 @@
-import { Target, Zap, TrendingUp, Heart, LucideIcon } from 'lucide-react';
+import { Target, Zap, TrendingUp, Heart, LucideIcon, Dumbbell, Timer, Flame } from 'lucide-react';
 import { FitnessGoal } from '@bene/shared';
 
 export const GOAL_UI_CONFIG: Record<FitnessGoal, { label: string; icon: LucideIcon }> = {
-  strength: { label: 'Build Strength', icon: Target },
-  endurance: { label: 'Improve Endurance', icon: Zap },
+  strength: { label: 'Build Strength', icon: Dumbbell },
+  endurance: { label: 'Improve Endurance', icon: Timer },
   muscle_growth: { label: 'Muscle Growth', icon: TrendingUp },
-  fat_loss: { label: 'Fat Loss', icon: TrendingUp },
+  weight_loss: { label: 'Weight Loss', icon: Flame },
   athletic_performance: { label: 'Athletic Performance', icon: Zap },
   general_health: { label: 'General Health', icon: Heart },
 };

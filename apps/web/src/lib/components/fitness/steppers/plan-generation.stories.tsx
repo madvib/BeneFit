@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import PlanGenerationWizard from './plan-generation-wizard';
+import PlanGenerationStepper from './plan-generation-stepper';
 
-const meta: Meta<typeof PlanGenerationWizard> = {
+const meta: Meta<typeof PlanGenerationStepper> = {
   title: 'Components/Plan Generation',
-  component: PlanGenerationWizard,
+  component: PlanGenerationStepper,
   parameters: {
     layout: 'centered',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof PlanGenerationWizard>;
+type Story = StoryObj<typeof PlanGenerationStepper>;
 
 export const Default: Story = {
   name: 'Plan Generation Flow',

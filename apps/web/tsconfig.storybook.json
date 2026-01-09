@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "out-tsc/storybook",
+    "noEmit": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "preserve",

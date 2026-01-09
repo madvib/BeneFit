@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import ProfileHeader from './profile-header';
+import ProfileSummary from './profile-summary';
 
-const meta: Meta<typeof ProfileHeader> = {
-  title: 'Pages/Account/Profile/ProfileHeader',
-  component: ProfileHeader,
+const meta: Meta<typeof ProfileSummary> = {
+  title: 'Pages/Account/Profile/ProfileSummary',
+  component: ProfileSummary,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof ProfileHeader> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ProfileHeader>;
+type Story = StoryObj<typeof ProfileSummary>;
 
 export const HeaderStates: Story = {
   name: 'Profile Header Examples',
@@ -25,7 +25,7 @@ export const HeaderStates: Story = {
     <div className="space-y-12">
       {/* Default User */}
       <div className="border-b pb-8">
-        <ProfileHeader
+        <ProfileSummary
           name="Alex Johnson"
           bio="Fitness enthusiast | Marathon runner | Strength training advocate"
           totalWorkouts={127}
@@ -38,7 +38,7 @@ export const HeaderStates: Story = {
 
       {/* New User */}
       <div className="border-b pb-8">
-        <ProfileHeader
+        <ProfileSummary
           name="Jamie Smith"
           bio="Just started my fitness journey!"
           totalWorkouts={3}
@@ -51,7 +51,7 @@ export const HeaderStates: Story = {
 
       {/* Pro User */}
       <div>
-        <ProfileHeader
+        <ProfileSummary
           name="Morgan Taylor"
           bio="Certified personal trainer | Nutrition coach | Helping others achieve their goals"
           totalWorkouts={1247}

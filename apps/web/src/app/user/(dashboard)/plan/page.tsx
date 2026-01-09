@@ -32,6 +32,7 @@ export default function PlanClient() {
   // New State for Week Navigation and Details
   const [selectedWeek, setSelectedWeek] = React.useState<number>(1);
   const [selectedWorkoutId, setSelectedWorkoutId] = React.useState<string | null>(null);
+  const [showNewProgramFlow, setShowNewProgramFlow] = React.useState(false);
 
   // Sync selected week with current week when plan loads
   React.useEffect(() => {
@@ -93,7 +94,7 @@ export default function PlanClient() {
     );
   }
 
-  if (!activePlanData?.hasPlan || !activePlanData.plan) {
+  if (!activePlanData?.hasPlan || !activePlanData.plan || showNewProgramFlow) {
     return (
       <PlanOnboarding
         onGenerate={handleGeneratePlan}
@@ -155,17 +156,7 @@ export default function PlanClient() {
           Congratulations! You&apos;ve completed your program. Ready for the next challenge?
         </p>
         <Button
-          onClick={() =>
-            handleGeneratePlan({
-              json: {
-                goals: {
-                  primary: 'maintenance',
-                  secondary: ['hypertrophy'],
-                  targetMetrics: { totalWorkouts: 20 },
-                },
-              },
-            })
-          }
+          onClick={() => setShowNewProgramFlow(true)}
           isLoading={generatePlanMutation.isPending}
           size="lg"
           className="shadow-primary/20 rounded-2xl px-8 shadow-lg"

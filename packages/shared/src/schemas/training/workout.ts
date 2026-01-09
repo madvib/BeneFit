@@ -39,8 +39,18 @@ export const UpcomingWorkoutSchema = z.object({
   status: z.string(),
 });
 
+// Summary schema for workouts within a plan/week
+export const WorkoutSummarySchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  dayOfWeek: z.number(),
+  status: z.enum(['scheduled', 'in_progress', 'completed', 'skipped', 'rescheduled']),
+  durationMinutes: z.number().optional(),
+});
+
 // Export inferred types
 export type Activity = z.infer<typeof ActivitySchema>;
 export type CompletedWorkoutSummary = z.infer<typeof CompletedWorkoutSummarySchema>;
 export type DailyWorkout = z.infer<typeof DailyWorkoutSchema>;
 export type UpcomingWorkout = z.infer<typeof UpcomingWorkoutSchema>;
+export type WorkoutSummary = z.infer<typeof WorkoutSummarySchema>;

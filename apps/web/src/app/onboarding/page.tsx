@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import OnboardingWizard from './_components/onboarding-wizard';
+import OnboardingStepper from './_components/onboarding-stepper';
 
 export const metadata: Metadata = {
   title: 'Setup Your Profile - BeneFit',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function OnboardingPage() {
   return (
     <div className="container mx-auto flex max-w-3xl flex-col items-center py-10">
-      <OnboardingWizard />
+      <OnboardingStepper />
     </div>
   );
 }

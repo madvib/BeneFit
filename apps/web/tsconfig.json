@@ -25,7 +25,10 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "types": [
+      "vitest/globals"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -40,9 +43,6 @@
     },
     {
       "path": "../../packages/react-api-client"
-    },
-    {
-      "path": "./tsconfig.storybook.json"
     }
   ],
   "exclude": [

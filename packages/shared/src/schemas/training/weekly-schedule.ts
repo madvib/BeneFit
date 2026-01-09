@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { WorkoutSummarySchema } from './fitness-plan.js';
+import { WorkoutSummarySchema } from './workout.js';
 
 // Weekly Schedule Schemas
 

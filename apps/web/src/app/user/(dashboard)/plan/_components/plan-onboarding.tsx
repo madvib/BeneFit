@@ -17,17 +17,7 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
 
   if (showGoalForm) {
     return (
-      <div className="container mx-auto max-w-6xl p-6">
-        <div className="mb-8 text-center">
-          <div className="bg-primary/10 text-primary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
-            <Dumbbell size={40} />
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Let&apos;s build your plan.</h1>
-          <p className="text-muted-foreground mx-auto max-w-2xl">
-            We&apos;ll create a custom training schedule based on your goals and equipment.
-          </p>
-        </div>
-
+      <div className="animate-in fade-in slide-in-from-bottom-4 container mx-auto max-w-3xl p-6 py-12 duration-500">
         <GoalSelectionForm onGenerate={onGenerate} isLoading={isLoading} />
 
         <div className="mt-4 text-center">
@@ -68,7 +58,7 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
       </div>
 
       {/* Options Grid */}
-      <div className="grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid w-full max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
         {/* AI Generation Card */}
         <div className="group relative overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5 p-8 transition-all hover:border-blue-500/40 hover:shadow-xl">
           <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500">

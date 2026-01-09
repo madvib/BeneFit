@@ -14,8 +14,8 @@ export * from './app-form';
 // Error Components
 export * from './error';
 
-// Header Components
-export * from './header';
+// Fitness Components
+export * from './fitness';
 
 // Navigation Components
 export * from './navigation';

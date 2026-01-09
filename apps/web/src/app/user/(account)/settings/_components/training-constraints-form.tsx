@@ -3,12 +3,9 @@
 import { useState } from 'react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { Calendar, Clock, Dumbbell, AlertTriangle } from 'lucide-react';
-import { UpdateTrainingConstraintsFormSchema } from '@bene/shared';
 import { useAppForm } from '@/lib/components/app-form';
 import { Button, Input } from '@/lib/components';
-
-const EQUIPMENT_OPTIONS =
-  UpdateTrainingConstraintsFormSchema.shape.availableEquipment.element.options;
+import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
 
 interface TrainingConstraintsFormProps {
   initialConstraints: {
@@ -130,50 +127,21 @@ export function TrainingConstraintsForm({
               </div>
             )}
           </form.AppField>
-
           {/* Equipment */}
           <form.AppField name="availableEquipment">
-            {(field) => {
-              const currentEquipment = field.state.value || [];
-              const toggleEquipment = (id: string) => {
-                const newValue = currentEquipment.includes(id)
-                  ? currentEquipment.filter((e) => e !== id)
-                  : [...currentEquipment, id];
-                field.handleChange(newValue);
-              };
-
-              return (
-                <div>
-                  <label className="mb-3 flex items-center gap-2 text-base font-medium">
-                    <Dumbbell size={18} /> Available Equipment
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {EQUIPMENT_OPTIONS.map((item) => {
-                      const id = item; // Value is explicitly the ID in our schema
-                      const isSelected = currentEquipment.includes(id);
-                      return (
-                        <button
-                          key={item}
-                          type="button"
-                          onClick={() => toggleEquipment(item)}
-                          className={`rounded-md border px-3 py-2 text-left text-sm transition-all ${
-                            isSelected ? 'border-primary bg-primary/10' : 'hover:bg-accent'
-                          }`}
-                          disabled={isLoading}
-                        >
-                          <div className="flex items-center justify-between">
-                            {item}
-                            {isSelected && <div className="bg-primary h-2 w-2 rounded-full" />}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            }}
+            {(field) => (
+              <div>
+                <label className="mb-3 flex items-center gap-2 text-base font-medium">
+                  <Dumbbell size={18} /> Available Equipment
+                </label>
+                <CategorizedEquipmentSelection
+                  selected={field.state.value || []}
+                  onChange={field.handleChange}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
           </form.AppField>
-
           {/* Injuries */}
           <form.AppField name="injuries">
             {(field) => {
@@ -257,7 +225,6 @@ export function TrainingConstraintsForm({
               );
             }}
           </form.AppField>
-
           <form.SubmissionError />
           <div className="flex justify-end pt-4">
             <form.SubmitButton label="Save Constraints" submitLabel="Saving..." />

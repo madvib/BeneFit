@@ -1,16 +1,11 @@
 'use client';
 
 import { Card } from '@/lib/components';
-import { Clock, Dumbbell, Activity } from 'lucide-react';
-
-interface WorkoutSummaryData {
-  durationMinutes?: number;
-  type?: string;
-  activities?: { type: string; durationMinutes: number }[];
-}
+import { Clock, Dumbbell, Activity as ActivityIcon } from 'lucide-react';
+import type { DailyWorkout, Activity } from '@bene/shared';
 
 interface WorkoutSummaryProps {
-  workout?: WorkoutSummaryData;
+  workout?: DailyWorkout;
 }
 
 export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
@@ -35,11 +30,10 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
           </div>
         </div>
         <div className="bg-accent flex items-center gap-3 rounded-lg p-3">
-          <Activity className="text-primary" size={24} />
+          <ActivityIcon className="text-primary" size={24} />
           <div>
             <p className="text-muted-foreground text-sm">Intensity</p>
             <p className="font-bold">Moderate</p>
-            {/* Placeholder, assuming intensity isn't explicitly in the basic workout object yet */}
           </div>
         </div>
       </div>
@@ -47,7 +41,7 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
       <div className="mt-6">
         <h3 className="text-muted-foreground mb-2 text-sm font-medium">Activities Completed</h3>
         <ul className="space-y-2">
-          {workout.activities?.map((activity, idx) => (
+          {workout.activities?.map((activity: Activity, idx: number) => (
             <li
               key={idx}
               className="border-border flex items-center justify-between border-b pb-2 text-sm last:border-0"

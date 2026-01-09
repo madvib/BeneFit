@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContainer, Header, Aurora, Footer } from '@/lib/components';
+import { PageContainer, UnifiedHeader, Aurora, Footer } from '@/lib/components';
 
 interface MarketingLayoutProperties {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export default function MarketingLayout({ children }: MarketingLayoutProperties)
       <div className="absolute inset-0 z-0 overflow-hidden">
         <Aurora blend={1} amplitude={0.8} speed={0.8} />
       </div>
-      <Header variant="marketing" />
+      <UnifiedHeader variant="marketing" />
       <PageContainer variant="fullViewport">
         <main className="relative z-10 w-full grow">
           <div className="container mx-auto px-4 py-8">{children}</div>

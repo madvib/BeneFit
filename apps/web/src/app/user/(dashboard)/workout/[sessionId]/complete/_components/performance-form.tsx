@@ -3,34 +3,19 @@
 import { Share2, ThumbsUp } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
+import type { DailyWorkout } from '@bene/shared';
 
 export interface PerformanceFormData {
   performance: {
-    rpe: number;
-    durationActual: number;
-    feedback: string;
-  };
-  verification: {
-    type: string;
-    metadata: Record<string, unknown>;
+    perceivedExertion: number;
+    durationMinutes: number;
+    notes: string;
   };
   shareToFeed: boolean;
 }
 
-interface Workout {
-  workoutId?: string;
-  planId?: string;
-  type?: string;
-  durationMinutes?: number;
-  activities?: {
-    type: 'main' | 'warmup' | 'cooldown';
-    instructions: string;
-    durationMinutes: number;
-  }[];
-}
-
 interface PerformanceFormProps {
-  workout: Workout;
+  workout: DailyWorkout;
   onSubmit: (_data: PerformanceFormData) => void;
   isLoading: boolean;
 }
@@ -39,13 +24,9 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
   const form = useAppForm({
     defaultValues: {
       performance: {
-        rpe: 5,
-        durationActual: workout?.durationMinutes || 30,
-        feedback: '',
-      },
-      verification: {
-        type: 'manual_input',
-        metadata: {},
+        perceivedExertion: 5,
+        durationMinutes: workout?.durationMinutes || 30,
+        notes: '',
       },
       shareToFeed: true,
     },
@@ -67,8 +48,7 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
     <form.AppForm>
       <form.Root title="Workout Complete" subtitle="Great job! How did it feel?">
         <div className="space-y-6">
-          {/* RPE Field */}
-          <form.AppField name="performance.rpe">
+          <form.AppField name="performance.perceivedExertion">
             {(field) => (
               <div>
                 <div className="mb-4 flex items-center justify-between">
@@ -92,17 +72,11 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
                   <span>Moderate</span>
                   <span>Max Effort</span>
                 </div>
-                {field.state.meta.errors ? (
-                  <p className="text-destructive mt-1 text-sm">
-                    {field.state.meta.errors.join(', ')}
-                  </p>
-                ) : null}
               </div>
             )}
           </form.AppField>
 
-          {/* Feedback Field */}
-          <form.AppField name="performance.feedback">
+          <form.AppField name="performance.notes">
             {(field) => (
               <div>
                 <label className="mb-2 block text-sm font-medium">Notes & Feedback</label>
@@ -117,7 +91,6 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
             )}
           </form.AppField>
 
-          {/* Share Field */}
           <form.AppField name="shareToFeed">
             {(field) => (
               <div className="flex items-center gap-3">

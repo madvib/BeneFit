@@ -13,7 +13,7 @@ export const EQUIPMENT_OPTIONS = Object.values(EQUIPMENT_CATEGORIES).flat();
 export const FITNESS_GOALS = [
   'strength',
   'muscle_growth',
-  'fat_loss',
+  'weight_loss',
   'endurance',
   'athletic_performance',
   'general_health',
