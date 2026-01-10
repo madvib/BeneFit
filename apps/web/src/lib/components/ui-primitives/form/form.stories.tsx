@@ -3,7 +3,7 @@ import Input from './input';
 import Select from './select';
 import Checkbox from './checkbox';
 import Label from './label';
-import { FormSuccessMessage } from './form-success-message';
+import FormSuccessMessage from './form-success-message';
 
 const meta: Meta = {
   title: 'Primitives/Form',

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Card } from '@/lib/components';
+import { Card, Typography } from '@/lib/components';
 
 interface FormSectionProps {
   title: string;
@@ -17,8 +17,14 @@ export default function FormSection({
   return (
     <Card className={className}>
       <div className="mb-6">
-        <h3 className="mb-4 text-2xl font-semibold">{title}</h3>
-        {description && <p className="text-muted-foreground mb-4">{description}</p>}
+        <Typography variant="h4" className="mb-4">
+          {title}
+        </Typography>
+        {description && (
+          <Typography variant="muted" className="mb-4 block">
+            {description}
+          </Typography>
+        )}
         {children}
       </div>
     </Card>
