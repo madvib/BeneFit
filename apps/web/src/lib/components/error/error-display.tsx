@@ -167,7 +167,11 @@ export function ErrorDisplay({
             )}
 
             {showRefreshButton && (
-              <Button onClick={handleRefresh} variant="default" className="rounded-2xl px-6">
+              <Button
+                onClick={handleRefresh}
+                variant={severity === 'error' ? 'destructive' : 'default'}
+                className="rounded-2xl px-6"
+              >
                 <RefreshCw size={16} className="mr-2" />
                 Retry
               </Button>
