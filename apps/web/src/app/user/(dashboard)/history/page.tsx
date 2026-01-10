@@ -6,7 +6,7 @@ import { workouts } from '@bene/react-api-client';
 import { LoadingSpinner, ErrorPage, Button, PageHeader, Badge } from '@/lib/components';
 import WorkoutDetailModal from './_components/history-modal';
 import { ROUTES } from '@/lib/constants';
-import { safeFormatDateTime } from '@/lib/utils/date-format';
+import { safeFormatDate } from '@/lib/utils/date-format';
 
 export default function HistoryPage() {
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function HistoryPage() {
 
   const workoutHistory = workoutHistoryRaw.map((w) => ({
     id: w.id,
-    date: safeFormatDateTime(w.recordedAt, {
+    date: safeFormatDate(w.recordedAt, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',

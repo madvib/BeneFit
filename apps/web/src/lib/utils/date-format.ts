@@ -5,9 +5,17 @@
 
 type DateValue = string | Date | null | undefined;
 
+const DEFAULT_DATETIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+};
+
 export function safeFormatDate(
   dateValue: DateValue,
-  options: Intl.DateTimeFormatOptions = {}
+  options: Intl.DateTimeFormatOptions = DEFAULT_DATETIME_OPTIONS
 ): string {
   if (!dateValue) return 'N/A';
 
@@ -27,20 +35,6 @@ export function safeFormatDate(
   }
 }
 
-const DEFAULT_DATETIME_OPTIONS: Intl.DateTimeFormatOptions = {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-};
-
-export function safeFormatDateTime(
-  dateValue: DateValue,
-  options: Intl.DateTimeFormatOptions = DEFAULT_DATETIME_OPTIONS
-): string {
-  return safeFormatDate(dateValue, options);
-}
 
 export function safeFormatTimeAgo(dateValue: DateValue): string {
   if (!dateValue) return 'N/A';

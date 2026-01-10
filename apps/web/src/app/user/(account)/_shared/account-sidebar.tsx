@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button, LogoutButton } from '@/lib/components';
-import { HEADER_CONFIG } from '@/lib/components/ui-primitives/header/header-config';
+import { HEADER_CONFIG } from '@/lib/components';
 
 interface AccountSidebarProps {
   className?: string;

@@ -55,3 +55,4 @@ export { default as Stepper, type StepperStep } from './stepper/stepper';
 // Typography
 export { default as PageHeader } from './typography/page-header';
 export { default as SectionHeader } from './typography/section-header';
+export { default as Typography, type TypographyProps } from './typography/typography';

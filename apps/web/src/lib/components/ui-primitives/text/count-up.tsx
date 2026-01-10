@@ -100,7 +100,6 @@ export default function CountUp({
         clearTimeout(durationTimeoutId);
       };
     }
-    return;
   }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {

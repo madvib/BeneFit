@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Stepper, type StepperStep } from './stepper';
 import { Target, Dumbbell, Calendar, User, Sparkles } from 'lucide-react';
-import { Button } from '@/lib/components';
+import Stepper, { type StepperStep } from './stepper';
+import Button from '../buttons/button';
 import React from 'react';
 
 const meta: Meta<typeof Stepper> = {
@@ -24,6 +24,7 @@ const meta: Meta<typeof Stepper> = {
       setCurrentStepIndex((prev) => Math.max(0, prev - 1));
     };
 
+    // eslint-disable-next-line security/detect-object-injection
     const currentStep = args.steps[currentStepIndex];
 
     return (

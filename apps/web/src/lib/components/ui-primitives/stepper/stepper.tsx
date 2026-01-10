@@ -35,6 +35,7 @@ export default function Stepper({
   showProgress = true,
   variant = 'modal',
 }: StepperProps) {
+  // eslint-disable-next-line security/detect-object-injection
   const currentStep = steps[currentStepIndex];
   if (!currentStep) return null;
 
@@ -125,6 +126,7 @@ export default function Stepper({
   }
 
   return (
+    // not sure about wrapping this in a modal...that is designed for modal routes.
     <Modal size={size} onClose={onClose || (() => {})}>
       {content}
     </Modal>
