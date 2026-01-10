@@ -78,7 +78,7 @@ const AppFormWrapper = () => {
 };
 
 const meta: Meta = {
-  title: 'Components/Patterns/AppForm',
+  title: 'Components/AppForm',
   parameters: {
     layout: 'centered',
   },

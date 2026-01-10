@@ -6,7 +6,7 @@ import { mockConnectedServices } from '@/lib/testing/fixtures';
 const MOCK_CONNECTED = mockConnectedServices.services;
 
 const meta: Meta = {
-  title: 'Pages/Account/Connections',
+  title: 'Features/Account/Connections',
   component: ConnectionsView,
   parameters: {
     layout: 'padded',

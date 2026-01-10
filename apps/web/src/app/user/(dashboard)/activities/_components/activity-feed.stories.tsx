@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ActivityFeed from './activity-feed';
 
 const meta: Meta<typeof ActivityFeed> = {
-  title: 'Pages/Dashboard/ActivityFeed',
+  title: 'Features/Dashboard/ActivityFeed',
   component: ActivityFeed,
   parameters: {
     layout: 'centered',

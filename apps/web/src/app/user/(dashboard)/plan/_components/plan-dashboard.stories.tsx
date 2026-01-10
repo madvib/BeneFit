@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PlanOverview from './plan-overview';
 import WeeklySchedule from './weekly-schedule';
-
-// Mock Data
+import { WorkoutDetailSheet } from './workout-detail-sheet';
+import QuickActions from './quick-actions';
 import { mockActivePlan } from '@/lib/testing/fixtures';
+import { mockWorkoutTemplate } from '@/lib/testing/fixtures/workouts';
 
 // PlanOverview likely expects the plan object, not the full response
 const activePlan = mockActivePlan.plan!;
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/Plan',
+  title: 'Features/Planning/Dashboard',
   parameters: {
     layout: 'padded',
   },
@@ -62,6 +63,28 @@ export const DashboardView: StoryObj = {
         selectedWeek={1}
         onWeekChange={() => {}}
         onWorkoutClick={() => {}}
+      />
+    </div>
+  ),
+};
+
+// --- Consolidated Sub-Components ---
+
+export const WorkoutDetail: StoryObj<typeof WorkoutDetailSheet> = {
+  render: () => (
+    <WorkoutDetailSheet workout={mockWorkoutTemplate} open={true} onOpenChange={() => {}} />
+  ),
+};
+
+export const PlanActions: StoryObj<typeof QuickActions> = {
+  render: () => (
+    <div className="max-w-md p-4">
+      <QuickActions
+        onCreatePlan={() => {}}
+        onSavePlan={() => {}}
+        onExportPlan={() => {}}
+        isLoading={false}
+        onPausePlan={() => {}}
       />
     </div>
   ),

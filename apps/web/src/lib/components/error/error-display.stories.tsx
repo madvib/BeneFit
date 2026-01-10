@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ErrorDisplay from './error-display';
 
 const meta: Meta<typeof ErrorDisplay> = {
-  title: 'Components/Features/ErrorDisplay',
+  title: 'Components/ErrorDisplay',
   component: ErrorDisplay,
   parameters: {
     layout: 'centered',

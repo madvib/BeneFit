@@ -17,7 +17,7 @@ const MOCK_WORKOUT_TODAY = {
 };
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/Today',
+  title: 'Features/Dashboard/Today',
   parameters: {
     layout: 'fullscreen',
   },
@@ -83,7 +83,7 @@ export const ErrorState: StoryObj<typeof TodayView> = {
   ),
 };
 
-// --- Skip Modal Stories ---
+// --- Consolidated Sub-Components ---
 
 export const SkipModalOpen: StoryObj<typeof SkipWorkoutModal> = {
   render: () => {

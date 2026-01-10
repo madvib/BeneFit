@@ -7,7 +7,7 @@ const MOCK_EVENTS = mockEvents;
 const MOCK_TEAMS = mockTeams;
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/Explore',
+  title: 'Features/Dashboard/Explore',
   component: ExploreView,
   parameters: {
     layout: 'fullscreen',

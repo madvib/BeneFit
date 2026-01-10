@@ -3,7 +3,7 @@ import ProgressChart from './progress-chart';
 import StatisticsSection from '../../../(account)/profile/_components/statistics-section';
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/Components',
+  title: 'Features/Dashboard/Components',
   parameters: {
     layout: 'padded',
   },

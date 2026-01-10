@@ -5,7 +5,7 @@ import { Button } from '@/lib/components';
 import React from 'react';
 
 const meta: Meta<typeof Stepper> = {
-  title: 'UI Primitives/Stepper',
+  title: 'Primitives/Stepper',
   component: Stepper,
   parameters: {
     layout: 'centered',

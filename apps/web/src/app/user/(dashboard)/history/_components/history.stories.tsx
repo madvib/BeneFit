@@ -1,10 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import WorkoutList from './workout-list';
 import HistoryModal from './history-modal';
+import WorkoutListTile from './workout-list-tile';
 import { useState } from 'react';
 import { Button } from '@/lib/components';
-
-import { mockWorkoutHistory, mockCompletedWorkout } from '@/lib/testing/fixtures';
+import {
+  mockCompletedWorkout,
+  mockWorkoutSession,
+  mockAbandonedSession,
+} from '@/lib/testing/fixtures';
 
 // Map domain fixture to UI model
 const MOCK_HISTORY_ITEMS = [
@@ -23,7 +27,7 @@ const MOCK_HISTORY_ITEMS = [
 ];
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/History',
+  title: 'Features/Dashboard/History',
   parameters: {
     layout: 'padded',
   },
@@ -91,4 +95,36 @@ const InteractiveModal = () => {
 
 export const ModalInteractive: StoryObj = {
   render: () => <InteractiveModal />,
+};
+
+// --- Consolidated Tile Stories ---
+
+export const TileCompletedStrength: StoryObj<typeof WorkoutListTile> = {
+  render: () => (
+    <table className="w-full">
+      <tbody>
+        <WorkoutListTile {...mockCompletedWorkout} />
+      </tbody>
+    </table>
+  ),
+};
+
+export const TileInProgress: StoryObj<typeof WorkoutListTile> = {
+  render: () => (
+    <table className="w-full">
+      <tbody>
+        <WorkoutListTile {...mockWorkoutSession} />
+      </tbody>
+    </table>
+  ),
+};
+
+export const TileAbandoned: StoryObj<typeof WorkoutListTile> = {
+  render: () => (
+    <table className="w-full">
+      <tbody>
+        <WorkoutListTile {...mockAbandonedSession} />
+      </tbody>
+    </table>
+  ),
 };

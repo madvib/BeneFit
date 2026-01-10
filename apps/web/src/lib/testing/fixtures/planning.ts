@@ -31,6 +31,7 @@ export const mockActivePlan: fitnessPlan.GetActivePlanResponse = {
     startedAt: '2025-12-15T00:00:00Z',
     weeks: [
       {
+        //TODO this is correct but we need to update the Gateway/UseCase!
         id: 'week-1',
         weekNumber: 1,
         startDate: '2025-12-15',

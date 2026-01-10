@@ -7,7 +7,7 @@ import { Bell, Lock, Mail, User } from 'lucide-react';
 import { Button, Switch } from '@/lib/components';
 
 const meta: Meta = {
-  title: 'Pages/Account/Shared',
+  title: 'Features/Account/Shared',
   parameters: {
     layout: 'padded',
   },

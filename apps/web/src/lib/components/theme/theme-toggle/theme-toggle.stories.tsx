@@ -3,7 +3,7 @@ import { ThemeToggle } from './theme-toggle';
 import { ThemeProvider } from '../theme-provider';
 
 const meta: Meta = {
-  title: 'Components/Primitives/ThemeToggle',
+  title: 'Components/Theme',
   component: ThemeToggle,
   parameters: {
     layout: 'centered',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { LoadingSpinner } from './loading-spinner';
 
 const meta: Meta = {
-  title: 'Components/Primitives/Loading',
+  title: 'Primitives/Loading',
   component: LoadingSpinner,
   parameters: {
     layout: 'centered',

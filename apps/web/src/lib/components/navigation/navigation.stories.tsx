@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DashboardNavigation from './dashboard-navigation';
 import MobileMenuToggle from './mobile-menu-toggle';
+import UnifiedHeader from './unified-header';
 
 const meta: Meta = {
-  title: 'Components/Features/Navigation',
+  title: 'Components/Navigation',
   parameters: {
     layout: 'centered',
   },
@@ -29,4 +30,21 @@ export const MobileToggle: StoryObj<typeof MobileMenuToggle> = {
       </div>
     </div>
   ),
+};
+
+// --- Unified Header Stories ---
+
+export const HeaderMarketing: StoryObj<typeof UnifiedHeader> = {
+  render: () => <UnifiedHeader variant="marketing" />,
+  parameters: { layout: 'fullscreen' },
+};
+
+export const HeaderApplication: StoryObj<typeof UnifiedHeader> = {
+  render: () => <UnifiedHeader variant="application" />,
+  parameters: { layout: 'fullscreen' },
+};
+
+export const HeaderAuth: StoryObj<typeof UnifiedHeader> = {
+  render: () => <UnifiedHeader variant="auth" />,
+  parameters: { layout: 'fullscreen' },
 };

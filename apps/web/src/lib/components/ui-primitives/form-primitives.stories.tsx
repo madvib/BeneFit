@@ -7,7 +7,7 @@ import FormSection from './form/form-section';
 import { FormSuccessMessage } from './form/form-success-message';
 
 const meta: Meta = {
-  title: 'Components/Primitives/Form',
+  title: 'Primitives/Data Entry',
   parameters: {
     layout: 'centered',
   },

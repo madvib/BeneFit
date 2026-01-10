@@ -28,7 +28,7 @@ const MOCK_WORKOUT = {
 };
 
 const meta: Meta = {
-  title: 'Pages/Dashboard/Workout/Session',
+  title: 'Features/Workout',
   component: SessionView,
   parameters: {
     layout: 'fullscreen',

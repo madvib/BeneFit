@@ -4,7 +4,7 @@ import TopTabNavigation from './top-tab-navigation';
 import Footer from '../ui-primitives/footer/footer';
 
 const meta: Meta = {
-  title: 'Components/Features/Layout',
+  title: 'Components/Layout',
   parameters: {
     layout: 'padded',
   },

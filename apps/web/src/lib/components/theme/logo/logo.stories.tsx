@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { BeneLogo } from './logo';
 
 const meta: Meta = {
-  title: 'Components/Primitives/Logo',
+  title: 'Primitives/Brand',
   parameters: {
     layout: 'padded',
   },
