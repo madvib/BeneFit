@@ -1,26 +1,55 @@
-import React from 'react';
+import { LucideIcon } from 'lucide-react';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-interface IconBoxProps {
-  children: React.ReactNode;
+const iconBoxVariants = cva(
+  'flex shrink-0 items-center justify-center rounded-full transition-colors',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary/10 text-primary',
+        secondary: 'bg-secondary text-secondary-foreground',
+        muted: 'bg-muted text-muted-foreground',
+        accent: 'bg-accent/10 text-accent-foreground',
+        outline: 'border border-border bg-background text-foreground',
+        ghost: 'bg-transparent text-foreground',
+      },
+      size: {
+        sm: 'h-8 w-8',
+        md: 'h-10 w-10',
+        lg: 'h-12 w-12',
+        xl: 'h-16 w-16',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'md',
+    },
+  },
+);
+
+export interface IconBoxProps extends VariantProps<typeof iconBoxVariants> {
+  icon: LucideIcon;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'primary' | 'secondary' | 'ghost';
+  iconClassName?: string;
 }
 
-export function IconBox({ children, className, size = 'md', variant = 'primary' }: IconBoxProps) {
-  let sizeClass = 'h-16 w-16 text-3xl'; // md
-  if (size === 'sm') sizeClass = 'h-10 w-10 text-xl';
-  if (size === 'lg') sizeClass = 'h-20 w-20 text-4xl';
-
-  let variantClass = 'bg-primary text-primary-foreground'; // primary
-  if (variant === 'secondary') variantClass = 'bg-secondary text-secondary-foreground';
-  if (variant === 'ghost') variantClass = 'bg-transparent text-primary';
+export default function IconBox({
+  icon: Icon,
+  variant,
+  size,
+  className,
+  iconClassName,
+}: IconBoxProps) {
+  const iconSizeMap = {
+    sm: 16,
+    md: 20,
+    lg: 24,
+    xl: 32,
+  };
 
   return (
-    <div
-      className={`mx-auto flex items-center justify-center rounded-full ${sizeClass} ${variantClass} ${className ?? ''}`}
-    >
-      {children}
+    <div className={iconBoxVariants({ variant, size, className })}>
+      <Icon size={size ? iconSizeMap[size] : 20} className={iconClassName} />
     </div>
   );
 }

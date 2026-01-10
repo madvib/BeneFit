@@ -20,7 +20,12 @@ const SIZE_CLASSES = {
   full: 'max-w-[95vw]',
 };
 
-export function Modal({ children, onClose, size = 'md', containerClassName }: ModalProperties) {
+export default function Modal({
+  children,
+  onClose,
+  size = 'md',
+  containerClassName,
+}: ModalProperties) {
   const router = useRouter();
   const { setIsModalOpen } = useUI();
 

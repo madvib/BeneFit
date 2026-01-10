@@ -1,4 +1,4 @@
-export function FormSuccessMessage({ message }: { message: string | null }) {
+export default function FormSuccessMessage({ message }: { message: string | null }) {
   if (!message) return null;
 
   return (

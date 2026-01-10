@@ -1,5 +1,5 @@
 import { CheckCircle2, Users, BarChart3 } from 'lucide-react';
-import { SignupForm } from '@/lib/components';
+import { SignupForm, IconBox } from '@/lib/components';
 
 export default function SignupPage() {
   return (
@@ -18,25 +18,19 @@ export default function SignupPage() {
           <div className="mt-8 space-y-4">
             {/* Item 1 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
-                <CheckCircle2 className="h-6 w-6" />
-              </div>
+              <IconBox icon={CheckCircle2} variant="default" size="md" />
               <span className="font-medium">Personalized fitness plans</span>
             </div>
 
             {/* Item 2 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
-                <Users className="h-6 w-6" />
-              </div>
+              <IconBox icon={Users} variant="default" size="md" />
               <span className="font-medium">Connect with fitness community</span>
             </div>
 
             {/* Item 3 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
-                <BarChart3 className="h-6 w-6" />
-              </div>
+              <IconBox icon={BarChart3} variant="default" size="md" />
               <span className="font-medium">Track your progress visually</span>
             </div>
           </div>

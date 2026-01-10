@@ -1,25 +1,28 @@
 'use client';
 
-interface ModernDashboardLayoutProps {
+interface DashboardShellProps {
   overview: React.ReactNode;
-  schedule: React.ReactNode;
+  schedule?: React.ReactNode;
   suggestions?: React.ReactNode;
-  actions: React.ReactNode;
+  actions?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export default function ModernDashboardLayout({
+export default function DashboardShell({
   overview,
   schedule,
   suggestions,
   actions,
-}: ModernDashboardLayoutProps) {
+  children,
+}: DashboardShellProps) {
   return (
     <div className="mx-auto max-w-400 p-4 md:p-6 lg:p-8">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
         {/* Left Column (Main Content) - 8/12 width */}
         <div className="flex flex-col gap-8 lg:col-span-8">
           <section className="w-full">{overview}</section>
-          <section className="w-full">{schedule}</section>
+          {schedule && <section className="w-full">{schedule}</section>}
+          {children}
         </div>
 
         {/* Right Column (Sidebar) - 4/12 width */}

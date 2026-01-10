@@ -7,7 +7,12 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-export function SectionHeader({ title, description, action, className }: SectionHeaderProps) {
+export default function SectionHeader({
+  title,
+  description,
+  action,
+  className,
+}: SectionHeaderProps) {
   return (
     <div className={`mb-4 flex items-center justify-between ${className ?? ''}`}>
       <div className="space-y-1">

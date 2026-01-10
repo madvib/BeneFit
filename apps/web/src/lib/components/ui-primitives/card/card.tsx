@@ -113,4 +113,5 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 );
 Card.displayName = 'Card';
 
-export { Card, cardVariants };
+export default Card;
+export { cardVariants };

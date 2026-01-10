@@ -4,8 +4,7 @@ import * as React from 'react';
 
 import { AlertCircle, PauseCircle } from 'lucide-react';
 import { fitnessPlan, workouts } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage, Button } from '@/lib/components';
-import ModernDashboardLayout from './_components/modern-dashboard-layout';
+import { LoadingSpinner, ErrorPage, Button, DashboardShell } from '@/lib/components';
 import PlanOverview from './_components/plan-overview';
 import QuickActions from './_components/quick-actions';
 import WeeklySchedule from './_components/weekly-schedule';
@@ -201,7 +200,7 @@ export default function PlanClient() {
 
   return (
     <>
-      <ModernDashboardLayout
+      <DashboardShell
         overview={renderOverview()}
         schedule={renderSchedule()}
         actions={renderActions()}

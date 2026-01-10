@@ -24,7 +24,7 @@ interface StepperProps {
   variant?: 'modal' | 'inline';
 }
 
-export function Stepper({
+export default function Stepper({
   steps,
   currentStepIndex,
   direction,
