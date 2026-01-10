@@ -20,7 +20,6 @@ interface StepperProps {
   footer: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   showProgress?: boolean;
-  variant?: 'modal' | 'inline';
 }
 
 export default function Stepper({
@@ -30,7 +29,6 @@ export default function Stepper({
   children,
   footer,
   showProgress = true,
-  variant = 'modal',
 }: StepperProps) {
   // eslint-disable-next-line security/detect-object-injection
   const currentStep = steps[currentStepIndex];
@@ -56,12 +54,10 @@ export default function Stepper({
   };
 
   return (
-    <div
-      className={`flex flex-col ${variant === 'inline' ? 'bg-background overflow-hidden rounded-3xl border shadow-xl' : 'min-h-[500px]'}`}
-    >
+    <div className="flex w-full flex-col overflow-hidden">
       {/* Progress Header */}
-      <div className="bg-muted/30 border-b p-6 sm:p-8">
-        <div className="font-outfit mb-6 flex items-center justify-between">
+      <div className="p-6">
+        <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4 text-left">
             <div className="bg-primary/10 text-primary ring-primary/20 flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm ring-1">
               <Icon size={24} />
@@ -75,9 +71,11 @@ export default function Stepper({
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <span className="text-muted-foreground text-sm font-semibold tracking-tighter">
-              Step {currentStepIndex + 1} of {steps.length}
+          <div className="flex items-center sm:block">
+            <span className="text-primary bg-primary/10 sm:text-muted-foreground rounded-full px-3 py-1 text-sm font-black tracking-tighter sm:bg-transparent sm:p-0 sm:font-semibold">
+              {currentStepIndex + 1}
+              <span className="mx-0.5 opacity-50">/</span>
+              {steps.length}
             </span>
           </div>
         </div>
@@ -93,7 +91,7 @@ export default function Stepper({
       </div>
 
       {/* Stepper Content */}
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative flex-1">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={currentStep.id}
@@ -106,7 +104,7 @@ export default function Stepper({
               x: { type: 'spring', stiffness: 300, damping: 35 },
               opacity: { duration: 0.2 },
             }}
-            className="h-full w-full p-6 sm:p-10"
+            className="h-full w-full p-0 sm:p-10"
           >
             <div className="mx-auto h-full max-w-2xl">{children}</div>
           </motion.div>
@@ -114,7 +112,7 @@ export default function Stepper({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-muted/10 border-t p-6 sm:p-8">{footer}</div>
+      <div className="p-6">{footer}</div>
     </div>
   );
 }

@@ -128,3 +128,4 @@ dist
 dist-types
 generated
 .temp
+.agent

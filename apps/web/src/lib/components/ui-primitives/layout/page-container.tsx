@@ -5,7 +5,7 @@ const pageContainerVariants = cva('w-full font-sans', {
     variant: {
       default: 'px-2 pt-16 md:px-6',
       noPadding: '',
-      fullViewport: 'px-2 md:px-6 flex flex-col',
+      fullViewport: 'p-0 sm:px-6 flex flex-col',
     },
   },
   defaultVariants: {

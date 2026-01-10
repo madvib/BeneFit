@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import OnboardingStepper from './_components/onboarding-stepper';
-import PlanGenerationStepper from '@/lib/components/fitness/steppers/plan-generation-stepper';
+import { Aurora, PageContainer } from '@/lib/components';
 
 const meta: Meta<typeof OnboardingStepper> = {
   title: 'Features/Onboarding',
@@ -15,17 +15,14 @@ type Story = StoryObj<typeof OnboardingStepper>;
 
 export const Default: Story = {
   name: 'Onboarding Flow',
-};
-
-// --- Plan Generation Stories ---
-
-export const PlanGeneration: StoryObj<typeof PlanGenerationStepper> = {
   render: () => (
-    <div className="flex justify-center p-8">
-      <PlanGenerationStepper
-        onComplete={(plan) => console.log('Plan generated:', plan)}
-        onSkip={() => console.log('Skipped')}
-      />
-    </div>
+    <PageContainer variant="fullViewport" className="relative flex items-center justify-center">
+      <div className="absolute inset-0 z-0">
+        <Aurora />
+      </div>
+      <div className="relative z-10 w-full max-w-4xl px-4">
+        <OnboardingStepper />
+      </div>
+    </PageContainer>
   ),
 };

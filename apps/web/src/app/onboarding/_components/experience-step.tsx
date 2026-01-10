@@ -1,6 +1,7 @@
 import { withForm } from '@/lib/components/app-form/app-form';
 import { EXPERIENCE_LEVELS } from '@bene/shared';
 import { onboardingFormOpts } from './form-options';
+import { Typography } from '@/lib/components';
 
 export const ExperienceStep = withForm({
   ...onboardingFormOpts,
@@ -27,22 +28,26 @@ export const ExperienceStep = withForm({
                   key={level}
                   type="button"
                   onClick={() => field.handleChange(level)}
-                  className={`flex items-start gap-4 rounded-xl border p-4 text-left transition-all ${
+                  className={`group flex items-start gap-4 rounded-xl border p-4 text-left transition-all sm:p-5 ${
                     field.state.value === level
-                      ? 'border-primary bg-primary/5 ring-primary ring-1'
-                      : 'hover:border-primary/50'
+                      ? 'border-primary bg-primary/5 ring-primary shadow-sm ring-1'
+                      : 'hover:border-primary/50 hover:bg-accent/50'
                   }`}
                 >
                   <div
-                    className={`mt-1 h-5 w-5 rounded-full border-2 ${
+                    className={`mt-1 h-5 w-5 rounded-full border-2 transition-colors ${
                       field.state.value === level
                         ? 'border-primary bg-primary'
-                        : 'border-muted-foreground'
+                        : 'border-muted-foreground group-hover:border-primary/50'
                     }`}
                   />
                   <div>
-                    <h3 className="font-semibold">{details.label}</h3>
-                    <p className="text-muted-foreground text-sm">{details.desc}</p>
+                    <Typography variant="large" className="font-bold">
+                      {details.label}
+                    </Typography>
+                    <Typography variant="small" className="text-muted-foreground">
+                      {details.desc}
+                    </Typography>
                   </div>
                 </button>
               );
