@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, ElectricBorder } from '@/lib/components/ui-primitives';
+import { Button, ElectricBorder, Card } from '@/lib/components/ui-primitives';
 
 const errorDisplayVariants = cva(
   'relative flex flex-col items-center justify-center overflow-hidden transition-all duration-300',
@@ -112,33 +112,41 @@ export default function ErrorDisplay({
     }
   }, [severity]);
 
-  const content = (
-    <>
-      {/* Background decoration for page variant */}
-      {variant === 'page' && (
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="bg-primary/5 absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl" />
-          <div className="bg-destructive/5 absolute top-1/2 -right-24 h-64 w-64 rounded-full blur-3xl" />
-        </div>
-      )}
+  const isPage = variant === 'page';
+  const isCard = variant === 'card';
+  const isInline = variant === 'inline';
 
+  const footer = isPage && (
+    <div className="text-muted-foreground/30 absolute bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 text-xs font-medium tracking-widest uppercase">
+      <Bug size={12} />
+      Error ID: {errorId}
+    </div>
+  );
+
+  const backgrounds = isPage && (
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="bg-primary/5 absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl" />
+      <div className="bg-destructive/10 absolute top-1/2 -right-24 h-64 w-64 rounded-full blur-3xl" />
+    </div>
+  );
+
+  const mainContent = (
+    <div className={`flex flex-col items-center justify-center ${isInline ? 'flex-row' : ''}`}>
       {/* Icon Section */}
       <div
-        className={`mb-6 flex items-center justify-center rounded-3xl ${
-          variant === 'inline'
-            ? 'mr-3 mb-0 bg-transparent'
-            : 'h-20 w-20 bg-current/10 ring-1 ring-current/20'
+        className={`flex items-center justify-center rounded-3xl ${
+          isInline ? 'mr-3 bg-transparent' : 'mb-6 h-20 w-20 bg-current/10 ring-1 ring-current/20'
         }`}
       >
-        <Icon size={variant === 'inline' ? 24 : 40} strokeWidth={1.5} />
+        <Icon size={isInline ? 24 : 40} strokeWidth={1.5} />
       </div>
 
-      {/* Content Section */}
-      <div className={variant === 'inline' ? 'flex-1' : ''}>
+      {/* Text Section */}
+      <div className={isInline ? 'flex-1 text-left' : 'text-center'}>
         {title && (
           <h2
             className={`text-foreground font-bold tracking-tight ${
-              variant === 'page' ? 'mb-4 text-3xl md:text-4xl' : 'mb-1 text-xl'
+              isPage ? 'mb-4 text-3xl md:text-4xl' : 'mb-1 text-xl'
             }`}
           >
             {title}
@@ -146,8 +154,8 @@ export default function ErrorDisplay({
         )}
         <p
           className={`text-muted-foreground max-w-lg leading-relaxed ${
-            variant === 'page' ? 'text-lg md:text-xl' : 'text-sm'
-          } ${variant === 'page' ? 'mx-auto' : ''}`}
+            isPage ? 'text-lg md:text-xl' : 'text-sm'
+          } ${isPage ? 'mx-auto' : ''}`}
         >
           {message}
         </p>
@@ -183,7 +191,7 @@ export default function ErrorDisplay({
         {(showBackButton || showRefreshButton || showReportButton || actions) && (
           <div
             className={`flex flex-wrap items-center gap-3 ${
-              variant === 'inline' ? 'mt-4' : 'mt-8 justify-center'
+              isInline ? 'mt-4' : 'mt-8 justify-center'
             }`}
           >
             {showBackButton && (
@@ -216,13 +224,7 @@ export default function ErrorDisplay({
         )}
       </div>
 
-      {variant === 'page' && (
-        <div className="text-muted-foreground/30 absolute bottom-12 flex items-center gap-2 text-xs font-medium tracking-widest uppercase">
-          <Bug size={12} />
-          Error Code: {errorId}
-        </div>
-      )}
-    </>
+    </div>
   );
 
   return (
@@ -232,13 +234,38 @@ export default function ErrorDisplay({
       exit={{ opacity: 0, y: -10 }}
       className={errorDisplayVariants({ variant, severity, className })}
     >
-      {variant === 'card' ? (
-        <ElectricBorder color={severityColor} borderRadius={24} chaos={0.1} speed={0.8}>
-          <div className="flex flex-col items-center justify-center p-8">{content}</div>
-        </ElectricBorder>
-      ) : (
-        content
-      )}
+      {backgrounds}
+
+      {(() => {
+        if (isPage) {
+          return (
+            <div className="flex w-full max-w-2xl flex-col items-center justify-center">
+              <ElectricBorder color={severityColor} borderRadius={48} chaos={0.05} speed={0.4}>
+                <Card
+                  variant="borderless"
+                  bodyClassName="p-12 md:p-20 bg-background/50 backdrop-blur-xl"
+                >
+                  {mainContent}
+                </Card>
+              </ElectricBorder>
+            </div>
+          );
+        }
+
+        if (isCard) {
+          return (
+            <ElectricBorder color={severityColor} borderRadius={24} chaos={0.1} speed={0.8}>
+              <div className="bg-background flex flex-col items-center justify-center p-8">
+                {mainContent}
+              </div>
+            </ElectricBorder>
+          );
+        }
+
+        return mainContent;
+      })()}
+
+      {footer}
     </motion.div>
   );
 }

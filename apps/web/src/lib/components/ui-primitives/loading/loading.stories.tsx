@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import LoadingSpinner from './loading-spinner';
 
-const meta: Meta = {
-  title: 'Primitives/Loading',
+const meta: Meta<typeof LoadingSpinner> = {
+  title: 'Primitives/LoadingSpinner',
   component: LoadingSpinner,
   parameters: {
     layout: 'centered',
@@ -11,26 +11,18 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: StoryObj<typeof LoadingSpinner> = {
-  render: () => <LoadingSpinner />,
-};
-
-export const Small: StoryObj<typeof LoadingSpinner> = {
-  render: () => <LoadingSpinner size="sm" />,
-};
-
-export const Large: StoryObj<typeof LoadingSpinner> = {
-  render: () => <LoadingSpinner size="lg" />,
-};
-
-export const WithText: StoryObj<typeof LoadingSpinner> = {
-  render: () => <LoadingSpinner text="Loading Data..." />,
-};
-
-export const FullScreen: StoryObj<typeof LoadingSpinner> = {
+export const Showcase: StoryObj<typeof LoadingSpinner> = {
   render: () => (
-    <div className="relative h-[300px] rounded border">
-      <LoadingSpinner variant="screen" text="Full Screen Loader" className="min-h-full" />
+    <div className="flex flex-col items-center gap-8">
+      <div className="flex items-center gap-4">
+        <LoadingSpinner size="sm" />
+        <LoadingSpinner size="md" />
+        <LoadingSpinner size="lg" />
+      </div>
+      <LoadingSpinner text="Loading your data..." />
+      <div className="relative flex h-[200px] w-[300px] items-center justify-center overflow-hidden rounded-xl border border-dashed">
+        <LoadingSpinner variant="screen" text="Full Screen Variant" />
+      </div>
     </div>
   ),
 };

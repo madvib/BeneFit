@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Alert from './alert';
-import { CheckCircle } from 'lucide-react';
 
 const meta: Meta<typeof Alert> = {
   title: 'Primitives/Alert',
@@ -13,29 +12,35 @@ const meta: Meta<typeof Alert> = {
 export default meta;
 type Story = StoryObj<typeof Alert>;
 
-export const Default: Story = {
-  args: {
-    title: 'Information',
-    description: 'This is a standard alert message.',
-    type: 'info',
-  },
-};
-
-export const Error: Story = {
-  args: {
-    title: 'Error',
-    description: 'Something went wrong! Please try again.',
-    type: 'error',
-  },
-};
-
-export const Success: Story = {
+export const Showcase: Story = {
   render: () => (
-    <div className="flex gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-green-700 dark:text-green-400">
-      <CheckCircle className="h-5 w-5" />
-      <div>
-        <h5 className="font-medium">Success (Custom)</h5>
-        <p className="text-sm">Action completed successfully.</p>
+    <div className="flex w-[500px] flex-col gap-6 p-8">
+      <Alert
+        title="Information"
+        description="Your sync will resume automatically once the connection is stable."
+        type="info"
+      />
+      <Alert
+        title="Sync Successful"
+        description="All your latest activities have been pulled from Garmin Connect."
+        type="success"
+      />
+      <Alert
+        title="Connection Warning"
+        description="Your Strava token is expiring soon. Please re-authenticate."
+        type="warning"
+      />
+      <Alert
+        title="API Error"
+        description="We couldn't reach the coaching engine. Using cached insights."
+        type="error"
+      />
+
+      <div className="bg-muted/10 space-y-4 rounded-2xl border border-dashed p-6">
+        <h4 className="text-muted-foreground text-xs font-bold tracking-widest uppercase">
+          In-Context Usage
+        </h4>
+        <Alert title="Account Verified" type="success" onClose={() => console.log('closed')} />
       </div>
     </div>
   ),

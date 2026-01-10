@@ -7,7 +7,7 @@ interface MetricPillProps {
   variant?: 'default' | 'accent';
 }
 
-export function MetricPill({
+export default function MetricPill({
   value,
   unit,
   icon: Icon,

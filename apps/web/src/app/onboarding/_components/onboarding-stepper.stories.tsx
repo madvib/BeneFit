@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import OnboardingStepper from './_components/onboarding-stepper';
+import OnboardingStepper from './onboarding-stepper';
 import { Aurora, PageContainer } from '@/lib/components';
 
 const meta: Meta<typeof OnboardingStepper> = {

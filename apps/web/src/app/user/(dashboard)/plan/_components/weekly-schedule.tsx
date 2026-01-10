@@ -148,7 +148,8 @@ export default function WeeklySchedule({
               <ProgressBar
                 value={weeklyWorkouts.filter((w) => w.status === 'completed').length}
                 max={weeklyWorkouts.length || 1}
-                className="h-2"
+                size="sm"
+                barVariant="default"
               />
             </div>
           </div>

@@ -113,7 +113,7 @@ export default function OnboardingStepper() {
     <form.AppForm>
       <Card
         variant="default"
-        className="h-full rounded-none border-none shadow-none sm:h-auto sm:rounded-3xl sm:border sm:shadow-2xl"
+        className="bg-card/80 h-full rounded-none border-none shadow-none backdrop-blur-xl sm:h-auto sm:rounded-3xl sm:border sm:shadow-2xl"
         bodyClassName="p-0 h-full"
       >
         <Stepper

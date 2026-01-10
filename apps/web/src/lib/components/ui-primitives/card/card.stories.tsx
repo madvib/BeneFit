@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Card } from './card';
-import SpotlightCard from './spotlight-card';
-import ImageCard from './image-card';
 import { Trophy } from 'lucide-react';
-import { Button } from '../buttons/button';
+import Button from '../buttons/button';
+import ImageCard from './image-card';
+import SpotlightCard from './spotlight-card';
+import Card from './card';
 
 const meta: Meta<typeof Card> = {
   title: 'Primitives/Card',

@@ -23,6 +23,7 @@ export { default as FormSuccessMessage } from './form/form-success-message';
 // Alerts & Feedback
 export { default as Alert } from './alert/alert';
 export { default as Badge } from './badges/badge';
+export { default as MetricPill } from './badges/metric-pill';
 export { default as LoadingSpinner } from './loading/loading-spinner';
 export { default as Skeleton } from './loading/skeleton';
 export { default as ProgressBar } from './progress-bar/progress-bar';

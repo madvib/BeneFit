@@ -11,6 +11,7 @@ import {
   Button,
   Badge,
   DashboardShell,
+  ProgressBar,
 } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
@@ -203,12 +204,13 @@ export default function ActivityFeedPage() {
                 <span className="text-foreground font-medium">{item.label}</span>
                 <span className="text-muted-foreground">{item.value}%</span>
               </div>
-              <div className="bg-accent h-2 w-full overflow-hidden rounded-full">
-                <div
-                  className={`h-full rounded-full ${item.color}`}
-                  style={{ width: `${item.value}%` }}
-                />
-              </div>
+              <ProgressBar
+                value={item.value}
+                max={100}
+                size="sm"
+                className="mt-1"
+                barVariant={item.label === 'Running' ? 'default' : 'solid'}
+              />
             </div>
           ))}
         </div>
