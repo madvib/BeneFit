@@ -12,34 +12,23 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, ElectricBorder, Card } from '@/lib/components/ui-primitives';
+import { Button, Typography } from '@/lib/components/ui-primitives';
 
-const errorDisplayVariants = cva(
-  'relative flex flex-col items-center justify-center overflow-hidden transition-all duration-300',
-  {
-    variants: {
-      variant: {
-        page: 'min-h-[calc(100dvh-var(--header-height))] w-full p-6 text-center lg:p-12',
-        card: 'bg-background relative w-full rounded-3xl p-8 text-center',
-        inline:
-          'bg-destructive/5 border-destructive/10 w-full rounded-2xl border p-4 text-left items-start justify-start',
-      },
-      severity: {
-        error: 'text-destructive',
-        warning: 'text-yellow-600 dark:text-yellow-500',
-        info: 'text-blue-600 dark:text-blue-400',
-      },
-    },
-    defaultVariants: {
-      variant: 'page',
-      severity: 'error',
-    },
-  },
-);
+export const getSeverityColor = (severity?: string | null): string => {
+  switch (severity) {
+    case 'warning':
+      return '#f59e0b';
+    case 'info':
+      return '#3b82f6';
+    default:
+      return '#ef4444';
+  }
+};
 
-interface ErrorDisplayProps extends VariantProps<typeof errorDisplayVariants> {
+export interface ErrorDisplayProps {
+  severity?: 'error' | 'warning' | 'info' | null;
+  variant?: 'page' | 'card' | 'inline' | null;
   title?: string;
   message: string;
   error?: Error | string;
@@ -49,13 +38,13 @@ interface ErrorDisplayProps extends VariantProps<typeof errorDisplayVariants> {
   onReportClick?: () => void;
   onRefresh?: () => void;
   backHref?: string;
-  className?: string;
   actions?: React.ReactNode;
+  className?: string;
 }
 
-export default function ErrorDisplay({
-  variant,
-  severity,
+export function ErrorDisplay({
+  severity = 'error',
+  variant = 'page',
   title,
   message,
   error,
@@ -65,8 +54,8 @@ export default function ErrorDisplay({
   onReportClick,
   onRefresh,
   backHref,
-  className,
   actions,
+  className,
 }: ErrorDisplayProps) {
   const router = useRouter();
   const [showTechnicalDetails, setShowTechnicalDetails] = React.useState(false);
@@ -87,8 +76,6 @@ export default function ErrorDisplay({
     }
   }, [backHref, router]);
 
-  const errorId = React.useId();
-
   // Determine icon based on severity
   const Icon = React.useMemo(() => {
     if (severity === 'warning') return ShieldAlert;
@@ -101,37 +88,13 @@ export default function ErrorDisplay({
     return typeof error === 'string' ? error : error.stack || error.message;
   }, [error]);
 
-  const severityColor = React.useMemo(() => {
-    switch (severity) {
-      case 'warning':
-        return '#f59e0b';
-      case 'info':
-        return '#3b82f6';
-      default:
-        return '#ef4444';
-    }
-  }, [severity]);
-
   const isPage = variant === 'page';
-  const isCard = variant === 'card';
   const isInline = variant === 'inline';
 
-  const footer = isPage && (
-    <div className="text-muted-foreground/30 absolute bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 text-xs font-medium tracking-widest uppercase">
-      <Bug size={12} />
-      Error ID: {errorId}
-    </div>
-  );
-
-  const backgrounds = isPage && (
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div className="bg-primary/5 absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl" />
-      <div className="bg-destructive/10 absolute top-1/2 -right-24 h-64 w-64 rounded-full blur-3xl" />
-    </div>
-  );
-
-  const mainContent = (
-    <div className={`flex flex-col items-center justify-center ${isInline ? 'flex-row' : ''}`}>
+  return (
+    <div
+      className={`flex flex-col items-center justify-center ${isInline ? 'flex-row' : ''} ${className ?? ''}`}
+    >
       {/* Icon Section */}
       <div
         className={`flex items-center justify-center rounded-3xl ${
@@ -144,21 +107,23 @@ export default function ErrorDisplay({
       {/* Text Section */}
       <div className={isInline ? 'flex-1 text-left' : 'text-center'}>
         {title && (
-          <h2
-            className={`text-foreground font-bold tracking-tight ${
+          <Typography
+            variant={isPage ? 'h2' : 'h4'}
+            className={`border-none pb-0 font-bold tracking-tight ${
               isPage ? 'mb-4 text-3xl md:text-4xl' : 'mb-1 text-xl'
             }`}
           >
             {title}
-          </h2>
+          </Typography>
         )}
-        <p
-          className={`text-muted-foreground max-w-lg leading-relaxed ${
+        <Typography
+          variant={isPage ? 'lead' : 'muted'}
+          className={`mt-0 max-w-lg leading-relaxed ${
             isPage ? 'text-lg md:text-xl' : 'text-sm'
           } ${isPage ? 'mx-auto' : ''}`}
         >
           {message}
-        </p>
+        </Typography>
 
         {/* Technical Details */}
         {technicalDetails && (
@@ -223,49 +188,8 @@ export default function ErrorDisplay({
           </div>
         )}
       </div>
-
     </div>
   );
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={errorDisplayVariants({ variant, severity, className })}
-    >
-      {backgrounds}
-
-      {(() => {
-        if (isPage) {
-          return (
-            <div className="flex w-full max-w-2xl flex-col items-center justify-center">
-              <ElectricBorder color={severityColor} borderRadius={48} chaos={0.05} speed={0.4}>
-                <Card
-                  variant="borderless"
-                  bodyClassName="p-12 md:p-20 bg-background/50 backdrop-blur-xl"
-                >
-                  {mainContent}
-                </Card>
-              </ElectricBorder>
-            </div>
-          );
-        }
-
-        if (isCard) {
-          return (
-            <ElectricBorder color={severityColor} borderRadius={24} chaos={0.1} speed={0.8}>
-              <div className="bg-background flex flex-col items-center justify-center p-8">
-                {mainContent}
-              </div>
-            </ElectricBorder>
-          );
-        }
-
-        return mainContent;
-      })()}
-
-      {footer}
-    </motion.div>
-  );
 }
+
+export default ErrorDisplay;

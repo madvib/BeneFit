@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingSpinner, ErrorPage, ErrorDisplay } from '@/lib/components';
+import { LoadingSpinner, ErrorPage, InlineError } from '@/lib/components';
 import { integrations } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import ConnectionsView from './connections-view';
@@ -65,8 +65,7 @@ export default function ConnectionsClient() {
   return (
     <div className="space-y-4">
       {mutationError && (
-        <ErrorDisplay
-          variant="inline"
+        <InlineError
           title="Action Failed"
           message={mutationError.message}
           error={mutationError}

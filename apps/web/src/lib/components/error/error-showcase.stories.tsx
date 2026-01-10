@@ -1,34 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import ErrorDisplay from './error-display';
+import ErrorPage from './page-error';
+import ErrorCard from './error-card';
+import InlineError from './inline-error';
 
-const meta: Meta<typeof ErrorDisplay> = {
-  title: 'Components/ErrorDisplay',
-  component: ErrorDisplay,
+const meta: Meta = {
+  title: 'Components/Errors',
   parameters: {
     layout: 'centered',
-  },
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['page', 'card', 'inline'],
-    },
-    severity: {
-      control: 'select',
-      options: ['error', 'warning', 'info'],
-    },
   },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ErrorDisplay>;
-
-export const FullPageError: Story = {
+export const FullPage: StoryObj<typeof ErrorPage> = {
+  render: (args) => <ErrorPage {...args} />,
   parameters: {
     layout: 'fullscreen',
   },
   args: {
-    variant: 'page',
     title: 'Something went wrong',
     message: 'We encountered an unexpected error while processing your request.',
     error: new Error('Stack trace: \n at Page (/app/user/plan/page.tsx:24) \n at ...'),
@@ -38,9 +27,9 @@ export const FullPageError: Story = {
   },
 };
 
-export const CardError: Story = {
+export const Card: StoryObj<typeof ErrorCard> = {
+  render: (args) => <ErrorCard {...args} />,
   args: {
-    variant: 'card',
     title: 'Failed to sync',
     message: 'We could not synchronize your workout data from Apple Health.',
     severity: 'error',
@@ -49,9 +38,9 @@ export const CardError: Story = {
   },
 };
 
-export const InlineError: Story = {
+export const Inline: StoryObj<typeof InlineError> = {
+  render: (args) => <InlineError {...args} />,
   args: {
-    variant: 'inline',
     title: 'Incompatible Goals',
     message:
       'Your muscle gain goal requires more recovery time than your current schedule allows.',
@@ -59,9 +48,12 @@ export const InlineError: Story = {
   },
 };
 
-export const InfoMessage: Story = {
+export const MaintenanceInfo: StoryObj<typeof ErrorPage> = {
+  render: (args) => <ErrorPage {...args} />,
+  parameters: {
+    layout: 'fullscreen',
+  },
   args: {
-    variant: 'page',
     title: 'Under Maintenance',
     message: 'We are currently upgrading our servers to improve your experience. Hang tight!',
     severity: 'info',
@@ -70,9 +62,9 @@ export const InfoMessage: Story = {
   },
 };
 
-export const InlineCritical: Story = {
+export const InlineCritical: StoryObj<typeof InlineError> = {
+  render: (args) => <InlineError {...args} />,
   args: {
-    variant: 'inline',
     message: 'Database connection failed. Some features may be unavailable.',
     severity: 'error',
     showRefreshButton: true,
