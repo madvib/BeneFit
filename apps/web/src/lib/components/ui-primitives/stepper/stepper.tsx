@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LucideIcon } from 'lucide-react';
-import { Modal } from '@/lib/components/ui-primitives';
 
 export interface StepperStep {
   id: string;
@@ -28,10 +27,8 @@ export default function Stepper({
   steps,
   currentStepIndex,
   direction,
-  onClose,
   children,
   footer,
-  size = 'lg',
   showProgress = true,
   variant = 'modal',
 }: StepperProps) {
@@ -58,7 +55,7 @@ export default function Stepper({
     }),
   };
 
-  const content = (
+  return (
     <div
       className={`flex flex-col ${variant === 'inline' ? 'bg-background overflow-hidden rounded-3xl border shadow-xl' : 'min-h-[500px]'}`}
     >
@@ -119,16 +116,5 @@ export default function Stepper({
       {/* Footer Navigation */}
       <div className="bg-muted/10 border-t p-6 sm:p-8">{footer}</div>
     </div>
-  );
-
-  if (variant === 'inline') {
-    return content;
-  }
-
-  return (
-    // not sure about wrapping this in a modal...that is designed for modal routes.
-    <Modal size={size} onClose={onClose || (() => {})}>
-      {content}
-    </Modal>
   );
 }

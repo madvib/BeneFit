@@ -1,6 +1,5 @@
-'use client';
-
-import { FormSection, Checkbox } from '@/lib/components';
+import { FormSection, Switch } from '@/lib/components';
+import Typography from '@/lib/components/ui-primitives/typography/typography';
 
 interface NotificationPreferencesProps {
   emailNotifications: boolean;
@@ -23,42 +22,39 @@ export default function NotificationPreferences({
     <FormSection title="Notification Preferences">
       <div className="space-y-4">
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
-          <div>
-            <p className="font-medium">Email Notifications</p>
-            <p className="text-muted-foreground text-sm">
+          <div className="space-y-0.5">
+            <Typography variant="large" className="text-base font-medium">
+              Email Notifications
+            </Typography>
+            <Typography variant="small" className="text-muted-foreground block">
               Receive email updates about your progress
-            </p>
+            </Typography>
           </div>
-          <Checkbox
-            checked={emailNotifications}
-            onChange={(e) => onEmailNotificationsChange(e.target.checked)}
-          />
+          <Switch checked={emailNotifications} onCheckedChange={onEmailNotificationsChange} />
         </div>
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
-          <div>
-            <p className="font-medium">Push Notifications</p>
-            <p className="text-muted-foreground text-sm">
+          <div className="space-y-0.5">
+            <Typography variant="large" className="text-base font-medium">
+              Push Notifications
+            </Typography>
+            <Typography variant="small" className="text-muted-foreground block">
               Receive push notifications on your devices
-            </p>
+            </Typography>
           </div>
-          <Checkbox
-            checked={pushNotifications}
-            onChange={(e) => onPushNotificationsChange(e.target.checked)}
-          />
+          <Switch checked={pushNotifications} onCheckedChange={onPushNotificationsChange} />
         </div>
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
-          <div>
-            <p className="font-medium">Workout Reminders</p>
-            <p className="text-muted-foreground text-sm">
+          <div className="space-y-0.5">
+            <Typography variant="large" className="text-base font-medium">
+              Workout Reminders
+            </Typography>
+            <Typography variant="small" className="text-muted-foreground block">
               Get reminders to complete your workouts
-            </p>
+            </Typography>
           </div>
-          <Checkbox
-            checked={workoutReminders}
-            onChange={(e) => onWorkoutRemindersChange(e.target.checked)}
-          />
+          <Switch checked={workoutReminders} onCheckedChange={onWorkoutRemindersChange} />
         </div>
       </div>
     </FormSection>

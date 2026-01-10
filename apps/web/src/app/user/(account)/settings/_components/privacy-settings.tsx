@@ -1,6 +1,5 @@
-'use client';
-
-import { FormSection, Select, Checkbox } from '@/lib/components';
+import { FormSection, Select, Switch } from '@/lib/components';
+import Typography from '@/lib/components/ui-primitives/typography/typography';
 
 type ProfileVisibility = 'Public' | 'Private';
 
@@ -21,9 +20,13 @@ export default function PrivacySettings({
     <FormSection title="Privacy Settings">
       <div className="space-y-4">
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
-          <div>
-            <p className="font-medium">Profile Visibility</p>
-            <p className="text-muted-foreground text-sm">Who can see your profile and activity</p>
+          <div className="space-y-0.5">
+            <Typography variant="large" className="text-base font-medium">
+              Profile Visibility
+            </Typography>
+            <Typography variant="small" className="text-muted-foreground block">
+              Who can see your profile and activity
+            </Typography>
           </div>
           <Select
             value={profileVisibility}
@@ -35,14 +38,15 @@ export default function PrivacySettings({
         </div>
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
-          <div>
-            <p className="font-medium">Activity Sharing</p>
-            <p className="text-muted-foreground text-sm">Share activities with friends</p>
+          <div className="space-y-0.5">
+            <Typography variant="large" className="text-base font-medium">
+              Activity Sharing
+            </Typography>
+            <Typography variant="small" className="text-muted-foreground block">
+              Share activities with friends
+            </Typography>
           </div>
-          <Checkbox
-            checked={activitySharing}
-            onChange={(e) => onActivitySharingChange(e.target.checked)}
-          />
+          <Switch checked={activitySharing} onCheckedChange={onActivitySharingChange} />
         </div>
       </div>
     </FormSection>
