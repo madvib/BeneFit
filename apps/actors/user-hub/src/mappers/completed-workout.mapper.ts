@@ -6,6 +6,7 @@ import {
   CompletedWorkout,
   WorkoutPerformance,
   WorkoutVerification,
+  VerificationData,
 } from '@bene/training-core';
 
 // Helper to extract fields from performance for querying/indexing
@@ -70,8 +71,8 @@ export function toDatabase(workout: CompletedWorkout): NewCompletedWorkout {
     caloriesBurned: metrics.caloriesBurned,
 
     // Full workout data as JSON (source of truth)
-    performanceJson: workout.performance as any,
-    verificationJson: workout.verification as any,
+    performanceJson: workout.performance,
+    verificationJson: workout.verification,
 
     // Social
     isPublic: workout.isPublic,
@@ -83,6 +84,16 @@ export function toDatabase(workout: CompletedWorkout): NewCompletedWorkout {
 
 // Database to Domain
 export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
+  const performance = (row.performanceJson as WorkoutPerformance) || {};
+  const verification = (row.verificationJson as WorkoutVerification) || {};
+
+  // Helper to ensure we have a Date object, falling back to recordedAt/completedAt if missing
+  const parseDate = (val: unknown, fallback: Date) => {
+    if (!val) return fallback;
+    const d = new Date(val as string | number | Date);
+    return isNaN(d.getTime()) ? fallback : d;
+  };
+
   return {
     id: row.id,
     userId: row.userId,
@@ -98,10 +109,28 @@ export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
     description: row.description || undefined,
 
     // Performance data (from JSON - source of truth)
-    performance: row.performanceJson as WorkoutPerformance,
+    performance: {
+      ...performance,
+      startedAt: parseDate(performance.startedAt, row.recordedAt),
+      completedAt: parseDate(performance.completedAt, row.completedAt),
+    },
 
     // Verification (from JSON)
-    verification: row.verificationJson as WorkoutVerification,
+    verification: {
+      ...verification,
+      verifiedAt: verification.verifiedAt ? new Date(verification.verifiedAt) : undefined,
+      verifications: (verification.verifications || []).map((v: VerificationData) => ({
+        ...v,
+        data: v.data ? Object.fromEntries(
+          Object.entries(v.data).map(([k, val]) => {
+            if (k.toLowerCase().includes('time') || k.toLowerCase().includes('at') || k === 'timestamp') {
+              return [k, val ? new Date(val as string | number | Date) : val];
+            }
+            return [k, val];
+          })
+        ) : v.data
+      }))
+    },
 
     // Social (reactions loaded separately, not from this row)
     reactions: [],

@@ -13,10 +13,10 @@ export class CompletedWorkoutMapper {
       description: workout.description,
       isPublic: workout.isPublic,
       multiplayerSessionId: workout.multiplayerSessionId,
-      recordedAt: workout.recordedAt.toISOString(),
+      recordedAt: workout.recordedAt?.toISOString() || new Date().toISOString(),
       performance: {
-        startedAt: workout.performance.startedAt.toISOString(),
-        completedAt: workout.performance.completedAt.toISOString(),
+        startedAt: workout.performance.startedAt?.toISOString() || workout.recordedAt?.toISOString() || new Date().toISOString(),
+        completedAt: workout.performance.completedAt?.toISOString() || workout.recordedAt?.toISOString() || new Date().toISOString(),
         durationMinutes: workout.performance.durationMinutes,
         perceivedExertion: workout.performance.perceivedExertion,
         energyLevel: workout.performance.energyLevel,
@@ -63,7 +63,7 @@ export class CompletedWorkoutMapper {
               method: 'gps',
               data: {
                 ...v.data,
-                timestamp: v.data.timestamp.toISOString(),
+                timestamp: v.data.timestamp?.toISOString() || '',
               },
             };
           }
@@ -72,7 +72,7 @@ export class CompletedWorkoutMapper {
               method: 'gym_checkin',
               data: {
                 ...v.data,
-                checkinTime: v.data.checkinTime.toISOString(),
+                checkinTime: v.data.checkinTime?.toISOString() || '',
                 checkoutTime: v.data.checkoutTime?.toISOString(),
               },
             };
@@ -82,7 +82,7 @@ export class CompletedWorkoutMapper {
               method: 'wearable',
               data: {
                 ...v.data,
-                syncedAt: v.data.syncedAt.toISOString(),
+                syncedAt: v.data.syncedAt?.toISOString() || '',
               },
             };
           }
@@ -91,7 +91,7 @@ export class CompletedWorkoutMapper {
               method: 'photo',
               data: {
                 ...v.data,
-                uploadedAt: v.data.uploadedAt.toISOString(),
+                uploadedAt: v.data.uploadedAt?.toISOString() || '',
               },
             };
           }
@@ -100,7 +100,7 @@ export class CompletedWorkoutMapper {
               method: 'witness',
               data: {
                 ...v.data,
-                verifiedAt: v.data.verifiedAt.toISOString(),
+                verifiedAt: v.data.verifiedAt?.toISOString() || '',
               },
             };
           }
@@ -112,7 +112,7 @@ export class CompletedWorkoutMapper {
         userId: r.userId,
         userName: r.userName,
         type: r.type,
-        createdAt: r.createdAt.toISOString(),
+        createdAt: r.createdAt?.toISOString() || new Date().toISOString(),
       })),
     };
   }
