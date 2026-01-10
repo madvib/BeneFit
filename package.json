@@ -49,6 +49,7 @@
     "@nx/vite": "22.3.3",
     "@nx/vitest": "22.3.3",
     "@nx/web": "22.3.3",
+    "@storybook/addon-themes": "^10.1.11",
     "@storybook/nextjs-vite": "^10.1.11",
     "@storybook/react": "10.1.11",
     "@storybook/react-vite": "10.1.11",

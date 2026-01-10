@@ -233,7 +233,7 @@ export default function ErrorDisplay({
       className={errorDisplayVariants({ variant, severity, className })}
     >
       {variant === 'card' ? (
-        <ElectricBorder color={severityColor} borderRadius={24} chaos={0.3} speed={0.8}>
+        <ElectricBorder color={severityColor} borderRadius={24} chaos={0.1} speed={0.8}>
           <div className="flex flex-col items-center justify-center p-8">{content}</div>
         </ElectricBorder>
       ) : (

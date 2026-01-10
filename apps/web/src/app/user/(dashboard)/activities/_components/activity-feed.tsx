@@ -1,6 +1,7 @@
 'use client';
 
 import { Activity, ArrowRight } from 'lucide-react';
+import { Button } from '@/lib/components';
 import { workouts } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import { getActivityColorClass, getActivityIcon } from '../../_shared/activity-styles';
@@ -93,9 +94,13 @@ export default function ActivityFeed() {
           <Activity size={18} className="text-primary" />
           <h3 className="text-lg font-semibold tracking-tight">Recent Activity</h3>
         </div>
-        <button className="text-muted-foreground hover:text-primary flex items-center gap-1 text-xs font-medium transition-colors">
+        <Button
+          variant="link"
+          size="sm"
+          className="text-muted-foreground hover:text-primary flex items-center gap-1 p-0 text-xs font-medium transition-colors"
+        >
           View All <ArrowRight size={12} />
-        </button>
+        </Button>
       </div>
 
       {renderContent()}

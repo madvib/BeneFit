@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { History, ChevronRight, Calendar, Clock, ArrowUpDown } from 'lucide-react';
 import { workouts } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage, Button } from '@/lib/components';
+import { LoadingSpinner, ErrorPage, Button, PageHeader, Badge } from '@/lib/components';
 import WorkoutDetailModal from './_components/history-modal';
 import { ROUTES } from '@/lib/constants';
 import { safeFormatDateTime } from '@/lib/utils/date-format';
@@ -77,16 +77,14 @@ export default function HistoryPage() {
 
   return (
     <div className="p-6 md:p-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Workout History</h1>
-          <p className="text-muted-foreground mt-2">
-            Track your progress and review past performance.
-          </p>
-        </div>
-        <div className="bg-accent/30 text-muted-foreground rounded-lg px-4 py-2 text-sm font-medium">
+      <div className="mb-2 flex items-start justify-between">
+        <PageHeader
+          title="Workout History"
+          description="Track your progress and review past performance."
+        />
+        <Badge variant="accent" className="translate-y-1 transform rounded-lg px-4 py-2 text-sm">
           {workoutHistory.length} Total Sessions
-        </div>
+        </Badge>
       </div>
 
       <div className="rounded-xl border shadow-sm">
@@ -136,9 +134,9 @@ export default function HistoryPage() {
                     </div>
                   </td>
                   <td className="hidden p-4 align-middle md:table-cell [&:has([role=checkbox])]:pr-0">
-                    <span className="focus:ring-ring bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold capitalize transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none">
+                    <Badge variant="secondary" className="capitalize">
                       {workout.type}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
                     <ChevronRight size={16} className="text-muted-foreground ml-auto" />

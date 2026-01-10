@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { withThemeByClassName } from '@storybook/addon-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../src/lib/components/theme/theme-provider';
 import { UIProvider } from '../src/lib/providers/ui-context';
@@ -33,6 +34,13 @@ const preview: Preview = {
     },
   },
   decorators: [
+    withThemeByClassName({
+      themes: {
+        light: '',
+        dark: 'dark',
+      },
+      defaultTheme: 'light',
+    }),
     (Story) => (
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <UIProvider>

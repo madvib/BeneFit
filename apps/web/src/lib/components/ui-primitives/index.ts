@@ -29,7 +29,8 @@ export { default as ProgressBar } from './progress-bar/progress-bar';
 
 // Layout & Structure
 export { default as Spacer } from './spacer/spacer';
-export { default as PageContainer } from '../layout/page-container';
+export { default as PageContainer } from './layout/page-container';
+
 export { default as Footer } from './footer/footer';
 
 // Icons & Visual Elements
@@ -37,6 +38,7 @@ export { default as Aurora } from './backgrounds/aurora';
 export { ShinyText } from './text/shiny-text';
 export { default as CountUp } from './text/count-up';
 export { default as LogoLoop } from './icons/logo-loop';
+export { IconBox } from './icons/icon-box';
 export * from './icons/service-logos';
 
 // Interactive Elements
@@ -48,3 +50,7 @@ export * from './header';
 
 // Multi-step Flows
 export * from './stepper/stepper';
+
+// Typography
+export * from './typography/page-header';
+export * from './typography/section-header';

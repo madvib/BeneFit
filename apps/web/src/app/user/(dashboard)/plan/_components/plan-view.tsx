@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Target,
 } from 'lucide-react';
+import { PageContainer, Button } from '@/lib/components';
 
 // --- Types (Inlined for self-containment) ---
 export interface PlanData {
@@ -40,11 +41,7 @@ interface PlanViewProps {
   onEditPlan: (_id: string) => void;
 }
 
-export default function PlanView({
-  currentPlan,
-  weeklyWorkouts,
-  onEditPlan,
-}: PlanViewProps) {
+export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: PlanViewProps) {
   if (!currentPlan) {
     return (
       <div className="text-muted-foreground bg-accent/20 border-muted flex h-64 flex-col items-center justify-center rounded-xl border border-dashed">
@@ -55,7 +52,7 @@ export default function PlanView({
   }
 
   return (
-    <div className="text-foreground mx-auto max-w-7xl space-y-8 p-4 font-sans md:p-6">
+    <PageContainer className="max-w-7xl space-y-8">
       {/* Main Plan Card */}
       <div className="bg-background border-muted group relative overflow-hidden rounded-xl border shadow-sm">
         {/* Header Accent Line */}
@@ -76,13 +73,15 @@ export default function PlanView({
                 {currentPlan.description}
               </p>
             </div>
-            <button
+            <Button
               onClick={() => onEditPlan(currentPlan.id)}
-              className="text-muted-foreground hover:bg-accent hover:border-muted hover:text-primary rounded-xl border border-transparent p-2.5 transition-colors"
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-primary h-10 w-10 rounded-xl"
               aria-label="Edit Plan"
             >
               <Edit2 size={20} />
-            </button>
+            </Button>
           </div>
 
           {/* Stats Grid */}
@@ -96,9 +95,7 @@ export default function PlanView({
                 <p className="text-muted-foreground mb-0.5 text-xs font-bold tracking-wider uppercase">
                   Difficulty
                 </p>
-                <p className="text-foreground font-semibold">
-                  {currentPlan.difficulty}
-                </p>
+                <p className="text-foreground font-semibold">{currentPlan.difficulty}</p>
               </div>
             </div>
 
@@ -125,9 +122,7 @@ export default function PlanView({
                   <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
                     Plan Progress
                   </p>
-                  <p className="text-sm font-bold tabular-nums">
-                    {currentPlan.progress}%
-                  </p>
+                  <p className="text-sm font-bold tabular-nums">{currentPlan.progress}%</p>
                 </div>
                 <div className="bg-background border-muted/50 h-2.5 w-full overflow-hidden rounded-full border p-[1px]">
                   <div
@@ -140,7 +135,7 @@ export default function PlanView({
           </div>
 
           {/* Bottom Stats Row */}
-          <div className="border-muted/60 grid grid-cols-3 gap-4 border-t pt-6">
+          <div className="border-muted/60 grid grid-cols-1 gap-4 border-t pt-6 md:grid-cols-3">
             <div className="border-muted/60 border-r px-4 text-center last:border-0">
               <div className="text-foreground text-2xl font-bold tabular-nums">18</div>
               <div className="text-muted-foreground mt-1 text-[10px] font-medium tracking-wider uppercase md:text-xs">
@@ -154,9 +149,7 @@ export default function PlanView({
               </div>
             </div>
             <div className="px-4 text-center">
-              <div className="text-muted-foreground text-2xl font-bold tabular-nums">
-                6
-              </div>
+              <div className="text-muted-foreground text-2xl font-bold tabular-nums">6</div>
               <div className="text-muted-foreground mt-1 text-[10px] font-medium tracking-wider uppercase md:text-xs">
                 Remaining
               </div>
@@ -172,7 +165,7 @@ export default function PlanView({
           <h3 className="text-lg font-semibold tracking-tight">Weekly Schedule</h3>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Grid cols={4} gap={4} className="md:grid-cols-2">
           {weeklyWorkouts.map((workout) => (
             <div
               key={workout.id}
@@ -200,9 +193,7 @@ export default function PlanView({
                 <p className="text-primary mb-0.5 text-xs font-bold tracking-wide uppercase">
                   {workout.day}
                 </p>
-                <p className="text-muted-foreground text-sm font-medium">
-                  {workout.date}
-                </p>
+                <p className="text-muted-foreground text-sm font-medium">{workout.date}</p>
               </div>
 
               {/* Exercise Info */}
@@ -233,12 +224,12 @@ export default function PlanView({
               </div>
 
               {/* Action Button */}
-              <button
-                className={`flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  workout.completed
-                    ? 'bg-green-500/5 text-green-600 hover:bg-green-500/15 dark:text-green-400'
-                    : 'bg-primary text-primary-foreground shadow-sm group-hover:-translate-y-px hover:opacity-90 hover:shadow'
-                } `}
+              <Button
+                variant={workout.completed ? 'soft-success' : 'default'}
+                className={`w-full gap-2 rounded-lg py-2.5 font-semibold transition-all duration-200 ${
+                  !workout.completed &&
+                  'group-hover:-translate-y-px hover:opacity-90 hover:shadow'
+                }`}
               >
                 {workout.completed ? (
                   <span>View Details</span>
@@ -248,11 +239,11 @@ export default function PlanView({
                     <span>Start Session</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           ))}
-        </div>
+        </Grid>
       </div>
-    </div>
+    </PageContainer>
   );
 }

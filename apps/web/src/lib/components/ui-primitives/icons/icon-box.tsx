@@ -1,43 +1,26 @@
-import { LucideIcon } from 'lucide-react';
+import React from 'react';
 
 interface IconBoxProps {
-  icon: LucideIcon;
-  variant?: 'blue' | 'green' | 'orange' | 'red' | 'primary' | 'gray';
-  size?: 'sm' | 'md';
+  children: React.ReactNode;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'ghost';
 }
 
-export function IconBox({ icon: Icon, variant = 'primary', size = 'md' }: IconBoxProps) {
-  let variantClasses = '';
-  switch (variant) {
-    case 'blue':
-      variantClasses = 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-      break;
-    case 'green':
-      variantClasses = 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
-      break;
-    case 'orange':
-      variantClasses = 'bg-orange-500/10 text-orange-600 border-orange-500/20';
-      break;
-    case 'red':
-      variantClasses = 'bg-red-500/10 text-red-600 border-red-500/20';
-      break;
-    case 'primary':
-      variantClasses = 'bg-primary/10 text-primary border-primary/20';
-      break;
-    case 'gray':
-      variantClasses = 'bg-muted text-muted-foreground border-transparent';
-      break;
-    default:
-      variantClasses = 'bg-primary/10 text-primary border-primary/20';
-  }
+export function IconBox({ children, className, size = 'md', variant = 'primary' }: IconBoxProps) {
+  let sizeClass = 'h-16 w-16 text-3xl'; // md
+  if (size === 'sm') sizeClass = 'h-10 w-10 text-xl';
+  if (size === 'lg') sizeClass = 'h-20 w-20 text-4xl';
 
-  const sizeClasses = size === 'sm' ? 'h-8 w-8 p-1.5' : 'h-10 w-10 p-2';
+  let variantClass = 'bg-primary text-primary-foreground'; // primary
+  if (variant === 'secondary') variantClass = 'bg-secondary text-secondary-foreground';
+  if (variant === 'ghost') variantClass = 'bg-transparent text-primary';
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-lg border ${variantClasses} ${sizeClasses}`}
+      className={`mx-auto flex items-center justify-center rounded-full ${sizeClass} ${variantClass} ${className ?? ''}`}
     >
-      <Icon className="h-full w-full" />
+      {children}
     </div>
   );
 }

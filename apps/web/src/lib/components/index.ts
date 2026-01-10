@@ -4,10 +4,6 @@ export * from './ui-primitives';
 // Auth Components
 export * from './auth';
 
-// Layout Components
-export * from './layout';
-export { default as Footer } from './ui-primitives/footer/footer';
-
 // App Forms
 export * from './app-form';
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Sparkles, Clock, Users, Star, ArrowRight, LayoutTemplate } from 'lucide-react';
-import { Card } from '@/lib/components';
+import { Card, Button } from '@/lib/components';
 
 export interface PlanSuggestionItem {
   id: string;
@@ -27,7 +27,13 @@ export default function PlanSuggestions({ suggestions, onSelectPlan }: PlanSugge
       className="border-border/50 bg-card h-full shadow-sm"
       headerClassName="border-b border-border/50"
       headerAction={
-        <button className="text-primary text-xs font-bold hover:underline">View All</button>
+        <Button
+          variant="link"
+          size="sm"
+          className="text-primary p-0 text-xs font-bold hover:underline"
+        >
+          View All
+        </Button>
       }
     >
       <div className="space-y-4">
@@ -64,12 +70,14 @@ export default function PlanSuggestions({ suggestions, onSelectPlan }: PlanSugge
                 </span>
               </div>
 
-              <button
+              <Button
+                variant="link"
                 onClick={() => onSelectPlan(plan.id)}
-                className="text-primary hover:text-primary/80 flex items-center gap-1 text-xs font-bold transition-colors"
+                className="text-primary hover:text-primary/80 flex items-center gap-1 p-0 text-xs font-bold transition-colors"
+                size="sm"
               >
                 View Plan <ArrowRight size={12} />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

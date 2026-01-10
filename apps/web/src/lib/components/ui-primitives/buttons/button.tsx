@@ -6,11 +6,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        soft: 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground shadow-sm',
+        surface: 'bg-background text-primary hover:bg-background/90 shadow-sm',
+        success: 'bg-green-500 text-white hover:bg-green-600 shadow-sm',
+        'soft-success':
+          'bg-green-500/10 text-green-600 hover:bg-green-500/20 dark:text-green-400',
+        glass:
+          'border border-primary-foreground/30 bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground backdrop-blur-sm shadow-sm',
         default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        dashed:
+          'border border-dashed border-border bg-transparent hover:border-primary/50 hover:bg-accent/5 hover:text-primary',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         gradient:

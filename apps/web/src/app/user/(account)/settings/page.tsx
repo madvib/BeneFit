@@ -1,14 +1,14 @@
 'use client';
 
 import { profile, authClient } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
-import { PageHeader } from '../_shared/page-header';
+import { LoadingSpinner, ErrorPage, PageHeader } from '@/lib/components';
 import {
   PrivacySettings,
   FitnessPreferences,
   AccountSettingsForm,
   NotificationPreferences,
 } from './_components';
+import { SectionHeader } from '@/lib/components';
 import { FitnessGoalsForm } from './_components/fitness-goals-form';
 import { TrainingConstraintsForm } from './_components/training-constraints-form';
 import { ROUTES } from '@/lib/constants';
@@ -83,7 +83,7 @@ function SettingsContent({
       />
 
       <section>
-        <h2 className="mb-4 text-xl font-bold">Account & Security</h2>
+        <SectionHeader title="Account & Security" className="mb-4" />
         <div className="space-y-4">
           <AccountSettingsForm
             initialName={userProfile.displayName}
@@ -107,7 +107,7 @@ function SettingsContent({
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold">Preferences</h2>
+        <SectionHeader title="Preferences" className="mb-4" />
         <div className="space-y-4">
           <NotificationPreferences
             emailNotifications={true} // TODO: Add to schema
@@ -141,7 +141,7 @@ function SettingsContent({
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold">Training Profile</h2>
+        <SectionHeader title="Training Profile" className="mb-4" />
         <div className="space-y-4">
           <FitnessGoalsForm
             initialPrimary={userProfile.preferences?.fitnessGoals?.primary || 'strength'}

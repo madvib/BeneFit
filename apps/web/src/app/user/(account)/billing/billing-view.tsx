@@ -1,8 +1,7 @@
 'use client';
 
 import { CreditCard, Check, Sparkles } from 'lucide-react';
-import { PageHeader } from '../_shared/page-header';
-import { Card, Button } from '@/lib/components';
+import { Card, Button, PageHeader, SectionHeader } from '@/lib/components';
 
 export default function BillingView() {
   return (
@@ -53,12 +52,14 @@ export default function BillingView() {
 
       {/* Payment Methods */}
       <Card className="p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Payment Methods</h3>
-          <Button variant="outline" size="sm">
-            Add Method
-          </Button>
-        </div>
+        <SectionHeader
+          title="Payment Methods"
+          action={
+            <Button variant="outline" size="sm">
+              Add Method
+            </Button>
+          }
+        />
 
         <div className="bg-muted/50 rounded-lg border p-4">
           <div className="flex flex-wrap items-start justify-between gap-4 sm:flex-nowrap sm:items-center">
@@ -80,7 +81,7 @@ export default function BillingView() {
 
       {/* Billing History */}
       <Card className="p-6">
-        <h3 className="mb-4 text-xl font-semibold">Billing History</h3>
+        <SectionHeader title="Billing History" />
         <div className="bg-muted/30 text-muted-foreground rounded-lg py-12 text-center">
           No billing history available
         </div>

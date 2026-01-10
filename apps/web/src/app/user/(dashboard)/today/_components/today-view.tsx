@@ -1,7 +1,7 @@
 'use client';
 
 import { Clock, Dumbbell, Play, SkipForward } from 'lucide-react';
-import { Card, Button, LoadingSpinner, ErrorPage } from '@/lib/components';
+import { Card, Button, LoadingSpinner, ErrorPage, PageHeader } from '@/lib/components';
 import { workouts } from '@bene/react-api-client';
 import SkipWorkoutModal from './skip-workout-modal';
 import { useState } from 'react';
@@ -53,10 +53,10 @@ export default function TodayView({
   return (
     <>
       <div className="container mx-auto p-6">
-        <div className="mb-8">
-          <h1 className="text-foreground text-3xl font-bold">Today&apos;s Workout</h1>
-          <p className="text-muted-foreground">Complete your planned workout to stay on track</p>
-        </div>
+        <PageHeader
+          title="Today's Workout"
+          description="Complete your planned workout to stay on track"
+        />
 
         {todaysWorkout ? (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

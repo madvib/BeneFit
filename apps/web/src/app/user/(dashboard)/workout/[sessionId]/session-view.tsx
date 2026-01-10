@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Card } from '@/lib/components';
+import { Button, Card, PageHeader } from '@/lib/components';
 import { ChevronLeft, Square, CheckSquare, Timer } from 'lucide-react';
 
 interface Activity {
@@ -59,10 +59,10 @@ export default function SessionView({ workout, onComplete, onBack }: SessionView
         </div>
       </div>
 
-      <div className="mb-6">
-        <h1 className="mb-2 text-2xl font-bold">{workout.type} Session</h1>
-        <p className="text-muted-foreground">{workout.activities?.length} activities planned</p>
-      </div>
+      <PageHeader
+        title={`${workout.type} Session`}
+        description={`${workout.activities?.length} activities planned`}
+      />
 
       {/* Activities List */}
       <div className="mb-8 flex-1 space-y-4">

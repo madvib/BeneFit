@@ -17,7 +17,7 @@
   --accent-foreground: #212529;
   --ring: #86b7fe;
   --error: #bf1616;
-  --error: #bf1616;
+  --destructive: #bf1616;
   /* Brand gradient: blue to purple (Light Theme - slightly brighter) */
   --gradient-start: #2563eb;
   --gradient-middle: #4f46e5;
@@ -38,7 +38,7 @@
   --accent-foreground: #f9fafb;
   --ring: #6366f1;
   --error: #bf1616;
-  --error: #bf1616;
+  --destructive: #bf1616;
   /* Brand gradient: blue to purple (Dark Theme - neon/vibrant) */
   --gradient-start: #2563eb;
   --gradient-middle: #4f46e5;

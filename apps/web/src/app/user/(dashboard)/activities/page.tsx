@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Heart, MessageCircle, Filter, TrendingUp, Activity, Calendar } from 'lucide-react';
 import { workouts, profile } from '@bene/react-api-client';
-import { Card, LoadingSpinner, ErrorPage } from '@/lib/components';
+import { Card, LoadingSpinner, ErrorPage, PageHeader, Button } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 
@@ -71,9 +71,7 @@ export default function ActivityFeedPage() {
         {/* Main Feed Area */}
         <div className="lg:col-span-8">
           {/* Header */}
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-foreground text-2xl font-bold">My Activity</h1>
-          </div>
+          <PageHeader title="My Activity" />
 
           {/* Feed List */}
           <div className="space-y-3">
@@ -120,12 +118,20 @@ export default function ActivityFeedPage() {
 
                   {/* Actions */}
                   <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button className="text-muted-foreground rounded-full p-2 hover:bg-red-500/10 hover:text-red-500">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground h-8 w-8 rounded-full hover:bg-red-500/10 hover:text-red-500"
+                    >
                       <Heart size={16} />
-                    </button>
-                    <button className="text-muted-foreground rounded-full p-2 hover:bg-blue-500/10 hover:text-blue-500">
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground h-8 w-8 rounded-full hover:bg-blue-500/10 hover:text-blue-500"
+                    >
                       <MessageCircle size={16} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </Card>
@@ -139,12 +145,13 @@ export default function ActivityFeedPage() {
             )}
 
             {filteredItems.length > visibleCount && (
-              <button
+              <Button
                 onClick={() => setVisibleCount((prev) => prev + 5)}
-                className="border-border text-muted-foreground hover:border-primary/50 hover:bg-accent/5 hover:text-primary w-full rounded-xl border border-dashed py-3 text-sm font-medium transition-colors"
+                variant="dashed"
+                className="h-auto w-full rounded-xl py-3 text-sm font-medium"
               >
                 View All Activity
-              </button>
+              </Button>
             )}
           </div>
         </div>

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PageContainer from './page-container';
 import TopTabNavigation from './top-tab-navigation';
-import Footer from '../ui-primitives/footer/footer';
+import Footer from '../footer/footer';
 
 const meta: Meta = {
   title: 'Components/Layout',

@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar, Users, ChevronRight } from 'lucide-react';
-import { Card } from '@/lib/components';
+import { Card, SectionHeader, Button } from '@/lib/components';
 
 export interface Event {
   id: string;
@@ -38,12 +38,20 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
             fitness journey.
           </p>
           <div className="flex flex-wrap gap-4">
-            <button className="bg-background text-primary rounded-full px-6 py-3 font-bold transition-transform hover:scale-105">
+            <Button
+              variant="surface"
+              size="lg"
+              className="rounded-full px-6 py-6 text-base font-bold transition-transform hover:scale-105"
+            >
               Find Events
-            </button>
-            <button className="border-primary-foreground/30 bg-primary-foreground/10 hover:bg-primary-foreground/20 rounded-full border px-6 py-3 font-bold backdrop-blur-sm transition-colors">
+            </Button>
+            <Button
+              variant="glass"
+              size="lg"
+              className="rounded-full px-6 py-6 text-base font-bold transition-colors"
+            >
               Browse Teams
-            </button>
+            </Button>
           </div>
         </div>
         {/* Decorative Background */}
@@ -53,12 +61,14 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
 
       {/* Upcoming Events */}
       <section className="mb-12">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-foreground text-2xl font-bold">Upcoming Events</h2>
-          <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline">
-            View all <ChevronRight size={16} />
-          </button>
-        </div>
+        <SectionHeader
+          title="Upcoming Events"
+          action={
+            <Button variant="link" className="p-0 text-sm" onClick={() => {}}>
+              View all <ChevronRight size={16} />
+            </Button>
+          }
+        />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
             <Card
@@ -89,12 +99,14 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
 
       {/* Featured Teams */}
       <section>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-foreground text-2xl font-bold">Featured Teams</h2>
-          <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline">
-            View all <ChevronRight size={16} />
-          </button>
-        </div>
+        <SectionHeader
+          title="Featured Teams"
+          action={
+            <Button variant="link" className="p-0 text-sm" onClick={() => {}}>
+              View all <ChevronRight size={16} />
+            </Button>
+          }
+        />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {featuredTeams.map((team) => (
             <Card
@@ -110,19 +122,22 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
                 <Users size={14} />
                 <span>{team.members} members</span>
               </div>
-              <button className="bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground mt-4 w-full rounded-xl py-2 text-sm font-bold transition-colors">
+              <Button variant="soft" className="mt-4 w-full rounded-xl font-bold">
                 Join Team
-              </button>
+              </Button>
             </Card>
           ))}
           {/* Create Team Card */}
-          <button className="border-border bg-accent/5 hover:border-primary/50 hover:bg-accent/10 flex flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center transition-all">
+          <Button
+            variant="dashed"
+            className="flex h-full w-full flex-col items-center justify-center rounded-xl p-6 text-center transition-all"
+          >
             <div className="bg-background mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow-sm">
               <Users size={32} className="text-primary" />
             </div>
             <h3 className="text-foreground text-lg font-bold">Create a Team</h3>
             <p className="text-muted-foreground text-sm">Start your own community</p>
-          </button>
+          </Button>
         </div>
       </section>
     </div>
