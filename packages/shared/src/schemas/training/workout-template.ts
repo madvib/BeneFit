@@ -34,6 +34,7 @@ export const WorkoutTemplateSchema = z.object({
   dayOfWeek: z.number(),
   scheduledDate: z.string(), // ISO date string
   title: z.string(),
+  description: z.string().optional(),
   type: WorkoutTypeSchema,
   category: WorkoutCategorySchema,
   goals: WorkoutGoalsSchema,

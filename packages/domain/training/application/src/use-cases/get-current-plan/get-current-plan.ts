@@ -65,6 +65,7 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
         return {
           id: w.id,
           type: w.type, // Already a string from WorkoutType
+          description: w.description,
           dayOfWeek: w.dayOfWeek || 0,
           status: w.status, // Already matches WorkoutStatus enum
           durationMinutes: duration,

@@ -45,6 +45,7 @@ export const UpcomingWorkoutSchema = z.object({
 export const WorkoutSummarySchema = z.object({
   id: z.string(),
   type: z.string(),
+  description: z.string().optional(),
   dayOfWeek: z.number(),
   status: z.enum(['scheduled', 'in_progress', 'completed', 'skipped', 'rescheduled']),
   durationMinutes: z.number().optional(),

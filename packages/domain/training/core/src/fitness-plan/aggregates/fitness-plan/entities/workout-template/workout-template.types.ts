@@ -23,6 +23,7 @@ export interface WorkoutTemplateData {
   dayOfWeek: number;
   scheduledDate: string;
   title: string;
+  description?: string;
   type: WorkoutType;
   category: WorkoutCategory;
   goals: WorkoutGoals;

@@ -137,7 +137,7 @@ export default function TodayView({
                   {todaysWorkout.type || 'Training Session'}
                 </Typography>
                 <Typography variant="lead" className="text-muted-foreground max-w-xl text-lg">
-                  {todaysWorkout.description ||
+                  {todaysWorkout?.description ||
                     'Focus on form and intensity. Your personalized plan is ready.'}
                 </Typography>
               </div>

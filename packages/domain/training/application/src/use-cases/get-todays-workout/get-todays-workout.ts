@@ -88,6 +88,7 @@ export class GetTodaysWorkoutUseCase extends BaseUseCase<
         workoutId: todaysWorkout.id,
         planId: plan.id,
         type: todaysWorkout.type,
+        description: todaysWorkout.description,
         durationMinutes: totalDuration,
         activities,
       },

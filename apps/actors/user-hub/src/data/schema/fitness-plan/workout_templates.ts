@@ -10,33 +10,34 @@ export const workoutTemplates = sqliteTable(
     weekNumber: integer('week_number').notNull(),
     dayOfWeek: integer('day_of_week').notNull(), // 0-6 (Sunday-Saturday)
     scheduledDate: text('scheduled_date').notNull(), // ISO date string
-    
+
     // Workout details
     title: text('title').notNull(),
+    description: text('description'),
     type: text('type').notNull(), // 'running' | 'cycling' | 'strength' | 'rest' | 'custom'
     category: text('category').notNull(), // 'cardio' | 'strength' | 'recovery'
-    
+
     // Status and importance
     status: text('status').notNull(), // 'scheduled' | 'in_progress' | 'completed' | 'skipped' | 'rescheduled'
     importance: text('importance').notNull(), // 'optional' | 'recommended' | 'key' | 'critical'
-    
+
     // Workout structure
     goalsJson: text('goals_json', { mode: 'json' }), // WorkoutGoals
     activitiesJson: text('activities_json', { mode: 'json' }).notNull(), // WorkoutActivity[]
     alternativesJson: text('alternatives_json', { mode: 'json' }), // WorkoutAlternative[]
-    
+
     // Completion and rescheduling
     completedWorkoutId: text('completed_workout_id'), // FK to completed_workouts
     rescheduledTo: text('rescheduled_to'), // ISO date string
-    
+
     // Notes
     userNotes: text('user_notes'),
     coachNotes: text('coach_notes'),
 
     createdAt: integer('created_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`),
+      sql`(unixepoch())`),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`),
+      sql`(unixepoch())`),
   },
   (table) => [
     index('workout_templates_plan_id_idx').on(table.planId),
