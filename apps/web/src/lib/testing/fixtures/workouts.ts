@@ -6,6 +6,7 @@ import type {
   WorkoutTemplate,
   CompletedWorkout,
   WorkoutSession,
+  DailyWorkout,
 } from '@bene/shared';
 
 export const mockWorkoutTemplate: WorkoutTemplate = {
@@ -207,6 +208,131 @@ export const mockWorkoutSession: WorkoutSession = {
   },
 };
 
+export const mockPushIntensitySession: WorkoutSession = {
+  id: 'session-123',
+  workoutType: 'Push Intensity',
+  state: 'in_progress',
+  currentActivityIndex: 0,
+  completedActivities: [],
+  totalPausedSeconds: 0,
+  configuration: {
+    isMultiplayer: false,
+    isPublic: false,
+    maxParticipants: 1,
+    allowSpectators: false,
+    enableChat: false,
+    enableVoiceAnnouncements: true,
+    showOtherParticipantsProgress: false,
+    autoAdvanceActivities: false,
+  },
+  participants: [],
+  activityFeed: [],
+  activities: [
+    {
+      name: 'Dynamic Warmup',
+      type: 'warmup',
+      order: 0,
+      duration: 10,
+      instructions: ['Focus on shoulder mobility and light chest activation.'],
+      structure: {
+        exercises: [
+          {
+            name: 'Shoulder Dislocates',
+            sets: 2,
+            reps: 15,
+            rest: 30,
+            notes: 'Use a resistance band or PVC pipe.',
+          },
+          { name: 'Pushups', sets: 2, reps: 10, rest: 60, notes: 'Slow and controlled' },
+        ],
+      },
+    },
+    {
+      name: 'Main Strength',
+      type: 'main',
+      order: 1,
+      duration: 35,
+      instructions: ['Execute compound movements with explosive intent.'],
+      structure: {
+        exercises: [
+          {
+            name: 'Bench Press',
+            sets: 4,
+            reps: 8,
+            weight: 80,
+            rest: 90,
+            notes: 'Focus on leg drive',
+          },
+          { name: 'Overhead Press', sets: 3, reps: 10, weight: 45, rest: 90 },
+        ],
+      },
+    },
+    {
+      name: 'Cooldown',
+      type: 'cooldown',
+      order: 2,
+      duration: 10,
+      instructions: ['Static stretching and parasympathetic breathing.'],
+      structure: {
+        exercises: [{ name: 'Pec Stretch', sets: 2, reps: '30s', rest: 15 }],
+      },
+    },
+  ],
+};
+
+export const mockDetailedWorkoutSession: WorkoutSession = {
+  id: 'session-123',
+  workoutType: 'Hypertrophy Upper',
+  state: 'in_progress',
+  currentActivityIndex: 0,
+  completedActivities: [],
+  totalPausedSeconds: 0,
+  configuration: {
+    isPublic: false,
+    isMultiplayer: false,
+    maxParticipants: 1,
+    allowSpectators: false,
+    enableChat: false,
+    enableVoiceAnnouncements: true,
+    showOtherParticipantsProgress: false,
+    autoAdvanceActivities: true,
+  },
+  participants: [],
+  activityFeed: [],
+  activities: [
+    {
+      name: 'Dynamic Warmup',
+      type: 'warmup',
+      order: 0,
+      duration: 10,
+      instructions: ['Increase heart rate and mobilize joints.'],
+      structure: {
+        exercises: [{ name: 'Band Pullaparts', sets: 2, reps: 20, rest: 30 }],
+      },
+    },
+    {
+      name: 'Primary Lifts',
+      type: 'main',
+      order: 1,
+      duration: 45,
+      instructions: ['Focus on contraction and tempo.'],
+      structure: {
+        exercises: [
+          {
+            name: 'Incline Bench Press',
+            sets: 3,
+            reps: 10,
+            weight: 60,
+            rest: 90,
+            notes: '3-0-1-0 tempo',
+          },
+          { name: 'Pullups', sets: 3, reps: 'To Failure', rest: 120 },
+        ],
+      },
+    },
+  ],
+};
+
 export const mockAbandonedSession: WorkoutSession = {
   id: 'session-2',
   workoutType: 'HIIT Blast',
@@ -244,7 +370,43 @@ export const mockWorkoutHistory: workouts.GetWorkoutHistoryResponse = {
         enjoyment: 9,
         energyLevel: 'high',
         difficultyRating: 'just_right',
-        activities: [],
+        caloriesBurned: 450,
+        heartRate: {
+          average: 145,
+          max: 178,
+          zones: { '1': 300, '2': 1200, '3': 1800, '4': 600, '5': 100 },
+        },
+        notes: 'Felt strong today, increased weight on bench press.',
+        activities: [
+          {
+            activityType: 'warmup',
+            completed: true,
+            durationMinutes: 10,
+            notes: 'Dynamic stretching',
+            exercises: [],
+          },
+          {
+            activityType: 'main',
+            completed: true,
+            durationMinutes: 45,
+            exercises: [
+              {
+                name: 'Barbell Bench Press',
+                setsCompleted: 4,
+                setsPlanned: 4,
+                reps: [10, 10, 8, 8],
+                weight: [60, 60, 65, 65],
+              },
+              {
+                name: 'Incline Dumbbell Fly',
+                setsCompleted: 3,
+                setsPlanned: 3,
+                reps: [12, 12, 12],
+                weight: [16, 16, 16],
+              },
+            ],
+          },
+        ],
       },
       verification: {
         verified: true,
@@ -266,7 +428,20 @@ export const mockWorkoutHistory: workouts.GetWorkoutHistoryResponse = {
         enjoyment: 6,
         energyLevel: 'medium',
         difficultyRating: 'too_hard',
-        activities: [],
+        caloriesBurned: 320,
+        heartRate: {
+          average: 155,
+          max: 180,
+        },
+        activities: [
+          {
+            activityType: 'main',
+            completed: true,
+            durationMinutes: 30,
+            exercises: [],
+            notes: 'Steady state run',
+          }
+        ],
       },
       verification: {
         verified: false,
@@ -279,4 +454,28 @@ export const mockWorkoutHistory: workouts.GetWorkoutHistoryResponse = {
     },
   ],
   total: 2,
+};
+
+export const mockDailyWorkout: DailyWorkout = {
+  workoutId: 'workout-1',
+  planId: 'plan-123',
+  type: 'Upper Body Strength',
+  durationMinutes: 45,
+  activities: [
+    {
+      type: 'warmup',
+      instructions: 'Dynamic stretching and light cardio.',
+      durationMinutes: 10,
+    },
+    {
+      type: 'main',
+      instructions: 'Focus on Barbell Bench Press and Dumbbell Rows.',
+      durationMinutes: 30,
+    },
+    {
+      type: 'cooldown',
+      instructions: 'Static stretching and breathing exercises.',
+      durationMinutes: 5,
+    },
+  ],
 };

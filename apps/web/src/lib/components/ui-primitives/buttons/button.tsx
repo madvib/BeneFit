@@ -16,6 +16,10 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
+        'outline-destructive':
+          'border border-error/30 bg-background text-error hover:bg-error/10 hover:border-error/50',
+        error: 'bg-error text-primary-foreground hover:bg-error/90 shadow-sm',
+        'soft-error': 'bg-error/10 text-error hover:bg-error/20 dark:text-error/40',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         dashed:

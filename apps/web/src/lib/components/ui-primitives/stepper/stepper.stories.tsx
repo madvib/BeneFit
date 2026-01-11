@@ -27,44 +27,43 @@ const meta: Meta<typeof Stepper> = {
     const currentStep = args.steps[currentStepIndex];
 
     return (
-      <div className="bg-card w-[600px] overflow-hidden rounded-3xl border shadow-2xl">
-        <Stepper
-          {...args}
-          currentStepIndex={currentStepIndex}
-          direction={direction}
-          footer={
-            <div className="flex w-full justify-between gap-4">
-              <Button
-                variant="ghost"
-                className="rounded-xl px-8"
-                onClick={handleBack}
-                disabled={currentStepIndex === 0}
-              >
-                Back
-              </Button>
-              <Button
-                className="shadow-primary/20 rounded-xl px-12 font-bold shadow-lg"
-                onClick={handleNext}
-                disabled={currentStepIndex === args.steps.length - 1}
-              >
-                {currentStepIndex === args.steps.length - 1 ? 'Finish' : 'Continue'}
-              </Button>
-            </div>
-          }
-        >
-          <div className="border-primary/20 bg-primary/5 flex min-h-[300px] flex-col items-center justify-center space-y-4 rounded-2xl border-2 border-dashed p-12 text-center">
-            <div className="bg-primary/10 text-primary flex h-20 w-20 items-center justify-center rounded-2xl">
-              {currentStep?.icon ? <currentStep.icon size={40} /> : <Target size={40} />}
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">{currentStep?.title || 'Step Content'}</h3>
-              <p className="text-muted-foreground max-w-xs">
-                {currentStep?.description || 'This description comes from the step metadata.'}
-              </p>
-            </div>
+      <Stepper
+        {...args}
+        currentStepIndex={currentStepIndex}
+        direction={direction}
+        className="w-[600px]"
+        footer={
+          <div className="flex w-full justify-between gap-4">
+            <Button
+              variant="ghost"
+              className="rounded-xl px-8"
+              onClick={handleBack}
+              disabled={currentStepIndex === 0}
+            >
+              Back
+            </Button>
+            <Button
+              className="shadow-primary/20 rounded-xl px-12 font-bold shadow-lg"
+              onClick={handleNext}
+              disabled={currentStepIndex === args.steps.length - 1}
+            >
+              {currentStepIndex === args.steps.length - 1 ? 'Finish' : 'Continue'}
+            </Button>
           </div>
-        </Stepper>
-      </div>
+        }
+      >
+        <div className="border-primary/20 bg-primary/5 flex min-h-[300px] flex-col items-center justify-center space-y-4 rounded-2xl border-2 border-dashed p-12 text-center">
+          <div className="bg-primary/10 text-primary flex h-20 w-20 items-center justify-center rounded-2xl">
+            {currentStep?.icon ? <currentStep.icon size={40} /> : <Target size={40} />}
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">{currentStep?.title || 'Step Content'}</h3>
+            <p className="text-muted-foreground max-w-xs">
+              {currentStep?.description || 'This description comes from the step metadata.'}
+            </p>
+          </div>
+        </div>
+      </Stepper>
     );
   },
 };

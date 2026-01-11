@@ -3,7 +3,7 @@
 import { integrations } from '@bene/react-api-client';
 import { OAuthButton } from '@/lib/components/auth/oauth-button';
 import { ServiceCard } from './_components';
-import { PageHeader, Grid } from '@/lib/components';
+import { PageHeader } from '@/lib/components';
 
 // Available services that can be connected
 // Exported for stories if needed, or kept internal

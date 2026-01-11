@@ -1,4 +1,13 @@
-import { Activity, CheckCircle2, Dumbbell, Flame, Medal, Salad } from 'lucide-react';
+import {
+  Activity,
+  CheckCircle2,
+  Dumbbell,
+  Flame,
+  Medal,
+  Salad,
+  Zap,
+  TrendingUp,
+} from 'lucide-react';
 
 export const getActivityIcon = (type: string) => {
   switch (type) {
@@ -12,6 +21,12 @@ export const getActivityIcon = (type: string) => {
       return <Medal size={18} className="text-purple-600" />;
     case 'nutrition':
       return <Salad size={18} className="text-yellow-600" />;
+    case 'warmup':
+      return <TrendingUp size={16} className="text-emerald-500" />;
+    case 'main':
+      return <Dumbbell size={16} className="text-primary" />;
+    case 'cooldown':
+      return <Zap size={16} className="text-orange-500" />;
     default:
       return <Activity size={18} className="text-primary" />;
   }

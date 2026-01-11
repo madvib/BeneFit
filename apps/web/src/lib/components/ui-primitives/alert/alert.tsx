@@ -1,55 +1,76 @@
-'use client';
+import { AlertTriangle, Bug, Check, Info, X, LucideIcon } from 'lucide-react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Typography } from '@/lib/components';
 
-import { AlertTriangle, Bug, Check, Info, X } from 'lucide-react';
+const alertVariants = cva('relative w-full rounded-2xl border p-4 shadow-sm transition-all', {
+  variants: {
+    variant: {
+      info: 'bg-info/10 border-info/20 text-info dark:bg-info/20 dark:border-info/30',
+      success:
+        'bg-success/10 border-success/20 text-success dark:bg-success/20 dark:border-success/30',
+      warning:
+        'bg-warning/10 border-warning/20 text-warning dark:bg-warning/20 dark:border-warning/30',
+      error: 'bg-error/10 border-error/20 text-error dark:bg-error/20 dark:border-error/30',
+    },
+  },
+  defaultVariants: {
+    variant: 'info',
+  },
+});
 
-interface AlertProperties {
+interface AlertProperties extends VariantProps<typeof alertVariants> {
   title: string;
   description?: string;
-  type?: 'info' | 'success' | 'warning' | 'error';
   onClose?: () => void;
   className?: string;
+  icon?: LucideIcon;
 }
 
 export default function Alert({
   title,
   description,
-  type = 'info',
+  variant = 'info',
   onClose,
   className = '',
+  icon: CustomIcon,
 }: AlertProperties) {
-  const typeStyles = {
-    info: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200',
-    success:
-      'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200',
-    warning:
-      'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200',
-    error:
-      'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200',
-  };
-
-  const iconPaths = {
-    info: <Info />,
-    success: <Check />,
-    warning: <AlertTriangle />,
-    error: <Bug />,
-  };
+  const Icon =
+    CustomIcon ||
+    {
+      info: Info,
+      success: Check,
+      warning: AlertTriangle,
+      error: Bug,
+    }[variant ?? 'info'];
 
   return (
-    <div
-      role="alert"
-      className={`rounded-lg border p-4 ${typeStyles[type satisfies keyof typeof typeStyles]} ${className}`}
-    >
-      <div className="flex items-start">
-        <div className="mr-3 shrink-0">
-          {iconPaths[type satisfies keyof typeof iconPaths]}
-        </div>
+    <div role="alert" className={alertVariants({ variant, className })}>
+      <div className="flex items-start gap-3">
+        {Icon && (
+          <div className="shrink-0 pt-0.5">
+            <Icon size={18} />
+          </div>
+        )}
         <div className="flex-1">
-          <h4 className="font-medium">{title}</h4>
-          {description && <p className="mt-1 text-sm">{description}</p>}
+          <Typography variant="h4" className="text-sm leading-tight font-black tracking-tight">
+            {title}
+          </Typography>
+          {description && (
+            <Typography
+              variant="muted"
+              className="mt-1 text-xs leading-relaxed font-medium italic"
+            >
+              {description}
+            </Typography>
+          )}
         </div>
         {onClose && (
-          <button onClick={onClose} className="ml-3 shrink-0" aria-label="Close alert">
-            <X />
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground -mt-1 -mr-1 rounded-full p-1 transition-colors"
+            aria-label="Close alert"
+          >
+            <X size={16} />
           </button>
         )}
       </div>

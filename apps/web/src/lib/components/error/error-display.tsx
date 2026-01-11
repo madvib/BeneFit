@@ -85,8 +85,17 @@ export function ErrorDisplay({
 
   const technicalDetails = React.useMemo(() => {
     if (!error) return null;
+
+    // Environment-aware detail visibility
+    const env = process.env.NEXT_PUBLIC_ENV || 'dev';
+    const canShowDetails = env === 'dev' || env === 'staging';
+
+    if (!canShowDetails && variant !== 'inline') {
+      return null;
+    }
+
     return typeof error === 'string' ? error : error.stack || error.message;
-  }, [error]);
+  }, [error, variant]);
 
   const isPage = variant === 'page';
   const isInline = variant === 'inline';
@@ -143,7 +152,7 @@ export function ErrorDisplay({
                   exit={{ height: 0, opacity: 0 }}
                   className="mt-2 overflow-hidden"
                 >
-                  <pre className="bg-muted text-muted-foreground max-h-48 overflow-auto rounded-xl p-4 font-mono text-[10px] leading-tight">
+                  <pre className="bg-muted text-muted-foreground max-h-48 overflow-auto rounded-xl p-4 font-mono text-[10px] leading-tight break-all whitespace-pre-wrap">
                     {technicalDetails}
                   </pre>
                 </motion.div>

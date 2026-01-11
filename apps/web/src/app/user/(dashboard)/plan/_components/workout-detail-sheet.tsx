@@ -1,9 +1,20 @@
 'use client';
 
-import { CheckCircle2, Clock, Dumbbell, Target, AlertCircle, Lightbulb, X } from 'lucide-react';
+import { useEscapeKey } from '@/lib/hooks/use-escape-key';
+import {
+  CheckCircle2,
+  Dumbbell,
+  Target,
+  AlertCircle,
+  Lightbulb,
+  X,
+  Zap,
+  ChevronRight,
+  Info,
+  Layers,
+} from 'lucide-react';
 import type { WorkoutTemplate } from '@bene/shared';
-import { Badge } from '@/lib/components/ui-primitives/badges/badge';
-import { Card } from '@/lib/components/ui-primitives/card/card';
+import { Badge, Typography, Card } from '@/lib/components';
 
 interface WorkoutDetailSheetProps {
   workout: WorkoutTemplate;
@@ -18,168 +29,319 @@ const importanceConfig = {
   critical: { variant: 'error' as const, label: 'Critical' },
 };
 
-const categoryIcons = {
-  cardio: Clock,
-  strength: Dumbbell,
-  recovery: Target,
-};
-
 export function WorkoutDetailSheet({ workout, open, onOpenChange }: WorkoutDetailSheetProps) {
+  // Close on Escape key
+  useEscapeKey(() => onOpenChange(false), open);
+
   if (!open) return null;
 
   const importanceStyle = importanceConfig[workout.importance];
-  const CategoryIcon = categoryIcons[workout.category];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-background relative m-4 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg shadow-xl">
+    <div
+      className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm duration-300"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onOpenChange(false);
+      }}
+    >
+      <div className="bg-background ring-border/50 animate-in zoom-in-95 relative m-4 flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-2xl ring-1 duration-300">
         {/* Header */}
-        <div className="bg-background border-muted sticky top-0 z-10 flex items-start justify-between gap-4 border-b px-6 py-4">
+        <div className="bg-background border-border/50 sticky top-0 z-10 flex items-center justify-between gap-4 border-b px-6 py-5 sm:px-8">
           <div className="flex-1">
-            <h2 className="text-2xl font-bold">{workout.title}</h2>
-            <p className="text-muted-foreground mt-1 text-sm">
-              {workout.type} • Day {workout.dayOfWeek + 1}
-            </p>
+            <Typography
+              variant="h2"
+              className="mb-1 text-2xl leading-none font-black tracking-tighter capitalize italic"
+            >
+              {workout.title}
+            </Typography>
+            <div className="flex items-center gap-2">
+              <Typography
+                variant="muted"
+                className="text-xs font-black tracking-widest uppercase"
+              >
+                {workout.type} • Day {workout.dayOfWeek + 1}
+              </Typography>
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Badge variant={importanceStyle.variant}>{importanceStyle.label}</Badge>
-            <Badge variant="outline" icon={CategoryIcon}>
-              {workout.category}
-            </Badge>
+          <div className="flex items-center gap-2">
+            <div className="hidden flex-col items-end gap-1 sm:flex">
+              <Badge
+                variant={importanceStyle.variant}
+                className="py-0.5 font-black tracking-tighter uppercase"
+              >
+                {importanceStyle.label}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-primary/20 text-primary py-0.5 font-black tracking-tighter uppercase"
+              >
+                {workout.category}
+              </Badge>
+            </div>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="bg-muted text-muted-foreground hover:bg-accent hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-90"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            onClick={() => onOpenChange(false)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X className="h-6 w-6" />
-          </button>
         </div>
 
-        {/* Content */}
-        <div className="space-y-6 p-6">
-          {/* Workout Goals */}
+        {/* Content Area */}
+        <div className="no-scrollbar max-h-[75vh] space-y-8 overflow-y-auto p-6 sm:p-8">
+          {/* Workout Goals Summary */}
           {workout.goals && (
-            <Card title="Goals" icon={Target} variant="borderless">
-              <div className="space-y-2">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/20 text-primary rounded-lg p-2">
+                  <Target size={18} />
+                </div>
+                <Typography
+                  variant="h4"
+                  className="text-sm font-black tracking-widest uppercase italic"
+                >
+                  Primary Metrics
+                </Typography>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {workout.goals.volume && (
-                  <div className="bg-muted flex justify-between rounded-md p-3 text-sm">
-                    <span>Volume Target</span>
-                    <span className="font-medium">
-                      {workout.goals.volume.totalSets} sets × {workout.goals.volume.totalReps}{' '}
-                      reps
-                    </span>
-                  </div>
+                  <Card className="flex flex-col justify-between p-4 shadow-sm">
+                    <Typography
+                      variant="muted"
+                      className="mb-2 block text-[10px] font-black tracking-widest uppercase opacity-70"
+                    >
+                      Volume Target
+                    </Typography>
+                    <Typography variant="small" className="text-sm font-black">
+                      {workout.goals.volume.totalSets} Sets <br />{' '}
+                      {workout.goals.volume.totalReps} Reps
+                    </Typography>
+                  </Card>
                 )}
                 {workout.goals.distance && (
-                  <div className="bg-muted flex justify-between rounded-md p-3 text-sm">
-                    <span>Distance</span>
-                    <span className="font-medium">
+                  <Card className="flex flex-col justify-between p-4 shadow-sm">
+                    <Typography
+                      variant="muted"
+                      className="mb-2 block text-[10px] font-black tracking-widest uppercase opacity-70"
+                    >
+                      Distance
+                    </Typography>
+                    <Typography variant="small" className="text-sm font-black">
                       {workout.goals.distance.value} {workout.goals.distance.unit}
-                    </span>
-                  </div>
+                    </Typography>
+                  </Card>
                 )}
                 {workout.goals.duration && (
-                  <div className="bg-muted flex justify-between rounded-md p-3 text-sm">
-                    <span>Duration</span>
-                    <span className="font-medium">{workout.goals.duration.value} min</span>
-                  </div>
+                  <Card className="flex flex-col justify-between p-4 shadow-sm">
+                    <Typography
+                      variant="muted"
+                      className="mb-2 block text-[10px] font-black tracking-widest uppercase opacity-70"
+                    >
+                      Duration
+                    </Typography>
+                    <Typography variant="small" className="text-sm font-black">
+                      {workout.goals.duration.value} min
+                    </Typography>
+                  </Card>
                 )}
               </div>
-            </Card>
+            </div>
           )}
 
-          {/* Activities */}
-          <Card title="Activities" icon={Dumbbell} variant="borderless">
+          {/* Activities List */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/20 text-primary rounded-lg p-2">
+                <Layers size={18} />
+              </div>
+              <Typography
+                variant="h4"
+                className="text-sm font-black tracking-widest uppercase italic"
+              >
+                Workout Structure
+              </Typography>
+            </div>
+
             <div className="space-y-4">
               {workout.activities.map((activity, idx) => (
-                <div key={idx} className="space-y-3 rounded-lg border p-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">{activity.name}</h4>
-                    <Badge variant="outline">{activity.type}</Badge>
+                <Card key={idx} className="border-border/40 overflow-hidden shadow-sm">
+                  <div className="bg-muted/30 border-border/40 flex items-center justify-between border-b px-5 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="text-muted-foreground">
+                        <ChevronRight size={16} />
+                      </div>
+                      <Typography variant="small" className="font-black capitalize">
+                        {activity.name}
+                      </Typography>
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className="bg-background border-border/50 border text-[9px] font-bold tracking-wider uppercase"
+                    >
+                      {activity.type}
+                    </Badge>
                   </div>
 
-                  {/* Exercise Structure */}
-                  {activity.structure?.exercises && (
-                    <div className="space-y-2">
-                      {activity.structure.exercises.map((exercise, exIdx) => (
-                        <div key={exIdx} className="bg-muted rounded-md p-3 text-sm">
-                          <div className="mb-1 font-medium">{exercise.name}</div>
-                          <div className="text-muted-foreground">
-                            {exercise.sets} sets × {exercise.reps} reps
-                            {exercise.weight && ` @ ${exercise.weight}kg`}
-                            {exercise.rest && ` • ${exercise.rest}s rest`}
-                          </div>
-                          {exercise.notes && (
-                            <div className="text-muted-foreground mt-1 text-xs italic">
-                              {exercise.notes}
+                  <div className="space-y-4 p-5">
+                    {/* Exercise Structure */}
+                    {activity.structure?.exercises && (
+                      <div className="space-y-2">
+                        {activity.structure.exercises.map((exercise, exIdx) => (
+                          <div
+                            key={exIdx}
+                            className="bg-background/50 hover:bg-accent/30 border-border/30 rounded-xl border p-3 transition-colors"
+                          >
+                            <div className="mb-2 flex items-start justify-between">
+                              <Typography
+                                variant="small"
+                                className="text-foreground/90 font-bold"
+                              >
+                                {exercise.name}
+                              </Typography>
+                              <div className="text-muted-foreground/50">
+                                <Zap size={14} />
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Instructions */}
-                  {activity.instructions && activity.instructions.length > 0 && (
-                    <div className="space-y-1">
-                      <div className="text-sm font-medium">Instructions:</div>
-                      <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
-                        {activity.instructions.map((instruction, instIdx) => (
-                          <li key={instIdx}>{instruction}</li>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                              <div className="flex min-w-[80px] items-center gap-1.5">
+                                <Dumbbell size={14} className="text-muted-foreground/70" />
+                                <Typography variant="muted" className="text-xs font-medium">
+                                  {exercise.sets} × {exercise.reps}
+                                </Typography>
+                              </div>
+                              {exercise.weight && (
+                                <div className="flex items-center gap-1.5">
+                                  <div className="bg-border h-1 w-1 rounded-full" />
+                                  <Typography variant="muted" className="text-xs font-medium">
+                                    {exercise.weight}kg
+                                  </Typography>
+                                </div>
+                              )}
+                              {exercise.rest && (
+                                <div className="flex items-center gap-1.5">
+                                  <div className="bg-border h-1 w-1 rounded-full" />
+                                  <Typography variant="muted" className="text-xs font-medium">
+                                    {exercise.rest}s
+                                  </Typography>
+                                </div>
+                              )}
+                            </div>
+                            {exercise.notes && (
+                              <div className="text-muted-foreground mt-2 flex items-start gap-2">
+                                <Info size={12} className="mt-0.5 shrink-0 opacity-70" />
+                                <Typography variant="muted" className="text-[10px] italic">
+                                  {exercise.notes}
+                                </Typography>
+                              </div>
+                            )}
+                          </div>
                         ))}
-                      </ol>
-                    </div>
-                  )}
+                      </div>
+                    )}
 
-                  {/* Alternative Exercises */}
-                  {activity.alternativeExercises && activity.alternativeExercises.length > 0 && (
-                    <div className="text-muted-foreground text-xs">
-                      <span className="font-medium">Alternatives:</span>{' '}
-                      {activity.alternativeExercises.join(', ')}
-                    </div>
-                  )}
-                </div>
+                    {/* Instructions */}
+                    {activity.instructions && activity.instructions.length > 0 && (
+                      <div className="bg-accent/10 border-border/30 rounded-xl border p-4">
+                        <Typography
+                          variant="muted"
+                          className="mb-3 block text-[10px] font-black tracking-widest uppercase opacity-60"
+                        >
+                          Coach Methodology
+                        </Typography>
+                        <ul className="space-y-2">
+                          {activity.instructions.map((instruction, instIdx) => (
+                            <li key={instIdx} className="flex gap-3">
+                              <div className="bg-primary/20 text-primary mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold">
+                                {instIdx + 1}
+                              </div>
+                              <Typography variant="muted" className="text-xs leading-relaxed">
+                                {instruction}
+                              </Typography>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </Card>
               ))}
             </div>
-          </Card>
+          </div>
 
           {/* Coach Notes */}
           {workout.coachNotes && (
-            <Card title="Coach Notes" icon={Lightbulb} variant="borderless">
-              <div className="bg-primary/5 border-primary rounded-md border-l-4 p-4">
-                <p className="text-sm leading-relaxed">{workout.coachNotes}</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-600">
+                  <Lightbulb size={18} />
+                </div>
+                <Typography
+                  variant="h4"
+                  className="text-sm font-black tracking-widest uppercase italic"
+                >
+                  Strategic Insights
+                </Typography>
               </div>
-            </Card>
+              <div className="rounded-r-xl border-l-4 border-yellow-500 bg-yellow-500/5 p-5">
+                <Typography
+                  variant="muted"
+                  className="text-foreground/80 text-sm leading-relaxed font-medium italic"
+                >
+                  &ldquo;{workout.coachNotes}&rdquo;
+                </Typography>
+              </div>
+            </div>
           )}
 
           {/* Alternatives */}
           {workout.alternatives && workout.alternatives.length > 0 && (
-            <Card title="Alternative Workouts" icon={AlertCircle} variant="borderless">
-              <div className="space-y-3">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-orange-500/10 p-2 text-orange-600">
+                  <AlertCircle size={18} />
+                </div>
+                <Typography
+                  variant="h4"
+                  className="text-sm font-black tracking-widest uppercase italic"
+                >
+                  Alternative Paths
+                </Typography>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {workout.alternatives.map((alt, idx) => (
-                  <div key={idx} className="rounded-lg border p-4">
-                    <div className="mb-2 text-sm font-medium">{alt.reason}</div>
+                  <Card key={idx} className="border-dashed p-4 shadow-sm">
+                    <Typography variant="small" className="mb-2 block font-black capitalize">
+                      {alt.reason}
+                    </Typography>
                     <div className="space-y-2">
-                      {alt.activities.map((activity, actIdx) => (
-                        <div key={actIdx} className="text-muted-foreground text-sm">
-                          • {activity.name}
+                      {alt.activities.map((act, actIdx) => (
+                        <div key={actIdx} className="flex items-center gap-2">
+                          <div className="bg-primary/40 h-1.5 w-1.5 rounded-full" />
+                          <Typography
+                            variant="muted"
+                            className="truncate text-xs font-bold capitalize"
+                          >
+                            {act.name}
+                          </Typography>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
-            </Card>
-          )}
-
-          {/* Status */}
-          {workout.status === 'completed' && workout.completedWorkoutId && (
-            <div className="flex items-center gap-2 rounded-md bg-green-50 p-4 text-sm text-green-600 dark:bg-green-900/20">
-              <CheckCircle2 className="h-4 w-4" />
-              <span>Workout completed!</span>
             </div>
           )}
         </div>
+
+        {/* Footer */}
+        {workout.status === 'completed' && (
+          <div className="flex items-center justify-center gap-3 bg-emerald-500 p-4 text-white">
+            <CheckCircle2 className="h-5 w-5" />
+            <Typography variant="small" className="font-black tracking-widest uppercase">
+              Workout Perfectly Executed
+            </Typography>
+          </div>
+        )}
       </div>
     </div>
   );

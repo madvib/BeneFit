@@ -1,8 +1,8 @@
 'use client';
 
-import { Button, Card } from '@/lib/components';
+import { Button, Card, Typography, Badge } from '@/lib/components';
 import { CheckInFormSchema } from '@bene/shared';
-import { MessageSquare, X } from 'lucide-react';
+import { MessageSquare, X, Sparkles } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
 
@@ -44,70 +44,102 @@ export default function CheckInModal({
   if (!isOpen || !checkIn) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <Card className="bg-card animate-in fade-in zoom-in w-full max-w-lg shadow-2xl duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md transition-all">
+      <Card className="bg-card animate-in fade-in zoom-in-95 border-border/50 w-full max-w-lg overflow-hidden shadow-2xl duration-300">
         <form.AppForm>
-          <div className="p-6">
-            <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary rounded-lg p-2">
-                  <MessageSquare size={24} />
+          <div className="relative p-0">
+            {/* Header */}
+            <div className="border-border/50 bg-primary/5 flex items-start justify-between border-b p-6">
+              <div className="flex items-center gap-4">
+                <div className="from-primary to-primary/60 text-primary-foreground shadow-primary/20 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg">
+                  <MessageSquare size={24} className="fill-current" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">Coach Check-In</h2>
-                  <p className="text-muted-foreground text-xs tracking-wide uppercase">
-                    {checkIn.triggeredBy
-                      ? `Triggered by ${checkIn.triggeredBy}`
-                      : 'Routine Check-In'}
-                  </p>
+                  <Typography variant="h3" className="text-lg font-bold">
+                    Coach Check-In
+                  </Typography>
+                  <div className="mt-1 flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="border-primary/20 bg-background/50 text-[10px] tracking-wider uppercase"
+                    >
+                      {checkIn.triggeredBy ? (
+                        <>
+                          <Sparkles size={10} className="text-primary mr-1 inline-block" />
+                          {checkIn.triggeredBy}
+                        </>
+                      ) : (
+                        'Routine Check-In'
+                      )}
+                    </Badge>
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => onDismiss(checkIn.id)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:bg-background/80 hover:text-foreground rounded-full p-2 transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="bg-accent/50 border-border mb-6 rounded-xl border p-4">
-              <p className="text-lg leading-relaxed font-medium">{checkIn.question}</p>
-            </div>
-
-            <form.Root>
-              <form.AppField name="response">
-                {(field) => (
-                  <div>
-                    <textarea
-                      className="border-input bg-background focus:ring-primary/20 min-h-[120px] w-full resize-none rounded-xl border p-4 transition-all focus:ring-2"
-                      placeholder="Type your response here..."
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      disabled={isLoading}
-                      autoFocus
-                    />
-                    {field.state.meta.errors ? (
-                      <p className="text-destructive mt-1 text-sm">
-                        {field.state.meta.errors.join(', ')}
-                      </p>
-                    ) : null}
-                  </div>
-                )}
-              </form.AppField>
-
-              <div className="flex justify-end gap-3">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => onDismiss(checkIn.id)}
-                  disabled={isLoading}
+            <div className="p-6 pt-8">
+              {/* Question */}
+              <div className="bg-muted/50 relative mb-8 rounded-2xl p-6">
+                {/* Decorative quote mark */}
+                <div className="text-primary/10 absolute -top-3 -left-2 font-serif text-6xl select-none">
+                  “
+                </div>
+                <Typography
+                  variant="h3"
+                  className="text-foreground/90 relative z-10 text-xl leading-relaxed font-medium italic"
                 >
-                  Remind Me Later
-                </Button>
-                <form.SubmitButton label="Send Response" />
+                  {checkIn.question}
+                </Typography>
               </div>
-            </form.Root>
+
+              <form.Root>
+                <form.AppField name="response">
+                  {(field) => (
+                    <div className="mb-8">
+                      <label className="text-muted-foreground mb-3 block text-xs font-bold tracking-widest uppercase">
+                        Your Response
+                      </label>
+                      <textarea
+                        className="border-input bg-background/50 ring-offset-background placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-primary/20 min-h-[140px] w-full resize-none rounded-xl border p-4 text-base shadow-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Share your thoughts..."
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        disabled={isLoading}
+                        autoFocus
+                      />
+                      {field.state.meta.errors ? (
+                        <p className="text-destructive animate-in slide-in-from-top-1 mt-2 text-sm font-medium">
+                          {field.state.meta.errors.join(', ')}
+                        </p>
+                      ) : null}
+                    </div>
+                  )}
+                </form.AppField>
+
+                <div className="border-border flex items-center justify-end gap-3 border-t pt-6">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="lg"
+                    onClick={() => onDismiss(checkIn.id)}
+                    disabled={isLoading}
+                    className="text-muted-foreground hover:text-foreground font-medium"
+                  >
+                    Remind Me Later
+                  </Button>
+                  <div className="min-w-[140px]">
+                    <form.SubmitButton label="Send Response" />
+                  </div>
+                </div>
+              </form.Root>
+            </div>
           </div>
         </form.AppForm>
       </Card>

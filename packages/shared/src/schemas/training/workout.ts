@@ -7,6 +7,7 @@ export const ActivitySchema = z.object({
   type: z.enum(['warmup', 'main', 'cooldown']),
   instructions: z.string(),
   durationMinutes: z.number(),
+  description: z.string().optional(),
 });
 
 // Schema for completed workouts summary (for lists/history view)
@@ -26,6 +27,7 @@ export const DailyWorkoutSchema = z.object({
   workoutId: z.string(),
   planId: z.string(),
   type: z.string(),
+  description: z.string().optional(),
   durationMinutes: z.number(),
   activities: z.array(ActivitySchema),
 });

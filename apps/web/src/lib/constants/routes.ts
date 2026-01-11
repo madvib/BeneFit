@@ -30,7 +30,6 @@ export const ROUTES = {
     COACH: '/user/coach',
     CONNECTIONS: '/user/connections',
     EXPLORE: '/user/explore',
-    HISTORY: '/user/history',
     NOTIFICATIONS: '/user/notifications',
     PLAN: '/user/plan',
     PROFILE: '/user/profile',

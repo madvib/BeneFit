@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import TodayView from './today-view';
-import SkipWorkoutModal from './skip-workout-modal';
 
 // Mock Data
 const MOCK_WORKOUT_TODAY = {
@@ -81,21 +80,4 @@ export const ErrorState: StoryObj<typeof TodayView> = {
       isSkipping={false}
     />
   ),
-};
-
-// --- Consolidated Sub-Components ---
-
-export const SkipModalOpen: StoryObj<typeof SkipWorkoutModal> = {
-  render: () => {
-    return (
-      <div className="bg-muted/20 relative flex h-[500px] w-full items-center justify-center">
-        <SkipWorkoutModal
-          isOpen={true}
-          onClose={() => {}}
-          onConfirm={(reason) => alert(`Skipping for: ${reason}`)}
-          isLoading={false}
-        />
-      </div>
-    );
-  },
 };

@@ -70,3 +70,29 @@ export const InlineCritical: StoryObj<typeof InlineError> = {
     showRefreshButton: true,
   },
 };
+
+export const OverflowTest: StoryObj<typeof ErrorPage> = {
+  render: (args) => <ErrorPage {...args} />,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  args: {
+    title: 'Extremely Long Error',
+    message: 'This error has a very long stack trace to test the overflow behavior.',
+    error: new Error(
+      'Error: [Bene Architecture Violation] Precision buffer overflow in AI engine.\n' +
+        Array.from({ length: 20 })
+          .fill(0)
+          .map((_, i) => `  at Layer${i} (internal/ai/engine.ts:${100 + i}:14)`)
+          .join('\n') +
+        '\n' +
+        'Caused by: MemoryLeakError: Exhausted available tokens while processing workout protocol.\n' +
+        Array.from({ length: 20 })
+          .fill(0)
+          .map((_, i) => `  at SubModule${i} (internal/memory/allocator.ts:${i * 5}:20)`)
+          .join('\n'),
+    ),
+    showBackButton: true,
+    showRefreshButton: true,
+  },
+};

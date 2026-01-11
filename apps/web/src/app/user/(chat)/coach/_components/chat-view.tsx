@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, Mic } from 'lucide-react';
+import { Paperclip, Send, Sparkles, Wand2 } from 'lucide-react';
 import ChatMessage from './chat-message';
 import type { MessageData } from './types';
+import { Typography, Badge } from '@/lib/components';
 
 interface ChatViewProps {
   messages: MessageData[];
@@ -25,33 +26,75 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
     }
   }, [input]);
 
   const handleSubmit = () => {
     if (input.trim() === '') return;
-
     onSendMessage(input);
     setInput('');
   };
 
   return (
-    <main className="bg-background relative flex min-w-0 flex-1 flex-col">
+    <main className="bg-background relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
+      {/* Background patterns */}
+      <div
+        className="bg-primary/5 pointer-events-none absolute inset-0 opacity-50"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 2px 2px, rgba(var(--primary), 0.1) 1px, transparent 0)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
       {/* Messages List (Scrollable) */}
-      <div className="no-scrollbar flex-1 overflow-y-auto scroll-smooth p-4 md:p-6">
+      <div className="no-scrollbar relative z-0 flex-1 overflow-y-auto scroll-smooth p-4 md:p-8">
         <div className="mx-auto flex max-w-3xl flex-col">
           {messages.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center py-12 text-center">
-              <div className="bg-accent/20 text-muted-foreground mb-6 rounded-full p-6">
-                <Mic size={48} />
+            <div className="flex flex-1 flex-col items-center justify-center py-24 text-center">
+              <div className="relative mb-10">
+                <div className="bg-primary/20 absolute -inset-6 animate-pulse rounded-full opacity-50 blur-3xl" />
+                <div className="from-primary to-primary/60 text-primary-foreground relative rounded-3xl bg-linear-to-br p-8 shadow-2xl transition-transform duration-500 hover:scale-105">
+                  <Sparkles size={48} className="animate-pulse" />
+                </div>
               </div>
-              <h2 className="text-foreground mb-2 text-2xl font-bold">Start a Conversation</h2>
-              <p className="text-muted-foreground mb-8 max-w-md">
-                Your AI coach is here to help you with training advice, motivation, and
-                personalized guidance. Ask anything!
-              </p>
+              <Badge
+                variant="success"
+                className="mb-4 text-[10px] font-black tracking-widest uppercase"
+              >
+                AI Coach Active
+              </Badge>
+              <Typography
+                variant="h1"
+                className="mb-4 text-4xl font-black tracking-tighter italic"
+              >
+                Elite Intelligence
+              </Typography>
+              <Typography
+                variant="muted"
+                className="mb-12 max-w-sm text-sm leading-relaxed font-medium"
+              >
+                Your AI coach is calibrated and ready. Ask for training optimizations, diet
+                protocols, or performance breakdowns.
+              </Typography>
+
+              <div className="grid w-full max-w-lg grid-cols-1 gap-3 sm:grid-cols-2">
+                {[
+                  'How can I improve my squat depth?',
+                  "What's the best protocol for fat loss?",
+                  'Analyze my recent workout volume.',
+                  'Adjust my plan for more recovery.',
+                ].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => setInput(suggestion)}
+                    className="bg-accent/40 hover:bg-accent ring-border/50 rounded-2xl p-4 text-left text-xs font-bold ring-1 transition-all hover:-translate-y-1 active:scale-95"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <>
@@ -60,29 +103,29 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
               ))}
 
               {isTyping && (
-                <div className="flex w-full justify-start py-2">
-                  <div className="bg-muted text-muted-foreground flex max-w-[80%] items-center gap-1 rounded-2xl rounded-tl-sm px-4 py-3 text-sm">
-                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70"></span>
-                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70 delay-150"></span>
-                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current opacity-70 delay-300"></span>
+                <div className="flex w-full justify-start py-4">
+                  <div className="bg-accent/50 text-primary ring-border/50 flex max-w-[80%] items-center gap-1.5 rounded-2xl rounded-tl-none px-5 py-3.5 text-sm ring-1">
+                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current"></span>
+                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current delay-150"></span>
+                    <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current delay-300"></span>
                   </div>
                 </div>
               )}
 
-              <div ref={messagesEndRef} className="h-4" />
+              <div ref={messagesEndRef} className="h-8" />
             </>
           )}
         </div>
       </div>
 
-      {/* Input Area (Fixed at bottom of main column) */}
-      <div className="from-background via-background z-10 shrink-0 bg-linear-to-t to-transparent p-4 pt-0">
+      {/* Input Area (Fixed at bottom) */}
+      <div className="from-background via-background z-10 shrink-0 bg-linear-to-t to-transparent p-6 pt-0">
         <div className="mx-auto max-w-3xl">
           {/* Input Container */}
-          <div className="bg-accent/50 border-muted focus-within:border-ring/50 focus-within:ring-ring/30 relative flex items-end gap-2 rounded-2xl border p-2 shadow-sm transition-all focus-within:ring-1">
+          <div className="bg-background/80 border-border/50 ring-border/20 focus-within:border-primary/50 focus-within:ring-primary/20 relative flex items-end gap-3 rounded-3xl border p-2.5 shadow-2xl ring-1 backdrop-blur-xl transition-all">
             <button
               type="button"
-              className="text-muted-foreground hover:text-primary hover:bg-muted mb-1 self-end rounded-xl p-2 transition-colors"
+              className="bg-accent/50 text-muted-foreground hover:bg-primary/20 hover:text-primary mb-1 self-end rounded-2xl p-2.5 transition-all active:scale-90"
             >
               <Paperclip size={20} />
             </button>
@@ -97,8 +140,8 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
                   handleSubmit();
                 }
               }}
-              placeholder="Message Agent..."
-              className="text-foreground placeholder:text-muted-foreground/70 no-scrollbar max-h-[150px] min-h-11 flex-1 resize-none scroll-py-2 border-none bg-transparent p-3 text-base leading-normal focus:ring-0"
+              placeholder="Message Coach..."
+              className="text-foreground placeholder:text-muted-foreground/50 no-scrollbar max-h-[150px] min-h-12 flex-1 resize-none scroll-py-2 border-none bg-transparent p-3.5 text-base leading-relaxed font-medium focus:ring-0"
               rows={1}
             />
 
@@ -109,20 +152,30 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
                 handleSubmit();
               }}
               disabled={!input.trim()}
-              className={`mb-1 rounded-xl p-2 transition-all duration-200 ${
+              className={`group mb-1 rounded-2xl p-3 transition-all duration-300 ${
                 input.trim()
-                  ? 'bg-primary text-primary-foreground shadow-md hover:scale-105'
+                  ? 'bg-primary text-primary-foreground shadow-[0_4px_15px_-3px_rgba(var(--primary),0.6)] hover:scale-105 active:scale-95'
                   : 'bg-muted text-muted-foreground cursor-not-allowed'
               }`}
             >
-              {input.trim() ? <Send size={18} /> : <Mic size={18} />}
+              {input.trim() ? (
+                <Send
+                  size={20}
+                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              ) : (
+                <Wand2 size={20} />
+              )}
             </button>
           </div>
 
-          <div className="mt-2 text-center">
-            <p className="text-muted-foreground text-[10px]">
+          <div className="mt-4 text-center">
+            <Typography
+              variant="muted"
+              className="text-[10px] font-black tracking-widest uppercase opacity-50"
+            >
               AgentUI can make errors. Consider checking important information.
-            </p>
+            </Typography>
           </div>
         </div>
       </div>

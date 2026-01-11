@@ -41,7 +41,7 @@ export default function TodaysWorkoutPage() {
     }
   };
 
-  const handleSkipWorkout = async (reason: string, _notes?: string) => {
+  const handleSkipWorkout = async (reason: string) => {
     if (todaysWorkout?.workoutId) {
       await skipWorkoutMutation.mutateAsync({
         json: {

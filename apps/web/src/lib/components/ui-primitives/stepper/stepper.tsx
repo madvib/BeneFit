@@ -3,6 +3,9 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LucideIcon } from 'lucide-react';
+import { ProgressBar, Card } from '@/lib/components';
+import { cardVariants } from '../card/card';
+import { VariantProps } from 'class-variance-authority';
 
 export interface StepperStep {
   id: string;
@@ -11,7 +14,7 @@ export interface StepperStep {
   icon: LucideIcon;
 }
 
-interface StepperProps {
+interface StepperProps extends VariantProps<typeof cardVariants> {
   steps: readonly StepperStep[];
   currentStepIndex: number;
   direction: number;
@@ -20,6 +23,7 @@ interface StepperProps {
   footer: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   showProgress?: boolean;
+  className?: string;
 }
 
 export default function Stepper({
@@ -29,6 +33,8 @@ export default function Stepper({
   children,
   footer,
   showProgress = true,
+  variant = 'default',
+  className,
 }: StepperProps) {
   // eslint-disable-next-line security/detect-object-injection
   const currentStep = steps[currentStepIndex];
@@ -54,7 +60,12 @@ export default function Stepper({
   };
 
   return (
-    <div className="flex w-full flex-col overflow-hidden">
+    <Card
+      variant={variant}
+      className={className}
+      bodyClassName="flex flex-col p-0 overflow-hidden"
+      footer={footer}
+    >
       {/* Progress Header */}
       <div className="p-6">
         <div className="mb-6 flex items-center justify-between">
@@ -81,12 +92,12 @@ export default function Stepper({
         </div>
 
         {showProgress && (
-          <div className="bg-secondary/50 ring-primary/5 relative h-2 w-full overflow-hidden rounded-full ring-1">
-            <div
-              className="h-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-500 ease-out"
-              style={{ width: `${(currentStepIndex / (steps.length - 1 || 1)) * 100}%` }}
-            />
-          </div>
+          <ProgressBar
+            value={currentStepIndex}
+            max={steps.length - 1 || 1}
+            size="sm"
+            className="mb-2"
+          />
         )}
       </div>
 
@@ -104,15 +115,12 @@ export default function Stepper({
               x: { type: 'spring', stiffness: 300, damping: 35 },
               opacity: { duration: 0.2 },
             }}
-            className="h-full w-full p-0 sm:p-10"
+            className="h-full w-full p-0 sm:px-10 sm:pb-10"
           >
             <div className="mx-auto h-full max-w-2xl">{children}</div>
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* Footer Navigation */}
-      <div className="p-6">{footer}</div>
-    </div>
+    </Card>
   );
 }

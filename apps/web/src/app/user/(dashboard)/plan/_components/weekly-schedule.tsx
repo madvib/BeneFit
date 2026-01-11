@@ -9,8 +9,9 @@ import {
   Zap,
   PlayCircle,
   CheckCircle2,
+  Lock,
 } from 'lucide-react';
-import { Card, ProgressBar } from '@/lib/components';
+import { Card, ProgressBar, Typography, Badge, Button } from '@/lib/components';
 
 // Extract plan type from API response
 type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
@@ -30,7 +31,6 @@ export default function WeeklySchedule({
   onWeekChange,
   onWorkoutClick,
 }: WeeklyScheduleProps) {
-  // Get workouts for the SELECTED week, fallback to empty
   const weekData = plan.weeks.find((w) => w.weekNumber === selectedWeek);
   const weeklyWorkouts = weekData?.workouts || [];
 
@@ -42,108 +42,92 @@ export default function WeeklySchedule({
     if (selectedWeek < plan.durationWeeks) onWeekChange(selectedWeek + 1);
   };
 
-  const getStatusClasses = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'border-primary/20 bg-primary/5';
-      case 'skipped':
-        return 'border-muted bg-muted/20 opacity-75';
-      default:
-        return 'border-border bg-card hover:border-primary/30';
-    }
-  };
-
-  const getStatusTextClass = (status: string) => {
-    switch (status) {
-      case 'completed':
-      case 'skipped':
-        return 'text-muted-foreground';
-      default:
-        return 'text-primary';
-    }
-  };
-
-  const getButtonClass = (status: string) => {
-    if (status === 'completed' || status === 'skipped') {
-      return 'bg-background text-muted-foreground hover:bg-accent hover:text-foreground';
-    }
-    return 'bg-primary text-primary-foreground hover:bg-primary/90';
-  };
-
-  const getButtonText = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'View Results';
-      case 'skipped':
-        return 'View Details';
-      default:
-        return 'Start Workout';
-    }
-  };
-
   return (
-    <Card
-      title="Weekly Schedule"
-      icon={Calendar}
-      className="border-border/50 bg-card h-full shadow-sm"
-      headerClassName="border-b border-border/50"
-      headerAction={
-        <div className="flex items-center gap-2">
-          <button
+    <Card className="flex h-full flex-col border-none bg-transparent shadow-none">
+      <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/20 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
+            <Calendar size={20} />
+          </div>
+          <div>
+            <Typography variant="h3" className="font-black tracking-tighter uppercase italic">
+              Training Schedule
+            </Typography>
+            <Typography
+              variant="muted"
+              className="text-[10px] font-black tracking-widest uppercase"
+            >
+              Weekly Overview
+            </Typography>
+          </div>
+        </div>
+
+        {/* Week Navigator */}
+        <div className="bg-accent/40 ring-border/50 flex items-center gap-2 rounded-2xl p-1.5 ring-1">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handlePrevWeek}
             disabled={selectedWeek === 1}
-            className="text-muted-foreground hover:bg-accent hover:text-foreground rounded-full p-1.5 transition-colors disabled:opacity-30"
+            className="h-8 w-8 rounded-xl p-0 transition-all disabled:opacity-20"
           >
-            <ChevronLeft size={18} />
-          </button>
-          <span className="text-foreground min-w-[100px] text-center text-sm font-medium">
+            <ChevronLeft size={16} />
+          </Button>
+          <Typography variant="small" className="min-w-[100px] text-center font-black">
             Week {selectedWeek} of {plan.durationWeeks}
-          </span>
-          <button
+          </Typography>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleNextWeek}
             disabled={selectedWeek === plan.durationWeeks}
-            className="text-muted-foreground hover:bg-accent hover:text-foreground rounded-full p-1.5 transition-colors disabled:opacity-30"
+            className="h-8 w-8 rounded-xl p-0 transition-all disabled:opacity-20"
           >
-            <ChevronRight size={18} />
-          </button>
+            <ChevronRight size={16} />
+          </Button>
         </div>
-      }
-    >
-      <div className="space-y-6">
-        {/* Weekly Header & Stats */}
+      </div>
+
+      <div className="space-y-8">
         {/* Weekly Header & Stats */}
         {weekData && (
-          <div className="bg-muted/30 grid grid-cols-1 gap-4 rounded-xl p-4 sm:grid-cols-3">
-            {/* Week Information */}
+          <div className="from-accent/30 to-accent/10 border-border/50 grid grid-cols-1 gap-6 rounded-3xl border bg-linear-to-r p-6 sm:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                Schedule
-              </span>
-              <span className="text-foreground font-semibold">Week {selectedWeek}</span>
+              <Typography
+                variant="muted"
+                className="text-[10px] font-black tracking-widest uppercase"
+              >
+                Focus Phase
+              </Typography>
+              <Typography variant="small" className="font-black italic">
+                Strength & Power Building
+              </Typography>
             </div>
 
-            {/* Workout Count */}
             <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                Workouts
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="text-foreground font-medium">
-                  {weeklyWorkouts.length} Sessions
-                </span>
-              </div>
+              <Typography
+                variant="muted"
+                className="text-[10px] font-black tracking-widest uppercase"
+              >
+                Commitment
+              </Typography>
+              <Typography variant="small" className="font-black">
+                {weeklyWorkouts.length} Sessions Planned
+              </Typography>
             </div>
 
-            {/* Progress - Calculated */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-                  Progress
-                </span>
-                <span className="text-muted-foreground text-xs">
+                <Typography
+                  variant="muted"
+                  className="text-[10px] font-black tracking-widest uppercase"
+                >
+                  Week Progress
+                </Typography>
+                <Typography variant="small" className="text-primary font-black italic">
                   {weeklyWorkouts.filter((w) => w.status === 'completed').length} /{' '}
-                  {weeklyWorkouts.length} workouts
-                </span>
+                  {weeklyWorkouts.length}
+                </Typography>
               </div>
               <ProgressBar
                 value={weeklyWorkouts.filter((w) => w.status === 'completed').length}
@@ -156,10 +140,12 @@ export default function WeeklySchedule({
         )}
 
         {/* Workouts Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {weeklyWorkouts.length === 0 && (
-            <div className="text-muted-foreground col-span-full py-8 text-center text-sm">
-              No workouts scheduled for this week.
+            <div className="bg-accent/20 border-border/50 col-span-full rounded-2xl border border-dashed py-12 text-center">
+              <Typography variant="muted" className="italic">
+                No sessions drafted for this week yet.
+              </Typography>
             </div>
           )}
 
@@ -168,62 +154,98 @@ export default function WeeklySchedule({
             const isSkipped = workout.status === 'skipped';
             const dayName = DAYS[workout.dayOfWeek] || 'Day';
 
+            let cardStyles = 'bg-card hover:border-primary/40';
+            if (isCompleted) {
+              cardStyles = 'bg-primary/5 border-primary/20';
+            } else if (isSkipped) {
+              cardStyles = 'bg-accent/30 opacity-60 grayscale';
+            }
+
+            let buttonLabel = 'Start Session';
+            if (isCompleted) {
+              buttonLabel = 'Review Result';
+            } else if (isSkipped) {
+              buttonLabel = 'Details';
+            }
+
+            const getIcon = () => {
+              if (!isCompleted && !isSkipped)
+                return <PlayCircle size={14} className="fill-current" />;
+              if (isCompleted) return <CheckCircle2 size={14} />;
+              return <Lock size={14} />;
+            };
+
             return (
               <div
                 key={workout.id}
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-4 transition-all hover:shadow-md ${getStatusClasses(
-                  workout.status,
-                )}`}
+                className={`group border-border/50 relative flex flex-col justify-between overflow-hidden rounded-3xl border p-5 transition-all duration-300 hover:shadow-xl ${cardStyles}`}
               >
-                {/* Day Header */}
-                <div className="mb-3 flex items-center justify-between">
-                  <span className={`text-sm font-bold ${getStatusTextClass(workout.status)}`}>
-                    {dayName}
-                  </span>
-                  {isCompleted && (
-                    <div className="bg-primary/10 text-primary rounded-full p-1">
-                      <CheckCircle2 size={14} />
-                    </div>
-                  )}
-                  {isSkipped && (
-                    <div className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wider uppercase">
-                      Skipped
-                    </div>
-                  )}
-                </div>
+                {/* Status Overlay for Completed */}
+                {isCompleted && (
+                  <div className="bg-primary/10 text-primary absolute -top-10 -right-10 flex h-24 w-24 items-end justify-start rounded-full p-4 transition-transform group-hover:scale-110">
+                    <CheckCircle2 size={16} />
+                  </div>
+                )}
 
-                {/* Workout Info */}
-                <div className="mb-4">
-                  <h4
-                    className={`mb-1 font-bold ${
-                      isSkipped ? 'text-muted-foreground line-through' : 'text-foreground'
-                    }`}
-                  >
-                    {workout.type}
-                  </h4>
-                  <div className="text-muted-foreground flex items-center gap-3 text-xs">
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
-                      {workout.durationMinutes ? `${workout.durationMinutes}m` : '45m'}
-                      Aurora
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Zap size={12} />
-                      {workout.status}
-                    </span>
+                <div>
+                  {/* Day Header */}
+                  <div className="mb-4 flex items-center justify-between">
+                    <Typography
+                      variant="muted"
+                      className={`text-[10px] font-black tracking-widest uppercase ${isCompleted ? 'text-primary' : ''}`}
+                    >
+                      {dayName}
+                    </Typography>
+                    {isSkipped && (
+                      <Badge
+                        variant="inactive"
+                        className="text-[8px] leading-none font-black tracking-widest uppercase"
+                      >
+                        Skipped
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Workout Info */}
+                  <div className="mb-6">
+                    <Typography
+                      variant="h4"
+                      className={`mb-2 leading-tight font-black italic ${isSkipped ? 'text-muted-foreground line-through' : 'text-foreground'}`}
+                    >
+                      {workout.type}
+                    </Typography>
+                    <div className="flex flex-wrap gap-3">
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={12} className="text-primary" />
+                        <Typography variant="muted" className="text-[10px] font-bold">
+                          {workout.durationMinutes || '45'}m
+                        </Typography>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Zap size={12} className="text-orange-500" />
+                        <Typography variant="muted" className="text-[10px] font-bold">
+                          Intensity High
+                        </Typography>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Action Button */}
-                <button
+                <Button
                   onClick={() => onWorkoutClick(workout.id)}
-                  className={`flex w-full items-center justify-center gap-2 rounded-xl py-2 text-xs font-bold transition-colors ${getButtonClass(
-                    workout.status,
-                  )}`}
+                  variant={isCompleted || isSkipped ? 'outline' : 'default'}
+                  className={`w-full gap-2 rounded-2xl py-6 font-black tracking-widest uppercase transition-all ${
+                    !isCompleted && !isSkipped
+                      ? 'shadow-[0_8px_20px_-10px_rgba(var(--primary),0.5)] active:scale-95'
+                      : 'bg-background/50 border-border/50 backdrop-blur-sm'
+                  }`}
                 >
-                  {getButtonText(workout.status)}
-                  {!isCompleted && !isSkipped && <PlayCircle size={14} />}
-                </button>
+                  <Typography variant="small" className="font-black">
+                    {buttonLabel}
+                  </Typography>
+                  {getIcon()}
+                </Button>
               </div>
             );
           })}

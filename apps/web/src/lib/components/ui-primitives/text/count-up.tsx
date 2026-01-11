@@ -77,29 +77,29 @@ export default function CountUp({
   }, [from, to, direction, formatValue]);
 
   useEffect(() => {
-    if (isInView && startWhen) {
-      if (typeof onStart === 'function') {
-        onStart();
-      }
+    if (!isInView || !startWhen) return;
 
-      const timeoutId = setTimeout(() => {
-        motionValue.set(direction === 'down' ? from : to);
-      }, delay * 1000);
-
-      const durationTimeoutId = setTimeout(
-        () => {
-          if (typeof onEnd === 'function') {
-            onEnd();
-          }
-        },
-        delay * 1000 + duration * 1000,
-      );
-
-      return () => {
-        clearTimeout(timeoutId);
-        clearTimeout(durationTimeoutId);
-      };
+    if (typeof onStart === 'function') {
+      onStart();
     }
+
+    const timeoutId = setTimeout(() => {
+      motionValue.set(direction === 'down' ? from : to);
+    }, delay * 1000);
+
+    const durationTimeoutId = setTimeout(
+      () => {
+        if (typeof onEnd === 'function') {
+          onEnd();
+        }
+      },
+      delay * 1000 + duration * 1000,
+    );
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearTimeout(durationTimeoutId);
+    };
   }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {

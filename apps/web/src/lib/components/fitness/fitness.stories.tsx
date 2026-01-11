@@ -1,19 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  mockUserStats,
-  mockWorkoutHistory,
-  mockCompletedWorkout,
-  mockTrainingConstraints,
-} from '../../testing/fixtures';
+import { mockUserStats, mockTrainingConstraints, mockDailyWorkout } from '../../testing/fixtures';
 import {
   StatisticsSection,
   ProgressChart,
-  ActivityFeed,
   WorkoutSummary,
-  WorkoutList,
   PrimaryGoalGrid,
   CategorizedEquipmentSelection,
   PlanGenerationStepper,
+  SkipWorkoutModal,
 } from './index';
 
 const meta: Meta = {
@@ -51,26 +45,10 @@ export const WeeklyProgress: StoryObj<typeof ProgressChart> = {
   ),
 };
 
-export const RecentActivity: StoryObj = {
-  render: () => (
-    <div className="max-w-2xl">
-      <ActivityFeed />
-    </div>
-  ),
-};
-
 export const Summary: StoryObj<typeof WorkoutSummary> = {
   render: () => (
     <div className="max-w-2xl">
-      <WorkoutSummary workout={mockCompletedWorkout as any} />
-    </div>
-  ),
-};
-
-export const HistoryList: StoryObj<typeof WorkoutList> = {
-  render: () => (
-    <div className="max-w-4xl">
-      <WorkoutList workouts={mockWorkoutHistory.workouts as any} />
+      <WorkoutSummary workout={mockDailyWorkout} />
     </div>
   ),
 };
@@ -96,8 +74,21 @@ export const EquipmentSelection: StoryObj = {
 
 export const PlanGeneration: StoryObj = {
   render: () => (
-    <div className="bg-background mx-auto max-w-2xl overflow-hidden rounded-2xl border shadow-xl">
+    <div className="bg-background mx-auto max-w-2xl overflow-hidden rounded-2xl shadow-xl">
       <PlanGenerationStepper onComplete={(p) => console.log(p)} onSkip={() => {}} />
+    </div>
+  ),
+};
+
+export const SkipWorkout: StoryObj<typeof SkipWorkoutModal> = {
+  render: () => (
+    <div className="bg-accent/20 flex h-[600px] w-full items-center justify-center p-8">
+      <SkipWorkoutModal
+        isOpen={true}
+        onClose={() => console.log('Close')}
+        onConfirm={(reason) => console.log('Confirm', reason)}
+        isLoading={false}
+      />
     </div>
   ),
 };

@@ -4,35 +4,32 @@ import { ReactNode, forwardRef } from 'react';
 
 import Typography from '../typography/typography';
 
-const cardVariants = cva('flex flex-col overflow-hidden rounded-xl shadow-sm', {
-  variants: {
-    variant: {
-      default: 'bg-background-muted border border-muted',
-      borderless: 'bg-background-muted',
+const cardVariants = cva(
+  'flex flex-col overflow-hidden rounded-xl shadow-sm transition-all duration-300',
+  {
+    variants: {
+      variant: {
+        default: 'bg-background border border-muted',
+        borderless: 'bg-background-muted',
+        ghost: 'bg-transparent border-none shadow-none',
+        premium: 'bg-card/80 border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl border',
+        glass: 'bg-background/50 border-white/5 shadow-xl backdrop-blur-md border',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
     },
   },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+);
 
-const cardHeaderVariants = cva('flex items-center justify-between px-6 py-4', {
+const cardHeaderVariants = cva('flex items-center justify-between px-4 py-4 sm:px-6', {
   variants: {
     variant: {
       default: 'border-muted bg-accent/20 border-b',
       borderless: 'bg-accent/20',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
-
-const cardBodyVariants = cva('flex-1 p-6', {
-  variants: {
-    variant: {
-      default: '',
-      borderless: '',
+      ghost: 'bg-accent/20',
+      premium: 'bg-white/5 border-white/10 border-b',
+      glass: 'bg-white/5 border-white/10 border-b',
     },
   },
   defaultVariants: {
@@ -98,7 +95,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         )}
 
         {/* Body */}
-        <div className={`${cardBodyVariants({ variant })} ${bodyClassName}`}>
+        <div className={`flex-1 p-4 sm:p-6 ${bodyClassName}`}>
           {description && (
             <Typography variant="muted" className="mb-4">
               {description}
@@ -110,7 +107,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         {/* Footer (Optional) */}
         {footer && (
           <div
-            className={`mx-6 py-4 ${variant === 'borderless' ? '' : 'border-muted/60 border-t'} ${footerClassName}`}
+            className={`px-4 py-4 sm:px-6 ${variant === 'borderless' ? '' : 'border-muted/60 border-t'} ${footerClassName}`}
           >
             {footer}
           </div>

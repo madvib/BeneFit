@@ -22,6 +22,9 @@ const meta: Meta<typeof Button> = {
         'dashed',
         'success',
         'soft-success',
+        'error',
+        'soft-error',
+        'outline-destructive',
       ],
     },
     size: {
@@ -76,6 +79,9 @@ export const AllVariants: Story = {
         <div className="flex flex-col gap-2">
           <Button variant="success">Success</Button>
           <Button variant="soft-success">Soft Success</Button>
+          <Button variant="error">Error</Button>
+          <Button variant="soft-error">Soft Error</Button>
+          <Button variant="outline-destructive">Outline Destructive</Button>
         </div>
       </div>
     </div>

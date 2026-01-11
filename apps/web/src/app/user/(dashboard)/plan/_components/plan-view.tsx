@@ -165,7 +165,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
           <h3 className="text-lg font-semibold tracking-tight">Weekly Schedule</h3>
         </div>
 
-        <Grid cols={4} gap={4} className="md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {weeklyWorkouts.map((workout) => (
             <div
               key={workout.id}
@@ -242,7 +242,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
               </Button>
             </div>
           ))}
-        </Grid>
+        </div>
       </div>
     </PageContainer>
   );

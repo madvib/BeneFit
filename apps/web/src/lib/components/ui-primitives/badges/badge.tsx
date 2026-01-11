@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, Sparkles } from 'lucide-react';
 
 // Define variants that cover all current use cases in the codebase
 const badgeVariants = cva(
@@ -7,17 +7,21 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground',
+        default: 'bg-primary text-primary-foreground shadow-sm',
         secondary: 'bg-secondary text-secondary-foreground',
-        success: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200',
-        warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200',
-        error: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200',
-        info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
-        active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
-        inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-700/30 dark:text-gray-300',
-        outline: 'border border-input text-foreground',
-        primaryLight: 'bg-primary/10 text-primary border border-primary/20',
-        accent: 'bg-accent/30 text-accent-foreground border border-accent/40',
+        success:
+          'bg-success/10 text-success ring-1 ring-inset ring-success/20 dark:bg-success/20 dark:ring-0',
+        warning:
+          'bg-warning/10 text-warning ring-1 ring-inset ring-warning/20 dark:bg-warning/20 dark:ring-0',
+        error:
+          'bg-error/10 text-error ring-1 ring-inset ring-error/20 dark:bg-error/20 dark:ring-0',
+        info: 'bg-info/10 text-info ring-1 ring-inset ring-info/20 dark:bg-info/20 dark:ring-0',
+        active: 'bg-success/10 text-success ring-1 ring-inset ring-success/20 dark:bg-success/20',
+        inactive: 'bg-muted text-muted-foreground ring-1 ring-inset ring-muted-foreground/10',
+        outline: 'border border-border text-foreground',
+        primaryLight: 'bg-primary/10 text-primary ring-1 ring-inset ring-primary/20',
+        accent: 'bg-accent/50 text-accent-foreground border border-accent',
+        ai: 'bg-primary/5 text-primary border border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]',
       },
     },
     defaultVariants: {
@@ -38,9 +42,17 @@ function Badge({
   children,
   ...props
 }: BadgeProps & { children: React.ReactNode }) {
+  const isAI = variant === 'ai';
+  const EffectiveIcon = Icon || (isAI ? Sparkles : null);
+
   return (
-    <span className={badgeVariants({ variant, className })} {...props}>
-      {Icon && <Icon size={10} className="mr-1" />}
+    <span className={`${badgeVariants({ variant, className })}`} {...props}>
+      {EffectiveIcon && (
+        <EffectiveIcon
+          size={isAI ? 12 : 10}
+          className={`mr-1.5 ${isAI ? 'text-primary animate-pulse' : ''}`}
+        />
+      )}
       {children}
     </span>
   );

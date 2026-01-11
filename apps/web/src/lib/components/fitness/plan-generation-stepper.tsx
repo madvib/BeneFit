@@ -1,10 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { UpdateTrainingConstraintsFormSchema } from '@bene/shared';
-import { Button, Stepper, type StepperStep } from '@/lib/components';
-import { Target, Dumbbell, Calendar, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
-import { FITNESS_GOALS, SECONDARY_GOALS } from '@bene/shared';
+import { Badge, Button, Stepper, Typography, type StepperStep } from '@/lib/components';
+import { Target, Dumbbell, Calendar, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
@@ -35,9 +33,6 @@ const STEPS: readonly StepperStep[] = [
     description: 'How often can you train?',
   },
 ] as const;
-
-const EQUIPMENT_OPTIONS =
-  UpdateTrainingConstraintsFormSchema.shape.availableEquipment.element.options;
 
 export default function PlanGenerationStepper({
   onComplete,
@@ -72,16 +67,6 @@ export default function PlanGenerationStepper({
   const handleBack = () => {
     setDirection(-1);
     setCurrentStepIndex((prev) => Math.max(0, prev - 1));
-  };
-
-  const toggleSecondaryGoal = (goal: string) => {
-    setSecondaryGoals((prev) =>
-      prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal],
-    );
-  };
-
-  const toggleEquipment = (eq: string) => {
-    setEquipment((prev) => (prev.includes(eq) ? prev.filter((e) => e !== eq) : [...prev, eq]));
   };
 
   if (!currentStep) return null;
@@ -120,19 +105,18 @@ export default function PlanGenerationStepper({
       <div className="space-y-6">
         {/* AI Badge inside content area for specialized feel */}
         <div className="mb-8 flex justify-center">
-          <div className="bg-primary/5 border-primary/10 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold tracking-tight">
-            <Sparkles size={14} className="text-primary animate-pulse" />
-            <span className="text-primary/80 uppercase">AI-Powered System</span>
-          </div>
+          <Badge variant="ai" className="px-4 py-2 tracking-tight uppercase">
+            AI-Powered System
+          </Badge>
         </div>
 
         {/* Goals Step */}
         {currentStep.id === 'goals' && (
           <div className="space-y-10">
             <div>
-              <h3 className="text-foreground mb-6 text-xl font-black">
+              <Typography variant="h3" className="mb-6 text-xl font-black">
                 What is your primary goal?
-              </h3>
+              </Typography>
               <PrimaryGoalGrid
                 selected={primaryGoal}
                 onChange={setPrimaryGoal}
@@ -141,9 +125,9 @@ export default function PlanGenerationStepper({
             </div>
 
             <div>
-              <h3 className="text-foreground mb-6 text-xl font-black">
+              <Typography variant="h3" className="mb-6 text-xl font-black">
                 Any secondary areas of focus?
-              </h3>
+              </Typography>
               <SecondaryGoalsList
                 selected={secondaryGoals}
                 onChange={setSecondaryGoals}
@@ -156,9 +140,9 @@ export default function PlanGenerationStepper({
         {/* Equipment Step */}
         {currentStep.id === 'equipment' && (
           <div className="space-y-6">
-            <h3 className="text-foreground mb-6 text-xl font-black">
+            <Typography variant="h3" className="mb-6 text-xl font-black">
               What equipment do you have?
-            </h3>
+            </Typography>
             <CategorizedEquipmentSelection
               selected={equipment}
               onChange={setEquipment}
@@ -172,12 +156,15 @@ export default function PlanGenerationStepper({
           <div className="space-y-8 py-4">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-foreground/70 text-sm font-semibold tracking-wider uppercase">
+                <Typography
+                  variant="muted"
+                  className="text-sm font-semibold tracking-wider uppercase"
+                >
                   Workouts per Week
-                </h3>
-                <span className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black">
+                </Typography>
+                <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black">
                   {workoutsPerWeek}
-                </span>
+                </div>
               </div>
               <input
                 type="range"
@@ -194,17 +181,17 @@ export default function PlanGenerationStepper({
                 <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
                   <Calendar size={18} />
                 </div>
-                <p className="text-foreground text-base font-bold">
+                <Typography className="text-foreground text-base font-bold">
                   {workoutsPerWeek} sessions scheduled
-                </p>
+                </Typography>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <Typography variant="muted" className="text-sm leading-relaxed">
                 Total weekly training time will be approximately{' '}
-                <span className="text-foreground font-black">
+                <Typography as="span" className="text-foreground font-black">
                   {workoutsPerWeek * 45}-{workoutsPerWeek * 60} minutes
-                </span>
+                </Typography>
                 .
-              </p>
+              </Typography>
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Filter } from 'lucide-react';
-import HistoryRow from './workout-list-tile';
-
+import { Button } from '@/lib/components';
+import ActivityListTile from './activity-list-tile';
 import type { CompletedWorkout, WorkoutSession } from '@bene/shared';
 
 // Union type for any item that can appear in the history list
@@ -66,15 +66,25 @@ export default function WorkoutList(data: WorkoutListProps) {
               </tr>
             </thead>
             <tbody className="divide-muted divide-y">
-              {filteredData.map((workout) => HistoryRow(workout))}
+              {filteredData.map((workout) => (
+                <ActivityListTile
+                  key={workout.id}
+                  workout={workout}
+                  onClick={() => data.onEdit && data.onEdit(workout.id)}
+                />
+              ))}
             </tbody>
           </table>
         )}
       </div>
       <div className="bg-muted/10 border-muted border-t px-6 py-3 text-center">
-        <button className="text-muted-foreground hover:text-primary text-xs font-medium transition-colors">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-primary text-xs font-medium transition-colors"
+        >
           Load More History
-        </button>
+        </Button>
       </div>
     </div>
   );

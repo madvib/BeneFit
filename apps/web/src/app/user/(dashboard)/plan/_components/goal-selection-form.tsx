@@ -3,7 +3,7 @@ import { Target, Settings, Wand2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { fitnessPlan } from '@bene/react-api-client';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
-import { Button, Stepper, type StepperStep } from '@/lib/components';
+import { Button, Stepper } from '@/lib/components';
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
 
@@ -71,7 +71,6 @@ export default function GoalSelectionForm({
         steps={STEPS}
         currentStepIndex={currentStepIndex}
         direction={direction}
-        variant="inline"
         onClose={() => {}} // GoalSelectionForm is inline, not in a modal and doesn't have a close action in this context
         footer={
           <div className="flex items-center justify-between gap-4">

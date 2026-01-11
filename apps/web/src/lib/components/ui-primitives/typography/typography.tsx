@@ -46,24 +46,16 @@ export interface TypographyProps
 const Typography = forwardRef<HTMLElement, TypographyProps>(
   ({ className, variant, as, ...props }, ref) => {
     // Map variant to default element if 'as' is not provided
-    const defaultSelector = () => {
-      if (as) return as;
-      if (!variant) return 'p';
-      if (['h1', 'h2', 'h3', 'h4', 'p', 'blockquote', 'code'].includes(variant)) {
-        return variant as TypographyElement;
-      }
-      return 'p';
-    };
+    const Tag = (as ||
+      (variant && ['h1', 'h2', 'h3', 'h4', 'p', 'blockquote', 'code'].includes(variant)
+        ? (variant as TypographyElement)
+        : 'p')) as TypographyElement;
 
-    const Component = defaultSelector();
-
-    return (
-      <Component
-        className={typographyVariants({ variant, className })}
-        ref={ref as any}
-        {...props}
-      />
-    );
+    return React.createElement(Tag, {
+      ...props,
+      className: typographyVariants({ variant, className }),
+      ref,
+    });
   },
 );
 

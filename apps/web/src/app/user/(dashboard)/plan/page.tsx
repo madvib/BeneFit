@@ -169,7 +169,7 @@ export default function PlanClient() {
   const renderOverview = () => (
     <PlanOverview
       currentPlan={plan}
-      onEditPlan={(id) => {
+      onEditPlan={(_id) => {
         // TODO: Implement plan editing
       }}
     />
@@ -211,6 +211,7 @@ export default function PlanClient() {
         onClose={() => setSelectedWorkoutId(null)}
         workout={selectedWorkout}
         onStart={(id) => {
+          // TODO: this is a real app...
           // Navigate to workout session or start endpoint
           // For now, we'll assume navigation to workout page which handles starting
           // In a real app, we might call startWorkoutMutation here first

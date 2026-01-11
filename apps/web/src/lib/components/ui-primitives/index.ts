@@ -8,7 +8,6 @@ export { default as Button, type ButtonProps } from './buttons/button';
 // Cards
 export { default as Card } from './card/card';
 export { default as ImageCard } from './card/image-card';
-export { default as DataCard } from './card/data-card';
 export { default as SpotlightCard } from './card/spotlight-card';
 export { default as ElectricBorder } from './card/electric-border';
 
@@ -19,6 +18,7 @@ export { default as Select } from './form/select';
 export { default as Checkbox } from './form/checkbox';
 export { default as FormSection } from './form/form-section';
 export { default as FormSuccessMessage } from './form/form-success-message';
+export { default as Slider } from './slider/slider';
 
 // Alerts & Feedback
 export { default as Alert } from './alert/alert';

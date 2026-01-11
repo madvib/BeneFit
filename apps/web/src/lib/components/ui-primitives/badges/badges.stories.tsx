@@ -31,6 +31,7 @@ export const Showcase: StoryObj = {
           <Badge variant="info">Info</Badge>
           <Badge variant="active">Active</Badge>
           <Badge variant="inactive">Inactive</Badge>
+          <Badge variant="ai">AI System</Badge>
         </div>
       </section>
 
@@ -52,6 +53,7 @@ export const Showcase: StoryObj = {
           <Badge variant="accent" icon={Star}>
             Featured
           </Badge>
+          <Badge variant="ai">AI Accelerated</Badge>
         </div>
       </section>
 
