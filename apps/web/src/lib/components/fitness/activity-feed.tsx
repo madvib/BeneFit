@@ -4,7 +4,7 @@ import { Activity, ArrowRight } from 'lucide-react';
 import { Button } from '@/lib/components';
 import { workouts } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
-import { getActivityColorClass, getActivityIcon } from '../../_shared/activity-styles';
+import { getActivityColorClass, getActivityIcon } from './constants';
 
 export default function ActivityFeed() {
   const historyQuery = workouts.useWorkoutHistory({ query: { limit: '5' } });

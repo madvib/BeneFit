@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MessageCircle, Filter, TrendingUp, Activity, Calendar } from 'lucide-react';
+import { Heart, MessageCircle, Filter, Activity, Calendar } from 'lucide-react';
 import { workouts, profile } from '@bene/react-api-client';
 import {
   Card,
@@ -12,6 +12,7 @@ import {
   Badge,
   DashboardShell,
   ProgressBar,
+  ProgressChart,
 } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
@@ -157,33 +158,17 @@ export default function ActivityFeedPage() {
   const renderSidebar = () => (
     <div className="space-y-6">
       {/* Weekly Progress Chart */}
-      <Card
-        title="Weekly Progress"
-        icon={TrendingUp}
-        className="border-border bg-card"
-        headerClassName="border-b border-border"
-      >
-        <div className="flex h-40 items-end justify-between gap-2">
-          {/* Weekly Progress Chart */}
-          {(() => {
-            const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-            return [40, 70, 30, 85, 50, 90, 60].map((height, i) => (
-              <div key={i} className="group relative flex w-full flex-col items-center gap-2">
-                <div
-                  className="bg-primary/20 group-hover:bg-primary w-full rounded-t-lg transition-all duration-500"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-muted-foreground text-[10px] font-medium">
-                  {
-                    // eslint-disable-next-line security/detect-object-injection
-                    DAYS[i]
-                  }
-                </span>
-              </div>
-            ));
-          })()}
-        </div>
-      </Card>
+      <ProgressChart
+        data={[
+          { date: 'Mon', value: 40 },
+          { date: 'Tue', value: 70 },
+          { date: 'Wed', value: 30 },
+          { date: 'Thu', value: 85 },
+          { date: 'Fri', value: 50 },
+          { date: 'Sat', value: 90 },
+          { date: 'Sun', value: 60 },
+        ]}
+      />
 
       {/* Activity Breakdown Chart */}
       <Card

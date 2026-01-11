@@ -1,3 +1,10 @@
-export * from './steppers/plan-generation-stepper';
+export { default as PlanGenerationStepper } from './steppers/plan-generation-stepper';
 export * from './goal-selection-ui';
 export * from './equipment-selection-ui';
+export { default as StatisticsSection } from './statistics-section';
+export { default as ProgressChart } from './progress-chart';
+export { default as ActivityFeed } from './activity-feed';
+export { default as WorkoutSummary } from './workout-summary';
+export { default as WorkoutList } from './workout-list';
+export { default as WorkoutListTile } from './workout-list-tile';
+export * from './constants';

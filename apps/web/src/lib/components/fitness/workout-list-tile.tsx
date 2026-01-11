@@ -1,6 +1,6 @@
 import { Clock, Zap, MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/lib/components';
-import { getActivityColorClass, getActivityIcon } from '../../_shared/activity-styles';
+import { getActivityColorClass, getActivityIcon } from './constants';
 import type { HistoryItem } from './workout-list';
 
 const mapStatusToBadgeVariant = (status: string) => {

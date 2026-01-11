@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { workouts } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
+import { LoadingSpinner, ErrorPage, WorkoutSummary } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
-import WorkoutSummary from './_components/workout-summary';
 import PerformanceForm, { type PerformanceFormData } from './_components/performance-form';
 import AchievementPopup from './_components/achievement-popup';
 import { CheckCircle } from 'lucide-react';

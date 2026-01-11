@@ -3,8 +3,7 @@ import PlanOverview from './plan-overview';
 import WeeklySchedule from './weekly-schedule';
 import { WorkoutDetailSheet } from './workout-detail-sheet';
 import QuickActions from './quick-actions';
-import { mockActivePlan } from '@/lib/testing/fixtures';
-import { mockWorkoutTemplate } from '@/lib/testing/fixtures/workouts';
+import { mockActivePlan, mockWorkoutTemplate } from '../../../../../lib/testing/fixtures';
 
 // PlanOverview likely expects the plan object, not the full response
 const activePlan = mockActivePlan.plan!;

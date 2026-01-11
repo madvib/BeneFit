@@ -2,13 +2,8 @@
 
 import { useState } from 'react';
 import { profile } from '@bene/react-api-client';
-import { Spacer } from '@/lib/components';
-import {
-  AboutMeSection,
-  ProfileSummary,
-  SaveChangesButton,
-  StatisticsSection,
-} from './_components';
+import { Spacer, StatisticsSection, Button } from '@/lib/components';
+import { AboutMeSection, ProfileSummary } from './_components';
 
 export interface ProfileViewProps {
   userProfile: profile.GetProfileResponse;
@@ -37,15 +32,14 @@ export default function ProfileView({ userProfile, userStats, onSave }: ProfileV
         onEditPicture={() => console.log('Edit picture clicked')}
       />
       <Spacer />
-
       <AboutMeSection aboutMe={aboutMe} onChange={setAboutMe} />
-
       <div className="mb-6">
         <StatisticsSection stats={userStats} />
       </div>
       <Spacer />
-
-      <SaveChangesButton onClick={handleSave} disabled={true} />
+      <Button variant="default" size="lg" onClick={handleSave} disabled>
+        Save Profile
+      </Button>
       <p className="text-muted-foreground mt-2 text-center text-sm">
         Saving changes is temporarily disabled.
       </p>
