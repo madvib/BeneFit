@@ -11,6 +11,7 @@ import {
   DashboardShell,
   ProgressBar,
   ProgressChart,
+  typography,
 } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import { ActivityFeedView, WorkoutHistoryDetailModal } from './_components';

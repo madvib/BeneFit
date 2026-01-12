@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
-import { Card } from '@/lib/components';
-import { typography } from '@/lib/components/theme/typography';
+import { Card, typography } from '@/lib/components';
 
 interface FormSectionProps {
   title: string;

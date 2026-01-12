@@ -14,8 +14,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import type { CompletedWorkout, ActivityPerformance, ExercisePerformance } from '@bene/shared';
-import { Badge, Button, Card } from '@/lib/components';
-import { typography } from '@/lib/components/theme/typography';
+import { Badge, Button, Card, typography } from '@/lib/components';
 
 interface WorkoutHistoryDetailModalProps {
   isOpen: boolean;

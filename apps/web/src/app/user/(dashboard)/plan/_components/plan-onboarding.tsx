@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import { Sparkles, Layout, Dumbbell, ArrowRight, Zap, Target, ShieldCheck } from 'lucide-react';
-import { Button } from '@/lib/components/ui-primitives';
+import { Button, typography } from '@/lib/components';
 import { fitnessPlan } from '@bene/react-api-client';
 import GoalSelectionForm from './goal-selection-form';
-import { typography } from '@/lib/components/theme/typography';
 
 interface PlanOnboardingProps {
   onGenerate: (_request: fitnessPlan.GeneratePlanRequest) => void;

@@ -3,10 +3,9 @@ import { Target, Settings, Wand2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { fitnessPlan } from '@bene/react-api-client';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
-import { Button, Stepper } from '@/lib/components';
+import { Button, Stepper, typography } from '@/lib/components';
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
-import { typography } from '@/lib/components/theme/typography';
 
 interface GoalSelectionFormProps {
   onGenerate: (_request: fitnessPlan.GeneratePlanRequest) => void;
