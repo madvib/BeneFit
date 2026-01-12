@@ -1,7 +1,7 @@
 'use client';
 
 import { BarChart3, TrendingUp, Sparkles } from 'lucide-react';
-import { Card, Typography, Badge } from '@/lib/components';
+import { Card, Badge, typography } from '@/lib/components';
 
 export default function ProgressChart({ data }: { data: { date: string; value: number }[] }) {
   const maxValue = Math.max(...data.map((d) => d.value), 10);
@@ -14,15 +14,9 @@ export default function ProgressChart({ data }: { data: { date: string; value: n
           <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
             <BarChart3 size={18} />
           </div>
-          <Typography variant="h4" className="text-lg font-black">
-            Weekly Activity
-          </Typography>
+          <h4 className={typography.h4}>Weekly Activity</h4>
         </div>
-        <Badge
-          variant="success"
-          icon={TrendingUp}
-          className="text-[10px] font-black tracking-widest uppercase"
-        >
+        <Badge variant="success" icon={TrendingUp} className={typography.labelXs}>
           +12.5%
         </Badge>
       </div>
@@ -40,7 +34,9 @@ export default function ProgressChart({ data }: { data: { date: string; value: n
                 className="group relative flex h-full flex-1 flex-col items-center justify-end gap-3"
               >
                 {/* Value Label (Hover) */}
-                <div className="bg-primary text-primary-foreground absolute -top-8 z-10 scale-0 rounded-lg px-2 py-1 text-[10px] font-black shadow-xl transition-all group-hover:scale-100">
+                <div
+                  className={`${typography.labelXs} bg-primary text-primary-foreground absolute -top-8 z-10 scale-0 rounded-lg px-2 py-1 shadow-xl transition-all group-hover:scale-100`}
+                >
                   {point.value}
                 </div>
 
@@ -62,12 +58,9 @@ export default function ProgressChart({ data }: { data: { date: string; value: n
                 </div>
 
                 {/* X-Axis Label */}
-                <Typography
-                  variant="muted"
-                  className="group-hover:text-primary text-[10px] font-black tracking-widest uppercase transition-colors"
-                >
+                <p className={`${typography.labelXs} group-hover:text-primary transition-colors`}>
                   {point.date}
-                </Typography>
+                </p>
               </div>
             );
           })}
@@ -76,34 +69,18 @@ export default function ProgressChart({ data }: { data: { date: string; value: n
         {/* Footer Summary */}
         <div className="border-border/50 mt-8 flex items-center justify-between border-t pt-6">
           <div className="flex flex-col gap-1">
-            <Typography
-              variant="muted"
-              className="text-[10px] font-black tracking-widest uppercase"
-            >
-              Total Distance
-            </Typography>
+            <p className={typography.labelXs}>Total Distance</p>
             <div className="flex items-baseline gap-2">
-              <Typography variant="h2" className="text-3xl font-black tracking-tighter italic">
-                32.4
-              </Typography>
-              <Typography variant="small" className="text-muted-foreground font-bold italic">
-                miles
-              </Typography>
+              <h2 className={typography.displayMd}>32.4</h2>
+              <p className={`${typography.small} text-muted-foreground italic`}>miles</p>
             </div>
           </div>
           <div className="bg-primary/5 border-primary/20 flex flex-col items-end rounded-2xl border px-4 py-3 text-right">
             <div className="mb-1 flex items-center gap-2">
               <Sparkles size={14} className="text-primary" />
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase"
-              >
-                Performance
-              </Typography>
+              <p className={typography.labelXs}>Performance</p>
             </div>
-            <Typography variant="small" className="text-foreground font-black">
-              Above Average
-            </Typography>
+            <p className={`${typography.small} text-foreground font-bold`}>Above Average</p>
           </div>
         </div>
       </div>

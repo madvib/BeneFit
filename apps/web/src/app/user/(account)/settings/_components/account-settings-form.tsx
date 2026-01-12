@@ -1,8 +1,9 @@
 'use client';
 
-import { useAppForm } from '@/lib/components/app-form';
 import { revalidateLogic } from '@tanstack/react-form';
 import { z } from 'zod';
+import { useAppForm } from '@/lib/components/app-form';
+import { typography } from '@/lib/components/theme/typography';
 
 const accountSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -43,7 +44,7 @@ export function AccountSettingsForm({
           <form.AppField name="name">
             {(field) => (
               <input
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className={`${typography.xs} border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 file:border-0 file:bg-transparent file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 disabled={isLoading}
@@ -54,7 +55,7 @@ export function AccountSettingsForm({
           <form.AppField name="email">
             {(field) => (
               <input
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className={`${typography.xs} border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 file:border-0 file:bg-transparent file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 disabled={isLoading} // Typically email might need re-verification

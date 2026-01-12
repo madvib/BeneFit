@@ -4,7 +4,7 @@ import {
   Button,
   getActivityColorClass,
   getActivityIcon,
-  Typography,
+  typography,
 } from '@/lib/components';
 import type { HistoryItem } from './workout-list';
 
@@ -76,34 +76,26 @@ export default function ActivityListTile({ workout, onClick }: ACtivityListTileP
             {getActivityIcon(workout.workoutType)}
           </div>
           <div>
-            <Typography variant="small" className="font-black capitalize">
-              {workout.workoutType}
-            </Typography>
-            <Typography variant="muted" className="text-[10px] tracking-widest uppercase">
-              Session
-            </Typography>
+            <p className={`${typography.small} font-bold capitalize`}>{workout.workoutType}</p>
+            <p className={`${typography.mutedXs} opacity-60`}>Session</p>
           </div>
         </div>
       </td>
       <td className="px-6 py-5">
-        <Typography variant="small" className="text-muted-foreground font-medium">
-          {details.date}
-        </Typography>
+        <p className={`${typography.small} text-muted-foreground opacity-80`}>{details.date}</p>
       </td>
       <td className="px-6 py-5">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
             <Clock size={14} className="text-primary" />
-            <Typography variant="small" className="font-bold">
-              {details.duration}
-            </Typography>
+            <p className={`${typography.small} font-bold`}>{details.duration}</p>
           </div>
           {details.calories && (
             <div className="flex items-center gap-1.5 opacity-70">
               <Zap size={14} className="text-orange-500" />
-              <Typography variant="muted" className="text-[10px] font-bold">
+              <p className={`${typography.mutedXs} font-bold opacity-70`}>
                 {details.calories} kcal
-              </Typography>
+              </p>
             </div>
           )}
         </div>
@@ -111,7 +103,7 @@ export default function ActivityListTile({ workout, onClick }: ACtivityListTileP
       <td className="px-6 py-5">
         <Badge
           variant={mapStatusToBadgeVariant(details.status)}
-          className="font-bold tracking-tighter uppercase"
+          className={`${typography.labelXs}`}
         >
           {details.status.replace('_', ' ')}
         </Badge>

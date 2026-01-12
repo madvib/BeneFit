@@ -1,6 +1,6 @@
 import { AlertTriangle, Bug, Check, Info, X, LucideIcon } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Typography } from '@/lib/components';
+import { typography } from '@/lib/components/theme/typography';
 
 const alertVariants = cva('relative w-full rounded-2xl border p-4 shadow-sm transition-all', {
   variants: {
@@ -52,16 +52,13 @@ export default function Alert({
           </div>
         )}
         <div className="flex-1">
-          <Typography variant="h4" className="text-sm leading-tight font-black tracking-tight">
+          <h4 className={`${typography.h4} text-sm leading-tight font-black tracking-tight`}>
             {title}
-          </Typography>
+          </h4>
           {description && (
-            <Typography
-              variant="muted"
-              className="mt-1 text-xs leading-relaxed font-medium italic"
-            >
+            <p className={`${typography.muted} mt-1 text-xs leading-relaxed font-medium italic`}>
               {description}
-            </Typography>
+            </p>
           )}
         </div>
         {onClose && (

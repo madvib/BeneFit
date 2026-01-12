@@ -6,6 +6,7 @@ import WorkoutList from './workout-list';
 import { WorkoutHistoryDetailModal } from './workout-history-detail-modal';
 import { mockWorkoutHistory } from '@/lib/testing/fixtures';
 import type { CompletedWorkout } from '@bene/shared';
+import { typography } from '../../../../../../lib/components/theme/typography';
 
 const meta: Meta<typeof ActivityFeedView> = {
   title: 'Features/Activity/ActivityFeedView',
@@ -97,10 +98,10 @@ const WorkoutHistoryDetailWrapper = () => {
         workout={mockWorkoutHistory.workouts[0]}
       />
       <div className="text-center">
-        <p className="text-muted-foreground mb-4 text-sm">Modal Closed</p>
+        <p className={`${typography.small} text-muted-foreground mb-4`}>Modal Closed</p>
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium"
+          className={`${typography.labelSm} bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 transition-all`}
         >
           Open Modal
         </button>

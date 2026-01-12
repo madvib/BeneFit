@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Pencil, Check, X, Quote } from 'lucide-react';
-import { Button, Card, Typography } from '@/lib/components';
+import { Button, Card, typography } from '@/lib/components';
 
 interface AboutMeSectionProps {
   aboutMe: string;
@@ -26,9 +26,7 @@ export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProp
   return (
     <div className="mx-auto max-w-xl px-4 text-center">
       <div className="mb-4 flex items-center justify-center gap-2">
-        <Typography variant="h3" className="text-lg font-bold">
-          About Me
-        </Typography>
+        <h3 className={typography.h3}>About Me</h3>
         {!isEditing && (
           <Button
             variant="ghost"
@@ -45,7 +43,7 @@ export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProp
       {isEditing ? (
         <Card className="border-primary/20 bg-background ring-primary/5 relative overflow-hidden shadow-lg ring-4 transition-all">
           <textarea
-            className="placeholder:text-muted-foreground flex min-h-[140px] w-full resize-none bg-transparent p-6 text-center text-base leading-relaxed focus:outline-none"
+            className={`${typography.p} placeholder:text-muted-foreground flex min-h-[140px] w-full resize-none bg-transparent p-6 text-center leading-relaxed focus:outline-none`}
             placeholder="Tell us a bit about your fitness journey, goals, or what makes you tick..."
             value={tempValue}
             onChange={(e) => setTempValue(e.target.value)}
@@ -54,9 +52,7 @@ export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProp
           />
 
           <div className="border-border bg-muted/20 flex items-center justify-between border-t px-4 py-2">
-            <span className="text-muted-foreground text-xs font-medium">
-              {tempValue.length}/500
-            </span>
+            <span className={`${typography.mutedXs} font-medium`}>{tempValue.length}/500</span>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -87,9 +83,9 @@ export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProp
                 size={24}
                 className="text-primary/10 absolute -top-2 -left-4 -scale-x-100 transform"
               />
-              <Typography variant="p" className="text-muted-foreground leading-relaxed italic">
+              <p className={`${typography.p} text-muted-foreground leading-relaxed italic`}>
                 {aboutMe}
-              </Typography>
+              </p>
               <Quote size={24} className="text-primary/10 absolute -right-4 -bottom-2" />
             </div>
           ) : (
@@ -97,9 +93,9 @@ export default function AboutMeSection({ aboutMe, onChange }: AboutMeSectionProp
               <div className="bg-muted/50 flex h-12 w-12 items-center justify-center rounded-full">
                 <Pencil size={20} />
               </div>
-              <Typography variant="small" className="italic">
+              <p className={`${typography.small} italic`}>
                 Click to write a short bio about your fitness journey...
-              </Typography>
+              </p>
             </div>
           )}
         </div>

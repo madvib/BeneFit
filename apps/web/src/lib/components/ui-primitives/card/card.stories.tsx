@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Trophy } from 'lucide-react';
+import { typography } from '../../';
 import Button from '../buttons/button';
 import ImageCard from './image-card';
 import SpotlightCard from './spotlight-card';
@@ -56,7 +57,7 @@ export const SpotlightEffect: StoryObj<typeof SpotlightCard> = {
     <div className="max-w-md rounded-3xl bg-black/5 p-4">
       <SpotlightCard>
         <div className="relative z-10 text-center">
-          <h3 className="mb-2 text-xl font-bold">Spotlight Effect</h3>
+          <h3 className={`mb-2 ${typography.h4} font-bold`}>Spotlight Effect</h3>
           <p className="text-muted-foreground">
             Hover over this card to see the radial gradient tracking your mouse cursor.
           </p>

@@ -1,7 +1,8 @@
 import { withForm } from '@/lib/components/app-form/app-form';
 import { EXPERIENCE_LEVELS } from '@bene/shared';
 import { onboardingFormOpts } from './form-options';
-import { Typography } from '@/lib/components';
+import { typography } from '@/lib/components/theme/typography';
+;
 
 export const ExperienceStep = withForm({
   ...onboardingFormOpts,
@@ -42,12 +43,12 @@ export const ExperienceStep = withForm({
                     }`}
                   />
                   <div>
-                    <Typography variant="large" className="font-bold">
+                    <p className={`${typography.large} font-bold`}>
                       {details.label}
-                    </Typography>
-                    <Typography variant="small" className="text-muted-foreground">
+                    </p>
+                    <p className={`${typography.small} text-muted-foreground`}>
                       {details.desc}
-                    </Typography>
+                    </p>
                   </div>
                 </button>
               );

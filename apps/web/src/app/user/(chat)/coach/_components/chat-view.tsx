@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Paperclip, Send, Sparkles, Wand2 } from 'lucide-react';
+import { Badge, Button, typography } from '@/lib/components';
 import ChatMessage from './chat-message';
 import type { MessageData } from './types';
-import { Typography, Badge } from '@/lib/components';
 
 interface ChatViewProps {
   messages: MessageData[];
@@ -59,25 +59,16 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
                   <Sparkles size={48} className="animate-pulse" />
                 </div>
               </div>
-              <Badge
-                variant="success"
-                className="mb-4 text-[10px] font-black tracking-widest uppercase"
-              >
+              <Badge variant="success" className={`${typography.mutedXs} mb-4`}>
                 AI Coach Active
               </Badge>
-              <Typography
-                variant="h1"
-                className="mb-4 text-4xl font-black tracking-tighter italic"
-              >
+              <h1 className={`${typography.displayLgResponsive} mb-4 italic`}>
                 Elite Intelligence
-              </Typography>
-              <Typography
-                variant="muted"
-                className="mb-12 max-w-sm text-sm leading-relaxed font-medium"
-              >
+              </h1>
+              <p className={`${typography.muted} mb-12 max-w-sm`}>
                 Your AI coach is calibrated and ready. Ask for training optimizations, diet
                 protocols, or performance breakdowns.
-              </Typography>
+              </p>
 
               <div className="grid w-full max-w-lg grid-cols-1 gap-3 sm:grid-cols-2">
                 {[
@@ -86,13 +77,13 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
                   'Analyze my recent workout volume.',
                   'Adjust my plan for more recovery.',
                 ].map((suggestion) => (
-                  <button
+                  <Button
                     key={suggestion}
                     onClick={() => setInput(suggestion)}
-                    className="bg-accent/40 hover:bg-accent ring-border/50 rounded-2xl p-4 text-left text-xs font-bold ring-1 transition-all hover:-translate-y-1 active:scale-95"
+                    className={`${typography.labelXs} bg-accent/40 hover:bg-accent ring-border/50 rounded-2xl p-4 text-left ring-1 transition-all hover:-translate-y-1 active:scale-95`}
                   >
                     {suggestion}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -104,7 +95,9 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
 
               {isTyping && (
                 <div className="flex w-full justify-start py-4">
-                  <div className="bg-accent/50 text-primary ring-border/50 flex max-w-[80%] items-center gap-1.5 rounded-2xl rounded-tl-none px-5 py-3.5 text-sm ring-1">
+                  <div
+                    className={`${typography.small} bg-accent/50 text-primary ring-border/50 flex max-w-[80%] items-center gap-1.5 rounded-2xl rounded-tl-none px-5 py-3.5 ring-1`}
+                  >
                     <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current"></span>
                     <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current delay-150"></span>
                     <span className="block h-1.5 w-1.5 animate-bounce rounded-full bg-current delay-300"></span>
@@ -141,7 +134,7 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
                 }
               }}
               placeholder="Message Coach..."
-              className="text-foreground placeholder:text-muted-foreground/50 no-scrollbar max-h-[150px] min-h-12 flex-1 resize-none scroll-py-2 border-none bg-transparent p-3.5 text-base leading-relaxed font-medium focus:ring-0"
+              className={`${typography.small} text-foreground placeholder:text-muted-foreground/50 no-scrollbar max-h-[150px] min-h-12 flex-1 resize-none scroll-py-2 border-none bg-transparent p-3.5 leading-relaxed focus:ring-0`}
               rows={1}
             />
 
@@ -170,12 +163,9 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
           </div>
 
           <div className="mt-4 text-center">
-            <Typography
-              variant="muted"
-              className="text-[10px] font-black tracking-widest uppercase opacity-50"
-            >
+            <p className={`${typography.mutedXs} mt-4 opacity-50`}>
               AgentUI can make errors. Consider checking important information.
-            </Typography>
+            </p>
           </div>
         </div>
       </div>

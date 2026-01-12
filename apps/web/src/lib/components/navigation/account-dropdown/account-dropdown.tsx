@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { CircleUser, ChevronDown } from 'lucide-react';
 import NavigationLinks from '../navigation-links';
-import { ThemeToggle } from '@/lib/components/theme';
+import { ThemeToggle, typography } from '@/lib/components/theme';
 import { LogoutButton } from '@/lib/components/auth';
 
 interface UserAccountMenuProps {
@@ -45,7 +45,7 @@ export default function UserAccountMenu({
       return (
         <div className="border-muted border-b">
           <button
-            className="text-foreground hover:bg-accent flex w-full items-center justify-between px-4 py-3 text-sm font-medium transition-colors"
+            className={`${typography.labelSm} text-foreground hover:bg-accent flex w-full items-center justify-between px-4 py-3 transition-colors`}
             onClick={() => setDropdownOpen(!dropdownOpen)}
             aria-label="Account menu"
             aria-expanded={dropdownOpen}
@@ -62,14 +62,16 @@ export default function UserAccountMenu({
           {dropdownOpen && (
             <div className="bg-background px-4 pb-2">
               <NavigationLinks variant="account" mobile={true} />
-              <div className="text-foreground/70 flex items-center justify-between py-2 text-sm">
+              <div
+                className={`${typography.p} text-foreground/70 flex items-center justify-between py-2`}
+              >
                 <span>Theme</span>
                 <ThemeToggle />
               </div>
               <div className="w-full py-2">
                 <LogoutButton
                   variant="ghost"
-                  className="text-foreground hover:bg-accent hover:text-accent-foreground block w-full px-4 py-2 text-left text-sm"
+                  className={`${typography.p} text-foreground hover:bg-accent hover:text-accent-foreground block w-full px-4 py-2 text-left`}
                 />
               </div>
             </div>
@@ -91,14 +93,16 @@ export default function UserAccountMenu({
           {dropdownOpen && (
             <div className="bg-background border-muted absolute right-0 z-50 mt-2 w-48 rounded-md border shadow-lg">
               <NavigationLinks variant="account" mobile={true} />
-              <div className="text-foreground/70 flex items-center justify-between px-4 py-2 text-sm">
+              <div
+                className={`${typography.p} text-foreground/70 flex items-center justify-between px-4 py-2`}
+              >
                 <span>Theme</span>
                 <ThemeToggle />
               </div>
               <div className="w-full px-4 py-2">
                 <LogoutButton
                   variant="ghost"
-                  className="text-foreground hover:bg-accent hover:text-accent-foreground block w-full px-4 py-2 text-left text-sm"
+                  className={`${typography.p} text-foreground hover:bg-accent hover:text-accent-foreground block w-full px-4 py-2 text-left`}
                 />
               </div>
             </div>

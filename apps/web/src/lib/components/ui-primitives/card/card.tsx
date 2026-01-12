@@ -2,7 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { LucideIcon } from 'lucide-react';
 import { ReactNode, forwardRef } from 'react';
 
-import Typography from '../typography/typography';
+import { typography } from '@/lib/components/theme/typography';
 
 const cardVariants = cva(
   'flex flex-col overflow-hidden rounded-xl shadow-sm transition-all duration-300',
@@ -78,9 +78,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
             {title && (
               <div className="flex items-center gap-2">
                 {Icon && <Icon size={18} className="text-primary" />}
-                <Typography variant="h4" className="font-semibold tracking-tight">
-                  {title}
-                </Typography>
+                <h4 className={`${typography.h4} font-semibold tracking-tight`}>{title}</h4>
               </div>
             )}
             {headerAction && <div>{headerAction}</div>}
@@ -96,11 +94,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 
         {/* Body */}
         <div className={`flex-1 p-4 sm:p-6 ${bodyClassName}`}>
-          {description && (
-            <Typography variant="muted" className="mb-4">
-              {description}
-            </Typography>
-          )}
+          {description && <p className={`${typography.muted} mb-4`}>{description}</p>}
           {children}
         </div>
 

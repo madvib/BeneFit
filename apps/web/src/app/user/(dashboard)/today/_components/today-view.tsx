@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Clock, Dumbbell, Play, SkipForward, Star, Zap, Calendar } from 'lucide-react';
+import { workouts } from '@bene/react-api-client';
 import {
   Card,
   Button,
   LoadingSpinner,
   ErrorPage,
   SkipWorkoutModal,
-  Typography,
   Badge,
+  typography,
 } from '@/lib/components';
-import { workouts } from '@bene/react-api-client';
 
 // Define the shape of the workout data as returned by the API
 type WorkoutDisplayData = NonNullable<workouts.GetTodaysWorkoutResponse['workout']>;
@@ -80,26 +80,24 @@ export default function TodayView({
             <Calendar size={48} className="text-primary opacity-80" />
           </div>
 
-          <Typography variant="h2" className="mb-3 text-3xl font-black tracking-tight">
-            Rest & Recovery
-          </Typography>
+          <h2 className={`${typography.h2} mb-3`}>Rest & Recovery</h2>
 
-          <Typography variant="muted" className="mb-8 max-w-[280px] text-base leading-relaxed">
+          <p className={`${typography.muted} mb-8 max-w-[280px]`}>
             No workout specifically assigned for today. Take this time to recharge your energy for
             the next session.
-          </Typography>
+          </p>
 
           <div className="w-full space-y-3">
             <Button
               variant="outline"
               onClick={() => {}}
-              className="border-primary/20 hover:bg-primary/5 h-12 w-full rounded-xl font-semibold"
+              className={`${typography.labelSm} border-primary/20 hover:bg-primary/5 h-12 w-full rounded-xl`}
             >
               View Weeks Schedule
             </Button>
             <Button
               variant="ghost"
-              className="text-muted-foreground hover:text-primary w-full rounded-xl text-xs"
+              className={`${typography.labelXs} text-muted-foreground hover:text-primary w-full rounded-xl`}
             >
               Browse Active Recovery Sessions
             </Button>
@@ -123,44 +121,39 @@ export default function TodayView({
                 <span className="bg-primary mr-2 h-1.5 w-1.5 rounded-full" />
                 Today&apos;s Protocol
               </Badge>
-              <Typography variant="muted" className="text-xs font-bold tracking-widest uppercase">
-                {dateString}
-              </Typography>
+              <p className={`${typography.mutedXs} opacity-60`}>{dateString}</p>
             </div>
 
             <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <Typography
-                  variant="h1"
-                  className="mb-4 text-5xl font-black tracking-tight capitalize md:text-6xl"
-                >
+                <h1 className={`${typography.displayLgResponsive} mb-4 capitalize`}>
                   {todaysWorkout.type || 'Training Session'}
-                </Typography>
-                <Typography variant="lead" className="text-muted-foreground max-w-xl text-lg">
+                </h1>
+                <p className={`${typography.lead} text-muted-foreground max-w-xl`}>
                   {todaysWorkout?.description ||
                     'Focus on form and intensity. Your personalized plan is ready.'}
-                </Typography>
+                </p>
               </div>
 
               {/* Key Stats */}
               <div className="flex gap-6">
                 <div className="flex flex-col gap-1">
-                  <div className="text-muted-foreground flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+                  <div className={`${typography.mutedXs} flex items-center gap-2`}>
                     <Clock size={16} /> Duration
                   </div>
-                  <Typography variant="h3" className="font-mono text-3xl font-bold">
+                  <h3 className={`${typography.h3} font-mono`}>
                     {todaysWorkout.durationMinutes}
-                    <span className="text-muted-foreground ml-1 text-sm font-normal">min</span>
-                  </Typography>
+                    <span className={`${typography.muted} ml-1 font-normal`}>min</span>
+                  </h3>
                 </div>
                 <div className="bg-border h-12 w-px" />
                 <div className="flex flex-col gap-1">
-                  <div className="text-muted-foreground flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+                  <div className={`${typography.mutedXs} flex items-center gap-2`}>
                     <Zap size={16} /> Activities
                   </div>
-                  <Typography variant="h3" className="font-mono text-3xl font-bold">
+                  <h3 className={`${typography.h3} font-mono`}>
                     {todaysWorkout.activities?.length || 0}
-                  </Typography>
+                  </h3>
                 </div>
               </div>
             </div>
@@ -171,9 +164,9 @@ export default function TodayView({
           {/* Main Content: Activities */}
           <div className="space-y-6 lg:col-span-2">
             <div className="flex items-center justify-between">
-              <Typography variant="h3" className="flex items-center gap-2 text-xl font-bold">
+              <h3 className={`${typography.large} flex items-center gap-2 font-bold`}>
                 <Dumbbell className="text-primary" size={24} /> Session Breakdown
-              </Typography>
+              </h3>
             </div>
 
             <div className="space-y-4">
@@ -187,21 +180,23 @@ export default function TodayView({
                   </div>
 
                   <div className="relative z-10 flex gap-5">
-                    <div className="bg-accent text-muted-foreground flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg font-bold">
+                    <div
+                      className={`${typography.h4} bg-accent text-muted-foreground flex h-12 w-12 shrink-0 items-center justify-center rounded-xl`}
+                    >
                       {idx + 1}
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
-                        <Typography variant="h4" className="text-lg font-bold capitalize">
+                        <h4 className={`${typography.large} font-bold capitalize`}>
                           {activity.type}
-                        </Typography>
+                        </h4>
                         <Badge variant="secondary" className="font-mono">
                           {activity.durationMinutes} min
                         </Badge>
                       </div>
-                      <Typography variant="muted" className="text-sm italic">
+                      <p className={`${typography.small} text-muted-foreground italic`}>
                         &quot;{activity.instructions}&quot;
-                      </Typography>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -218,12 +213,8 @@ export default function TodayView({
                     <Star size={20} className="fill-current" />
                   </div>
                   <div>
-                    <Typography variant="small" className="font-bold uppercase">
-                      Ready to start?
-                    </Typography>
-                    <Typography variant="muted" className="text-xs">
-                      Commit to the process.
-                    </Typography>
+                    <p className={`${typography.small} font-bold`}>Ready to start?</p>
+                    <p className={`${typography.mutedXs}`}>Commit to the process.</p>
                   </div>
                 </div>
 
@@ -233,7 +224,7 @@ export default function TodayView({
                     disabled={isLoading || isStarting}
                     isLoading={isStarting}
                     size="lg"
-                    className="shadow-primary/20 w-full gap-2 text-base font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className={`${typography.labelSm} shadow-primary/20 w-full gap-2 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]`}
                   >
                     {!isStarting && <Play size={20} className="fill-current" />}
                     Start Session
@@ -253,9 +244,9 @@ export default function TodayView({
 
               {/* Progress / Context */}
               <div className="border-border bg-card/50 rounded-2xl border p-6">
-                <Typography variant="small" className="text-muted-foreground mb-3 font-bold">
+                <p className={`${typography.labelSm} text-muted-foreground mb-3`}>
                   Session Focus
-                </Typography>
+                </p>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline">Strength</Badge>
                   <Badge variant="outline">Endurance</Badge>

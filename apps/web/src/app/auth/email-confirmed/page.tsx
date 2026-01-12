@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertTriangle, Check } from 'lucide-react';
 import { authClient } from '@bene/react-api-client';
-import { LoadingSpinner } from '@/lib/components';
+import { LoadingSpinner, typography } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function EmailConfirmedPage() {
@@ -46,32 +46,35 @@ export default function EmailConfirmedPage() {
   }
 
   if (success) {
+    // TODO(UI) PageContainer, IconBox, possibly Card?
     return (
       <div className="container mx-auto flex min-h-screen items-center justify-center p-8">
         <div className="bg-secondary w-full max-w-md rounded-lg p-8 text-center shadow-md">
           <div className="bg-success/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
             <Check className="text-success" />
           </div>
-          <h2 className="text-secondary-foreground mt-6 text-3xl font-bold">Email Confirmed!</h2>
-          <p className="text-secondary-foreground mt-4">
+          <h2 className={`${typography.h2} text-secondary-foreground mt-6`}>Email Confirmed!</h2>
+          <p className={`${typography.p} text-secondary-foreground mt-4`}>
             Your email has been successfully confirmed. You&apos;re now logged in and can access
             all features.
           </p>
-          <p className="text-secondary-foreground mt-2">Redirecting to your dashboard...</p>
+          <p className={`${typography.small} text-secondary-foreground mt-2`}>
+            Redirecting to your dashboard...
+          </p>
         </div>
       </div>
     );
   }
 
-  // Error state
+  // Error state TODO(UI) use error display!
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center p-8">
       <div className="bg-secondary w-full max-w-md rounded-lg p-8 text-center shadow-md">
         <div className="bg-error/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
           <AlertTriangle className="text-error" />
         </div>
-        <h2 className="text-secondary-foreground mt-6 text-3xl font-bold">Verification Failed</h2>
-        <p className="text-secondary-foreground mt-4">
+        <h2 className={`${typography.h2} text-secondary-foreground mt-6`}>Verification Failed</h2>
+        <p className={`${typography.p} text-secondary-foreground mt-4`}>
           {error || "We couldn't confirm your email address. The link may have expired."}
         </p>
         <div className="mt-6 space-y-3">

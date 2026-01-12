@@ -1,5 +1,5 @@
 import React from 'react';
-import Typography from './typography';
+import { typography } from '@/lib/components/theme/typography';
 
 interface SectionHeaderProps {
   title: string;
@@ -17,10 +17,8 @@ export default function SectionHeader({
   return (
     <div className={`mb-4 flex items-center justify-between ${className ?? ''}`}>
       <div className="space-y-1">
-        <Typography variant="h2" className="border-none pb-0">
-          {title}
-        </Typography>
-        {description && <Typography variant="muted">{description}</Typography>}
+        <h2 className={`${typography.h2} border-none pb-0`}>{title}</h2>
+        {description && <p className={typography.muted}>{description}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ChartColumnBig, Gift, Zap } from 'lucide-react';
-import { Button, LogoLoop } from '@/lib/components';
+import { Button, LogoLoop, typography } from '@/lib/components';
 import { FeaturesHero, FeatureCard } from './_components';
 import { ROUTES } from '@/lib/constants';
 
@@ -72,8 +72,8 @@ export default function FeaturesPage() {
       </div>
 
       <div className="bg-background rounded-xl p-8 shadow-md">
-        <h2 className="mb-6 text-center text-3xl font-bold">Connect with Your Favorite Apps</h2>
-        <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-center">
+        <h2 className={`${typography.h2} mb-6 text-center`}>Connect with Your Favorite Apps</h2>
+        <p className={`${typography.p} text-muted-foreground mx-auto mb-8 max-w-2xl text-center`}>
           Seamlessly integrate with popular fitness and health platforms to get a complete picture
           of your wellness journey.
         </p>

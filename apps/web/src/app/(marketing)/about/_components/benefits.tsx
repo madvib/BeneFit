@@ -1,5 +1,5 @@
-import { SpotlightCard } from '@/lib/components';
 import { BadgeCheck, Heart, Zap } from 'lucide-react';
+import { SpotlightCard, typography } from '@/lib/components';
 
 export default function Benefits() {
   const benefits = [
@@ -29,8 +29,8 @@ export default function Benefits() {
             <div className="bg-primary text-primary-foreground mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
               {benefit.icon}
             </div>
-            <h3 className="mb-2 text-xl font-bold">{benefit.title}</h3>
-            <p className="text-muted-foreground">{benefit.description}</p>
+            <h3 className={`${typography.h3} mb-2`}>{benefit.title}</h3>
+            <p className={`${typography.p} text-muted-foreground`}>{benefit.description}</p>
           </div>
         ))}
       </div>

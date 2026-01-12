@@ -41,10 +41,10 @@ export const recommended = (name, projectDir) => [
     rules: {
       ...unicorn.configs.unopinionated.rules,
       ...sonarjs.configs.recommended.rules,
+      'sonarjs/todo-tag': 'warn',
       ...security.configs.recommended.rules,
       ...testing_library.configs['flat/react'].rules,
       ...vitest.configs.recommended.rules,
-      'custom/require-colocated-tests': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'sonarjs/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
@@ -65,11 +65,7 @@ export const recommended = (name, projectDir) => [
             },
             {
               sourceTag: 'layer:infrastructure',
-              onlyDependOnLibsWithTags: [
-                'layer:application',
-                'layer:core',
-                'layer:shared',
-              ],
+              onlyDependOnLibsWithTags: ['layer:application', 'layer:core', 'layer:shared'],
             },
             {
               sourceTag: 'layer:presentation',
@@ -83,11 +79,7 @@ export const recommended = (name, projectDir) => [
             },
             {
               sourceTag: 'scope:training',
-              onlyDependOnLibsWithTags: [
-                'scope:training',
-                'scope:shared',
-                'scope:persistence',
-              ],
+              onlyDependOnLibsWithTags: ['scope:training', 'scope:shared', 'scope:persistence'],
             },
 
             {
@@ -136,7 +128,19 @@ export const recommended = (name, projectDir) => [
           ],
         },
       ],
-
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            'JSXAttribute[name.name="className"] Literal[value=/text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)/]',
+          message: 'Use typography constants from typography.ts instead',
+        },
+        {
+          selector:
+            'JSXAttribute[name.name="className"] Literal[value=/font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)/]',
+          message: 'Use typography constants from typography.ts instead',
+        },
+      ],
       '@next/next/no-img-element': 'off',
     },
   },

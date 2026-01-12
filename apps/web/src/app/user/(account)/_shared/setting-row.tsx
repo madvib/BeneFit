@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import { typography } from '@/lib/components/theme/typography';
 
 interface SettingRowProps {
   icon?: LucideIcon;
@@ -24,9 +25,9 @@ export function SettingRow({
           </div>
         )}
         <div>
-          <h3 className="font-semibold">{title}</h3>
+          <h3 className={typography.h4}>{title}</h3>
           {description && (
-            <p className="text-muted-foreground text-sm">{description}</p>
+            <p className={`${typography.p} text-muted-foreground text-sm`}>{description}</p>
           )}
         </div>
       </div>

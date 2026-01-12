@@ -23,8 +23,8 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <Providers>
-            <div>{modal}</div>
-            <div>{children}</div>
+            {modal}
+            {children}
           </Providers>
         </ThemeProvider>
       </body>

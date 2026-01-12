@@ -1,9 +1,8 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUI } from '@/lib/providers/ui-context';
-import { useEffect } from 'react';
 
 interface ModalProperties {
   children: ReactNode;

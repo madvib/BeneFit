@@ -8,6 +8,7 @@ import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { FormSuccessMessage } from '@/lib/components';
 import { useAppForm } from '../app-form';
 import { OAuthButton } from './oauth-button';
+import { typography } from '../theme/typography';
 
 export function SignupForm({ isModal = false }) {
   const form = useAppForm({
@@ -109,16 +110,16 @@ export function SignupForm({ isModal = false }) {
 
         <div className="relative flex items-center py-2">
           <div className="border-border grow border-t"></div>
-          <span className="text-muted-foreground mx-4 shrink text-sm">or</span>
+          <span className={`${typography.muted} mx-4 shrink`}>or</span>
           <div className="border-border grow border-t"></div>
         </div>
 
         <OAuthButton provider="google" />
-        <div className="text-muted-foreground mt-6 text-center text-sm">
+        <div className={`${typography.muted} mt-6 text-center`}>
           Already have an account?{' '}
           <Link
             href={isModal ? ROUTES.MODAL.LOGIN : ROUTES.AUTH.LOGIN}
-            className="text-primary font-medium hover:underline"
+            className={`${typography.small} text-primary hover:underline`}
             replace
           >
             Log in

@@ -1,7 +1,7 @@
-import { withForm } from '@/lib/components/app-form/app-form';
-import { EQUIPMENT_OPTIONS } from '@bene/shared';
-import { Label } from '@/lib/components';
 import { Check } from 'lucide-react';
+import { EQUIPMENT_OPTIONS } from '@bene/shared';
+import { withForm } from '@/lib/components/app-form/app-form';
+import { Label, typography } from '@/lib/components';
 import { onboardingFormOpts } from './form-options';
 
 // Use indexed access type directly in component props
@@ -29,7 +29,7 @@ function EquipmentButton({
     <button
       type="button"
       onClick={handleClick}
-      className={`rounded-md border p-2 text-left text-sm ${
+      className={`${typography.small} rounded-md border p-2 text-left ${
         isSelected ? 'border-primary bg-primary/5' : 'hover:bg-muted'
       }`}
     >
@@ -58,7 +58,7 @@ export const ConstraintsStep = withForm({
                 onChange={(e) => field.handleChange(Number(e.target.value))}
                 className="w-full"
               />
-              <div className="text-muted-foreground mt-1 flex justify-between text-xs">
+              <div className={`${typography.mutedXs} mt-1 flex justify-between`}>
                 <span>1 day</span>
                 <span>7 days</span>
               </div>
@@ -78,7 +78,7 @@ export const ConstraintsStep = withForm({
                     key={mins}
                     type="button"
                     onClick={() => field.handleChange(mins)}
-                    className={`flex-1 rounded-md border py-2 text-sm font-medium ${
+                    className={`${typography.labelXs} flex-1 rounded-md border py-2 ${
                       field.state.value === mins
                         ? 'bg-primary text-primary-foreground'
                         : 'hover:bg-muted'

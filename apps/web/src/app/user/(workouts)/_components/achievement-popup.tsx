@@ -1,7 +1,7 @@
 'use client';
 
 import { Award, X, Trophy, Star } from 'lucide-react';
-import { Button, Typography, Badge } from '@/lib/components';
+import { Button, Badge, typography } from '@/lib/components';
 import { useModalAnimation } from '@/lib/hooks/use-modal-animation';
 
 interface Achievement {
@@ -38,14 +38,13 @@ export default function AchievementPopup({
         <div className="pointer-events-none absolute top-0 right-0 left-0 h-40 bg-linear-to-b from-yellow-500/10 to-transparent" />
         <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-yellow-500/10 blur-[80px]" />
         <div className="bg-primary/10 absolute -top-24 -right-24 h-64 w-64 rounded-full blur-[80px]" />
-
+        {/* TODO should be Button */}
         <button
           onClick={onClose}
           className="text-muted-foreground hover:text-foreground bg-accent/30 hover:bg-accent/50 absolute top-4 right-4 z-10 rounded-xl p-2 transition-all sm:top-6 sm:right-6"
         >
           <X size={20} />
         </button>
-
         <div className="relative z-10 mb-8 text-center sm:mb-10">
           <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center sm:mb-8 sm:h-32 sm:w-32">
             {/* Glowing Halo */}
@@ -61,26 +60,16 @@ export default function AchievementPopup({
             </div>
           </div>
 
-          <Badge
-            variant="success"
-            className="mb-3 text-[9px] font-black tracking-[0.2em] uppercase sm:mb-4 sm:text-[10px]"
-          >
-            Elite Milestone
-          </Badge>
-          <Typography
-            variant="h1"
-            className="mb-1 text-2xl font-black tracking-tighter italic sm:mb-2 sm:text-3xl"
-          >
+          <div className={`${typography.labelXs} mb-3 sm:mb-4`}>
+            <Badge variant="success">Elite Milestone</Badge>
+          </div>
+          <h1 className={`${typography.displayLgResponsive} mb-1 sm:mb-2`}>
             Achievement Unlocked
-          </Typography>
-          <Typography
-            variant="muted"
-            className="text-xs font-bold tracking-widest uppercase opacity-60"
-          >
+          </h1>
+          <p className={`${typography.displaySm} opacity-60`}>
             Precision Intelligence Validation
-          </Typography>
+          </p>
         </div>
-
         <div className="relative z-10 mb-10 space-y-4">
           {achievements.map((achievement, idx) => (
             <div
@@ -91,23 +80,17 @@ export default function AchievementPopup({
                 <Award className="text-primary" size={24} />
               </div>
               <div className="text-left">
-                <Typography
-                  variant="small"
-                  className="mb-1 text-base leading-none font-black italic"
-                >
-                  {achievement.name}
-                </Typography>
-                <Typography variant="muted" className="text-[10px] font-medium opacity-70">
+                <p className={`${typography.displayBase} mb-1`}>{achievement.name}</p>
+                <p className={`${typography.mutedXs} opacity-70`}>
                   {achievement.description || 'Superior performance threshold exceeded.'}
-                </Typography>
+                </p>
               </div>
             </div>
           ))}
         </div>
-
         <Button
           onClick={onClose}
-          className="bg-primary text-primary-foreground shadow-primary/20 h-14 w-full rounded-2xl text-xs font-black tracking-widest uppercase shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+          className={`${typography.labelSm} bg-primary text-primary-foreground shadow-primary/20 h-14 w-full rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-95`}
         >
           Acknowledge
         </Button>

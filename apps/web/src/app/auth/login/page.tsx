@@ -1,7 +1,8 @@
 import { CheckCircle2, Zap, BarChart3 } from 'lucide-react';
-import { LoginForm } from '@/lib/components';
+import { LoginForm, typography } from '@/lib/components';
 
 export default function LoginPage() {
+  // TODO(UI) add to storybook, clean up div soup, use IconBox
   return (
     // Main Container: h-screen ensures full viewport height, overflow-hidden prevents scrolling
     <div className="flex h-screen w-full overflow-hidden pt-16">
@@ -13,8 +14,8 @@ export default function LoginPage() {
 
         {/* Content Layer (z-10 to sit on top of gradient) */}
         <div className="text-primary-foreground relative z-10">
-          <h1 className="mb-4 text-4xl font-bold">Welcome Back!</h1>
-          <p className="max-w-md text-xl opacity-90">
+          <h1 className={`${typography.h1} mb-4`}>Welcome Back!</h1>
+          <p className={`${typography.lead} max-w-md opacity-90`}>
             Join thousands of users achieving their fitness goals with our personalized approach.
           </p>
 
@@ -24,7 +25,7 @@ export default function LoginPage() {
               <div className="bg-primary-foreground/20 rounded-full p-2">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <span className="font-medium">Track your workouts and progress</span>
+              <span className={typography.p}>Track your workouts and progress</span>
             </div>
 
             {/* Item 2 */}
@@ -32,7 +33,7 @@ export default function LoginPage() {
               <div className="bg-primary-foreground/20 rounded-full p-2">
                 <Zap className="h-6 w-6" />
               </div>
-              <span className="font-medium">Customized fitness plans</span>
+              <span className={typography.p}>Customized fitness plans</span>
             </div>
 
             {/* Item 3 */}
@@ -40,7 +41,7 @@ export default function LoginPage() {
               <div className="bg-primary-foreground/20 rounded-full p-2">
                 <BarChart3 className="h-6 w-6" />
               </div>
-              <span className="font-medium">Health insights & analytics</span>
+              <span className={typography.p}>Health insights & analytics</span>
             </div>
           </div>
         </div>

@@ -1,10 +1,9 @@
 'use client';
 
-import { Button, Card, Typography, Badge } from '@/lib/components';
-import { CheckInFormSchema } from '@bene/shared';
 import { MessageSquare, X, Sparkles } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useAppForm } from '@/lib/components/app-form';
+import { CheckInFormSchema } from '@bene/shared';
+import { Button, Card, Badge, typography, useAppForm } from '@/lib/components';
 
 interface CheckIn {
   id: string;
@@ -55,13 +54,11 @@ export default function CheckInModal({
                   <MessageSquare size={24} className="fill-current" />
                 </div>
                 <div>
-                  <Typography variant="h3" className="text-lg font-bold">
-                    Coach Check-In
-                  </Typography>
+                  <h3 className={`${typography.h4} text-foreground font-bold`}>Coach Check-In</h3>
                   <div className="mt-1 flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="border-primary/20 bg-background/50 text-[10px] tracking-wider uppercase"
+                      className={`${typography.mutedXs} border-primary/20 bg-background/50`}
                     >
                       {checkIn.triggeredBy ? (
                         <>
@@ -88,26 +85,23 @@ export default function CheckInModal({
               {/* Question */}
               <div className="bg-muted/50 relative mb-8 rounded-2xl p-6">
                 {/* Decorative quote mark */}
-                <div className="text-primary/10 absolute -top-3 -left-2 font-serif text-6xl select-none">
+                <div className="text-primary/10 absolute -top-3 -left-2 text-6xl select-none">
                   “
                 </div>
-                <Typography
-                  variant="h3"
-                  className="text-foreground/90 relative z-10 text-xl leading-relaxed font-medium italic"
+                <h3
+                  className={`${typography.large} text-foreground/90 relative z-10 leading-relaxed font-medium italic`}
                 >
                   {checkIn.question}
-                </Typography>
+                </h3>
               </div>
 
               <form.Root>
                 <form.AppField name="response">
                   {(field) => (
                     <div className="mb-8">
-                      <label className="text-muted-foreground mb-3 block text-xs font-bold tracking-widest uppercase">
-                        Your Response
-                      </label>
+                      <label className={`${typography.mutedXs} mb-3 block`}>Your Response</label>
                       <textarea
-                        className="border-input bg-background/50 ring-offset-background placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-primary/20 min-h-[140px] w-full resize-none rounded-xl border p-4 text-base shadow-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        className={`${typography.small} border-input bg-background/50 ring-offset-background placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-primary/20 min-h-[140px] w-full resize-none rounded-xl border p-4 shadow-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50`}
                         placeholder="Share your thoughts..."
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -115,7 +109,9 @@ export default function CheckInModal({
                         autoFocus
                       />
                       {field.state.meta.errors ? (
-                        <p className="text-destructive animate-in slide-in-from-top-1 mt-2 text-sm font-medium">
+                        <p
+                          className={`${typography.small} text-destructive animate-in slide-in-from-top-1 mt-2 font-medium`}
+                        >
                           {field.state.meta.errors.join(', ')}
                         </p>
                       ) : null}
@@ -130,7 +126,7 @@ export default function CheckInModal({
                     size="lg"
                     onClick={() => onDismiss(checkIn.id)}
                     disabled={isLoading}
-                    className="text-muted-foreground hover:text-foreground font-medium"
+                    className={`${typography.labelSm} text-muted-foreground hover:text-foreground`}
                   >
                     Remind Me Later
                   </Button>

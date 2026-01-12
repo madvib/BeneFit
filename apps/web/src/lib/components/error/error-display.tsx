@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Typography } from '@/lib/components/ui-primitives';
+import { Button,typography } from '@/lib/components/ui-primitives';
 
 export const getSeverityColor = (severity?: string | null): string => {
   switch (severity) {
@@ -116,30 +116,26 @@ export function ErrorDisplay({
       {/* Text Section */}
       <div className={isInline ? 'flex-1 text-left' : 'text-center'}>
         {title && (
-          <Typography
-            variant={isPage ? 'h2' : 'h4'}
-            className={`border-none pb-0 font-bold tracking-tight ${
-              isPage ? 'mb-4 text-3xl md:text-4xl' : 'mb-1 text-xl'
+          <h2
+            className={`${isPage ? typography.h1 : typography.h4} mb-1 border-none pb-0 ${
+              isPage ? 'mb-4' : ''
             }`}
           >
             {title}
-          </Typography>
+          </h2>
         )}
-        <Typography
-          variant={isPage ? 'lead' : 'muted'}
-          className={`mt-0 max-w-lg leading-relaxed ${
-            isPage ? 'text-lg md:text-xl' : 'text-sm'
-          } ${isPage ? 'mx-auto' : ''}`}
+        <p
+          className={`${isPage ? typography.lead : typography.muted} mt-0 max-w-lg leading-relaxed ${isPage ? 'mx-auto' : ''}`}
         >
           {message}
-        </Typography>
+        </p>
 
         {/* Technical Details */}
         {technicalDetails && (
           <div className="mt-6 w-full text-left">
             <button
               onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-              className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-medium transition-colors"
+              className={`${typography.xs} text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors`}
             >
               {showTechnicalDetails ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               Technical Details
@@ -152,7 +148,9 @@ export function ErrorDisplay({
                   exit={{ height: 0, opacity: 0 }}
                   className="mt-2 overflow-hidden"
                 >
-                  <pre className="bg-muted text-muted-foreground max-h-48 overflow-auto rounded-xl p-4 font-mono text-[10px] leading-tight break-all whitespace-pre-wrap">
+                  <pre
+                    className={`${typography.mutedXs} bg-muted max-h-48 overflow-auto rounded-xl p-4 font-mono leading-tight break-all whitespace-pre-wrap`}
+                  >
                     {technicalDetails}
                   </pre>
                 </motion.div>

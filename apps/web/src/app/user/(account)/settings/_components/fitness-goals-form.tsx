@@ -3,6 +3,7 @@ import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
 import { UpdateFitnessGoalsFormSchema } from '@bene/shared';
 import { SecondaryGoalsList, PrimaryGoalGrid } from '@/lib/components/fitness/goal-selection-ui';
+import { typography } from '@/lib/components/theme/typography';
 
 interface FitnessGoalsFormProps {
   initialPrimary: string;
@@ -39,14 +40,14 @@ export function FitnessGoalsForm({
           <form.AppField name="primary">
             {(field) => (
               <div>
-                <label className="mb-3 block text-base font-medium">Primary Goal</label>
+                <label className={`${typography.h4} mb-3 block`}>Primary Goal</label>
                 <PrimaryGoalGrid
                   selected={field.state.value}
                   onChange={field.handleChange}
                   isLoading={isLoading}
                 />
                 {field.state.meta.errors ? (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className={`${typography.xs} text-destructive mt-1`}>
                     {field.state.meta.errors.join(', ')}
                   </p>
                 ) : null}
@@ -58,7 +59,7 @@ export function FitnessGoalsForm({
           <form.AppField name="secondary">
             {(field) => (
               <div>
-                <label className="mb-3 block text-base font-medium">Secondary Goals</label>
+                <label className={`${typography.h4} mb-3 block`}>Secondary Goals</label>
                 <SecondaryGoalsList
                   selected={field.state.value || []}
                   onChange={field.handleChange}

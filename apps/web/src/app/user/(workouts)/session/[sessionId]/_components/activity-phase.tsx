@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, Typography, Badge } from '@/lib/components';
+import { Card, Badge,typography } from '@/lib/components';
 import { Play, CheckCircle2, Lock } from 'lucide-react';
 import type { WorkoutActivity } from '@bene/shared';
 import ExerciseRow from './exercise-row';
+
 
 interface ActivityPhaseProps {
   activity: WorkoutActivity;
@@ -20,8 +21,6 @@ export default function ActivityPhase({
   onSetComplete,
   completedExercises,
 }: ActivityPhaseProps) {
-  const status = isCompleted ? 'completed' : isActive ? 'active' : 'locked';
-
   return (
     <Card
       variant={isActive ? 'default' : 'ghost'}
@@ -50,25 +49,21 @@ export default function ActivityPhase({
               )}
             </div>
             <div>
-              <Typography
-                variant="h3"
-                className={`text-xl font-black tracking-tight italic ${isCompleted ? 'text-emerald-500/70 line-through' : ''}`}
+              <h3
+                className={`${typography.h3} ${isCompleted ? 'text-emerald-500/70 line-through' : ''}`}
               >
                 {activity.name}
-              </Typography>
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase opacity-40"
-              >
+              </h3>
+              <p className={typography.labelXs}>
                 {activity.type} Protocol • {activity.duration || 0}m Target
-              </Typography>
+              </p>
             </div>
           </div>
 
           {isActive && (
             <Badge
               variant="outline"
-              className="border-primary/20 text-primary animate-pulse text-[10px] font-black italic"
+              className={`${typography.labelXs} border-primary/20 text-primary animate-pulse italic`}
             >
               LIVE PHASE
             </Badge>
@@ -77,12 +72,9 @@ export default function ActivityPhase({
 
         {activity.instructions && activity.instructions.length > 0 && isActive && (
           <div className="bg-primary/5 border-primary mb-8 rounded-r-xl border-l-4 p-4">
-            <Typography
-              variant="small"
-              className="text-foreground/80 text-xs leading-relaxed font-bold italic"
-            >
+            <p className={`${typography.small} text-foreground/80 leading-relaxed italic`}>
               &ldquo;{activity.instructions[0]}&rdquo;
-            </Typography>
+            </p>
           </div>
         )}
 

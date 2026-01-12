@@ -2,10 +2,10 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LucideIcon } from 'lucide-react';
-import { ProgressBar, Card } from '@/lib/components';
-import { cardVariants } from '../card/card';
 import { VariantProps } from 'class-variance-authority';
+import { LucideIcon } from 'lucide-react';
+import { ProgressBar, Card, typography } from '@/lib/components';
+import { cardVariants } from '../card/card';
 
 export interface StepperStep {
   id: string;
@@ -74,16 +74,14 @@ export default function Stepper({
               <Icon size={24} />
             </div>
             <div>
-              <h2 className="text-xl leading-tight font-bold tracking-tight">
-                {currentStep.title}
-              </h2>
-              <p className="text-muted-foreground text-sm font-medium">
-                {currentStep.description}
-              </p>
+              <h2 className={`${typography.h4} font-bold`}>{currentStep.title}</h2>
+              <p className={`${typography.muted} font-medium`}>{currentStep.description}</p>
             </div>
           </div>
           <div className="flex items-center sm:block">
-            <span className="text-primary bg-primary/10 sm:text-muted-foreground rounded-full px-3 py-1 text-sm font-black tracking-tighter sm:bg-transparent sm:p-0 sm:font-semibold">
+            <span
+              className={`${typography.small} text-primary bg-primary/10 sm:text-muted-foreground rounded-full px-3 py-1 font-black tracking-tighter sm:bg-transparent sm:p-0 sm:font-semibold`}
+            >
               {currentStepIndex + 1}
               <span className="mx-0.5 opacity-50">/</span>
               {steps.length}

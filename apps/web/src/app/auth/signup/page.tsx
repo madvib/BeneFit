@@ -1,7 +1,8 @@
 import { CheckCircle2, Users, BarChart3 } from 'lucide-react';
-import { SignupForm, IconBox } from '@/lib/components';
+import { SignupForm, IconBox, typography } from '@/lib/components';
 
 export default function SignupPage() {
+  // TODO(UI) possible to use PageContainer? Reduce nested divs? Add to storybook
   return (
     <div className="flex h-screen w-full flex-col pt-16 md:flex-row">
       {/* Left Section: Marketing/Branding */}
@@ -10,28 +11,29 @@ export default function SignupPage() {
         <div className="from-primary to-primary/90 absolute inset-0 bg-linear-to-br" />
         {/* Content Layer (z-10 to sit on top of gradient) */}
         <div className="text-primary-foreground relative z-10">
-          <h1 className="mb-4 text-4xl font-bold">Join Us Today!</h1>
-          <p className="max-w-md text-xl opacity-90">
+          <h1 className={`${typography.h1} mb-4`}>Join Us Today!</h1>
+          <p className={`${typography.lead} max-w-md opacity-90`}>
             Start your wellness journey with personalized fitness plans and community support.
           </p>
 
           <div className="mt-8 space-y-4">
+            {/* TODO(UI) avoid repitition map over points */}
             {/* Item 1 */}
             <div className="flex items-center gap-3">
               <IconBox icon={CheckCircle2} variant="default" size="md" />
-              <span className="font-medium">Personalized fitness plans</span>
+              <span className={typography.p}>Personalized fitness plans</span>
             </div>
 
             {/* Item 2 */}
             <div className="flex items-center gap-3">
               <IconBox icon={Users} variant="default" size="md" />
-              <span className="font-medium">Connect with fitness community</span>
+              <span className={typography.p}>Connect with fitness community</span>
             </div>
 
             {/* Item 3 */}
             <div className="flex items-center gap-3">
               <IconBox icon={BarChart3} variant="default" size="md" />
-              <span className="font-medium">Track your progress visually</span>
+              <span className={typography.p}>Track your progress visually</span>
             </div>
           </div>
         </div>

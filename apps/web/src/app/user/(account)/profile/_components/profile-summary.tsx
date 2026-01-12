@@ -1,5 +1,5 @@
 import { Camera, Trophy, Flame, Dumbbell } from 'lucide-react';
-import { CountUp, Typography } from '@/lib/components';
+import { CountUp, typography } from '@/lib/components';
 
 interface ProfileSummaryProps {
   name: string;
@@ -78,17 +78,8 @@ export default function ProfileSummary({
         </div>
 
         <div className="mx-auto max-w-lg text-center">
-          <Typography
-            variant="h1"
-            className="mb-1 text-3xl font-black tracking-tighter italic sm:text-4xl"
-          >
-            {name}
-          </Typography>
-          {bio && (
-            <Typography variant="muted" className="text-base font-medium">
-              {bio}
-            </Typography>
-          )}
+          <h1 className={`${typography.h1} mb-1 sm:text-4xl`}>{name}</h1>
+          {bio && <p className={typography.muted}>{bio}</p>}
         </div>
 
         {/* Stats Grid */}
@@ -97,16 +88,11 @@ export default function ProfileSummary({
             <div key={stat.label} className="flex flex-col items-center">
               <div className="mb-0.5 flex items-center gap-2">
                 <stat.icon size={16} className={`${stat.color} opacity-80`} />
-                <Typography variant="h3" className="text-3xl font-black tracking-tighter italic">
+                <h3 className={typography.displayMd}>
                   <CountUp from={0} to={stat.value} duration={1.5} />
-                </Typography>
+                </h3>
               </div>
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase opacity-60"
-              >
-                {stat.label}
-              </Typography>
+              <p className={typography.displaySm}>{stat.label}</p>
             </div>
           ))}
         </div>

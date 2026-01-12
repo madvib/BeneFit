@@ -2,9 +2,8 @@
 
 import { Share2, ThumbsUp, Activity, PenLine, Heart } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useAppForm } from '@/lib/components/app-form';
 import type { DailyWorkout } from '@bene/shared';
-import { Typography, Button, Slider } from '@/lib/components';
+import { Button, Slider, useAppForm,typography } from '@/lib/components';
 
 export interface PerformanceFormData {
   performance: {
@@ -20,7 +19,7 @@ interface PerformanceFormProps {
   onSubmit: (_data: PerformanceFormData) => void;
   isLoading: boolean;
 }
-
+// TODO need a validator, replace PerformanceFormData with shared schema.
 export default function PerformanceForm({ workout, onSubmit, isLoading }: PerformanceFormProps) {
   const form = useAppForm({
     defaultValues: {
@@ -61,44 +60,29 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
         >
           <div className="space-y-10">
             {/* RPE Selector */}
+            {/* TODO replace with RPE picker component */}
             <form.AppField name="performance.perceivedExertion">
               {(field) => (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Activity size={18} className="text-primary" />
-                      <Typography
-                        variant="h4"
-                        className="text-sm font-black tracking-widest uppercase italic"
-                      >
-                        Intensity Index (RPE)
-                      </Typography>
+                      <h4 className={typography.labelSm}>Intensity Index (RPE)</h4>
                     </div>
                     {/* Enhanced RPE Indicator */}
                     <div className="bg-primary/10 border-primary/20 flex h-12 w-16 items-center justify-center rounded-xl border shadow-[0_0_15px_-3px_rgba(var(--primary),0.3)]">
-                      <Typography
-                        variant="h2"
-                        className="text-primary text-2xl font-black italic"
-                      >
+                      <h2 className={`${typography.displayMd} text-primary`}>
                         {field.state.value}
-                      </Typography>
+                      </h2>
                     </div>
                   </div>
 
                   <div className="bg-accent/40 border-border/50 space-y-8 rounded-3xl border p-8">
                     <div className="text-center">
-                      <Typography
-                        variant="h3"
-                        className="text-primary mb-1 text-2xl font-black tracking-tighter capitalize italic"
-                      >
+                      <h3 className={`${typography.displayLg} text-primary mb-1`}>
                         {getRpeLabel(field.state.value)}
-                      </Typography>
-                      <Typography
-                        variant="muted"
-                        className="text-[10px] font-black tracking-[0.2em] uppercase opacity-50"
-                      >
-                        Subjective Exertion Rating
-                      </Typography>
+                      </h3>
+                      <p className={typography.displaySm}>Subjective Exertion Rating</p>
                     </div>
 
                     <div className="relative px-2 pt-2">
@@ -125,16 +109,11 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <PenLine size={18} className="text-primary" />
-                    <Typography
-                      variant="h4"
-                      className="text-sm font-black tracking-widest uppercase italic"
-                    >
-                      Coach Transcription
-                    </Typography>
+                    <h4 className={typography.labelSm}>Coach Transcription</h4>
                   </div>
                   <div className="group relative">
                     <textarea
-                      className="bg-accent/20 border-border/50 focus:border-primary/50 focus:ring-primary/5 placeholder:text-muted-foreground/30 no-scrollbar min-h-[120px] w-full rounded-2xl border p-5 text-sm leading-relaxed font-medium transition-all focus:ring-4"
+                      className={`${typography.small} bg-accent/20 border-border/50 focus:border-primary/50 focus:ring-primary/5 placeholder:text-muted-foreground/30 no-scrollbar min-h-[120px] w-full rounded-2xl border p-5 leading-relaxed transition-all focus:ring-4`}
                       placeholder="Input physiological feedback, form observations, or cognitive state during peak loads..."
                       value={field.state.value || ''}
                       onChange={(e) => field.handleChange(e.target.value)}
@@ -157,19 +136,17 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
                       <Share2 size={20} />
                     </div>
                     <div>
-                      <Typography variant="small" className="font-black italic">
-                        Sync to Achievement Feed
-                      </Typography>
-                      <Typography variant="muted" className="text-[10px] font-bold">
+                      <p className={typography.displayBase}>Sync to Achievement Feed</p>
+                      <p className={typography.displaySm}>
                         Transmit this session data to your network.
-                      </Typography>
+                      </p>
                     </div>
                   </div>
                   <Button
                     type="button"
                     variant={field.state.value ? 'default' : 'outline'}
                     onClick={() => field.handleChange(!field.state.value)}
-                    className={`rounded-xl px-6 text-[10px] font-black tracking-widest uppercase transition-all ${field.state.value ? 'shadow-primary/20 scale-105 shadow-lg' : 'border-border hover:bg-accent/40 bg-transparent'}`}
+                    className={`${typography.labelXs} rounded-xl px-6 transition-all ${field.state.value ? 'shadow-primary/20 scale-105 shadow-lg' : 'border-border hover:bg-accent/40 bg-transparent'}`}
                     disabled={isLoading}
                   >
                     {field.state.value ? 'Broadcast On' : 'Broadcast Off'}
@@ -184,7 +161,7 @@ export default function PerformanceForm({ workout, onSubmit, isLoading }: Perfor
           <div className="pt-12">
             <Button
               type="submit"
-              className="bg-primary text-primary-foreground shadow-primary/30 group h-16 w-full rounded-[24px] font-black tracking-[0.2em] uppercase italic shadow-2xl transition-all hover:scale-[1.02] active:scale-95"
+              className={`${typography.labelSm} bg-primary text-primary-foreground shadow-primary/30 group h-16 w-full rounded-[24px] italic shadow-2xl transition-all hover:scale-[1.02] active:scale-95`}
               disabled={isLoading}
               size="lg"
             >

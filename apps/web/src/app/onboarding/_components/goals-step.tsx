@@ -1,7 +1,8 @@
 import { withForm } from '@/lib/components/app-form/app-form';
-import { Typography } from '@/lib/components';
+;
 import { onboardingFormOpts } from './form-options';
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
+import { typography } from '@/lib/components/theme/typography';
 
 export const GoalsStep = withForm({
   ...onboardingFormOpts,
@@ -11,9 +12,9 @@ export const GoalsStep = withForm({
         <form.AppField name="primaryGoal">
           {(field) => (
             <>
-              <Typography variant="h3" className="mb-6">
+              <h3 className={`${typography.h3} mb-6`}>
                 Primary Goal
-              </Typography>
+              </h3>
               <PrimaryGoalGrid selected={field.state.value} onChange={field.handleChange} />
             </>
           )}
@@ -26,9 +27,9 @@ export const GoalsStep = withForm({
         <form.AppField name="secondaryGoals">
           {(field) => (
             <>
-              <Typography variant="h3" className="mb-6">
+              <h3 className={`${typography.h3} mb-6`}>
                 Secondary Goals
-              </Typography>
+              </h3>
               <SecondaryGoalsList
                 selected={field.state.value || []}
                 onChange={field.handleChange}

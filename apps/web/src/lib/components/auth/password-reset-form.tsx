@@ -7,6 +7,7 @@ import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { ROUTES } from '@/lib/constants';
 import { FormSuccessMessage } from '../ui-primitives';
 import Link from 'next/link';
+import { typography } from '../theme/typography';
 
 export function PasswordResetForm({ isModal = false }) {
   const form = useAppForm({
@@ -48,12 +49,12 @@ export function PasswordResetForm({ isModal = false }) {
         </form.AppField>
         <form.SubmissionError />
         <form.SubmitButton label="Send Reset Email" submitLabel="Sending..." />
-        <div className="text-muted-foreground mt-4 text-center text-sm">
+        <div className={`${typography.muted} mt-4 text-center`}>
           Remember your password?{' '}
           <Link
             href={isModal ? ROUTES.MODAL.LOGIN : ROUTES.AUTH.LOGIN}
             replace
-            className="text-primary font-medium hover:underline"
+            className={`${typography.small} text-primary hover:underline`}
           >
             Log in
           </Link>

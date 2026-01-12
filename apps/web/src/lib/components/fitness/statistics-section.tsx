@@ -1,16 +1,19 @@
 'use client';
 
-import { Card, CountUp, Typography, SpotlightCard } from '@/lib/components';
+import { Card, CountUp, SpotlightCard,typography } from '@/lib/components';
 import { profile } from '@bene/react-api-client';
 import { Award, Flame, TrendingUp, Clock, Dumbbell, Zap } from 'lucide-react';
 import { safeFormatDate } from '@/lib/utils';
+
 
 export default function StatisticsSection({ stats }: { stats: profile.GetUserStatsResponse }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Typography variant="h3">Fitness Performance</Typography>
-        <div className="bg-primary/10 text-primary flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wider uppercase">
+        <h3 className={typography.h3}>Fitness Performance</h3>
+        <div
+          className={`${typography.labelSm} bg-primary/10 text-primary flex items-center gap-2 rounded-full px-3 py-1`}
+        >
           <Zap size={12} className="fill-current" />
           <span>Live Stats</span>
         </div>
@@ -27,12 +30,10 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
               <TrendingUp size={20} className="text-primary/50" />
             </div>
             <div className="mt-8">
-              <Typography variant="muted" className="mb-1 tracking-widest uppercase">
-                Total Workouts
-              </Typography>
-              <Typography variant="h1" className="text-4xl font-black sm:text-5xl">
+              <p className={`${typography.labelSm} mb-1`}>Total Workouts</p>
+              <h1 className={typography.displayLgResponsive}>
                 <CountUp to={stats.totalWorkouts || 0} />
-              </Typography>
+              </h1>
             </div>
           </div>
         </SpotlightCard>
@@ -44,16 +45,12 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
               <Clock size={20} />
             </div>
             <div className="mt-4">
-              <Typography variant="muted" className="mb-0.5 text-xs tracking-widest uppercase">
-                Time Active
-              </Typography>
+              <p className={`${typography.labelSm} mb-0.5`}>Time Active</p>
               <div className="flex items-baseline gap-1">
-                <Typography variant="h3" className="font-black">
+                <h3 className={typography.h3}>
                   <CountUp to={stats.totalMinutes || 0} />
-                </Typography>
-                <Typography variant="small" className="text-muted-foreground font-bold">
-                  min
-                </Typography>
+                </h3>
+                <p className={`${typography.small} text-muted-foreground italic`}>min</p>
               </div>
             </div>
           </div>
@@ -66,16 +63,12 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
               <TrendingUp size={20} />
             </div>
             <div className="mt-4">
-              <Typography variant="muted" className="mb-0.5 text-xs tracking-widest uppercase">
-                Total Volume
-              </Typography>
+              <p className={`${typography.labelSm} mb-0.5`}>Total Volume</p>
               <div className="flex items-baseline gap-1">
-                <Typography variant="h3" className="font-black">
+                <h3 className={typography.h3}>
                   <CountUp to={stats.totalVolume || 0} separator="," />
-                </Typography>
-                <Typography variant="small" className="text-muted-foreground font-bold">
-                  lbs
-                </Typography>
+                </h3>
+                <p className={`${typography.small} text-muted-foreground italic`}>lbs</p>
               </div>
             </div>
           </div>
@@ -89,36 +82,21 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
                 <Flame size={24} fill={stats.streakActive ? 'currentColor' : 'none'} />
               </div>
               {stats.streakActive && (
-                <Typography
-                  variant="small"
-                  className="rounded-full bg-orange-500/20 px-3 py-1 font-bold tracking-tighter text-orange-600 uppercase"
+                <p
+                  className={`${typography.labelSm} rounded-full bg-orange-500/20 px-3 py-1 text-orange-600`}
                 >
                   On Fire
-                </Typography>
+                </p>
               )}
             </div>
             <div className="mt-6 grid grid-cols-2 gap-4">
               <div>
-                <Typography
-                  variant="muted"
-                  className="mb-0.5 text-[10px] tracking-widest uppercase"
-                >
-                  Current Streak
-                </Typography>
-                <Typography variant="h3" className="font-black text-orange-600">
-                  {stats.currentStreak} days
-                </Typography>
+                <p className={`${typography.labelXs} mb-0.5 opacity-60`}>Current Streak</p>
+                <h3 className={`${typography.h3} text-orange-600`}>{stats.currentStreak} days</h3>
               </div>
               <div>
-                <Typography
-                  variant="muted"
-                  className="mb-0.5 text-[10px] tracking-widest uppercase"
-                >
-                  Personal Best
-                </Typography>
-                <Typography variant="h3" className="font-bold">
-                  {stats.longestStreak} d
-                </Typography>
+                <p className={`${typography.labelXs} mb-0.5 opacity-60`}>Personal Best</p>
+                <h3 className={typography.h3}>{stats.longestStreak} d</h3>
               </div>
             </div>
           </div>
@@ -131,15 +109,15 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-500">
                 <Award size={24} />
               </div>
-              <Typography variant="small" className="text-muted-foreground font-medium">
+              <p className={`${typography.small} text-muted-foreground`}>
                 Last: {safeFormatDate(stats.lastWorkoutDate)}
-              </Typography>
+              </p>
             </div>
 
             <div className="mt-6">
-              <Typography variant="muted" className="mb-3 text-[10px] tracking-widest uppercase">
+              <p className={`${typography.labelXs} mb-3 opacity-60`}>
                 Recent Achievements ({stats.achievements.length})
-              </Typography>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {stats.achievements.slice(0, 3).map((achievement) => (
                   <div
@@ -149,22 +127,16 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
                     <div className="rounded-lg bg-yellow-500/20 p-1 text-yellow-600">
                       <Zap size={14} fill="currentColor" />
                     </div>
-                    <Typography variant="small" className="font-bold whitespace-nowrap">
-                      {achievement.name}
-                    </Typography>
+                    <p className={`${typography.small} font-bold`}>{achievement.name}</p>
                   </div>
                 ))}
                 {stats.achievements.length > 3 && (
                   <div className="bg-muted flex items-center justify-center rounded-xl border border-dashed px-3 py-2">
-                    <Typography variant="small" className="text-muted-foreground font-medium">
-                      +{stats.achievements.length - 3} more
-                    </Typography>
+                    <p className={typography.small}>+{stats.achievements.length - 3} more</p>
                   </div>
                 )}
                 {stats.achievements.length === 0 && (
-                  <Typography variant="muted" className="italic">
-                    Keep training to earn awards!
-                  </Typography>
+                  <p className={`${typography.muted} italic`}>Keep training to earn awards!</p>
                 )}
               </div>
             </div>

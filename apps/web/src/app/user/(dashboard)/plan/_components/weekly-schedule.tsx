@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   Lock,
 } from 'lucide-react';
-import { Card, ProgressBar, Typography, Badge, Button } from '@/lib/components';
+import { Card, ProgressBar, Badge, Button,typography } from '@/lib/components';
+
 
 // Extract plan type from API response
 type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
@@ -50,15 +51,8 @@ export default function WeeklySchedule({
             <Calendar size={20} />
           </div>
           <div>
-            <Typography variant="h3" className="font-black tracking-tighter uppercase italic">
-              Training Schedule
-            </Typography>
-            <Typography
-              variant="muted"
-              className="text-[10px] font-black tracking-widest uppercase"
-            >
-              Weekly Overview
-            </Typography>
+            <h3 className={`${typography.labelSm} italic`}>Training Schedule</h3>
+            <p className={typography.mutedXs}>Weekly Overview</p>
           </div>
         </div>
 
@@ -73,9 +67,9 @@ export default function WeeklySchedule({
           >
             <ChevronLeft size={16} />
           </Button>
-          <Typography variant="small" className="min-w-[100px] text-center font-black">
+          <p className={`${typography.small} min-w-[100px] text-center`}>
             Week {selectedWeek} of {plan.durationWeeks}
-          </Typography>
+          </p>
           <Button
             variant="ghost"
             size="sm"
@@ -93,41 +87,22 @@ export default function WeeklySchedule({
         {weekData && (
           <div className="from-accent/30 to-accent/10 border-border/50 grid grid-cols-1 gap-6 rounded-3xl border bg-linear-to-r p-6 sm:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase"
-              >
-                Focus Phase
-              </Typography>
-              <Typography variant="small" className="font-black italic">
-                Strength & Power Building
-              </Typography>
+              <p className={typography.mutedXs}>Focus Phase</p>
+              <p className={`${typography.small} italic`}>Strength & Power Building</p>
             </div>
 
             <div className="flex flex-col gap-1">
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase"
-              >
-                Commitment
-              </Typography>
-              <Typography variant="small" className="font-black">
-                {weeklyWorkouts.length} Sessions Planned
-              </Typography>
+              <p className={typography.mutedXs}>Commitment</p>
+              <p className={typography.small}>{weeklyWorkouts.length} Sessions Planned</p>
             </div>
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <Typography
-                  variant="muted"
-                  className="text-[10px] font-black tracking-widest uppercase"
-                >
-                  Week Progress
-                </Typography>
-                <Typography variant="small" className="text-primary font-black italic">
+                <p className={typography.mutedXs}>Week Progress</p>
+                <p className={`${typography.small} text-primary italic`}>
                   {weeklyWorkouts.filter((w) => w.status === 'completed').length} /{' '}
                   {weeklyWorkouts.length}
-                </Typography>
+                </p>
               </div>
               <ProgressBar
                 value={weeklyWorkouts.filter((w) => w.status === 'completed').length}
@@ -143,9 +118,9 @@ export default function WeeklySchedule({
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {weeklyWorkouts.length === 0 && (
             <div className="bg-accent/20 border-border/50 col-span-full rounded-2xl border border-dashed py-12 text-center">
-              <Typography variant="muted" className="italic">
+              <p className={`${typography.muted} italic`}>
                 No sessions drafted for this week yet.
-              </Typography>
+              </p>
             </div>
           )}
 
@@ -190,17 +165,11 @@ export default function WeeklySchedule({
                 <div>
                   {/* Day Header */}
                   <div className="mb-4 flex items-center justify-between">
-                    <Typography
-                      variant="muted"
-                      className={`text-[10px] font-black tracking-widest uppercase ${isCompleted ? 'text-primary' : ''}`}
-                    >
+                    <p className={`${typography.mutedXs} ${isCompleted ? 'text-primary' : ''}`}>
                       {dayName}
-                    </Typography>
+                    </p>
                     {isSkipped && (
-                      <Badge
-                        variant="inactive"
-                        className="text-[8px] leading-none font-black tracking-widest uppercase"
-                      >
+                      <Badge variant="inactive" className={`${typography.mutedXs}`}>
                         Skipped
                       </Badge>
                     )}
@@ -208,24 +177,19 @@ export default function WeeklySchedule({
 
                   {/* Workout Info */}
                   <div className="mb-6">
-                    <Typography
-                      variant="h4"
-                      className={`mb-2 leading-tight font-black italic ${isSkipped ? 'text-muted-foreground line-through' : 'text-foreground'}`}
+                    <h4
+                      className={`${typography.h4} mb-2 italic ${isSkipped ? 'text-muted-foreground line-through' : 'text-foreground'}`}
                     >
                       {workout.type}
-                    </Typography>
+                    </h4>
                     <div className="flex flex-wrap gap-3">
                       <div className="flex items-center gap-1.5">
                         <Clock size={12} className="text-primary" />
-                        <Typography variant="muted" className="text-[10px] font-bold">
-                          {workout.durationMinutes || '45'}m
-                        </Typography>
+                        <p className={typography.mutedXs}>{workout.durationMinutes || '45'}m</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Zap size={12} className="text-orange-500" />
-                        <Typography variant="muted" className="text-[10px] font-bold">
-                          Intensity High
-                        </Typography>
+                        <p className={typography.mutedXs}>Intensity High</p>
                       </div>
                     </div>
                   </div>
@@ -235,15 +199,13 @@ export default function WeeklySchedule({
                 <Button
                   onClick={() => onWorkoutClick(workout.id)}
                   variant={isCompleted || isSkipped ? 'outline' : 'default'}
-                  className={`w-full gap-2 rounded-2xl py-6 font-black tracking-widest uppercase transition-all ${
+                  className={`w-full gap-2 rounded-2xl py-6 transition-all ${
                     !isCompleted && !isSkipped
                       ? 'shadow-[0_8px_20px_-10px_rgba(var(--primary),0.5)] active:scale-95'
                       : 'bg-background/50 border-border/50 backdrop-blur-sm'
                   }`}
                 >
-                  <Typography variant="small" className="font-black">
-                    {buttonLabel}
-                  </Typography>
+                  <p className={typography.labelSm}>{buttonLabel}</p>
                   {getIcon()}
                 </Button>
               </div>

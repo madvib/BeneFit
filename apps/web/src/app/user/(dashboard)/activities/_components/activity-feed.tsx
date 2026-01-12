@@ -1,7 +1,7 @@
 'use client';
 
 import { Activity, ArrowRight, Sparkles, History } from 'lucide-react';
-import { Button, Typography, Badge, Card } from '@/lib/components';
+import { Button, Badge, Card, typography } from '@/lib/components';
 import { workouts } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import {
@@ -17,13 +17,13 @@ export default function ActivityFeed() {
       return (
         <div className="flex flex-col gap-4 p-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="border-muted/40 flex gap-4 rounded-2xl border p-4">
-              <div className="bg-muted/50 h-10 w-10 animate-pulse rounded-xl" />
+            <Card key={i} className="flex gap-4 p-4">
+              <div className="bg-muted h-10 w-10 animate-pulse rounded-xl" />
               <div className="flex-1 space-y-2">
-                <div className="bg-muted/50 h-4 w-1/3 animate-pulse rounded" />
-                <div className="bg-muted/30 h-3 w-3/4 animate-pulse rounded" />
+                <div className="bg-muted h-4 w-1/3 animate-pulse rounded" />
+                <div className="bg-muted h-3 w-3/4 animate-pulse rounded" />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       );
@@ -35,10 +35,10 @@ export default function ActivityFeed() {
           <div className="bg-destructive/10 text-destructive mb-2 rounded-full p-4">
             <Activity size={32} />
           </div>
-          <Typography variant="h4">Something went wrong</Typography>
-          <Typography variant="muted" className="max-w-[240px]">
-            We couldn&apos;t load your recent activity. Please try again later.
-          </Typography>
+          <h4 className={typography.h4}>Something went wrong</h4>
+          <p className={`${typography.muted} max-w-[240px]`}>
+            We couldn't load your recent activity. Please try again later.
+          </p>
         </div>
       );
     }
@@ -51,10 +51,10 @@ export default function ActivityFeed() {
           <div className="bg-accent/50 text-muted-foreground mb-2 rounded-full p-4">
             <History size={32} />
           </div>
-          <Typography variant="h4">No Activity Yet</Typography>
-          <Typography variant="muted" className="max-w-[240px]">
+          <h4 className={typography.h4}>No Activity Yet</h4>
+          <p className={`${typography.muted} max-w-[240px]`}>
             Your recent workouts and achievements will appear here once you start training.
-          </Typography>
+          </p>
           <Button variant="outline" size="sm" className="mt-2 rounded-xl">
             Start First Workout
           </Button>
@@ -65,9 +65,9 @@ export default function ActivityFeed() {
     return (
       <div className="flex flex-col gap-4 p-6">
         {workoutsData.map((workout) => (
-          <div
+          <Card
             key={workout.id}
-            className="group border-border/50 bg-card hover:border-primary/40 hover:bg-accent/5 relative flex gap-4 rounded-2xl border p-4 transition-all duration-300"
+            className="group border-border/50 bg-card hover:border-primary/40 hover:bg-accent/5 relative flex gap-4 p-4 transition-all duration-300"
           >
             <div
               className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 shadow-sm ${getActivityColorClass('workout')}`}
@@ -76,31 +76,27 @@ export default function ActivityFeed() {
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
               <div className="flex items-start justify-between gap-2">
-                <Typography
-                  variant="small"
-                  className="text-foreground group-hover:text-primary truncate font-black transition-colors"
+                <p
+                  className={`${typography.small} text-foreground group-hover:text-primary truncate font-bold transition-colors`}
                 >
                   {workout.workoutType.charAt(0).toUpperCase() + workout.workoutType.slice(1)}{' '}
                   Workout
-                </Typography>
-                <Typography
-                  variant="muted"
-                  className="shrink-0 text-[10px] font-bold tracking-tighter uppercase"
-                >
+                </p>
+                <p className={`${typography.mutedXs} shrink-0 opacity-60`}>
                   {safeFormatTimeAgo(workout.recordedAt)}
-                </Typography>
+                </p>
               </div>
-              <Typography variant="muted" className="line-clamp-1 text-xs">
+              <p className={`${typography.mutedXs} line-clamp-1`}>
                 Completed {workout.performance.durationMinutes} min session •{' '}
                 {workout.performance.caloriesBurned || 0} kcal
-              </Typography>
+              </p>
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex gap-2">
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px] font-bold">
+                  <Badge variant="secondary" className={`${typography.labelXs} px-1.5 py-0`}>
                     {workout.performance.durationMinutes}m
                   </Badge>
                   {workout.performance.caloriesBurned && (
-                    <Badge variant="outline" className="px-1.5 py-0 text-[10px] font-bold">
+                    <Badge variant="outline" className={`${typography.labelXs} px-1.5 py-0`}>
                       {workout.performance.caloriesBurned} kcal
                     </Badge>
                   )}
@@ -110,7 +106,7 @@ export default function ActivityFeed() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     );
@@ -123,14 +119,12 @@ export default function ActivityFeed() {
           <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
             <Sparkles size={16} />
           </div>
-          <Typography variant="h4" className="text-lg font-black italic">
-            Recent Activity
-          </Typography>
+          <h4 className={`${typography.h4} italic`}>Recent Activity</h4>
         </div>
         <Button
           variant="ghost"
           size="sm"
-          className="text-muted-foreground hover:text-primary -mr-2 rounded-xl text-xs font-bold transition-colors"
+          className={`${typography.labelXs} text-muted-foreground hover:text-primary -mr-2 rounded-xl transition-colors`}
         >
           View All <ArrowRight size={14} className="ml-1" />
         </Button>

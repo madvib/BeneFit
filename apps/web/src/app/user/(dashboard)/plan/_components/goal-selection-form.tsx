@@ -6,6 +6,7 @@ import { useAppForm } from '@/lib/components/app-form';
 import { Button, Stepper } from '@/lib/components';
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
+import { typography } from '@/lib/components/theme/typography';
 
 interface GoalSelectionFormProps {
   onGenerate: (_request: fitnessPlan.GeneratePlanRequest) => void;
@@ -89,11 +90,9 @@ export default function GoalSelectionForm({
               onClick={handleNext}
               isLoading={isLoading}
               type="button"
-              className="shadow-primary/20 min-w-[160px] rounded-xl px-8 shadow-lg"
+              className={`${typography.labelSm} shadow-primary/20 min-w-[160px] rounded-xl px-8 shadow-lg`}
             >
-              <span className="font-bold">
-                {currentStepIndex === STEPS.length - 1 ? 'Generate Plan' : 'Continue'}
-              </span>
+              <span>{currentStepIndex === STEPS.length - 1 ? 'Generate Plan' : 'Continue'}</span>
               {currentStepIndex !== STEPS.length - 1 && <ArrowRight size={18} className="ml-2" />}
             </Button>
           </div>
@@ -105,7 +104,9 @@ export default function GoalSelectionForm({
               <form.AppField name="goals.primary">
                 {(field) => (
                   <div className="space-y-4">
-                    <label className="text-lg font-bold">What&apos;s your primary goal?</label>
+                    <label className={`${typography.large} font-bold`}>
+                      What&apos;s your primary goal?
+                    </label>
                     <PrimaryGoalGrid
                       selected={field.state.value}
                       onChange={field.handleChange}
@@ -118,7 +119,9 @@ export default function GoalSelectionForm({
               <form.AppField name="goals.secondary">
                 {(field) => (
                   <div className="space-y-4">
-                    <label className="text-lg font-bold">Secondary goals (optional)</label>
+                    <label className={`${typography.large} font-bold`}>
+                      Secondary goals (optional)
+                    </label>
                     <SecondaryGoalsList
                       selected={field.state.value || []}
                       onChange={field.handleChange}
@@ -137,7 +140,7 @@ export default function GoalSelectionForm({
                   const workoutsPerWeek = Math.round(field.state.value / 4);
                   return (
                     <div className="space-y-4">
-                      <label className="text-lg font-bold">Workouts per week</label>
+                      <label className={`${typography.large} font-bold`}>Workouts per week</label>
                       <div className="bg-accent/10 flex flex-col items-center gap-4 rounded-3xl border p-5 sm:flex-row sm:gap-6 sm:p-8">
                         <input
                           type="range"
@@ -148,7 +151,9 @@ export default function GoalSelectionForm({
                           className="accent-primary bg-muted h-2 w-full cursor-pointer appearance-none rounded-lg"
                           disabled={isLoading}
                         />
-                        <div className="bg-primary text-primary-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl font-black shadow-lg">
+                        <div
+                          className={`${typography.displayXs} bg-primary text-primary-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-lg`}
+                        >
                           {workoutsPerWeek}
                         </div>
                       </div>
@@ -160,7 +165,7 @@ export default function GoalSelectionForm({
               <form.AppField name="availableEquipment">
                 {(field) => (
                   <div className="space-y-4">
-                    <label className="text-lg font-bold">Available Equipment</label>
+                    <label className={`${typography.large} font-bold`}>Available Equipment</label>
                     <CategorizedEquipmentSelection
                       selected={field.state.value || []}
                       onChange={field.handleChange}
@@ -177,12 +182,14 @@ export default function GoalSelectionForm({
               <form.AppField name="customInstructions">
                 {(field) => (
                   <div className="space-y-4">
-                    <label className="text-lg font-bold">Custom instructions (optional)</label>
+                    <label className={`${typography.large} font-bold`}>
+                      Custom instructions (optional)
+                    </label>
                     <div className="relative">
                       <textarea
                         value={field.state.value || ''}
                         onChange={(e) => field.handleChange(e.target.value)}
-                        className="border-input bg-background/50 focus:bg-background focus:ring-primary/20 h-40 w-full rounded-2xl border p-5 text-base transition-all outline-none focus:ring-2"
+                        className={`${typography.small} border-input bg-background/50 focus:bg-background focus:ring-primary/20 h-40 w-full rounded-2xl border p-5 transition-all outline-none focus:ring-2`}
                         placeholder="E.g., 'Focus on upper body', 'I prefer shorter workouts', 'I have a sensitive shoulder'..."
                         disabled={isLoading}
                       />

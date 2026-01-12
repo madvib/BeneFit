@@ -1,6 +1,4 @@
-import { FormSection, Select, Switch } from '@/lib/components';
-import Typography from '@/lib/components/ui-primitives/typography/typography';
-
+import { FormSection, Select, Switch, typography } from '@/lib/components';
 type ProfileVisibility = 'Public' | 'Private';
 
 interface PrivacySettingsProps {
@@ -21,12 +19,10 @@ export default function PrivacySettings({
       <div className="space-y-4">
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
           <div className="space-y-0.5">
-            <Typography variant="large" className="text-base font-medium">
-              Profile Visibility
-            </Typography>
-            <Typography variant="small" className="text-muted-foreground block">
+            <p className={`${typography.large} text-base font-medium`}>Profile Visibility</p>
+            <p className={`${typography.small} text-muted-foreground block`}>
               Who can see your profile and activity
-            </Typography>
+            </p>
           </div>
           <Select
             value={profileVisibility}
@@ -39,12 +35,10 @@ export default function PrivacySettings({
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
           <div className="space-y-0.5">
-            <Typography variant="large" className="text-base font-medium">
-              Activity Sharing
-            </Typography>
-            <Typography variant="small" className="text-muted-foreground block">
+            <p className={`${typography.large} text-base font-medium`}>Activity Sharing</p>
+            <p className={`${typography.small} text-muted-foreground block`}>
               Share activities with friends
-            </Typography>
+            </p>
           </div>
           <Switch checked={activitySharing} onCheckedChange={onActivitySharingChange} />
         </div>

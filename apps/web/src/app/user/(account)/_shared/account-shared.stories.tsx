@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import AccountHeader from './account-header';
 import AccountSidebar from './account-sidebar';
-import { PageHeader } from './page-header';
 import { SettingRow } from './setting-row';
 import { Bell, Lock, Mail, User } from 'lucide-react';
-import { Button, Switch } from '@/lib/components';
+import { Button, PageHeader, Switch, typography } from '@/lib/components';
 
 const meta: Meta = {
   title: 'Features/Account/Shared',
@@ -39,9 +38,7 @@ export const PageHeaders: StoryObj<typeof PageHeader> = {
   render: () => (
     <div className="max-w-2xl space-y-8">
       <div>
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          With Description
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>With Description</p>
         <PageHeader
           title="Account Settings"
           description="Manage your account preferences and settings"
@@ -49,9 +46,7 @@ export const PageHeaders: StoryObj<typeof PageHeader> = {
       </div>
 
       <div className="border-t pt-8">
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          With Description
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>With Description</p>
         <PageHeader
           title="Profile"
           description="Manage your public profile and personal information"
@@ -59,9 +54,7 @@ export const PageHeaders: StoryObj<typeof PageHeader> = {
       </div>
 
       <div className="border-t pt-8">
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          Title Only
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>Title Only</p>
         <PageHeader title="Security" />
       </div>
     </div>
@@ -72,9 +65,7 @@ export const SettingRows: StoryObj<typeof SettingRow> = {
   render: () => (
     <div className="max-w-2xl space-y-8">
       <div>
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          Basic (No Action)
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>Basic (No Action)</p>
         <SettingRow
           icon={User}
           title="Profile Information"
@@ -83,9 +74,7 @@ export const SettingRows: StoryObj<typeof SettingRow> = {
       </div>
 
       <div className="border-t pt-8">
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          With Toggle Switch
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>With Toggle Switch</p>
         <SettingRow
           icon={Bell}
           title="Push Notifications"
@@ -95,9 +84,7 @@ export const SettingRows: StoryObj<typeof SettingRow> = {
       </div>
 
       <div className="border-t pt-8">
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          With Button
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>With Button</p>
         <SettingRow
           icon={Mail}
           title="Email Preferences"
@@ -107,9 +94,7 @@ export const SettingRows: StoryObj<typeof SettingRow> = {
       </div>
 
       <div className="border-t pt-8">
-        <p className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          With Outline Button
-        </p>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>With Outline Button</p>
         <SettingRow
           icon={Lock}
           title="Change Password"

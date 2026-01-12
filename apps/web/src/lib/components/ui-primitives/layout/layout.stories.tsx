@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import PageContainer from './page-container';
 import TopTabNavigation from './top-tab-navigation';
 import DashboardShell from './dashboard-shell';
-import { Card, Typography } from '@/lib/components';
+import { Card, typography } from '@/lib/components';
 import { Activity, Calendar, Zap, TrendingUp } from 'lucide-react';
 
 const meta: Meta = {
@@ -19,10 +19,10 @@ export const Container: StoryObj<typeof PageContainer> = {
     <div className="bg-muted/10 h-screen w-full">
       <PageContainer variant="default">
         <div className="bg-background border-primary/20 mt-8 flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-dashed shadow-xl">
-          <Typography variant="h2">Page Container</Typography>
-          <Typography variant="muted">
+          <h2 className={typography.h2}>Page Container</h2>
+          <p className={typography.muted}>
             Content is constrained to a readable width with safe horizontal padding.
-          </Typography>
+          </p>
         </div>
       </PageContainer>
     </div>
@@ -35,7 +35,7 @@ export const Dashboard: StoryObj<typeof DashboardShell> = {
       <DashboardShell
         overview={
           <div className="space-y-4">
-            <Typography variant="h2">Dashboard Overview</Typography>
+            <h2 className={typography.h2}>Dashboard Overview</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Card title="Latest Activity" icon={Activity} className="h-32">
                 Activity Chart Workspace
@@ -50,23 +50,27 @@ export const Dashboard: StoryObj<typeof DashboardShell> = {
           <div className="space-y-4">
             <Card title="Quick Actions" className="bg-primary/5 border-primary/10">
               <div className="flex flex-col gap-2">
-                <div className="bg-primary text-primary-foreground rounded-xl px-4 py-2 text-center text-sm font-bold">
+                <div
+                  className={`${typography.labelSm} bg-primary text-primary-foreground rounded-xl px-4 py-2 text-center`}
+                >
                   Start Session
                 </div>
-                <div className="bg-background rounded-xl border px-4 py-2 text-center text-sm font-bold">
+                <div
+                  className={`${typography.labelSm} bg-background rounded-xl border px-4 py-2 text-center`}
+                >
                   Log Manual Activity
                 </div>
               </div>
             </Card>
             <Card title="Metrics" icon={TrendingUp}>
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+                <div className={`${typography.p} flex justify-between`}>
                   <span>Vo2 Max</span>
-                  <span className="font-bold">54.2</span>
+                  <span className={`${typography.h4} italic`}>54.2</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className={`${typography.p} flex justify-between`}>
                   <span>Recovery</span>
-                  <span className="font-bold">82%</span>
+                  <span className={`${typography.h4} italic`}>82%</span>
                 </div>
               </div>
             </Card>
@@ -94,20 +98,20 @@ export const Tabs: StoryObj<typeof TopTabNavigation> = {
         {{
           overview: (
             <Card className="min-h-[200px]">
-              <Typography variant="h3">Overview Content</Typography>
-              <Typography variant="p">Welcome to your dashboard overview.</Typography>
+              <h3 className={typography.h3}>Overview Content</h3>
+              <p className={typography.p}>Welcome to your dashboard overview.</p>
             </Card>
           ),
           analytics: (
             <Card className="min-h-[200px]">
-              <Typography variant="h3">Analytics Engine</Typography>
-              <Typography variant="p">Deeper insights into your fitness trends.</Typography>
+              <h3 className={typography.h3}>Analytics Engine</h3>
+              <p className={typography.p}>Deeper insights into your fitness trends.</p>
             </Card>
           ),
           settings: (
             <Card className="min-h-[200px]">
-              <Typography variant="h3">Layout Settings</Typography>
-              <Typography variant="p">Configure how your layout is structured.</Typography>
+              <h3 className={typography.h3}>Layout Settings</h3>
+              <p className={typography.p}>Configure how your layout is structured.</p>
             </Card>
           ),
         }}

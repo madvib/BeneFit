@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { authClient } from '@bene/react-api-client';
-import { Button, FormSuccessMessage } from '@/lib/components';
+import { Button, FormSuccessMessage, typography } from '@/lib/components';
 import { useAppForm } from '@/lib/components/app-form';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 
@@ -102,7 +102,7 @@ export default function PersonalInfoForm({ initialData }: PersonalInfoFormProps)
             </>
           ) : (
             <div className="space-y-3 rounded-md border border-yellow-200 bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-800">
+              <p className={`${typography.xs} text-yellow-800`}>
                 Your email must be verified before it can be changed.
               </p>
 
@@ -131,7 +131,9 @@ export default function PersonalInfoForm({ initialData }: PersonalInfoFormProps)
               </Button>
 
               {verifySuccess && (
-                <p className="text-sm text-green-600">Verification email sent successfully!</p>
+                <p className={`${typography.xs} text-green-600`}>
+                  Verification email sent successfully!
+                </p>
               )}
             </div>
           )}

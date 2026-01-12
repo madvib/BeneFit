@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useFormContext } from './app-form';
 import { Card } from '../ui-primitives';
+import { typography } from '../theme/typography';
 
 export function Root({
   title,
@@ -17,8 +18,8 @@ export function Root({
   return (
     <Card variant={variant}>
       <div className="mb-6">
-        {title && <h2 className="text-foreground text-2xl font-bold">{title}</h2>}
-        {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
+        {title && <h2 className={typography.h3}>{title}</h2>}
+        {subtitle && <p className={`${typography.muted} mt-2`}>{subtitle}</p>}
       </div>
 
       <form

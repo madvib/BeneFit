@@ -1,4 +1,5 @@
 import { MessageSquare, Plus, Settings } from 'lucide-react';
+import { typography } from '@/lib/components/theme/typography';
 
 interface ChatData {
   id: number | string;
@@ -27,7 +28,7 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
         <div className="p-4">
           <button
             onClick={onNewChat}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center gap-2 rounded-lg px-4 py-3 font-medium shadow-sm transition-all"
+            className={`${typography.labelSm} bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center gap-2 rounded-lg px-4 py-3 shadow-sm transition-all`}
           >
             <Plus size={18} />
             <span>New Chat</span>
@@ -44,7 +45,7 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
               <div className="space-y-1">
                 <button
                   key={idx}
-                  className="text-foreground/80 hover:bg-muted hover:text-foreground group flex w-full items-center gap-2 truncate rounded-md px-3 py-2 text-left text-sm transition-colors"
+                  className={`${typography.small} text-foreground/80 hover:bg-muted hover:text-foreground group flex w-full items-center gap-2 truncate rounded-md px-3 py-2 text-left transition-colors`}
                 >
                   <MessageSquare
                     size={14}
@@ -59,7 +60,9 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
 
         {/* User Settings Footer */}
         <div className="border-muted mt-auto border-t p-4">
-          <button className="text-foreground/80 hover:bg-muted flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors">
+          <button
+            className={`${typography.small} text-foreground/80 hover:bg-muted flex w-full items-center gap-3 rounded-md px-3 py-2 transition-colors`}
+          >
             <Settings size={18} />
             <span>Settings</span>
           </button>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { Calendar, Clock, Dumbbell, AlertTriangle } from 'lucide-react';
 import { useAppForm } from '@/lib/components/app-form';
-import { Button, Input } from '@/lib/components';
+import { Button, Input, typography } from '@/lib/components';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
 
 interface TrainingConstraintsFormProps {
@@ -70,7 +70,7 @@ export function TrainingConstraintsForm({
 
               return (
                 <div>
-                  <label className="mb-3 flex items-center gap-2 text-base font-medium">
+                  <label className={`${typography.h4} mb-3 flex items-center gap-2`}>
                     <Calendar size={18} /> Training Frequency
                   </label>
                   <div className="bg-accent/20 flex items-center gap-4 rounded-lg border p-4">
@@ -83,10 +83,10 @@ export function TrainingConstraintsForm({
                       className="flex-1"
                       disabled={isLoading}
                     />
-                    <span className="font-semibold">{daysCount} days / week</span>
+                    <span className={typography.h4}>{daysCount} days / week</span>
                   </div>
                   {field.state.meta.errors ? (
-                    <p className="text-destructive mt-1 text-sm">
+                    <p className={`${typography.xs} text-destructive mt-1`}>
                       {field.state.meta.errors.join(', ')}
                     </p>
                   ) : null}
@@ -99,7 +99,7 @@ export function TrainingConstraintsForm({
           <form.AppField name="maxDuration">
             {(field) => (
               <div>
-                <label className="mb-3 flex items-center gap-2 text-base font-medium">
+                <label className={`${typography.h4} mb-3 flex items-center gap-2`}>
                   <Clock size={18} /> Max Workout Duration
                 </label>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -108,7 +108,7 @@ export function TrainingConstraintsForm({
                       key={mins}
                       type="button"
                       onClick={() => field.handleChange(mins)}
-                      className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
+                      className={`${typography.p} rounded-lg border px-4 py-2 text-sm transition-all ${
                         field.state.value === mins
                           ? 'border-primary bg-primary/10 text-primary'
                           : 'hover:border-primary/50'
@@ -120,7 +120,7 @@ export function TrainingConstraintsForm({
                   ))}
                 </div>
                 {field.state.meta.errors ? (
-                  <p className="text-destructive mt-1 text-sm">
+                  <p className={`${typography.xs} text-destructive mt-1`}>
                     {field.state.meta.errors.join(', ')}
                   </p>
                 ) : null}
@@ -131,7 +131,7 @@ export function TrainingConstraintsForm({
           <form.AppField name="availableEquipment">
             {(field) => (
               <div>
-                <label className="mb-3 flex items-center gap-2 text-base font-medium">
+                <label className={`${typography.h4} mb-3 flex items-center gap-2`}>
                   <Dumbbell size={18} /> Available Equipment
                 </label>
                 <CategorizedEquipmentSelection
@@ -167,7 +167,7 @@ export function TrainingConstraintsForm({
 
               return (
                 <div>
-                  <label className="mb-3 flex items-center gap-2 text-base font-medium">
+                  <label className={`${typography.h4} mb-3 flex items-center gap-2`}>
                     <AlertTriangle size={18} /> Injuries & Limitations
                   </label>
                   <div className="space-y-3">
@@ -199,14 +199,14 @@ export function TrainingConstraintsForm({
                         {currentInjuries.map((injury, idx: number) => (
                           <span
                             key={idx}
-                            className="bg-destructive/10 text-destructive flex items-center gap-2 rounded-full px-3 py-1 text-sm"
+                            className={`${typography.xs} bg-destructive/10 text-destructive flex items-center gap-2 rounded-full px-3 py-1`}
                             title={`${injury.severity} - ${injury.bodyPart}`}
                           >
                             {injury.description}
                             <button
                               type="button"
                               onClick={() => removeInjury(idx)}
-                              className="hover:text-destructive/80 font-bold"
+                              className="hover:text-destructive/80"
                             >
                               ×
                             </button>
@@ -216,7 +216,7 @@ export function TrainingConstraintsForm({
                     )}
 
                     {currentInjuries.length === 0 && (
-                      <p className="text-muted-foreground text-sm italic">
+                      <p className={`${typography.xs} text-muted-foreground italic`}>
                         No injuries reported.
                       </p>
                     )}

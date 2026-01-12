@@ -1,6 +1,4 @@
-'use client';
-
-import { SpotlightCard } from '@/lib/components';
+import { SpotlightCard, typography } from '@/lib/components';
 
 interface Testimonial {
   id: number;
@@ -42,8 +40,8 @@ export default function AboutTestimonials() {
     <section className="py-20">
       <div className="container">
         <div className="text-center">
-          <h2 className="text-foreground text-3xl font-bold md:text-4xl">What Our Users Say</h2>
-          <p className="text-muted-foreground mx-auto mt-4 max-w-2xl">
+          <h2 className={typography.h2}>What Our Users Say</h2>
+          <p className={`${typography.p} text-muted-foreground mx-auto mt-4 max-w-2xl`}>
             Don&apos;t just take our word for it - hear from real users who transformed their
             lives
           </p>
@@ -64,10 +62,10 @@ export default function AboutTestimonials() {
                   </svg>
                 ))}
               </div>
-              <p className="text-foreground mb-6 italic">&quot;{testimonial.content}&quot;</p>
+              <p className={`${typography.p} mb-6 italic`}>&quot;{testimonial.content}&quot;</p>
               <div>
-                <p className="font-semibold">{testimonial.name}</p>
-                <p className="text-muted-foreground text-sm">{testimonial.role}</p>
+                <p className={typography.large}>{testimonial.name}</p>
+                <p className={`${typography.small} text-muted-foreground`}>{testimonial.role}</p>
               </div>
             </SpotlightCard>
           ))}

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Badge, MetricPill, Typography } from '../';
+import { Badge, MetricPill } from '../';
+import { typography } from '../../';
 import { ShieldCheck, AlertCircle, Info, Star, Zap, Flame, Timer } from 'lucide-react';
 
 const meta: Meta = {
@@ -16,9 +17,7 @@ export const Showcase: StoryObj = {
     <div className="flex flex-col gap-12 p-8">
       {/* Badge Variants */}
       <section className="space-y-4">
-        <Typography variant="muted" className="text-xs font-bold tracking-widest uppercase">
-          Badge Variants
-        </Typography>
+        <p className={typography.labelXs}>Badge Variants</p>
         <div className="flex flex-wrap gap-4">
           <Badge variant="default">Default</Badge>
           <Badge variant="secondary">Secondary</Badge>
@@ -37,9 +36,7 @@ export const Showcase: StoryObj = {
 
       {/* Badges with Icons */}
       <section className="space-y-4">
-        <Typography variant="muted" className="text-xs font-bold tracking-widest uppercase">
-          Badges with Icons
-        </Typography>
+        <p className={typography.labelXs}>Badges with Icons</p>
         <div className="flex flex-wrap gap-4">
           <Badge variant="success" icon={ShieldCheck}>
             Verified
@@ -59,9 +56,7 @@ export const Showcase: StoryObj = {
 
       {/* Metric Pills */}
       <section className="space-y-4">
-        <Typography variant="muted" className="text-xs font-bold tracking-widest uppercase">
-          Metric Pills (Performance)
-        </Typography>
+        <p className={typography.labelXs}>Metric Pills (Performance)</p>
         <div className="flex flex-wrap gap-4">
           <MetricPill value="120" unit="bpm" icon={Zap} />
           <MetricPill value="450" unit="kcal" icon={Flame} variant="accent" />
@@ -73,26 +68,22 @@ export const Showcase: StoryObj = {
 
       {/* Combinations */}
       <section className="space-y-4">
-        <Typography variant="muted" className="text-xs font-bold tracking-widest uppercase">
-          Usage Context
-        </Typography>
+        <p className={typography.labelXs}>Usage Context</p>
         <div className="bg-background flex max-w-md items-center justify-between rounded-2xl border p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full font-bold">
+            <div
+              className={`${typography.labelXs} bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full`}
+            >
               JD
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <Typography variant="large" className="font-bold">
-                  John Doe
-                </Typography>
-                <Badge variant="primaryLight" className="px-1.5 text-[10px]">
+                <p className={typography.h4}>John Doe</p>
+                <Badge variant="primaryLight" className={`${typography.labelXs} px-1.5`}>
                   PRO
                 </Badge>
               </div>
-              <Typography variant="muted" className="text-xs">
-                Active for 12 days
-              </Typography>
+              <p className={typography.mutedXs}>Active for 12 days</p>
             </div>
           </div>
           <MetricPill value="92" unit="%" variant="accent" />

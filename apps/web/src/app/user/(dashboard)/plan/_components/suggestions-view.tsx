@@ -12,6 +12,7 @@ import {
   Tag,
   LayoutTemplate,
 } from 'lucide-react';
+import { typography } from '@/lib/components/theme/typography';
 
 // --- Types ---
 export interface PlanSuggestion {
@@ -42,7 +43,7 @@ export default function SuggestionsView({
         {/* Header */}
         <div className="border-muted bg-accent/20 flex items-center gap-2 border-b px-6 py-4">
           <Sparkles size={18} className="text-primary" />
-          <h3 className="text-lg font-semibold tracking-tight">AI Recommendations</h3>
+          <h3 className={typography.large}>AI Recommendations</h3>
         </div>
 
         {/* Suggestions Grid */}
@@ -54,31 +55,39 @@ export default function SuggestionsView({
             >
               {/* Top Badges */}
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
+                <span
+                  className={`${typography.labelXs} bg-primary/10 text-primary border-primary/20 inline-flex items-center gap-1 rounded-md border px-2 py-0.5`}
+                >
                   <Tag size={10} /> {plan.category}
                 </span>
-                <span className="text-muted-foreground bg-muted/50 ml-auto flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium">
+                <span
+                  className={`${typography.muted} bg-muted/50 ml-auto flex items-center gap-1 rounded-full px-2 py-0.5`}
+                >
                   <Clock size={10} /> {plan.duration}
                 </span>
               </div>
 
               {/* Title */}
-              <h4 className="text-foreground group-hover:text-primary mb-1 text-lg font-bold transition-colors">
+              <h4
+                className={`${typography.large} group-hover:text-primary mb-1 transition-colors`}
+              >
                 {plan.name}
               </h4>
 
               {/* Difficulty Indicator */}
-              <div className="text-muted-foreground mb-6 flex items-center gap-2 text-xs">
+              <div className={`${typography.muted} mb-6 flex items-center gap-2`}>
                 <TrendingUp size={12} />
                 <span>
                   Difficulty:{' '}
-                  <span className="text-foreground font-medium">{plan.difficulty}</span>
+                  <span className={`${typography.small} text-foreground`}>{plan.difficulty}</span>
                 </span>
               </div>
 
               {/* Action Area */}
               <div className="border-muted/60 mt-auto flex items-center justify-between border-t pt-4">
-                <span className="text-muted-foreground group-hover:text-primary text-xs font-medium transition-colors">
+                <span
+                  className={`${typography.muted} group-hover:text-primary transition-colors`}
+                >
                   View details
                 </span>
                 <button className="bg-accent text-foreground group-hover:bg-primary group-hover:text-primary-foreground rounded-full p-2 shadow-sm transition-all">
@@ -101,7 +110,7 @@ export default function SuggestionsView({
       <div className="bg-background border-muted overflow-hidden rounded-xl border shadow-sm">
         <div className="border-muted bg-accent/20 flex items-center gap-2 border-b px-6 py-4">
           <Zap size={18} className="text-primary" />
-          <h3 className="text-lg font-semibold tracking-tight">Quick Actions</h3>
+          <h3 className={typography.large}>Quick Actions</h3>
         </div>
 
         <div className="grid gap-3 p-6 sm:grid-cols-3">
@@ -114,12 +123,12 @@ export default function SuggestionsView({
               <Plus size={24} />
             </div>
             <div>
-              <span className="text-foreground group-hover:text-primary block font-semibold transition-colors">
+              <span
+                className={`${typography.small} group-hover:text-primary block transition-colors`}
+              >
                 Create New Plan
               </span>
-              <span className="text-muted-foreground mt-1 block text-xs">
-                Start from scratch
-              </span>
+              <span className={`${typography.muted} mt-1 block`}>Start from scratch</span>
             </div>
           </button>
 
@@ -132,10 +141,8 @@ export default function SuggestionsView({
               <Save size={24} />
             </div>
             <div>
-              <span className="text-foreground block font-semibold">Save Progress</span>
-              <span className="text-muted-foreground mt-1 block text-xs">
-                Save current edits
-              </span>
+              <span className={`${typography.small} block`}>Save Progress</span>
+              <span className={`${typography.muted} mt-1 block`}>Save current edits</span>
             </div>
           </button>
 
@@ -148,10 +155,8 @@ export default function SuggestionsView({
               <Download size={24} />
             </div>
             <div>
-              <span className="text-foreground block font-semibold">Export Plan</span>
-              <span className="text-muted-foreground mt-1 block text-xs">
-                Download as PDF/CSV
-              </span>
+              <span className={`${typography.small} block`}>Export Plan</span>
+              <span className={`${typography.muted} mt-1 block`}>Download as PDF/CSV</span>
             </div>
           </button>
         </div>

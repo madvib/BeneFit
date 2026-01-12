@@ -1,6 +1,7 @@
 import React from 'react';
 import { EQUIPMENT_CATEGORIES } from '@bene/shared';
 import { Check } from 'lucide-react';
+import { typography } from '../theme/typography';
 
 interface EquipmentSelectionProps {
   selected: string[];
@@ -31,9 +32,7 @@ export function CategorizedEquipmentSelection({
     <div className="space-y-6">
       {Object.entries(EQUIPMENT_CATEGORIES).map(([category, equipment]) => (
         <div key={category} className="space-y-3">
-          <h4 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-            {category}
-          </h4>
+          <h4 className={`${typography.labelXs} text-muted-foreground`}>{category}</h4>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {equipment.map((item) => {
               const isSelected = selected.includes(item);
@@ -51,7 +50,7 @@ export function CategorizedEquipmentSelection({
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span
-                      className={`font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}
+                      className={`${typography.small} ${isSelected ? 'text-primary' : 'text-foreground'}`}
                     >
                       {formatLabel(item)}
                     </span>

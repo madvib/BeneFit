@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Badge, Button, Stepper, Typography, type StepperStep } from '@/lib/components';
+import { Badge, Button, Stepper, type StepperStep, typography } from '@/lib/components';
 import { Target, Dumbbell, Calendar, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
@@ -96,7 +96,7 @@ export default function PlanGenerationStepper({
             type="button"
             className="shadow-primary/20 min-w-[140px] rounded-xl shadow-lg"
           >
-            <span className="font-bold">{isLastStep ? 'Generate' : 'Continue'}</span>
+            <span className={typography.labelSm}>{isLastStep ? 'Generate' : 'Continue'}</span>
             {!isLastStep && <ArrowRight size={18} className="ml-2" />}
           </Button>
         </div>
@@ -105,7 +105,7 @@ export default function PlanGenerationStepper({
       <div className="space-y-6">
         {/* AI Badge inside content area for specialized feel */}
         <div className="mb-8 flex justify-center">
-          <Badge variant="ai" className="px-4 py-2 tracking-tight uppercase">
+          <Badge variant="ai" className={`${typography.mutedXs} px-4 py-2 opacity-80`}>
             AI-Powered System
           </Badge>
         </div>
@@ -114,9 +114,7 @@ export default function PlanGenerationStepper({
         {currentStep.id === 'goals' && (
           <div className="space-y-10">
             <div>
-              <Typography variant="h3" className="mb-6 text-xl font-black">
-                What is your primary goal?
-              </Typography>
+              <h3 className={`${typography.h3} mb-6`}>What is your primary goal?</h3>
               <PrimaryGoalGrid
                 selected={primaryGoal}
                 onChange={setPrimaryGoal}
@@ -125,9 +123,7 @@ export default function PlanGenerationStepper({
             </div>
 
             <div>
-              <Typography variant="h3" className="mb-6 text-xl font-black">
-                Any secondary areas of focus?
-              </Typography>
+              <h3 className={`${typography.h3} mb-6`}>Any secondary areas of focus?</h3>
               <SecondaryGoalsList
                 selected={secondaryGoals}
                 onChange={setSecondaryGoals}
@@ -140,9 +136,7 @@ export default function PlanGenerationStepper({
         {/* Equipment Step */}
         {currentStep.id === 'equipment' && (
           <div className="space-y-6">
-            <Typography variant="h3" className="mb-6 text-xl font-black">
-              What equipment do you have?
-            </Typography>
+            <h3 className={`${typography.h3} mb-6`}>What equipment do you have?</h3>
             <CategorizedEquipmentSelection
               selected={equipment}
               onChange={setEquipment}
@@ -156,13 +150,10 @@ export default function PlanGenerationStepper({
           <div className="space-y-8 py-4">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <Typography
-                  variant="muted"
-                  className="text-sm font-semibold tracking-wider uppercase"
+                <p className={typography.labelSm}>Workouts per Week</p>
+                <div
+                  className={`${typography.displayMd} bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl`}
                 >
-                  Workouts per Week
-                </Typography>
-                <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl text-xl font-black">
                   {workoutsPerWeek}
                 </div>
               </div>
@@ -181,17 +172,15 @@ export default function PlanGenerationStepper({
                 <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
                   <Calendar size={18} />
                 </div>
-                <Typography className="text-foreground text-base font-bold">
-                  {workoutsPerWeek} sessions scheduled
-                </Typography>
+                <p className={typography.p}>{workoutsPerWeek} sessions scheduled</p>
               </div>
-              <Typography variant="muted" className="text-sm leading-relaxed">
+              <p className={typography.muted}>
                 Total weekly training time will be approximately{' '}
-                <Typography as="span" className="text-foreground font-black">
+                <span className={typography.displayMd}>
                   {workoutsPerWeek * 45}-{workoutsPerWeek * 60} minutes
-                </Typography>
+                </span>
                 .
-              </Typography>
+              </p>
             </div>
           </div>
         )}
@@ -201,7 +190,7 @@ export default function PlanGenerationStepper({
           <div className="pt-6 text-center">
             <button
               onClick={onSkip}
-              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 transition-all hover:underline"
+              className={`${typography.small} text-muted-foreground hover:text-foreground underline-offset-4 transition-all hover:underline`}
             >
               Skip and browse programs instead
             </button>

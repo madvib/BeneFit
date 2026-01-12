@@ -1,7 +1,7 @@
 'use client';
 
 import { CreditCard, Check, Sparkles } from 'lucide-react';
-import { Card, Button, PageHeader, SectionHeader } from '@/lib/components';
+import { Card, Button, PageHeader, SectionHeader, typography } from '@/lib/components';
 
 export default function BillingView() {
   return (
@@ -16,11 +16,11 @@ export default function BillingView() {
         <div className="bg-primary/5 p-6">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <div className="text-primary mb-1 text-sm font-semibold tracking-wider uppercase">
-                Current Plan
-              </div>
-              <h2 className="text-2xl font-bold">Free Tier</h2>
-              <p className="text-muted-foreground">Basic access to all features</p>
+              <div className={`${typography.labelSm} text-primary mb-1`}>Current Plan</div>
+              <h2 className={typography.h2}>Free Tier</h2>
+              <p className={`${typography.p} text-muted-foreground`}>
+                Basic access to all features
+              </p>
             </div>
             <Button variant="gradient">
               <Sparkles className="mr-2 h-4 w-4" />
@@ -33,19 +33,19 @@ export default function BillingView() {
             <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
               <Check size={14} />
             </div>
-            <span className="font-medium">Basic Analytics</span>
+            <span className={typography.p}>Basic Analytics</span>
           </div>
           <div className="flex items-center gap-2.5">
             <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
               <Check size={14} />
             </div>
-            <span className="font-medium">5 Projects</span>
+            <span className={typography.p}>5 Projects</span>
           </div>
           <div className="flex items-center gap-2.5">
             <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
               <Check size={14} />
             </div>
-            <span className="font-medium">Community Support</span>
+            <span className={typography.p}>Community Support</span>
           </div>
         </div>
       </Card>
@@ -68,11 +68,13 @@ export default function BillingView() {
                 <CreditCard size={24} />
               </div>
               <div className="min-w-0">
-                <div className="truncate font-semibold">Visa ending in 4242</div>
-                <div className="text-muted-foreground text-sm">Expires 12/24</div>
+                <div className={`${typography.h4} truncate`}>Visa ending in 4242</div>
+                <div className={`${typography.mutedXs} text-muted-foreground`}>Expires 12/24</div>
               </div>
             </div>
-            <div className="bg-primary text-primary-foreground ml-auto rounded-full px-3 py-1 text-xs font-semibold sm:ml-0">
+            <div
+              className={`${typography.xs} bg-primary text-primary-foreground ml-auto rounded-full px-3 py-1 font-semibold sm:ml-0`}
+            >
               Default
             </div>
           </div>

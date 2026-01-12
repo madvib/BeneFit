@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar, Users, ChevronRight } from 'lucide-react';
-import { Card, SectionHeader, Button } from '@/lib/components';
+import { Card, SectionHeader, Button, typography } from '@/lib/components';
 
 export interface Event {
   id: string;
@@ -30,10 +30,10 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
       {/* Hero Section */}
       <div className="bg-primary text-primary-foreground relative mb-12 overflow-hidden rounded-3xl px-8 py-16 md:px-16">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className={`${typography.displayLgResponsive} mb-4`}>
             Discover Your Next Challenge
           </h1>
-          <p className="text-primary-foreground/80 mb-8 text-lg">
+          <p className={`${typography.lead} text-primary-foreground/80 mb-8`}>
             Find local events, join communities, and connect with expert coaches to elevate your
             fitness journey.
           </p>
@@ -41,14 +41,14 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
             <Button
               variant="surface"
               size="lg"
-              className="rounded-full px-6 py-6 text-base font-bold transition-transform hover:scale-105"
+              className={`${typography.labelSm} rounded-full px-6 py-6 transition-transform hover:scale-105`}
             >
               Find Events
             </Button>
             <Button
               variant="glass"
               size="lg"
-              className="rounded-full px-6 py-6 text-base font-bold transition-colors"
+              className={`${typography.labelSm} rounded-full px-6 py-6 transition-colors`}
             >
               Browse Teams
             </Button>
@@ -64,7 +64,7 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
         <SectionHeader
           title="Upcoming Events"
           action={
-            <Button variant="link" className="p-0 text-sm" onClick={() => {}}>
+            <Button variant="link" className={`${typography.small} p-0`} onClick={() => {}}>
               View all <ChevronRight size={16} />
             </Button>
           }
@@ -76,13 +76,13 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
               className="group border-border bg-card overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg"
               image={undefined}
             >
-              <div className="bg-accent/50 -mx-6 -mt-6 mb-6 flex aspect-video w-[calc(100%+3rem)] items-center justify-center text-6xl">
+              <div className="bg-accent/50 -mx-6 -mt-6 mb-6 flex aspect-video w-[calc(100%+3rem)] items-center justify-center">
                 {/* Fallback image if needed since we removed category logic for placeholder */}
                 <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
               </div>
 
-              <h3 className="text-foreground mb-2 text-xl font-bold">{event.title}</h3>
-              <div className="text-muted-foreground space-y-2 text-sm">
+              <h3 className={`${typography.h4} text-foreground mb-2`}>{event.title}</h3>
+              <div className={`${typography.small} text-muted-foreground space-y-2`}>
                 <div className="flex items-center gap-2">
                   <Calendar size={16} />
                   <span>{new Date(event.date).toLocaleDateString()}</span>
@@ -102,7 +102,7 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
         <SectionHeader
           title="Featured Teams"
           action={
-            <Button variant="link" className="p-0 text-sm" onClick={() => {}}>
+            <Button variant="link" className={`${typography.small} p-0`} onClick={() => {}}>
               View all <ChevronRight size={16} />
             </Button>
           }
@@ -116,13 +116,17 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
               <div className="bg-accent mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
                 <img src={team.image} alt={team.name} className="h-full w-full object-cover" />
               </div>
-              <h3 className="text-foreground mb-1 text-lg font-bold">{team.name}</h3>
-              <p className="text-muted-foreground mb-4 text-sm">{team.activityType}</p>
-              <div className="text-muted-foreground mt-auto flex items-center gap-2 text-xs font-medium">
+              <h3 className={`${typography.large} text-foreground mb-1`}>{team.name}</h3>
+              <p className={`${typography.small} text-muted-foreground mb-4`}>
+                {team.activityType}
+              </p>
+              <div
+                className={`${typography.mutedXs} text-muted-foreground mt-auto flex items-center gap-2`}
+              >
                 <Users size={14} />
                 <span>{team.members} members</span>
               </div>
-              <Button variant="soft" className="mt-4 w-full rounded-xl font-bold">
+              <Button variant="soft" className={`${typography.labelSm} mt-4 w-full rounded-xl`}>
                 Join Team
               </Button>
             </Card>
@@ -135,8 +139,10 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
             <div className="bg-background mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow-sm">
               <Users size={32} className="text-primary" />
             </div>
-            <h3 className="text-foreground text-lg font-bold">Create a Team</h3>
-            <p className="text-muted-foreground text-sm">Start your own community</p>
+            <h3 className={`${typography.large} text-foreground`}>Create a Team</h3>
+            <p className={`${typography.small} text-muted-foreground`}>
+              Start your own community
+            </p>
           </Button>
         </div>
       </section>

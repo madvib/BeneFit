@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProgressBar from './progress-bar';
+import { typography } from '../../';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'Primitives/ProgressBar',
@@ -11,6 +12,7 @@ const meta: Meta<typeof ProgressBar> = {
     value: { control: { type: 'range', min: 0, max: 100 } },
     max: { control: { type: 'number' } },
   },
+  render: (args) => <ProgressBar {...args} />,
 };
 
 export default meta;
@@ -51,23 +53,27 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="flex w-[400px] flex-col gap-6">
       <div className="space-y-1">
-        <span className="text-muted-foreground text-xs tracking-wider uppercase">
+        <span className={`${typography.xs} text-muted-foreground tracking-wider uppercase`}>
           Extra Small (xs)
         </span>
         <ProgressBar {...args} size="xs" value={30} />
       </div>
       <div className="space-y-1">
-        <span className="text-muted-foreground text-xs tracking-wider uppercase">Small (sm)</span>
+        <span className={`${typography.xs} text-muted-foreground tracking-wider uppercase`}>
+          Small (sm)
+        </span>
         <ProgressBar {...args} size="sm" value={50} />
       </div>
       <div className="space-y-1">
-        <span className="text-muted-foreground text-xs tracking-wider uppercase">
+        <span className={`${typography.xs} text-muted-foreground tracking-wider uppercase`}>
           Medium (md)
         </span>
         <ProgressBar {...args} size="md" value={70} />
       </div>
       <div className="space-y-1">
-        <span className="text-muted-foreground text-xs tracking-wider uppercase">Large (lg)</span>
+        <span className={`${typography.xs} text-muted-foreground tracking-wider uppercase`}>
+          Large (lg)
+        </span>
         <ProgressBar {...args} size="lg" value={90} />
       </div>
     </div>

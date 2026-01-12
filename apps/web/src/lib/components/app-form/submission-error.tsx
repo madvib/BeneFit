@@ -1,6 +1,7 @@
 import { AlertCircle } from 'lucide-react';
 import { SubmitError, useFormContext } from './app-form';
 import { Button } from '../ui-primitives';
+import { typography } from '../theme/typography';
 
 export function SubmissionError() {
   const form = useFormContext();
@@ -10,7 +11,9 @@ export function SubmissionError() {
         const submitError = error as SubmitError | undefined;
         if (!submitError) return null;
         return (
-          <div className="bg-error/15 space-y-2 overflow-hidden rounded-md p-3 text-sm text-red-500 transition-all duration-200">
+          <div
+            className={`${typography.small} bg-error/15 space-y-2 overflow-hidden rounded-md p-3 text-red-500 transition-all duration-200`}
+          >
             <div className="flex items-center gap-x-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <p className="truncate">{submitError.message}</p>
@@ -18,7 +21,7 @@ export function SubmissionError() {
             {submitError.resolutions?.map((res, idx) => (
               <div
                 key={idx}
-                className="text-muted-foreground mt-2 flex flex-row items-center gap-2 text-sm"
+                className={`${typography.muted} mt-2 flex flex-row items-center gap-2`}
               >
                 <p>{res.message}</p>
                 {res.actions?.map((act, i) => (
@@ -26,7 +29,7 @@ export function SubmissionError() {
                     key={i}
                     variant="outline"
                     size="sm"
-                    className="text-primary text-center text-sm"
+                    className={`${typography.small} text-primary text-center`}
                     onClick={act.action}
                   >
                     {act.label}

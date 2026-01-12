@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Heart, MessageCircle, Filter, History as HistoryIcon, LayoutList } from 'lucide-react';
 import type { CompletedWorkout } from '@bene/shared';
-import { Card, Button, Badge } from '@/lib/components';
+import { Card, Button, Badge, typography } from '@/lib/components';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import WorkoutList from './workout-list';
 
@@ -64,10 +64,10 @@ export function ActivityFeedView({
     <div className="bg-muted/30 mb-6 flex w-fit items-center gap-2 rounded-xl p-1">
       <button
         onClick={() => setActiveTab('feed')}
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-all ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
           activeTab === 'feed'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:bg-background/50'
+            ? `${typography.small} bg-background text-foreground shadow-sm`
+            : `${typography.muted} hover:bg-background/50`
         }`}
       >
         <LayoutList size={16} />
@@ -75,10 +75,10 @@ export function ActivityFeedView({
       </button>
       <button
         onClick={() => setActiveTab('history')}
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-all ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
           activeTab === 'history'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:bg-background/50'
+            ? `${typography.small} bg-background text-foreground shadow-sm`
+            : `${typography.muted} hover:bg-background/50`
         }`}
       >
         <HistoryIcon size={16} />
@@ -98,7 +98,7 @@ export function ActivityFeedView({
           <div className="flex items-start gap-4">
             {/* Avatar */}
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${item.user.color}`}
+              className={`${typography.small} flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${item.user.color}`}
             >
               {item.user.avatar}
             </div>
@@ -106,21 +106,26 @@ export function ActivityFeedView({
             {/* Content */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
-                <p className="text-foreground truncate text-sm">
-                  <span className="font-bold">{item.user.name}</span>{' '}
-                  <span className="text-muted-foreground">{item.action}</span>
+                <p className={`${typography.small} truncate`}>
+                  {item.user.name} <span className={typography.muted}>{item.action}</span>
                 </p>
-                <span className="text-muted-foreground shrink-0 text-xs">{item.time}</span>
+                <span className={`${typography.xs} text-muted-foreground shrink-0`}>
+                  {item.time}
+                </span>
               </div>
 
-              <p className="text-foreground/90 mt-1 text-sm">{item.content}</p>
+              <p className={`${typography.small} text-foreground/90 mt-1`}>{item.content}</p>
 
               {item.stats && (
-                <div className="text-muted-foreground mt-2 flex items-center gap-4 text-xs">
+                <div className="mt-2 flex items-center gap-4">
                   {Object.entries(item.stats).map(([key, value]) => (
-                    <Badge key={key} variant="accent" className="bg-accent/50 text-foreground">
+                    <Badge
+                      key={key}
+                      variant="accent"
+                      className={`${typography.xs} bg-accent/50 text-foreground`}
+                    >
                       <span className="mr-1 tracking-wider uppercase opacity-70">{key}:</span>
-                      <span className="font-medium">{String(value)}</span>
+                      <span>{String(value)}</span>
                     </Badge>
                   ))}
                 </div>
@@ -159,7 +164,7 @@ export function ActivityFeedView({
         <Button
           onClick={() => setVisibleCount((prev) => prev + 5)}
           variant="dashed"
-          className="h-auto w-full rounded-xl py-3 text-sm font-medium"
+          className={`${typography.small} h-auto w-full rounded-xl py-3`}
         >
           View More Activity
         </Button>

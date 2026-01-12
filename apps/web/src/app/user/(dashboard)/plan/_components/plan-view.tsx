@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Target,
 } from 'lucide-react';
-import { PageContainer, Button } from '@/lib/components';
+import { PageContainer, Button,typography } from '@/lib/components';
 
 // --- Types (Inlined for self-containment) ---
 export interface PlanData {
@@ -44,7 +44,9 @@ interface PlanViewProps {
 export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: PlanViewProps) {
   if (!currentPlan) {
     return (
-      <div className="text-muted-foreground bg-accent/20 border-muted flex h-64 flex-col items-center justify-center rounded-xl border border-dashed">
+      <div
+        className={`${typography.muted} bg-accent/20 border-muted flex h-64 flex-col items-center justify-center rounded-xl border border-dashed`}
+      >
         <Activity size={48} className="mb-4 opacity-20" />
         <p>No active training plan found.</p>
       </div>
@@ -62,14 +64,14 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
           <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row">
             <div>
               <div className="mb-3 flex items-center gap-3">
-                <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-                  {currentPlan.name}
-                </h2>
-                <span className="text-primary rounded-full border border-(--primary)/20 bg-(--primary)/10 px-2.5 py-0.5 text-xs font-medium tracking-wide uppercase">
+                <h2 className={typography.h2}>{currentPlan.name}</h2>
+                <span
+                  className={`${typography.labelXs} text-primary rounded-full border border-(--primary)/20 bg-(--primary)/10 px-2.5 py-0.5`}
+                >
                   {currentPlan.category}
                 </span>
               </div>
-              <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
+              <p className={`${typography.p} text-muted-foreground max-w-2xl leading-relaxed`}>
                 {currentPlan.description}
               </p>
             </div>
@@ -92,10 +94,8 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
                 <TrendingUp size={20} />
               </div>
               <div>
-                <p className="text-muted-foreground mb-0.5 text-xs font-bold tracking-wider uppercase">
-                  Difficulty
-                </p>
-                <p className="text-foreground font-semibold">{currentPlan.difficulty}</p>
+                <p className={`${typography.labelXs} text-muted-foreground mb-0.5`}>Difficulty</p>
+                <p className={typography.small}>{currentPlan.difficulty}</p>
               </div>
             </div>
 
@@ -105,10 +105,8 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
                 <Clock size={20} />
               </div>
               <div>
-                <p className="text-muted-foreground mb-0.5 text-xs font-bold tracking-wider uppercase">
-                  Duration
-                </p>
-                <p className="text-foreground font-semibold">{currentPlan.duration}</p>
+                <p className={`${typography.labelXs} text-muted-foreground mb-0.5`}>Duration</p>
+                <p className={typography.small}>{currentPlan.duration}</p>
               </div>
             </div>
 
@@ -119,10 +117,8 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
               </div>
               <div className="flex-1">
                 <div className="mb-2 flex items-end justify-between">
-                  <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                    Plan Progress
-                  </p>
-                  <p className="text-sm font-bold tabular-nums">{currentPlan.progress}%</p>
+                  <p className={`${typography.labelXs} text-muted-foreground`}>Plan Progress</p>
+                  <p className={`${typography.small} tabular-nums`}>{currentPlan.progress}%</p>
                 </div>
                 <div className="bg-background border-muted/50 h-2.5 w-full overflow-hidden rounded-full border p-[1px]">
                   <div
@@ -137,22 +133,18 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
           {/* Bottom Stats Row */}
           <div className="border-muted/60 grid grid-cols-1 gap-4 border-t pt-6 md:grid-cols-3">
             <div className="border-muted/60 border-r px-4 text-center last:border-0">
-              <div className="text-foreground text-2xl font-bold tabular-nums">18</div>
-              <div className="text-muted-foreground mt-1 text-[10px] font-medium tracking-wider uppercase md:text-xs">
+              <div className={`${typography.h3} tabular-nums`}>18</div>
+              <div className={`${typography.labelXs} text-muted-foreground mt-1`}>
                 Total Sessions
               </div>
             </div>
             <div className="border-muted/60 border-r px-4 text-center last:border-0">
-              <div className="text-primary text-2xl font-bold tabular-nums">12</div>
-              <div className="text-muted-foreground mt-1 text-[10px] font-medium tracking-wider uppercase md:text-xs">
-                Completed
-              </div>
+              <div className={`${typography.h3} text-primary tabular-nums`}>12</div>
+              <div className={`${typography.labelXs} text-muted-foreground mt-1`}>Completed</div>
             </div>
             <div className="px-4 text-center">
-              <div className="text-muted-foreground text-2xl font-bold tabular-nums">6</div>
-              <div className="text-muted-foreground mt-1 text-[10px] font-medium tracking-wider uppercase md:text-xs">
-                Remaining
-              </div>
+              <div className={`${typography.h3} text-muted-foreground tabular-nums`}>6</div>
+              <div className={`${typography.labelXs} text-muted-foreground mt-1`}>Remaining</div>
             </div>
           </div>
         </div>
@@ -162,7 +154,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
       <div>
         <div className="mb-5 flex items-center gap-2 px-1">
           <Calendar size={20} className="text-primary" />
-          <h3 className="text-lg font-semibold tracking-tight">Weekly Schedule</h3>
+          <h3 className={typography.large}>Weekly Schedule</h3>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -190,16 +182,14 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
 
               {/* Date Info */}
               <div className="mb-3">
-                <p className="text-primary mb-0.5 text-xs font-bold tracking-wide uppercase">
-                  {workout.day}
-                </p>
-                <p className="text-muted-foreground text-sm font-medium">{workout.date}</p>
+                <p className={`${typography.labelXs} text-primary mb-0.5`}>{workout.day}</p>
+                <p className={`${typography.muted} font-medium`}>{workout.date}</p>
               </div>
 
               {/* Exercise Info */}
               <div className="mb-4 flex-1">
                 <h4
-                  className="text-foreground mb-2 line-clamp-2 text-lg leading-tight font-bold"
+                  className={`${typography.large} mb-2 line-clamp-2 leading-tight`}
                   title={workout.exercise}
                 >
                   {workout.exercise}
@@ -207,7 +197,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
 
                 <div className="space-y-1.5">
                   {workout.sets > 0 && (
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+                    <div className={`${typography.muted} flex items-center gap-2 font-medium`}>
                       <Dumbbell size={14} className="opacity-70" />
                       <span>
                         {workout.sets} sets × {workout.reps} reps
@@ -215,7 +205,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
                     </div>
                   )}
                   {workout.duration && (
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+                    <div className={`${typography.muted} flex items-center gap-2 font-medium`}>
                       <Clock size={14} className="opacity-70" />
                       <span>{workout.duration}</span>
                     </div>
@@ -226,7 +216,7 @@ export default function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Pl
               {/* Action Button */}
               <Button
                 variant={workout.completed ? 'soft-success' : 'default'}
-                className={`w-full gap-2 rounded-lg py-2.5 font-semibold transition-all duration-200 ${
+                className={`${typography.small} w-full gap-2 rounded-lg py-2.5 transition-all duration-200 ${
                   !workout.completed &&
                   'group-hover:-translate-y-px hover:opacity-90 hover:shadow'
                 }`}

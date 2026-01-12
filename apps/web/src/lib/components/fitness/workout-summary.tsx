@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Typography, Badge } from '@/lib/components';
+import { Card, Badge, typography } from '@/lib/components';
 import { Clock, Zap, CheckCircle2, TrendingUp, Sparkles } from 'lucide-react';
 import type { DailyWorkout, Activity } from '@bene/shared';
 import { getActivityIcon } from './constants';
@@ -16,7 +16,9 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
     <div className="space-y-6">
       {/* Hero Header */}
       <div className="bg-primary/5 border-primary/20 relative flex flex-col items-center overflow-hidden rounded-3xl border p-8 text-center sm:p-12">
-        <div className="bg-primary/10 text-primary absolute top-0 right-0 flex items-center gap-1 rounded-bl-2xl px-4 py-2 text-[10px] font-black tracking-widest uppercase">
+        <div
+          className={`${typography.labelXs} bg-primary/10 text-primary absolute top-0 right-0 flex items-center gap-1 rounded-bl-2xl px-4 py-2`}
+        >
           <Sparkles size={12} className="animate-pulse" />
           <span>Session Complete</span>
         </div>
@@ -25,13 +27,11 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
           <CheckCircle2 size={40} />
         </div>
 
-        <Typography variant="h1" className="mb-2 text-3xl font-black capitalize sm:text-4xl">
-          {workout.type} Summary
-        </Typography>
-        <Typography variant="muted" className="max-w-md text-sm sm:text-base">
+        <h1 className={`${typography.h1} mb-2 capitalize`}>{workout.type} Summary</h1>
+        <p className={`${typography.muted} max-w-md`}>
           Excellent work completing your scheduled session. You have reached another milestone in
           your fitness journey.
-        </Typography>
+        </p>
       </div>
 
       {/* Metrics Grid */}
@@ -42,12 +42,8 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
               <Clock size={24} />
             </div>
             <div>
-              <Typography variant="muted" className="text-[10px] tracking-widest uppercase">
-                Duration
-              </Typography>
-              <Typography variant="h3" className="font-black">
-                {workout.durationMinutes} min
-              </Typography>
+              <p className={typography.labelXs}>Duration</p>
+              <h3 className={typography.h3}>{workout.durationMinutes} min</h3>
             </div>
           </div>
         </Card>
@@ -58,12 +54,8 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
               <TrendingUp size={24} />
             </div>
             <div>
-              <Typography variant="muted" className="text-[10px] tracking-widest uppercase">
-                Intensity
-              </Typography>
-              <Typography variant="h3" className="font-black">
-                Moderate
-              </Typography>
+              <p className={typography.labelXs}>Intensity</p>
+              <h3 className={typography.h3}>Moderate</h3>
             </div>
           </div>
         </Card>
@@ -74,12 +66,8 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
               <Zap size={24} />
             </div>
             <div>
-              <Typography variant="muted" className="text-[10px] tracking-widest uppercase">
-                Energy
-              </Typography>
-              <Typography variant="h3" className="font-black">
-                Optimal
-              </Typography>
+              <p className={typography.labelXs}>Energy</p>
+              <h3 className={typography.h3}>Optimal</h3>
             </div>
           </div>
         </Card>
@@ -88,10 +76,8 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
       {/* Activity Breakdown */}
       <div className="bg-accent/30 rounded-3xl border p-6 sm:p-8">
         <div className="mb-6 flex items-center justify-between">
-          <Typography variant="h3" className="text-xl font-black">
-            Section Breakdown
-          </Typography>
-          <Badge variant="outline" className="font-bold">
+          <h3 className={typography.h3}>Section Breakdown</h3>
+          <Badge variant="outline" className={typography.small}>
             {workout.activities?.length || 0} Sections
           </Badge>
         </div>
@@ -107,18 +93,14 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
                   {getActivityIcon(activity.type)}
                 </div>
                 <div>
-                  <Typography variant="small" className="font-black capitalize">
-                    {activity.type}
-                  </Typography>
-                  <Typography variant="muted" className="text-[10px] tracking-tighter uppercase">
-                    Focus Area
-                  </Typography>
+                  <p className={`${typography.small} font-black capitalize`}>{activity.type}</p>
+                  <p className={typography.labelXs}>Focus Area</p>
                 </div>
               </div>
               <div className="text-right">
-                <Typography variant="small" className="text-foreground font-black">
+                <p className={`${typography.small} text-foreground font-bold`}>
                   {activity.durationMinutes} min
-                </Typography>
+                </p>
                 <div className="bg-primary/20 h-1 w-12 overflow-hidden rounded-full">
                   <div
                     className="bg-primary h-full rounded-full"

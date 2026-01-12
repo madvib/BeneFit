@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button, LogoutButton } from '@/lib/components';
+import { Button, LogoutButton, typography } from '@/lib/components';
 import { HEADER_CONFIG } from '@/lib/components';
 
 interface AccountSidebarProps {
@@ -14,8 +14,8 @@ const AccountSidebar = ({ className }: AccountSidebarProps) => {
   return (
     <div className={`bg-muted/10 flex h-full flex-col ${className || ''}`}>
       <div className="p-6">
-        <h2 className="text-lg font-semibold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground text-sm">Manage your account</p>
+        <h2 className={`${typography.h3} tracking-tight`}>Settings</h2>
+        <p className={`${typography.labelXs} text-muted-foreground mb-3`}>Manage your account</p>
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
@@ -34,7 +34,7 @@ const AccountSidebar = ({ className }: AccountSidebarProps) => {
               >
                 <div className="flex items-center gap-3">
                   <item.icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <span className={typography.labelSm}>{item.label}</span>
                 </div>
               </Button>
             </Link>

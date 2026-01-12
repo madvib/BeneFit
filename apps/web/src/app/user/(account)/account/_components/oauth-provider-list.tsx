@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Check, ExternalLink } from 'lucide-react';
 import { authClient } from '@bene/react-api-client';
-import { Button, LoadingSpinner } from '@/lib/components';
+import { Button, LoadingSpinner, typography } from '@/lib/components';
 import { OAuthButton } from '@/lib/components/auth';
 
 export default function OAuthProviderList() {
@@ -15,7 +15,6 @@ export default function OAuthProviderList() {
     const fetchProviders = async () => {
       try {
         setLoading(true);
-
         // Get already linked providers
         if (session?.user) {
           const linkedAccounts = await authClient.listAccounts();
@@ -81,8 +80,8 @@ export default function OAuthProviderList() {
             )}
           </div>
           <div>
-            <div className="font-medium capitalize">Google</div>
-            <div className="text-muted-foreground text-sm">
+            <div className={`${typography.h4} capitalize`}>Google</div>
+            <div className={`${typography.mutedXs} text-muted-foreground`}>
               {googleConnected ? 'Connected' : 'Not connected'}
             </div>
           </div>

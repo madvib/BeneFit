@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Dumbbell, Info } from 'lucide-react';
-import { Typography, Badge } from '@/lib/components';
+import { Badge, typography } from '@/lib/components';
 import type { Exercise } from '@bene/shared';
 import SetTracker from './set-tracker';
 
@@ -21,24 +20,20 @@ export default function ExerciseRow({
     <div className="space-y-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
+          {/*TODO Icon Box  */}
           <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
             <Dumbbell size={20} />
           </div>
           <div>
-            <Typography variant="h4" className="text-lg font-black tracking-tight italic">
-              {exercise.name}
-            </Typography>
+            <h4 className={typography.h4}>{exercise.name}</h4>
             <div className="flex items-center gap-2">
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase opacity-40"
-              >
+              <p className={typography.labelXs}>
                 Target: {exercise.sets} Sets × {exercise.reps}
-              </Typography>
+              </p>
               {exercise.rest && (
                 <Badge
                   variant="outline"
-                  className="border-white/10 text-[9px] font-bold opacity-60"
+                  className={`${typography.labelXs} border-white/10 opacity-60`}
                 >
                   {exercise.rest}s Rest
                 </Badge>
@@ -51,12 +46,7 @@ export default function ExerciseRow({
       {exercise.notes && (
         <div className="bg-primary/5 flex items-start gap-2 rounded-xl p-3">
           <Info size={14} className="text-primary mt-0.5 opacity-60" />
-          <Typography
-            variant="muted"
-            className="text-[11px] leading-relaxed font-medium italic opacity-70"
-          >
-            {exercise.notes}
-          </Typography>
+          <p className={typography.mutedXs}>{exercise.notes}</p>
         </div>
       )}
 

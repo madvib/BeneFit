@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { profile } from '@bene/react-api-client';
-import { Spacer, StatisticsSection, Button } from '@/lib/components';
+import { Spacer, StatisticsSection, Button, typography } from '@/lib/components';
 import { AboutMeSection, ProfileSummary } from './_components';
 
 export interface ProfileViewProps {
@@ -61,7 +61,7 @@ export default function ProfileView({ userProfile, userStats, onSave }: ProfileV
           >
             Save Profile
           </Button>
-          <p className="text-muted-foreground text-xs">Saving changes is temporarily disabled.</p>
+          <p className={typography.mutedXs}>Saving changes is temporarily disabled.</p>
         </div>
       </div>
     </div>

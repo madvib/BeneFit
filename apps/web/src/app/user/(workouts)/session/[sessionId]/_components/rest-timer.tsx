@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { SkipForward } from 'lucide-react';
-import { Button, Typography } from '@/lib/components';
+import { Button, typography } from '@/lib/components';
 
 interface RestTimerProps {
   durationSeconds: number;
@@ -56,30 +56,20 @@ export default function RestTimer({ durationSeconds, onComplete }: RestTimerProp
         </svg>
 
         <div className="absolute flex flex-col items-center">
-          <Typography
-            variant="muted"
-            className="text-[10px] font-black tracking-[0.2em] uppercase opacity-40"
-          >
-            Recovery Phase
-          </Typography>
-          <Typography
-            variant="h1"
-            className="font-mono text-7xl font-black tracking-tighter italic"
-          >
-            {timeLeft}s
-          </Typography>
+          <p className={`${typography.mutedXs} opacity-40`}>Recovery Phase</p>
+          <h1 className={`${typography.displayLg} font-mono italic`}>{timeLeft}s</h1>
         </div>
       </div>
 
       <div className="flex flex-col items-center gap-6">
-        <Typography variant="h3" className="max-w-xs text-center text-xl font-black italic">
+        <h3 className={`${typography.h4} max-w-xs text-center italic`}>
           Prepare for your next set. Focus on deep breathing.
-        </Typography>
+        </h3>
 
         <Button
           onClick={onComplete}
           variant="outline"
-          className="bg-primary/10 border-primary/20 hover:bg-primary/20 gap-2 rounded-2xl px-8 py-6 text-xs font-black tracking-widest uppercase"
+          className={`${typography.labelXs} bg-primary/10 border-primary/20 hover:bg-primary/20 gap-2 rounded-2xl px-8 py-6`}
         >
           <SkipForward size={16} />
           Skip Rest

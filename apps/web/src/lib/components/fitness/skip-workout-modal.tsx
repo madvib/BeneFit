@@ -1,7 +1,7 @@
 'use client';
 
 import { X, AlertCircle, Clock, BrainCircuit, BatteryPlus, Activity } from 'lucide-react';
-import { Button, Typography, Badge } from '@/lib/components';
+import { Button, Badge, typography } from '@/lib/components';
 
 interface SkipWorkoutModalProps {
   isOpen: boolean;
@@ -70,20 +70,15 @@ export default function SkipWorkoutModal({
               </div>
               <Badge
                 variant="outline"
-                className="bg-orange-500/10 text-[9px] font-black tracking-widest text-orange-600 uppercase"
+                className={`${typography.labelXs} bg-orange-500/10 text-orange-600`}
               >
                 Protocol Deviation
               </Badge>
             </div>
-            <Typography
-              variant="h2"
-              className="text-2xl leading-none font-black tracking-tighter sm:text-3xl"
-            >
-              Skip this Session?
-            </Typography>
-            <Typography variant="muted" className="mt-2 text-xs font-bold opacity-70">
+            <h2 className={typography.h2}>Skip this Session?</h2>
+            <p className={`${typography.muted} mt-2 opacity-70`}>
               Deviating from the plan may impact your long-term adaptation cycle.
-            </Typography>
+            </p>
           </div>
           <Button
             variant="ghost"
@@ -97,12 +92,7 @@ export default function SkipWorkoutModal({
 
         {/* Rationale Selection */}
         <div className="mb-8 sm:mb-10">
-          <Typography
-            variant="muted"
-            className="mb-4 text-[10px] font-black tracking-widest uppercase opacity-40"
-          >
-            Valid Rationale Required
-          </Typography>
+          <p className={`${typography.labelXs} mb-4 opacity-40`}>Valid Rationale Required</p>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             {SKIP_REASONS.map((reason) => (
@@ -118,16 +108,11 @@ export default function SkipWorkoutModal({
                   >
                     <reason.icon size={16} />
                   </div>
-                  <Typography variant="small" className="text-sm font-black italic">
-                    {reason.title}
-                  </Typography>
+                  <p className={`${typography.h4} italic`}>{reason.title}</p>
                 </div>
-                <Typography
-                  variant="muted"
-                  className="text-[10px] leading-tight font-medium opacity-70"
-                >
+                <p className={`${typography.mutedXs} leading-tight opacity-70`}>
                   {reason.description}
-                </Typography>
+                </p>
               </button>
             ))}
           </div>
@@ -138,7 +123,7 @@ export default function SkipWorkoutModal({
           <Button
             variant="default"
             size="lg"
-            className="h-12 w-full rounded-2xl bg-orange-600 text-xs font-black tracking-widest text-white uppercase transition-all hover:bg-orange-700 active:scale-95 sm:h-14 dark:bg-orange-500 dark:hover:bg-orange-400"
+            className={`${typography.labelSm} h-12 w-full rounded-2xl bg-orange-600 text-white transition-all hover:bg-orange-700 active:scale-95 sm:h-14 dark:bg-orange-500 dark:hover:bg-orange-400`}
             onClick={() => onConfirm('other')}
             isLoading={isLoading}
           >
@@ -148,7 +133,7 @@ export default function SkipWorkoutModal({
           <Button
             variant="ghost"
             size="lg"
-            className="text-muted-foreground hover:text-foreground h-12 w-full rounded-2xl text-[9px] font-black tracking-widest uppercase sm:h-14"
+            className={`${typography.labelXs} text-muted-foreground hover:text-foreground h-12 w-full rounded-2xl sm:h-14`}
             onClick={onClose}
           >
             Negate & Execute Session
@@ -156,12 +141,9 @@ export default function SkipWorkoutModal({
         </div>
 
         <div className="border-border/50 mt-6 border-t pt-4 text-center sm:mt-8 sm:pt-6">
-          <Typography
-            variant="muted"
-            className="text-[9px] font-black tracking-widest uppercase opacity-30"
-          >
+          <p className={`${typography.labelXs} opacity-30`}>
             BeneFit Intelligence • Tactical Planning System
-          </Typography>
+          </p>
         </div>
       </div>
     </div>

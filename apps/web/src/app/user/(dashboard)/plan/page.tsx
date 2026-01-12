@@ -116,8 +116,8 @@ export default function PlanClient() {
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-yellow-500/10 text-yellow-500 ring-1 ring-yellow-500/20">
           <PauseCircle size={48} />
         </div>
-        <h1 className="text-foreground mb-4 text-3xl font-bold">Plan Paused</h1>
-        <p className="text-muted-foreground mb-8 max-w-md text-lg">
+        <h1 className={`${typography.h1} mb-4`}>Plan Paused</h1>
+        <p className={`${typography.lead} text-muted-foreground mb-8 max-w-md`}>
           Your training plan is currently on hold. Would you like to resume your journey?
         </p>
         <div className="flex gap-4">
@@ -150,8 +150,8 @@ export default function PlanClient() {
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
           <AlertCircle size={48} />
         </div>
-        <h1 className="text-foreground mb-4 text-3xl font-bold">Goal Achieved!</h1>
-        <p className="text-muted-foreground mb-8 max-w-md text-lg">
+        <h1 className={`${typography.h1} mb-4`}>Goal Achieved!</h1>
+        <p className={`${typography.lead} text-muted-foreground mb-8 max-w-md`}>
           Congratulations! You&apos;ve completed your program. Ready for the next challenge?
         </p>
         <Button

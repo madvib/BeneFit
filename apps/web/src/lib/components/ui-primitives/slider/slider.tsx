@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import Typography from '../typography/typography';
+import { typography } from '@/lib/components';
 
 const sliderVariants = cva(
   'relative w-full cursor-pointer appearance-none rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
@@ -88,12 +88,11 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(
               >
                 <div className="bg-border h-1.5 w-1.5 rounded-full" />
                 {getTickLabel && (
-                  <Typography
-                    variant="muted"
-                    className="text-[9px] font-black tracking-widest uppercase opacity-40"
+                  <p
+                    className={`${typography.muted} text-[9px] font-black tracking-widest uppercase opacity-40`}
                   >
                     {getTickLabel(tick)}
-                  </Typography>
+                  </p>
                 )}
               </div>
             ))}

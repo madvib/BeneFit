@@ -2,7 +2,7 @@
 
 import { Trophy, Flame, Timer, Zap, Activity, Edit2, Target, Calendar } from 'lucide-react';
 import type { fitnessPlan } from '@bene/react-api-client';
-import { SpotlightCard, Typography, Badge, Button } from '@/lib/components';
+import { SpotlightCard, Badge, Button, typography } from '@/lib/components';
 
 // Extract plan type from API response
 type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
@@ -19,10 +19,10 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
         <div className="bg-accent/10 mb-4 rounded-full p-4">
           <Activity size={32} className="text-muted-foreground opacity-50" />
         </div>
-        <Typography variant="h4">No Active Plan</Typography>
-        <Typography variant="muted" className="max-w-[200px]">
+        <h4 className={typography.h4}>No Active Plan</h4>
+        <p className={`${typography.muted} max-w-[200px]`}>
           Start a new plan to see your progress here.
-        </Typography>
+        </p>
       </div>
     );
   }
@@ -44,15 +44,8 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
               <Trophy size={20} />
             </div>
             <div>
-              <Typography variant="h3" className="font-black tracking-tighter uppercase italic">
-                Active Plan
-              </Typography>
-              <Typography
-                variant="muted"
-                className="text-[10px] font-black tracking-widest uppercase"
-              >
-                Fitness Journey
-              </Typography>
+              <h3 className={`${typography.h3} italic`}>Active Plan</h3>
+              <p className={`${typography.mutedXs} opacity-60`}>Fitness Journey</p>
             </div>
           </div>
           <Button
@@ -69,29 +62,23 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
           {/* Main Info */}
           <div className="space-y-6">
             <div>
-              <div className="mb-2 flex flex-wrap gap-2 text-[10px] font-black tracking-widest uppercase">
-                <Badge variant="success" className="rounded-lg px-2 py-0.5">
+              <div className={`${typography.mutedXs} mb-2 flex flex-wrap gap-2 opacity-80`}>
+                <Badge variant="success" className="px-2 py-0.5">
                   Week {currentPlan.currentWeek}
                 </Badge>
                 {currentPlan.planType && (
-                  <Badge
-                    variant="outline"
-                    className="border-primary/30 bg-primary/5 rounded-lg px-2 py-0.5"
-                  >
+                  <Badge variant="outline" className="border-primary/30 bg-primary/5 px-2 py-0.5">
                     {currentPlan.planType}
                   </Badge>
                 )}
               </div>
-              <Typography
-                variant="h1"
-                className="mb-2 text-3xl font-black capitalize sm:text-4xl"
-              >
+              <h1 className={`${typography.displayMd} mb-2 capitalize italic`}>
                 {currentPlan.title}
-              </Typography>
-              <Typography variant="muted" className="line-clamp-2 max-w-sm text-sm">
+              </h1>
+              <p className={`${typography.muted} line-clamp-2 max-w-sm`}>
                 {currentPlan.description ||
                   'Dedication and consistency are the keys to your success. Keep pushing!'}
-              </Typography>
+              </p>
             </div>
 
             {/* Progress Visualization */}
@@ -99,13 +86,11 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Activity size={16} className="text-primary" />
-                  <Typography variant="small" className="font-black tracking-widest uppercase">
-                    Weekly Goal
-                  </Typography>
+                  <p className={`${typography.labelXs} opacity-60`}>Weekly Goal</p>
                 </div>
-                <Typography variant="small" className="text-primary font-black italic">
+                <p className={`${typography.small} text-primary italic`}>
                   {Math.round(progressPercentage)}% Complete
-                </Typography>
+                </p>
               </div>
 
               <div className="mb-3 h-3 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
@@ -118,15 +103,10 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
               </div>
 
               <div className="flex items-baseline gap-2">
-                <Typography variant="h2" className="text-4xl font-black italic">
-                  {weeklyProgress}
-                </Typography>
-                <Typography
-                  variant="muted"
-                  className="text-xs font-bold tracking-widest uppercase"
-                >
+                <h2 className={`${typography.displayLg} italic`}>{weeklyProgress}</h2>
+                <p className={`${typography.mutedXs} opacity-60`}>
                   of {totalWorkouts} sessions met
-                </Typography>
+                </p>
               </div>
             </div>
           </div>
@@ -139,13 +119,8 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
                 <Calendar size={20} />
               </div>
               <div>
-                <Typography
-                  variant="muted"
-                  className="text-[10px] leading-none font-black tracking-widest uppercase"
-                >
-                  Timeline
-                </Typography>
-                <Typography variant="small" className="font-black">
+                <p className={`${typography.mutedXs} opacity-60`}>Timeline</p>
+                <p className={`${typography.small} font-bold`}>
                   {new Date(currentPlan.startDate!).toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric',
@@ -156,7 +131,7 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
                     day: 'numeric',
                     year: 'numeric',
                   })}
-                </Typography>
+                </p>
               </div>
             </div>
 
@@ -190,15 +165,10 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
                   className="bg-background/20 hover:bg-background/40 flex flex-col items-center justify-center rounded-2xl border border-white/5 p-3 text-center transition-all"
                 >
                   <stat.icon size={18} className={`${stat.color} mb-1.5`} />
-                  <Typography variant="small" className="mb-1 leading-none font-black capitalize">
+                  <p className={`${typography.small} mb-1 leading-none font-bold capitalize`}>
                     {stat.value}
-                  </Typography>
-                  <Typography
-                    variant="muted"
-                    className="text-[9px] font-black tracking-tighter uppercase"
-                  >
-                    {stat.label}
-                  </Typography>
+                  </p>
+                  <p className={`${typography.mutedXs} opacity-50`}>{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -207,20 +177,18 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
             <div className="from-primary/10 border-primary/20 rounded-2xl border bg-linear-to-br to-transparent p-4">
               <div className="mb-3 flex items-center gap-3">
                 <Target size={18} className="text-primary" />
-                <Typography variant="small" className="font-black tracking-widest uppercase">
-                  North Star
-                </Typography>
+                <p className={`${typography.labelXs} opacity-60`}>North Star</p>
               </div>
-              <Typography variant="h4" className="mb-2 leading-none font-black capitalize italic">
+              <h4 className={`${typography.h4} mb-2 leading-none capitalize italic`}>
                 {currentPlan.goals?.primary.replaceAll('_', ' ') || 'Get Fit'}
-              </Typography>
+              </h4>
               {currentPlan.goals?.secondary && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {currentPlan.goals.secondary.map((goal) => (
                     <Badge
                       key={goal}
                       variant="outline"
-                      className="bg-background/30 border-primary/10 text-[9px] font-black tracking-tighter uppercase"
+                      className={`${typography.mutedXs} bg-background/30 border-primary/10`}
                     >
                       {goal.replaceAll('_', ' ')}
                     </Badge>

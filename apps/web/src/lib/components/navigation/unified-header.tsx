@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from '@bene/react-api-client';
 import { useUI } from '@/lib/providers/ui-context';
-import { BeneLogo, ThemeToggle, HeaderRoot, HeaderLeft, HeaderRight } from '@/lib/components';
+import { BeneLogo, ThemeToggle, HeaderRoot, HeaderLeft, HeaderRight,typography } from '@/lib/components';
 import UserAccountMenu from './account-dropdown/account-dropdown';
 import AuthCTA from './auth-cta';
 import DashboardLink from './dashboard-link';
@@ -71,7 +71,9 @@ export default function UnifiedHeader({
           <div className="flex items-center gap-3 md:gap-6">
             <BeneLogo href={logoHref} />
             {variant !== 'application' && (
-              <nav className="text-muted-foreground ml-4 hidden items-center gap-8 text-sm font-medium md:flex">
+              <nav
+                className={`${typography.labelSm} text-muted-foreground ml-4 hidden items-center gap-8 md:flex`}
+              >
                 <NavigationLinks mobile={false} variant={variant} />
               </nav>
             )}

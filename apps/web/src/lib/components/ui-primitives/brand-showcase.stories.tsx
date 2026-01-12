@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   Card,
-  Typography,
+  typography,
   Aurora,
   ShinyText,
   ElectricBorder,
@@ -33,16 +33,13 @@ export const Showcase: StoryObj = {
           >
             Premium Assets
           </Badge>
-          <Typography
-            variant="h1"
-            className="text-5xl font-bold tracking-tighter text-white md:text-7xl"
-          >
+          <h1 className={`${typography.displayXl} text-white`}>
             Elevate the <ShinyText text="Fitness Experience" speed={3} />
-          </Typography>
-          <Typography variant="lead" className="mx-auto max-w-2xl text-white/60">
+          </h1>
+          <p className={`${typography.lead} mx-auto max-w-2xl text-white/60`}>
             Our brand system combines dynamic motion, electric accents, and glassy surfaces to
             create a premium, state-of-the-art interface.
-          </Typography>
+          </p>
         </div>
       </section>
 
@@ -51,28 +48,26 @@ export const Showcase: StoryObj = {
         <section className="space-y-6">
           <div className="flex items-center gap-2">
             <Zap className="text-primary h-5 w-5" />
-            <Typography variant="h3">Electric Borders</Typography>
+            <h3 className={typography.h3}>Electric Borders</h3>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <ElectricBorder color="#3b82f6" borderRadius={24}>
               <Card className="bg-background/50 flex h-48 items-center justify-center p-6 backdrop-blur-sm">
-                <Typography variant="p" className="text-center font-bold italic">
+                <p className={`${typography.p} text-center font-bold italic`}>
                   High Intensity Focus
-                </Typography>
+                </p>
               </Card>
             </ElectricBorder>
             <ElectricBorder color="#a855f7" borderRadius={24} chaos={0.3}>
               <Card className="bg-background/50 flex h-48 items-center justify-center p-6 backdrop-blur-sm">
-                <Typography variant="p" className="text-center font-bold italic">
-                  Deep Recovery
-                </Typography>
+                <p className={`${typography.p} text-center font-bold italic`}>Deep Recovery</p>
               </Card>
             </ElectricBorder>
             <ElectricBorder color="#22c55e" borderRadius={24} speed={1.5}>
               <Card className="bg-background/50 flex h-48 items-center justify-center p-6 backdrop-blur-sm">
-                <Typography variant="p" className="text-center font-bold italic">
+                <p className={`${typography.p} text-center font-bold italic`}>
                   Optimal Performance
-                </Typography>
+                </p>
               </Card>
             </ElectricBorder>
           </div>
@@ -83,10 +78,10 @@ export const Showcase: StoryObj = {
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <Sparkles className="text-primary h-5 w-5" />
-              <Typography variant="h3">Shiny Typography</Typography>
+              <h3 className={typography.h3}>Shiny Typography</h3>
             </div>
             <Card className="flex min-h-[200px] items-center justify-center bg-black p-12">
-              <div className="text-4xl font-bold md:text-5xl">
+              <div className={typography.displayLgResponsive}>
                 <ShinyText text="Unlock Your Potential" disabled={false} speed={3} />
               </div>
             </Card>
@@ -95,19 +90,14 @@ export const Showcase: StoryObj = {
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <TrendingUp className="text-primary h-5 w-5" />
-              <Typography variant="h3">Dynamic Counters</Typography>
+              <h3 className={typography.h3}>Dynamic Counters</h3>
             </div>
             <Card className="flex min-h-[200px] flex-col items-center justify-center p-8">
-              <div className="flex items-baseline gap-1 text-6xl font-black tracking-tighter tabular-nums">
+              <div className={`${typography.displayXl} flex items-baseline gap-1 tabular-nums`}>
                 <CountUp from={0} to={98.4} duration={2} />
-                <span className="text-muted-foreground text-2xl">%</span>
+                <span className={`${typography.h3} text-muted-foreground`}>%</span>
               </div>
-              <Typography
-                variant="muted"
-                className="mt-2 text-xs font-bold tracking-widest uppercase"
-              >
-                Accuracy Score
-              </Typography>
+              <p className={`${typography.labelXs} mt-2`}>Accuracy Score</p>
             </Card>
           </div>
         </section>

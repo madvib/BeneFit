@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Select } from '@/lib/components';
+import { Card, Select, typography } from '@/lib/components';
 
 type PreferredUnits = 'metric' | 'imperial';
 type GoalFocus = 'motivational' | 'casual' | 'professional' | 'tough_love';
@@ -19,11 +19,11 @@ export default function FitnessPreferences({
   onGoalFocusChange,
 }: FitnessPreferencesProps) {
   return (
-    <Card className="mb-8">
-      <h3 className="mb-4 text-2xl font-semibold">Fitness Preferences</h3>
+    <Card className="mb-8 p-6">
+      <h3 className={typography.h3}>Fitness Preferences</h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className="text-foreground mb-2 block">Preferred Units</label>
+        <div className="mt-4">
+          <label className={`${typography.h4} mb-2 block`}>Preferred Units</label>
           <Select
             value={preferredUnits}
             onChange={(e) => onPreferredUnitsChange(e.target.value as 'metric' | 'imperial')}
@@ -32,8 +32,8 @@ export default function FitnessPreferences({
             <option value="imperial">Imperial (lbs, miles)</option>
           </Select>
         </div>
-        <div>
-          <label className="text-foreground mb-2 block">Goal Focus</label>
+        <div className="mt-4">
+          <label className={`${typography.h4} mb-2 block`}>Goal Focus</label>
           <Select
             value={goalFocus}
             onChange={(e) =>

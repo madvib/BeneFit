@@ -69,9 +69,9 @@ export default function ActivityFeedPage() {
             { label: 'Other', value: 10, color: 'bg-orange-500' },
           ].map((item) => (
             <div key={item.label}>
-              <div className="mb-1 flex justify-between text-xs">
-                <span className="text-foreground font-medium">{item.label}</span>
-                <span className="text-muted-foreground">{item.value}%</span>
+              <div className={`${typography.mutedXs} mb-1 flex justify-between`}>
+                <span className={`${typography.labelXs} text-foreground`}>{item.label}</span>
+                <span className="opacity-60">{item.value}%</span>
               </div>
               <ProgressBar
                 value={item.value}
@@ -94,12 +94,12 @@ export default function ActivityFeedPage() {
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-background/50 rounded-2xl p-4">
-            <p className="text-foreground text-2xl font-bold">12</p>
-            <p className="text-muted-foreground text-xs uppercase">Workouts</p>
+            <p className={`${typography.displayMd} text-foreground`}>12</p>
+            <p className={`${typography.mutedXs} opacity-60`}>Workouts</p>
           </div>
           <div className="bg-background/50 rounded-2xl p-4">
-            <p className="text-foreground text-2xl font-bold">8.5h</p>
-            <p className="text-muted-foreground text-xs uppercase">Active Time</p>
+            <p className={`${typography.displayMd} text-foreground`}>8.5h</p>
+            <p className={`${typography.mutedXs} opacity-60`}>Active Time</p>
           </div>
         </div>
       </Card>

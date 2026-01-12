@@ -1,7 +1,6 @@
 import { withForm } from '@/lib/components/app-form/app-form';
 import { onboardingFormOpts } from './form-options';
-import { Typography } from '@/lib/components';
-
+import { typography } from '@/lib/components/theme/typography';
 export const BioStep = withForm({
   ...onboardingFormOpts,
   render: ({ form }) => (
@@ -13,7 +12,7 @@ export const BioStep = withForm({
               label="What should we call you?"
               placeholder="Your name"
               autoFocus
-              className="text-lg font-medium"
+              className={typography.large}
             />
           )}
         </form.AppField>
@@ -32,9 +31,9 @@ export const BioStep = withForm({
         </form.AppField>
       </div>
       <div className="bg-primary/5 border-primary/10 rounded-xl border p-4">
-        <Typography variant="small" className="text-muted-foreground flex items-center gap-2">
+        <p className={`${typography.small} text-muted-foreground flex items-center gap-2`}>
           <span>💡</span> You can always update this information later from your profile
-        </Typography>
+        </p>
       </div>
     </div>
   ),

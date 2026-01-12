@@ -1,6 +1,4 @@
-import { FormSection, Switch } from '@/lib/components';
-import Typography from '@/lib/components/ui-primitives/typography/typography';
-
+import { FormSection, Switch, typography } from '@/lib/components';
 interface NotificationPreferencesProps {
   emailNotifications: boolean;
   pushNotifications: boolean;
@@ -23,36 +21,30 @@ export default function NotificationPreferences({
       <div className="space-y-4">
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
           <div className="space-y-0.5">
-            <Typography variant="large" className="text-base font-medium">
-              Email Notifications
-            </Typography>
-            <Typography variant="small" className="text-muted-foreground block">
+            <p className={typography.h4}>Email Notifications</p>
+            <p className={`${typography.p} text-muted-foreground block text-sm`}>
               Receive email updates about your progress
-            </Typography>
+            </p>
           </div>
           <Switch checked={emailNotifications} onCheckedChange={onEmailNotificationsChange} />
         </div>
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
           <div className="space-y-0.5">
-            <Typography variant="large" className="text-base font-medium">
-              Push Notifications
-            </Typography>
-            <Typography variant="small" className="text-muted-foreground block">
+            <p className={typography.h4}>Push Notifications</p>
+            <p className={`${typography.p} text-muted-foreground block text-sm`}>
               Receive push notifications on your devices
-            </Typography>
+            </p>
           </div>
           <Switch checked={pushNotifications} onCheckedChange={onPushNotificationsChange} />
         </div>
 
         <div className="bg-background flex items-center justify-between rounded-lg p-3">
           <div className="space-y-0.5">
-            <Typography variant="large" className="text-base font-medium">
-              Workout Reminders
-            </Typography>
-            <Typography variant="small" className="text-muted-foreground block">
+            <p className={typography.h4}>Workout Reminders</p>
+            <p className={`${typography.p} text-muted-foreground block text-sm`}>
               Get reminders to complete your workouts
-            </Typography>
+            </p>
           </div>
           <Switch checked={workoutReminders} onCheckedChange={onWorkoutRemindersChange} />
         </div>

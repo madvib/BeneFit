@@ -2,7 +2,7 @@
 
 import { useEscapeKey } from '@/lib/hooks/use-escape-key';
 import { X, Clock, Zap, PlayCircle, SkipForward, BarChart2, Star } from 'lucide-react';
-import { Button, Typography, Badge, Card } from '@/lib/components';
+import { Button, Badge, Card, typography } from '@/lib/components';
 import { fitnessPlan } from '@bene/react-api-client';
 
 // Extract types
@@ -58,53 +58,47 @@ export default function WorkoutDetailModal({
             <div className="mb-3 flex flex-wrap gap-2">
               <Badge
                 variant="secondary"
-                className="bg-primary/10 text-primary border-none text-[10px] font-black tracking-tighter uppercase"
+                className={`${typography.labelXs} bg-primary/10 text-primary border-none`}
               >
                 {workout.type}
               </Badge>
               {isCompleted && (
-                <Badge
-                  variant="success"
-                  className="text-[10px] font-black tracking-tighter uppercase"
-                >
+                <Badge variant="success" className={typography.labelXs}>
                   Completed
                 </Badge>
               )}
               {isSkipped && (
                 <Badge
                   variant="secondary"
-                  className="bg-muted text-muted-foreground text-[10px] font-black tracking-tighter uppercase"
+                  className={`${typography.labelXs} bg-muted text-muted-foreground`}
                 >
                   Skipped
                 </Badge>
               )}
             </div>
-            <Typography
-              variant="h2"
-              className="text-2xl leading-none font-black tracking-tighter italic sm:text-3xl"
-            >
-              {workout.type} Session
-            </Typography>
+            <h2 className={typography.h2}>{workout.type} Session</h2>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1 p-2">
-              <div className="text-muted-foreground flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+              <div
+                className={`${typography.labelXs} text-muted-foreground flex items-center gap-2`}
+              >
                 <Clock size={14} className="text-primary" /> Duration
               </div>
-              <Typography variant="h3" className="font-black italic">
+              <h3 className={typography.h3}>
                 {workout.durationMinutes || 45}
-                <span className="text-muted-foreground ml-1 text-sm not-italic">min</span>
-              </Typography>
+                <span className={`${typography.p} text-muted-foreground ml-1`}>min</span>
+              </h3>
             </div>
             <div className="flex flex-col gap-1 p-2">
-              <div className="text-muted-foreground flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+              <div
+                className={`${typography.labelXs} text-muted-foreground flex items-center gap-2`}
+              >
                 <Zap size={14} className="text-orange-500" /> Intensity
               </div>
-              <Typography variant="h3" className="font-black italic">
-                High
-              </Typography>
+              <h3 className={`${typography.h3} font-black italic`}>High</h3>
             </div>
           </div>
 
@@ -115,15 +109,10 @@ export default function WorkoutDetailModal({
                 <Star size={14} />
               </div>
               <div>
-                <Typography
-                  variant="muted"
-                  className="mb-1 text-[10px] font-black tracking-widest uppercase"
-                >
-                  Session Intent
-                </Typography>
-                <Typography variant="small" className="text-foreground/90 font-medium">
+                <p className={`${typography.labelXs} mb-1`}>Session Intent</p>
+                <p className={`${typography.p} text-foreground/90`}>
                   Focus on hypertrophy & explosive power retention.
-                </Typography>
+                </p>
               </div>
             </div>
           </Card>
@@ -134,7 +123,7 @@ export default function WorkoutDetailModal({
               <>
                 <Button
                   size="lg"
-                  className="w-full gap-2 rounded-xl py-6 text-sm font-black tracking-widest uppercase"
+                  className={`${typography.labelSm} w-full gap-2 rounded-xl py-6`}
                   onClick={() => onStart(workout.id)}
                   isLoading={isStarting}
                 >
@@ -145,7 +134,7 @@ export default function WorkoutDetailModal({
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="text-muted-foreground w-full gap-2 text-xs font-black tracking-widest uppercase"
+                  className={`${typography.labelXs} text-muted-foreground w-full gap-2`}
                   onClick={() => onSkip(workout.id)}
                   isLoading={isSkipping}
                 >
@@ -171,7 +160,7 @@ export default function WorkoutDetailModal({
               <Button
                 variant="default"
                 size="lg"
-                className="w-full gap-2 rounded-xl py-6 font-black uppercase"
+                className={`${typography.labelSm} w-full gap-2 rounded-xl py-6`}
                 onClick={() => onStart(workout.id)}
                 isLoading={isStarting}
               >

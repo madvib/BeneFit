@@ -1,5 +1,6 @@
 import { FITNESS_GOALS, SECONDARY_GOAL_CATEGORIES } from '@bene/shared';
 import { GOAL_UI_CONFIG, SECONDARY_GOAL_LABELS } from '@/lib/constants/training-ui';
+import { typography } from '../theme/typography';
 
 // Backward compatibility exports if needed, but components should use config directly
 export const GOAL_METADATA = GOAL_UI_CONFIG;
@@ -42,7 +43,7 @@ export function PrimaryGoalGrid({ selected, onChange, isLoading }: GoalGridProps
               <Icon size={24} className="transition-transform group-hover:scale-110" />
             </div>
             <span
-              className={`font-semibold transition-colors ${isSelected ? 'text-primary' : 'text-foreground/90'}`}
+              className={`${typography.small} transition-colors ${isSelected ? 'text-primary' : 'text-foreground/90'}`}
             >
               {meta.label}
             </span>
@@ -81,16 +82,14 @@ export function SecondaryGoalsList({ selected, onChange, isLoading }: SecondaryG
     <div className="space-y-6">
       {Object.entries(SECONDARY_GOAL_CATEGORIES).map(([category, goals]) => (
         <div key={category} className="space-y-3">
-          <h4 className="text-muted-foreground text-sm font-semibold tracking-wider uppercase">
-            {category}
-          </h4>
+          <h4 className={`${typography.labelSm} text-muted-foreground`}>{category}</h4>
           <div className="flex flex-wrap gap-2">
             {goals.map((goalValue) => (
               <button
                 key={goalValue}
                 type="button"
                 onClick={() => toggleGoal(goalValue)}
-                className={`rounded-full px-4 py-2 text-sm transition-all ${
+                className={`${typography.small} rounded-full px-4 py-2 transition-all ${
                   selected.includes(goalValue)
                     ? 'bg-primary text-primary-foreground shadow-md'
                     : 'bg-background hover:bg-accent border-muted-foreground/20 text-muted-foreground border'

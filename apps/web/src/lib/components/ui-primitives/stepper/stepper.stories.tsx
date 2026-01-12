@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Target, Dumbbell, Calendar, User, Sparkles } from 'lucide-react';
 import Stepper, { type StepperStep } from './stepper';
 import Button from '../buttons/button';
+import { typography } from '../../theme/typography';
 import React from 'react';
 
 const meta: Meta<typeof Stepper> = {
@@ -43,7 +44,7 @@ const meta: Meta<typeof Stepper> = {
               Back
             </Button>
             <Button
-              className="shadow-primary/20 rounded-xl px-12 font-bold shadow-lg"
+              className={`${typography.labelSm} shadow-primary/20 rounded-xl px-12 shadow-lg`}
               onClick={handleNext}
               disabled={currentStepIndex === args.steps.length - 1}
             >
@@ -57,8 +58,8 @@ const meta: Meta<typeof Stepper> = {
             {currentStep?.icon ? <currentStep.icon size={40} /> : <Target size={40} />}
           </div>
           <div>
-            <h3 className="text-xl font-bold">{currentStep?.title || 'Step Content'}</h3>
-            <p className="text-muted-foreground max-w-xs">
+            <h3 className={typography.h3}>{currentStep?.title || 'Step Content'}</h3>
+            <p className={`${typography.muted} max-w-xs`}>
               {currentStep?.description || 'This description comes from the step metadata.'}
             </p>
           </div>

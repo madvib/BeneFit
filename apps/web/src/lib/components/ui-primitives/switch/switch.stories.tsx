@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Switch from './switch';
 import Label from '../form/label';
-import Typography from '../typography/typography';
-
+import { typography } from '@/lib/components/theme/typography';
 const meta: Meta<typeof Switch> = {
   title: 'Primitives/Switch',
   component: Switch,
@@ -18,22 +17,22 @@ export const Showcase: Story = {
   render: () => (
     <div className="space-y-12">
       <div className="flex flex-col gap-8">
-        <Typography variant="h3">Switch States</Typography>
+        <h3 className={typography.h3}>Switch States</h3>
         <div className="flex items-center gap-8">
           <div className="flex flex-col items-center gap-2">
-            <Typography variant="small">Default</Typography>
+            <p className={typography.small}>Default</p>
             <Switch />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <Typography variant="small">Checked</Typography>
+            <p className={typography.small}>Checked</p>
             <Switch checked />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <Typography variant="small">Disabled</Typography>
+            <p className={typography.small}>Disabled</p>
             <Switch disabled />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <Typography variant="small">Disabled Checked</Typography>
+            <p className={typography.small}>Disabled Checked</p>
             <Switch disabled checked />
           </div>
         </div>
@@ -41,19 +40,17 @@ export const Showcase: Story = {
 
       <div className="flex w-[400px] flex-col space-y-8 rounded-xl border p-6 shadow-sm">
         <div className="space-y-4">
-          <Typography variant="h3">Settings Example</Typography>
-          <Typography variant="muted">Manage your application preferences.</Typography>
+          <h3 className={typography.h3}>Settings Example</h3>
+          <p className={typography.muted}>Manage your application preferences.</p>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="notifications" className="text-base">
-                Notifications
-              </Label>
-              <Typography variant="small" className="text-muted-foreground block">
+              <Label htmlFor="notifications">Notifications</Label>
+              <p className={`${typography.small} text-muted-foreground block`}>
                 Receive alerts about your workout progress.
-              </Typography>
+              </p>
             </div>
             <Switch id="notifications" />
           </div>
@@ -62,12 +59,10 @@ export const Showcase: Story = {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="marketing" className="text-base">
-                Marketing emails
-              </Label>
-              <Typography variant="small" className="text-muted-foreground block">
+              <Label htmlFor="marketing">Marketing emails</Label>
+              <p className={`${typography.small} text-muted-foreground block`}>
                 Receive emails about new features and offers.
-              </Typography>
+              </p>
             </div>
             <Switch id="marketing" checked />
           </div>
@@ -76,12 +71,10 @@ export const Showcase: Story = {
 
           <div className="flex items-center justify-between opacity-50">
             <div className="space-y-0.5">
-              <Label htmlFor="sync" className="text-base">
-                Strict Syncing
-              </Label>
-              <Typography variant="small" className="text-muted-foreground block">
+              <Label htmlFor="sync">Strict Syncing</Label>
+              <p className={`${typography.small} text-muted-foreground block`}>
                 Automatically sync data after every session.
-              </Typography>
+              </p>
             </div>
             <Switch id="sync" disabled />
           </div>

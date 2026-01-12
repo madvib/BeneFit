@@ -1,6 +1,7 @@
 import { User, Sparkles } from 'lucide-react';
 import type { MessageData } from './types';
-import { Typography } from '@/lib/components';
+import { typography } from '@/lib/components/theme/typography';
+;
 
 export default function ChatMessage({ message }: { message: MessageData }) {
   const isUser = message.role === 'user';
@@ -26,19 +27,13 @@ export default function ChatMessage({ message }: { message: MessageData }) {
         {/* Bubble & Metadata */}
         <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} gap-1.5`}>
           <div className={`mb-0.5 flex items-center gap-2 px-0.5`}>
-            <Typography
-              variant="muted"
-              className="text-muted-foreground/50 text-[10px] font-black tracking-widest uppercase"
-            >
+            <p className={`${typography.muted} text-muted-foreground/50 text-[10px] font-black tracking-widest uppercase`}>
               {isUser ? 'Athlete' : 'BeneFit Intelligence'}
-            </Typography>
+            </p>
             <div className="bg-border h-1 w-1 rounded-full" />
-            <Typography
-              variant="muted"
-              className="text-muted-foreground/40 text-[10px] font-bold"
-            >
+            <p className={`${typography.muted} text-muted-foreground/40 text-[10px] font-bold`}>
               {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Typography>
+            </p>
           </div>
 
           <div
@@ -48,12 +43,9 @@ export default function ChatMessage({ message }: { message: MessageData }) {
                 : 'bg-accent/40 border-border/50 text-foreground rounded-tl-none border backdrop-blur-md'
             } `}
           >
-            <Typography
-              variant="small"
-              className={`leading-relaxed font-medium ${isUser ? 'text-primary-foreground' : 'text-foreground'}`}
-            >
+            <p className={`${typography.small} leading-relaxed font-medium ${isUser ? 'text-primary-foreground' : 'text-foreground'}`}>
               {message.content}
-            </Typography>
+            </p>
           </div>
         </div>
       </div>

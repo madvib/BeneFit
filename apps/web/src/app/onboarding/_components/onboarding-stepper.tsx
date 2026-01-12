@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity, Target, User, ArrowRight, ArrowLeft } from 'lucide-react';
-import { Button, Stepper, Typography } from '@/lib/components';
+import { profile } from '@bene/react-api-client';
+import { Button, Stepper, typography } from '@/lib/components';
 import { useAppForm } from '@/lib/components/app-form/app-form';
 import { ROUTES } from '@/lib/constants';
-import { profile } from '@bene/react-api-client';
 
 import { BioStep } from './bio-step';
 import { ExperienceStep } from './experience-step';
@@ -136,7 +136,7 @@ export default function OnboardingStepper() {
                 onClick={handleNext}
                 isLoading={createProfileMutation.isPending}
                 type="button"
-                className="shadow-primary/20 min-w-[120px] rounded-xl px-6 font-bold shadow-lg sm:min-w-[140px] sm:px-8"
+                className={`${typography.labelSm} shadow-primary/20 min-w-[120px] rounded-xl px-6 shadow-lg sm:min-w-[140px] sm:px-8`}
               >
                 {isLastStep ? 'Complete Setup' : 'Continue'}
                 {!isLastStep && <ArrowRight size={18} className="ml-2" />}
@@ -153,15 +153,13 @@ export default function OnboardingStepper() {
           {/* Error Message */}
           {createProfileMutation.error && (
             <div className="mt-8 px-6 pb-6">
-              <div className="bg-destructive/10 text-destructive border-destructive/20 animate-in fade-in slide-in-from-top-2 rounded-xl border p-4 text-sm">
-                <Typography variant="large" className="font-bold">
-                  Setup Error
-                </Typography>
-                <Typography variant="p" className="opacity-90">
+              <div className="bg-destructive/10 text-destructive border-destructive/20 animate-in fade-in slide-in-from-top-2 rounded-xl border p-4">
+                <p className={typography.h4}>Setup Error</p>
+                <p className={`${typography.p} opacity-90`}>
                   {createProfileMutation.error instanceof Error
                     ? createProfileMutation.error.message
                     : 'Something went wrong. Please try again.'}
-                </Typography>
+                </p>
               </div>
             </div>
           )}

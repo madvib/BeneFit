@@ -1,7 +1,8 @@
 'use client';
 
 import { Timer } from 'lucide-react';
-import { Typography, ProgressBar } from '@/lib/components';
+import { ProgressBar,typography } from '@/lib/components';
+
 
 interface SessionHeaderProps {
   title: string;
@@ -23,42 +24,38 @@ export default function SessionHeader({
       <div className="container mx-auto px-6 pt-6">
         <div className="mb-4 flex items-end justify-between">
           <div className="flex flex-col gap-1">
-            <Typography
-              variant="muted"
-              className="text-[10px] font-black tracking-[0.2em] uppercase opacity-50"
+            <p
+              className={`${typography.muted} text-[10px] font-black tracking-[0.2em] uppercase opacity-50`}
             >
-              Active {workoutType} Protocol
-            </Typography>
-            <Typography
-              variant="h2"
-              className="text-3xl leading-none font-black tracking-tighter italic"
+              Active {workoutType}
+            </p>
+            <h2
+              className={`${typography.h2} text-3xl leading-none font-black tracking-tighter italic`}
             >
               {title}
-            </Typography>
+            </h2>
           </div>
 
           <div className="bg-primary/10 text-primary border-primary/20 shadow-primary/10 flex items-center gap-3 rounded-2xl border px-5 py-2.5 shadow-lg">
             <Timer size={18} className="animate-pulse" />
-            <Typography
-              variant="h3"
-              className="font-mono text-2xl font-black tracking-tighter italic"
+            <h3
+              className={`${typography.h3} font-mono text-2xl font-black tracking-tighter italic`}
             >
               {formatDuration(elapsedSeconds)}
-            </Typography>
+            </h3>
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Typography
-              variant="muted"
-              className="text-[9px] font-black tracking-widest uppercase opacity-40"
+            <p
+              className={`${typography.muted} text-[9px] font-black tracking-widest uppercase opacity-40`}
             >
               Phase Progression
-            </Typography>
-            <Typography variant="small" className="text-primary text-[10px] font-black italic">
+            </p>
+            <p className={`${typography.small} text-primary text-[10px] font-black italic`}>
               {currentStep} of {totalSteps} Complete
-            </Typography>
+            </p>
           </div>
           <ProgressBar value={currentStep} max={totalSteps} size="sm" className="bg-white/5" />
         </div>

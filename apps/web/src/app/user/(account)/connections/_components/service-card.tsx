@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/lib/components';
 import { integrations } from '@bene/react-api-client';
 import { CheckCircle2, RefreshCw, X, ArrowRight } from 'lucide-react';
+import { Button, typography } from '@/lib/components';
 
 interface ServiceCardProps {
   service: integrations.ConnectedService;
@@ -17,7 +17,9 @@ const ServiceIcon = ({ type }: { type: string }) => {
   if (type === 'strava') return <StravaLogo />;
   if (type === 'garmin') return <GarminLogo />;
   return (
-    <div className="bg-primary/10 text-primary flex h-full w-full items-center justify-center rounded-lg font-bold">
+    <div
+      className={`${typography.displayMd} bg-primary/10 text-primary flex h-full w-full items-center justify-center rounded-lg text-lg`}
+    >
       {type.charAt(0).toUpperCase()}
     </div>
   );
@@ -61,8 +63,8 @@ export default function ServiceCard({
               )}
             </div>
             <div>
-              <h4 className="text-lg font-semibold capitalize">{service.serviceType}</h4>
-              <p className="text-muted-foreground text-sm">
+              <h4 className={`${typography.h4} text-lg capitalize`}>{service.serviceType}</h4>
+              <p className={`${typography.p} text-muted-foreground text-sm`}>
                 {isConnected ? (
                   <span className="flex items-center gap-1.5">
                     <span className="relative flex h-2 w-2">
@@ -80,8 +82,8 @@ export default function ServiceCard({
 
           {formattedSyncTime && (
             <div className="text-right">
-              <p className="text-muted-foreground text-xs">Last Synced</p>
-              <p className="text-xs font-medium">{formattedSyncTime}</p>
+              <p className={`${typography.mutedXs} text-muted-foreground`}>Last Synced</p>
+              <p className={`${typography.xs} font-medium`}>{formattedSyncTime}</p>
             </div>
           )}
         </div>
@@ -110,7 +112,7 @@ export default function ServiceCard({
               </Button>
             </div>
           ) : (
-            <Button className="btn-gradient w-full gap-2 text-base" size="sm">
+            <Button className={`${typography.p} btn-gradient w-full gap-2 text-base`} size="sm">
               Connect {service.serviceType.charAt(0).toUpperCase() + service.serviceType.slice(1)}
               <ArrowRight size={14} />
             </Button>

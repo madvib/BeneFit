@@ -2,8 +2,8 @@
 
 import { integrations } from '@bene/react-api-client';
 import { OAuthButton } from '@/lib/components/auth/oauth-button';
+import { PageHeader, typography } from '@/lib/components';
 import { ServiceCard } from './_components';
-import { PageHeader } from '@/lib/components';
 
 // Available services that can be connected
 // Exported for stories if needed, or kept internal
@@ -46,7 +46,7 @@ export default function ConnectionsView({
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Connected Services - Left Column (Larger) */}
         <div className="space-y-4 lg:col-span-2">
-          <h3 className="text-xl font-semibold">Connected Services</h3>
+          <h3 className={typography.h3}>Connected Services</h3>
           <div className="flex flex-col gap-4">
             {connectedServices.length > 0 ? (
               connectedServices.map((service) => (
@@ -68,7 +68,7 @@ export default function ConnectionsView({
 
         {/* Available Services - Right Column (Smaller) */}
         <div className="space-y-4 lg:col-span-1">
-          <h3 className="text-xl font-semibold">Available Services</h3>
+          <h3 className={typography.h3}>Available Services</h3>
           <div className="flex flex-col gap-4">
             {availableServices.length > 0 ? (
               availableServices.map((service) => (
@@ -81,8 +81,10 @@ export default function ConnectionsView({
                       <img src={service.icon} alt={service.displayName} className="h-6 w-6" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold">{service.displayName}</h4>
-                      <p className="text-muted-foreground text-sm">{service.description}</p>
+                      <h4 className={typography.h4}>{service.displayName}</h4>
+                      <p className={`${typography.p} text-muted-foreground`}>
+                        {service.description}
+                      </p>
                     </div>
                   </div>
                   <OAuthButton

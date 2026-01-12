@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, Scale, Repeat } from 'lucide-react';
-import { Button, Typography } from '@/lib/components';
+import { Button, typography } from '@/lib/components';
 import { useState } from 'react';
 
 interface SetTrackerProps {
@@ -39,7 +39,7 @@ export default function SetTracker({
     >
       <div className="flex items-center gap-4">
         <div
-          className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-black italic ${
+          className={`flex h-8 w-8 items-center justify-center rounded-lg italic ${typography.labelXs} ${
             isCompleted
               ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
               : 'bg-white/10 text-white/40'
@@ -56,14 +56,12 @@ export default function SetTracker({
                 type="number"
                 value={reps}
                 onChange={(e) => setReps(e.target.value)}
-                className="w-12 bg-transparent text-sm font-black tracking-tight outline-none"
+                className={`${typography.p} w-12 bg-transparent outline-none`}
                 placeholder="0"
                 disabled={isCompleted}
               />
             </div>
-            <Typography variant="muted" className="text-[9px] font-bold uppercase opacity-30">
-              Reps
-            </Typography>
+            <p className={`${typography.labelXs} opacity-30`}>Reps</p>
           </div>
 
           <div className="flex flex-col gap-0.5">
@@ -73,14 +71,12 @@ export default function SetTracker({
                 type="number"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-12 bg-transparent text-sm font-black tracking-tight outline-none"
+                className={`${typography.p} w-12 bg-transparent outline-none`}
                 placeholder="0"
                 disabled={isCompleted}
               />
             </div>
-            <Typography variant="muted" className="text-[9px] font-bold uppercase opacity-30">
-              Weight (kg)
-            </Typography>
+            <p className={`${typography.labelXs} opacity-30`}>Weight (kg)</p>
           </div>
         </div>
       </div>
@@ -91,11 +87,7 @@ export default function SetTracker({
         onClick={handleComplete}
         className={`h-10 w-10 rounded-xl p-0 transition-all ${isCompleted ? 'bg-emerald-500' : 'bg-primary/20 text-primary hover:bg-primary/30'}`}
       >
-        {isCompleted ? (
-          <Check size={18} />
-        ) : (
-          <div className="text-[10px] font-black italic">SET</div>
-        )}
+        {isCompleted ? <Check size={18} /> : <div className={typography.labelXs}>SET</div>}
       </Button>
     </div>
   );

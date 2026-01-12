@@ -8,6 +8,7 @@ import { ROUTES } from '@/lib/constants';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { useAppForm } from '../app-form';
 import { OAuthButton } from './oauth-button';
+import { typography } from '../theme/typography';
 
 export function LoginForm({ isModal = false }) {
   const searchParameters = useSearchParams();
@@ -60,16 +61,16 @@ export function LoginForm({ isModal = false }) {
 
         <div className="relative flex items-center py-2">
           <div className="border-border grow border-t"></div>
-          <span className="text-muted-foreground mx-4 shrink text-sm">or</span>
+          <span className={`${typography.muted} mx-4 shrink`}>or</span>
           <div className="border-border grow border-t"></div>
         </div>
 
         <OAuthButton provider="google" />
-        <div className="text-center text-sm">
+        <div className={`${typography.muted} text-center`}>
           <Link
             href={isModal ? ROUTES.MODAL.PASSWORD_RESET : ROUTES.AUTH.PASSWORD_RESET}
             replace
-            className="text-primary font-medium hover:underline"
+            className={`${typography.small} text-primary hover:underline`}
           >
             Forgot password?
           </Link>

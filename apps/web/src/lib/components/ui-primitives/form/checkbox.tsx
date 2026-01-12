@@ -1,4 +1,5 @@
 import { InputHTMLAttributes } from 'react';
+import { typography } from '@/lib/components/theme/typography';
 
 type CheckboxProps = {
   label?: string;
@@ -6,30 +7,24 @@ type CheckboxProps = {
   description?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export default function Checkbox({ 
-  label, 
-  error, 
+export default function Checkbox({
+  label,
+  error,
   description,
-  className = '', 
-  ...props 
+  className = '',
+  ...props
 }: CheckboxProps) {
   return (
     <div className="flex items-center">
-      <label className="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          className={`sr-only peer ${className}`}
-          {...props}
-        />
-        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+      <label className="relative inline-flex cursor-pointer items-center">
+        <input type="checkbox" className={`peer sr-only ${className}`} {...props} />
+        <div className="peer peer-checked:bg-primary h-6 w-11 rounded-full bg-gray-200 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
       </label>
-      {label && (
-        <span className="ml-3 text-sm font-medium text-foreground">
-          {label}
-        </span>
+      {label && <span className={`${typography.small} text-foreground ml-3`}>{label}</span>}
+      {error && <p className={`${typography.xs} ml-3 text-red-600`}>{error}</p>}
+      {description && (
+        <p className={`${typography.xs} text-muted-foreground ml-3`}>{description}</p>
       )}
-      {error && <p className="text-xs text-red-600 ml-3">{error}</p>}
-      {description && <p className="text-xs text-muted-foreground ml-3">{description}</p>}
     </div>
   );
 }

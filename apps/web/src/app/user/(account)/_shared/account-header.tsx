@@ -1,11 +1,11 @@
 import { Bell, Menu, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { BeneLogo, ThemeToggle } from '@/lib/components/theme';
-import { Button } from '@/lib/components';
+import { Button, BeneLogo, ThemeToggle } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function AccountHeader({ onOpenMobileMenu }: { onOpenMobileMenu?: () => void }) {
   return (
+    //TODO(UI) Should be using header primitives, can probably use a few less divs
     <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-4">

@@ -1,6 +1,7 @@
 import { InputHTMLAttributes } from 'react';
 import { Input } from '../ui-primitives';
 import { useFieldContext } from './app-form';
+import { typography } from '../theme/typography';
 
 type ControlledInputProps = {
   label: string;
@@ -18,7 +19,7 @@ export function ControlledInput({
   const field = useFieldContext<string>();
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={field.name} className="text-foreground block text-sm font-medium">
+      <label htmlFor={field.name} className={`${typography.small} mb-1.5 block`}>
         {label}
       </label>
       <Input
@@ -48,11 +49,11 @@ export function ControlledInput({
       />
       <div className="mt-1 transition-all duration-200">
         {field.state.meta.errors.length > 0 ? (
-          <p className="animate-in fade-in slide-in-from-top-1 text-xs text-red-500">
+          <p className={`${typography.xs} animate-in fade-in slide-in-from-top-1 text-red-500`}>
             {field.state.meta.errors.map((err) => err?.message).join(', ')}
           </p>
         ) : (
-          description && <p className="text-muted-foreground text-xs">{description}</p>
+          description && <p className={`${typography.xs} text-muted-foreground`}>{description}</p>
         )}
       </div>
     </div>

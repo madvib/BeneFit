@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, Typography, ProgressBar } from '@/lib/components';
+import { Button, ProgressBar,typography } from '@/lib/components';
 import { CheckCircle2, ChevronRight, Trophy, AlertTriangle } from 'lucide-react';
 import type { WorkoutSession, WorkoutActivity } from '@bene/shared';
 import SessionHeader from './_components/session-header';
 import ActivityPhase from './_components/activity-phase';
 import RestTimer from './_components/rest-timer';
+
 
 interface SessionViewProps {
   session: WorkoutSession;
@@ -121,7 +122,7 @@ export default function SessionView({ session, onComplete, onAbort }: SessionVie
           <Button
             variant="ghost"
             onClick={onAbort}
-            className="rounded-2xl bg-red-500/10 p-6 text-xs font-black tracking-widest text-red-500 uppercase hover:bg-red-500/20"
+            className={`${typography.labelXs} rounded-2xl bg-red-500/10 p-6 text-red-500 hover:bg-red-500/20`}
           >
             Abort
           </Button>
@@ -129,7 +130,7 @@ export default function SessionView({ session, onComplete, onAbort }: SessionVie
           {currentActivityIndex === totalPhases - 1 && isCurrentPhaseComplete() ? (
             <Button
               onClick={() => onComplete({ elapsedSeconds, activityPerformance })}
-              className="h-16 flex-1 gap-3 rounded-3xl bg-emerald-500 text-base font-black tracking-widest uppercase shadow-2xl shadow-emerald-500/20"
+              className={`${typography.labelSm} h-16 flex-1 gap-3 rounded-3xl bg-emerald-500 shadow-2xl shadow-emerald-500/20`}
             >
               <Trophy size={20} className="animate-bounce" />
               Finish Session
@@ -138,7 +139,7 @@ export default function SessionView({ session, onComplete, onAbort }: SessionVie
             <Button
               onClick={handleNextPhase}
               disabled={!isCurrentPhaseComplete()}
-              className="shadow-primary/20 h-16 flex-1 gap-3 rounded-3xl text-base font-black tracking-widest uppercase shadow-2xl"
+              className={`${typography.labelSm} shadow-primary/20 h-16 flex-1 gap-3 rounded-3xl shadow-2xl`}
             >
               Next Phase
               <ChevronRight size={20} />

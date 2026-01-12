@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Heart, PlayCircle, Edit2 } from 'lucide-react';
+import { typography } from '../../';
 import Button from './button';
 
 const meta: Meta<typeof Button> = {
@@ -50,7 +51,7 @@ export const AllVariants: Story = {
   render: () => (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
       <div className="space-y-4">
-        <h3 className="text-muted-foreground text-sm font-semibold">Standard</h3>
+        <h3 className={`${typography.small} text-muted-foreground font-semibold`}>Standard</h3>
         <div className="flex flex-col gap-2">
           <Button variant="default">Default</Button>
           <Button variant="secondary">Secondary</Button>
@@ -61,7 +62,7 @@ export const AllVariants: Story = {
         </div>
       </div>
       <div className="space-y-4">
-        <h3 className="text-muted-foreground text-sm font-semibold">Special</h3>
+        <h3 className={`${typography.small} text-muted-foreground font-semibold`}>Special</h3>
         <div className="flex flex-col gap-2">
           <Button variant="soft">Soft</Button>
           <Button variant="surface" className="bg-gray-100 dark:bg-gray-800">
@@ -75,7 +76,7 @@ export const AllVariants: Story = {
         </div>
       </div>
       <div className="space-y-4">
-        <h3 className="text-muted-foreground text-sm font-semibold">Status</h3>
+        <h3 className={`${typography.small} text-muted-foreground font-semibold`}>Status</h3>
         <div className="flex flex-col gap-2">
           <Button variant="success">Success</Button>
           <Button variant="soft-success">Soft Success</Button>

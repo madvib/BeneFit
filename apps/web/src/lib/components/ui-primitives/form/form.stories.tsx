@@ -4,6 +4,7 @@ import Select from './select';
 import Checkbox from './checkbox';
 import Label from './label';
 import FormSuccessMessage from './form-success-message';
+import { typography } from '@/lib/components/theme/typography';
 
 const meta: Meta = {
   title: 'Primitives/Form',
@@ -61,7 +62,7 @@ export const Labels: StoryObj<typeof Label> = {
   render: () => (
     <div className="space-y-2">
       <Label>Standard Label</Label>
-      <Label className="text-primary font-bold italic">Custom Styled Label</Label>
+      <Label className={`${typography.h4} text-primary italic`}>Custom Styled Label</Label>
     </div>
   ),
 };

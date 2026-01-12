@@ -1,6 +1,5 @@
 'use client';
 import { Menu, Star, Share2, PanelRightClose, PanelRightOpen } from 'lucide-react';
-import { ChatTitle } from './chat-title';
 
 import { useChatUI } from '@/lib/hooks/use-chat-ui';
 import {
@@ -8,10 +7,11 @@ import {
   HeaderLeft,
   HeaderCenter,
   HeaderRight,
-} from '@/lib/components/ui-primitives/header';
-import { DashboardNavigation } from '@/lib/components/navigation';
+  BeneLogo,
+  DashboardNavigation,
+} from '@/lib/components';
 import UserAccountMenu from '@/lib/components/navigation/account-dropdown/account-dropdown';
-import { BeneLogo } from '@/lib/components/theme';
+import { ChatTitle } from './chat-title';
 
 interface ChatHeaderProps {
   title: string;
@@ -24,6 +24,7 @@ export default function ChatHeader({ title }: ChatHeaderProps) {
     <HeaderRoot>
       {/* LEFT: Mobile Menu + Logo + Title */}
       <HeaderLeft>
+        {/* TODO(UI) use Button component */}
         <button
           onClick={toggleLeft}
           className="hover:bg-muted text-muted-foreground hover:text-foreground mr-10 -ml-2 rounded-md p-2 md:hidden"
@@ -42,6 +43,8 @@ export default function ChatHeader({ title }: ChatHeaderProps) {
       {/* RIGHT: Tools + Profile + Sidebar Toggle */}
       <HeaderRight>
         <div className="mr-1 flex items-center gap-1">
+          {/* TODO(UI) use Button component */}
+
           <button className="text-muted-foreground hidden rounded-md p-2 transition-colors hover:bg-yellow-500/10 hover:text-yellow-500 sm:block">
             <Star size={18} />
           </button>
@@ -51,6 +54,7 @@ export default function ChatHeader({ title }: ChatHeaderProps) {
         </div>
 
         <UserAccountMenu isLoggedIn={true} />
+        {/* TODO(UI) use Button component */}
 
         <button
           onClick={toggleRight}

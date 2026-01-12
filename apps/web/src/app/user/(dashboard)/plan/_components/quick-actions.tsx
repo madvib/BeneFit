@@ -1,7 +1,7 @@
 'use client';
 
 import { Zap, Plus, Share2, Download, Save, Pause } from 'lucide-react';
-import { Card } from '@/lib/components';
+import { Card,typography } from '@/lib/components';
 
 interface QuickActionsProps {
   onCreatePlan: () => void;
@@ -80,7 +80,9 @@ export default function QuickActions({
             >
               {action.icon}
             </div>
-            <span className="text-muted-foreground group-hover:text-foreground text-xs font-bold transition-colors">
+            <span
+              className={`${typography.labelXs} text-muted-foreground group-hover:text-foreground transition-colors`}
+            >
               {action.label}
             </span>
           </button>
