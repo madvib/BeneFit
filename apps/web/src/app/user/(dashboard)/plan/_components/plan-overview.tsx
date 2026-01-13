@@ -2,7 +2,7 @@
 
 import { Trophy, Flame, Timer, Zap, Activity, Edit2, Target, Calendar } from 'lucide-react';
 import type { fitnessPlan } from '@bene/react-api-client';
-import { SpotlightCard, Badge, Button, typography } from '@/lib/components';
+import { SpotlightCard, Badge, Button, typography, IconBox } from '@/lib/components';
 
 // Extract plan type from API response
 type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
@@ -40,9 +40,7 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
         {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/20 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-              <Trophy size={20} />
-            </div>
+            <IconBox icon={Trophy} variant="default" size="md" className="rounded-xl" />
             <div>
               <h3 className={`${typography.h3} italic`}>Active Plan</h3>
               <p className={`${typography.mutedXs} opacity-60`}>Fitness Journey</p>
@@ -115,9 +113,7 @@ export default function PlanOverview({ currentPlan, onEditPlan }: PlanOverviewPr
           <div className="flex flex-col justify-between space-y-6">
             {/* Date Range Glass Component */}
             <div className="bg-background/40 ring-border/50 flex items-center gap-4 rounded-2xl p-4 ring-1 backdrop-blur-xl">
-              <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-                <Calendar size={20} />
-              </div>
+              <IconBox icon={Calendar} variant="default" size="md" className="rounded-xl" />
               <div>
                 <p className={`${typography.mutedXs} opacity-60`}>Timeline</p>
                 <p className={`${typography.small} font-bold`}>

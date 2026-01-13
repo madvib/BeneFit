@@ -18,6 +18,7 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // TODO extract into reusable hook, or existing chat hook.
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -38,7 +39,7 @@ export default function ChatView({ messages, onSendMessage, isTyping = false }: 
 
   return (
     <main className="bg-background relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
-      {/* Background patterns */}
+      {/* Background patterns TODO extract background patterns into component library*/}
       <div
         className="bg-primary/5 pointer-events-none absolute inset-0 opacity-50"
         style={{

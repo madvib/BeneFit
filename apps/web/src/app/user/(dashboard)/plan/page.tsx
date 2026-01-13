@@ -4,7 +4,14 @@ import * as React from 'react';
 
 import { AlertCircle, PauseCircle } from 'lucide-react';
 import { fitnessPlan, workouts } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage, Button, DashboardShell, typography } from '@/lib/components';
+import {
+  LoadingSpinner,
+  ErrorPage,
+  Button,
+  DashboardShell,
+  typography,
+  IconBox,
+} from '@/lib/components';
 import PlanOverview from './_components/plan-overview';
 import QuickActions from './_components/quick-actions';
 import WeeklySchedule from './_components/weekly-schedule';
@@ -113,9 +120,12 @@ export default function PlanClient() {
   if (plan.status === 'paused') {
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-yellow-500/10 text-yellow-500 ring-1 ring-yellow-500/20">
-          <PauseCircle size={48} />
-        </div>
+        <IconBox
+          icon={PauseCircle}
+          variant="ghost"
+          size="xl"
+          className="mb-6 rounded-3xl bg-yellow-500/10 text-yellow-500 ring-1 ring-yellow-500/20"
+        />
         <h1 className={`${typography.h1} mb-4`}>Plan Paused</h1>
         <p className={`${typography.lead} text-muted-foreground mb-8 max-w-md`}>
           Your training plan is currently on hold. Would you like to resume your journey?
@@ -147,9 +157,12 @@ export default function PlanClient() {
   if (plan.status === 'completed') {
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
-        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20">
-          <AlertCircle size={48} />
-        </div>
+        <IconBox
+          icon={AlertCircle}
+          variant="ghost"
+          size="xl"
+          className="mb-6 rounded-3xl bg-green-500/10 text-green-500 ring-1 ring-green-500/20"
+        />
         <h1 className={`${typography.h1} mb-4`}>Goal Achieved!</h1>
         <p className={`${typography.lead} text-muted-foreground mb-8 max-w-md`}>
           Congratulations! You&apos;ve completed your program. Ready for the next challenge?

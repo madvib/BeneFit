@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button,typography } from '@/lib/components/ui-primitives';
+import { Button, typography } from '@/lib/components';
 
 export const getSeverityColor = (severity?: string | null): string => {
   switch (severity) {

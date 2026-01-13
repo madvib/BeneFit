@@ -5,6 +5,7 @@ import {
   getActivityColorClass,
   getActivityIcon,
   typography,
+  IconBox,
 } from '@/lib/components';
 import type { HistoryItem } from './workout-list';
 
@@ -70,11 +71,11 @@ export default function ActivityListTile({ workout, onClick }: ACtivityListTileP
     >
       <td className="px-6 py-5">
         <div className="flex items-center gap-4">
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-xl border-2 shadow-sm ${getActivityColorClass(workout.workoutType)}`}
+          <IconBox
+            className={`h-10 w-10 rounded-xl border-2 shadow-sm ${getActivityColorClass(workout.workoutType)}`}
           >
             {getActivityIcon(workout.workoutType)}
-          </div>
+          </IconBox>
           <div>
             <p className={`${typography.small} font-bold capitalize`}>{workout.workoutType}</p>
             <p className={`${typography.mutedXs} opacity-60`}>Session</p>

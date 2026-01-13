@@ -1,7 +1,7 @@
 'use client';
 
 import { CreditCard, Check, Sparkles } from 'lucide-react';
-import { Card, Button, PageHeader, SectionHeader, typography } from '@/lib/components';
+import { Card, Button, PageHeader, SectionHeader, typography, IconBox } from '@/lib/components';
 
 export default function BillingView() {
   return (
@@ -30,21 +30,15 @@ export default function BillingView() {
         </div>
         <div className="space-y-3 p-6">
           <div className="flex items-center gap-2.5">
-            <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
-              <Check size={14} />
-            </div>
+            <IconBox icon={Check} variant="default" size="sm" />
             <span className={typography.p}>Basic Analytics</span>
           </div>
           <div className="flex items-center gap-2.5">
-            <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
-              <Check size={14} />
-            </div>
+            <IconBox icon={Check} variant="default" size="sm" />
             <span className={typography.p}>5 Projects</span>
           </div>
           <div className="flex items-center gap-2.5">
-            <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full">
-              <Check size={14} />
-            </div>
+            <IconBox icon={Check} variant="default" size="sm" />
             <span className={typography.p}>Community Support</span>
           </div>
         </div>
@@ -64,9 +58,12 @@ export default function BillingView() {
         <div className="bg-muted/50 rounded-lg border p-4">
           <div className="flex flex-wrap items-start justify-between gap-4 sm:flex-nowrap sm:items-center">
             <div className="flex items-center gap-4">
-              <div className="bg-primary/10 text-primary flex h-12 w-16 shrink-0 items-center justify-center rounded-lg">
-                <CreditCard size={24} />
-              </div>
+              <IconBox
+                icon={CreditCard}
+                variant="default"
+                size="lg"
+                className="w-16 rounded-lg"
+              />
               <div className="min-w-0">
                 <div className={`${typography.h4} truncate`}>Visa ending in 4242</div>
                 <div className={`${typography.mutedXs} text-muted-foreground`}>Expires 12/24</div>

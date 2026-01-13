@@ -41,7 +41,7 @@ export default function ProgressChart({ data }: { data: { date: string; value: n
                 </div>
 
                 {/* Bar Track */}
-                <div className="bg-background/50 border-border/50 relative flex h-full w-full max-w-[32px] items-end overflow-hidden rounded-xl border shadow-inner">
+                <div className="bg-background/50 border-border/50 relative flex h-full w-full max-w-8 items-end overflow-hidden rounded-xl border shadow-inner">
                   {/* Actual Bar */}
                   <div
                     className={`cubic-bezier(0.34, 1.56, 0.64, 1) w-full rounded-t-lg transition-all duration-700 ${

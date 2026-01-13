@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react';
-import { typography } from '@/lib/components/theme/typography';
+import { typography, IconBox } from '@/lib/components';
 
 interface SettingRowProps {
   icon?: LucideIcon;
@@ -19,11 +19,7 @@ export function SettingRow({
   return (
     <div className={`flex items-start justify-between ${className || ''}`}>
       <div className="flex gap-4">
-        {Icon && (
-          <div className="bg-primary/10 text-primary mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
-            <Icon size={20} />
-          </div>
-        )}
+        {Icon && <IconBox icon={Icon} variant="default" size="md" className="mt-1" />}
         <div>
           <h3 className={typography.h4}>{title}</h3>
           {description && (

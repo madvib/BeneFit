@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Sparkles, Clock, Users, Star, ArrowRight, LayoutTemplate } from 'lucide-react';
-import { Card, Button, Badge, typography } from '@/lib/components';
+import { Card, Button, Badge, typography, IconBox } from '@/lib/components';
 
 export interface PlanSuggestionItem {
   id: string;
@@ -24,9 +24,7 @@ export default function PlanSuggestions({ suggestions, onSelectPlan }: PlanSugge
     <div className="flex h-full flex-col">
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="bg-primary/20 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-            <Sparkles size={20} />
-          </div>
+          <IconBox icon={Sparkles} variant="default" size="md" className="rounded-xl" />
           <div>
             <h3 className={`${typography.labelSm} italic`}>AI Suggestions</h3>
             <p className={typography.mutedXs}>Personalized Path</p>
@@ -49,11 +47,12 @@ export default function PlanSuggestions({ suggestions, onSelectPlan }: PlanSugge
           >
             <div className="p-6">
               <div className="mb-6 flex items-start justify-between">
-                <div
-                  className={`${typography.h2} bg-primary/10 border-primary/20 flex h-14 w-14 items-center justify-center rounded-2xl border shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
+                <IconBox
+                  variant="ghost"
+                  className={`${typography.h2} bg-primary/10 border-primary/20 h-14 w-14 rounded-2xl border shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
                 >
                   {plan.image}
-                </div>
+                </IconBox>
                 <div
                   className={`${typography.mutedXs} flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-600 ring-1 ring-emerald-500/20`}
                 >

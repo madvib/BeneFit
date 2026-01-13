@@ -11,8 +11,7 @@ import {
   CheckCircle2,
   Lock,
 } from 'lucide-react';
-import { Card, ProgressBar, Badge, Button,typography } from '@/lib/components';
-
+import { Card, ProgressBar, Badge, Button, typography, IconBox } from '@/lib/components';
 
 // Extract plan type from API response
 type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
@@ -47,9 +46,7 @@ export default function WeeklySchedule({
     <Card className="flex h-full flex-col border-none bg-transparent shadow-none">
       <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="bg-primary/20 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-            <Calendar size={20} />
-          </div>
+          <IconBox icon={Calendar} variant="default" size="md" className="rounded-xl" />
           <div>
             <h3 className={`${typography.labelSm} italic`}>Training Schedule</h3>
             <p className={typography.mutedXs}>Weekly Overview</p>

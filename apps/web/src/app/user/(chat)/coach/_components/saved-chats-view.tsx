@@ -1,5 +1,5 @@
 import { MessageSquare, Plus, Settings } from 'lucide-react';
-import { typography } from '@/lib/components/theme/typography';
+import { Button, typography } from '@/lib/components';
 
 interface ChatData {
   id: number | string;
@@ -22,17 +22,17 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
 
       {/* Sidebar Content */}
       <aside
-        className={`bg-accent/30 border-muted fixed inset-y-0 left-0 z-40 flex h-full w-[280px] transform flex-col border-r pt-20 transition-transform duration-300 ease-in-out md:static md:transform-none md:pt-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[280px] md:w-[280px] xl:ml-0 xl:w-[280px]'} ${!isOpen && 'md:hidden xl:flex'} `}
+        className={`bg-accent/30 border-muted fixed inset-y-0 left-0 z-40 flex h-full w-70 transform flex-col border-r pt-20 transition-transform duration-300 ease-in-out md:static md:transform-none md:pt-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[280px] md:w-[280px] xl:ml-0 xl:w-[280px]'} ${!isOpen && 'md:hidden xl:flex'} `}
       >
         {/* New Chat Button */}
         <div className="p-4">
-          <button
+          <Button
             onClick={onNewChat}
             className={`${typography.labelSm} bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center gap-2 rounded-lg px-4 py-3 shadow-sm transition-all`}
           >
             <Plus size={18} />
             <span>New Chat</span>
-          </button>
+          </Button>
         </div>
 
         {/* Scrollable List */}
@@ -43,7 +43,7 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
                 {item.category}
               </h3> */}
               <div className="space-y-1">
-                <button
+                <Button
                   key={idx}
                   className={`${typography.small} text-foreground/80 hover:bg-muted hover:text-foreground group flex w-full items-center gap-2 truncate rounded-md px-3 py-2 text-left transition-colors`}
                 >
@@ -52,7 +52,7 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
                     className="text-muted-foreground group-hover:text-primary"
                   />
                   <span className="truncate">{item.title}</span>
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -60,12 +60,12 @@ export default function SavedChatsView({ isOpen, onClose, chats, onNewChat }: Sa
 
         {/* User Settings Footer */}
         <div className="border-muted mt-auto border-t p-4">
-          <button
+          <Button
             className={`${typography.small} text-foreground/80 hover:bg-muted flex w-full items-center gap-3 rounded-md px-3 py-2 transition-colors`}
           >
             <Settings size={18} />
             <span>Settings</span>
-          </button>
+          </Button>
         </div>
       </aside>
     </>

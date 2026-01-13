@@ -82,7 +82,7 @@ export const PlanGeneration: StoryObj = {
 
 export const SkipWorkout: StoryObj<typeof SkipWorkoutModal> = {
   render: () => (
-    <div className="bg-accent/20 flex h-[600px] w-full items-center justify-center p-8">
+    <div className="bg-accent/20 flex h-150 w-full items-center justify-center p-8">
       <SkipWorkoutModal
         isOpen={true}
         onClose={() => console.log('Close')}

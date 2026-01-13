@@ -43,6 +43,7 @@ export const recommended = (name, projectDir) => [
       ...sonarjs.configs.recommended.rules,
       'sonarjs/todo-tag': 'warn',
       ...security.configs.recommended.rules,
+      'security/detect-object-injection': 'off',
       ...testing_library.configs['flat/react'].rules,
       ...vitest.configs.recommended.rules,
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

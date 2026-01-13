@@ -1,7 +1,7 @@
 'use client';
 
 import { Dumbbell, Info } from 'lucide-react';
-import { Badge, typography } from '@/lib/components';
+import { Badge, typography, IconBox } from '@/lib/components';
 import type { Exercise } from '@bene/shared';
 import SetTracker from './set-tracker';
 
@@ -20,10 +20,7 @@ export default function ExerciseRow({
     <div className="space-y-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {/*TODO Icon Box  */}
-          <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-xl">
-            <Dumbbell size={20} />
-          </div>
+          <IconBox icon={Dumbbell} variant="default" size="md" className="rounded-xl" />
           <div>
             <h4 className={typography.h4}>{exercise.name}</h4>
             <div className="flex items-center gap-2">

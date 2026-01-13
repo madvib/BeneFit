@@ -43,8 +43,7 @@ export default function ChatHeader({ title }: ChatHeaderProps) {
       {/* RIGHT: Tools + Profile + Sidebar Toggle */}
       <HeaderRight>
         <div className="mr-1 flex items-center gap-1">
-          {/* TODO(UI) use Button component */}
-
+          {/* TODO(UI) use Button components */}
           <button className="text-muted-foreground hidden rounded-md p-2 transition-colors hover:bg-yellow-500/10 hover:text-yellow-500 sm:block">
             <Star size={18} />
           </button>

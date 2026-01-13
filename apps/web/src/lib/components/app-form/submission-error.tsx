@@ -1,6 +1,6 @@
 import { AlertCircle } from 'lucide-react';
 import { SubmitError, useFormContext } from './app-form';
-import { Button,typography } from '../ui-primitives';
+import { Button, typography } from '@/lib/components';
 
 export function SubmissionError() {
   const form = useFormContext();

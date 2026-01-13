@@ -1,5 +1,5 @@
 import { BadgeCheck, Heart, Zap } from 'lucide-react';
-import { SpotlightCard, typography } from '@/lib/components';
+import { SpotlightCard, typography, IconBox } from '@/lib/components';
 
 export default function Benefits() {
   const benefits = [
@@ -26,9 +26,13 @@ export default function Benefits() {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         {benefits.map((benefit, index) => (
           <div key={index} className="text-center">
-            <div className="bg-primary text-primary-foreground mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+            <IconBox
+              variant="ghost"
+              size="xl"
+              className="bg-primary text-primary-foreground mx-auto mb-4"
+            >
               {benefit.icon}
-            </div>
+            </IconBox>
             <h3 className={`${typography.h3} mb-2`}>{benefit.title}</h3>
             <p className={`${typography.p} text-muted-foreground`}>{benefit.description}</p>
           </div>

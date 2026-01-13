@@ -11,6 +11,7 @@ import {
   SkipWorkoutModal,
   Badge,
   typography,
+  IconBox,
 } from '@/lib/components';
 
 // Define the shape of the workout data as returned by the API
@@ -76,9 +77,12 @@ export default function TodayView({
         </div>
 
         <Card className="border-primary/10 bg-background/60 flex max-w-md flex-col items-center border p-12 text-center shadow-2xl backdrop-blur-xl">
-          <div className="bg-primary/5 animate-bounce-slow ring-primary/20 mb-8 flex h-24 w-24 items-center justify-center rounded-full ring-1">
-            <Calendar size={48} className="text-primary opacity-80" />
-          </div>
+          <IconBox
+            icon={Calendar}
+            variant="ghost"
+            className="bg-primary/5 animate-bounce-slow ring-primary/20 mb-8 h-24 w-24 rounded-full ring-1"
+            iconClassName="text-primary opacity-80 h-12 w-12"
+          />
 
           <h2 className={`${typography.h2} mb-3`}>Rest & Recovery</h2>
 
@@ -130,8 +134,7 @@ export default function TodayView({
                   {todaysWorkout.type || 'Training Session'}
                 </h1>
                 <p className={`${typography.lead} text-muted-foreground max-w-xl`}>
-                  {todaysWorkout?.description ||
-                    'Focus on form and intensity. Your personalized plan is ready.'}
+                  {'Focus on form and intensity. Your personalized plan is ready.'}
                 </p>
               </div>
 
@@ -180,11 +183,9 @@ export default function TodayView({
                   </div>
 
                   <div className="relative z-10 flex gap-5">
-                    <div
-                      className={`${typography.h4} bg-accent text-muted-foreground flex h-12 w-12 shrink-0 items-center justify-center rounded-xl`}
-                    >
+                    <IconBox variant="muted" size="lg" className="rounded-xl">
                       {idx + 1}
-                    </div>
+                    </IconBox>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
                         <h4 className={`${typography.large} font-bold capitalize`}>
@@ -209,9 +210,7 @@ export default function TodayView({
             <div className="sticky top-8 space-y-6">
               <Card className="border-primary/20 bg-background/50 overflow-hidden p-6 shadow-xl backdrop-blur-xl">
                 <div className="mb-6 flex items-center gap-3">
-                  <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full">
-                    <Star size={20} className="fill-current" />
-                  </div>
+                  <IconBox icon={Star} variant="default" size="md" iconClassName="fill-current" />
                   <div>
                     <p className={`${typography.small} font-bold`}>Ready to start?</p>
                     <p className={`${typography.mutedXs}`}>Commit to the process.</p>

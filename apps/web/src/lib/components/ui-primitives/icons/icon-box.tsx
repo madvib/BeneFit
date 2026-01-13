@@ -28,13 +28,15 @@ const iconBoxVariants = cva(
 );
 
 export interface IconBoxProps extends VariantProps<typeof iconBoxVariants> {
-  icon: LucideIcon;
+  icon?: LucideIcon | React.ElementType;
+  children?: React.ReactNode;
   className?: string;
   iconClassName?: string;
 }
 
 export default function IconBox({
   icon: Icon,
+  children,
   variant,
   size,
   className,
@@ -49,7 +51,7 @@ export default function IconBox({
 
   return (
     <div className={iconBoxVariants({ variant, size, className })}>
-      <Icon size={size ? iconSizeMap[size] : 20} className={iconClassName} />
+      {Icon ? <Icon size={size ? iconSizeMap[size] : 20} className={iconClassName} /> : children}
     </div>
   );
 }

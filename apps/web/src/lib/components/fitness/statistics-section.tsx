@@ -1,10 +1,9 @@
 'use client';
 
-import { Card, CountUp, SpotlightCard,typography } from '@/lib/components';
+import { Card, CountUp, SpotlightCard, typography, IconBox } from '@/lib/components';
 import { profile } from '@bene/react-api-client';
 import { Award, Flame, TrendingUp, Clock, Dumbbell, Zap } from 'lucide-react';
 import { safeFormatDate } from '@/lib/utils';
-
 
 export default function StatisticsSection({ stats }: { stats: profile.GetUserStatsResponse }) {
   return (
@@ -24,9 +23,7 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
         <SpotlightCard className="border-primary/20 bg-primary/5 col-span-1 sm:col-span-2 lg:col-span-2">
           <div className="flex h-full flex-col justify-between p-6">
             <div className="flex items-center justify-between">
-              <div className="bg-primary/20 text-primary flex h-12 w-12 items-center justify-center rounded-2xl">
-                <Dumbbell size={24} />
-              </div>
+              <IconBox icon={Dumbbell} variant="default" size="lg" className="rounded-2xl" />
               <TrendingUp size={20} className="text-primary/50" />
             </div>
             <div className="mt-8">
@@ -41,9 +38,12 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
         {/* Total Minutes */}
         <Card className="border-muted/50 col-span-1">
           <div className="flex h-full flex-col justify-between p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
-              <Clock size={20} />
-            </div>
+            <IconBox
+              icon={Clock}
+              variant="ghost"
+              size="md"
+              className="rounded-xl bg-orange-500/10 text-orange-500"
+            />
             <div className="mt-4">
               <p className={`${typography.labelSm} mb-0.5`}>Time Active</p>
               <div className="flex items-baseline gap-1">
@@ -59,9 +59,12 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
         {/* Total Volume */}
         <Card className="border-muted/50 col-span-1">
           <div className="flex h-full flex-col justify-between p-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-              <TrendingUp size={20} />
-            </div>
+            <IconBox
+              icon={TrendingUp}
+              variant="ghost"
+              size="md"
+              className="rounded-xl bg-blue-500/10 text-blue-500"
+            />
             <div className="mt-4">
               <p className={`${typography.labelSm} mb-0.5`}>Total Volume</p>
               <div className="flex items-baseline gap-1">
@@ -78,9 +81,13 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
         <Card className="col-span-1 border-orange-500/20 bg-orange-500/5 sm:col-span-2">
           <div className="flex h-full flex-col justify-between p-6">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/20 text-orange-500">
-                <Flame size={24} fill={stats.streakActive ? 'currentColor' : 'none'} />
-              </div>
+              <IconBox
+                icon={Flame}
+                variant="ghost"
+                size="lg"
+                className="rounded-2xl bg-orange-500/20 text-orange-500"
+                iconClassName={stats.streakActive ? 'fill-current' : ''}
+              />
               {stats.streakActive && (
                 <p
                   className={`${typography.labelSm} rounded-full bg-orange-500/20 px-3 py-1 text-orange-600`}
@@ -106,9 +113,12 @@ export default function StatisticsSection({ stats }: { stats: profile.GetUserSta
         <Card className="border-muted/50 col-span-1 sm:col-span-2 lg:col-span-2">
           <div className="flex h-full flex-col justify-between p-6">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-500">
-                <Award size={24} />
-              </div>
+              <IconBox
+                icon={Award}
+                variant="ghost"
+                size="lg"
+                className="rounded-2xl bg-purple-500/10 text-purple-500"
+              />
               <p className={`${typography.small} text-muted-foreground`}>
                 Last: {safeFormatDate(stats.lastWorkoutDate)}
               </p>

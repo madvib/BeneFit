@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Check, ExternalLink } from 'lucide-react';
 import { authClient } from '@bene/react-api-client';
-import { Button, LoadingSpinner, typography } from '@/lib/components';
+import { Button, LoadingSpinner, typography, IconBox } from '@/lib/components';
 import { OAuthButton } from '@/lib/components/auth';
 
 export default function OAuthProviderList() {
@@ -72,13 +72,12 @@ export default function OAuthProviderList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-lg border p-4">
         <div className="flex items-center gap-3">
-          <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
-            {googleConnected ? (
-              <Check className="text-green-500" size={20} />
-            ) : (
-              <ExternalLink size={20} />
-            )}
-          </div>
+          <IconBox
+            icon={googleConnected ? Check : ExternalLink}
+            variant="muted"
+            size="md"
+            iconClassName={googleConnected ? 'text-green-500' : ''}
+          />
           <div>
             <div className={`${typography.h4} capitalize`}>Google</div>
             <div className={`${typography.mutedXs} text-muted-foreground`}>

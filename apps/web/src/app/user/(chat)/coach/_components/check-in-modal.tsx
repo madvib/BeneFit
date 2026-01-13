@@ -3,8 +3,9 @@
 import { MessageSquare, X, Sparkles } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
 import { CheckInFormSchema } from '@bene/shared';
-import { Button, Card, Badge, typography, useAppForm } from '@/lib/components';
+import { Button, Card, Badge, typography, useAppForm, IconBox } from '@/lib/components';
 
+// TODO use domain schema for this?
 interface CheckIn {
   id: string;
   question: string;
@@ -41,7 +42,7 @@ export default function CheckInModal({
   });
 
   if (!isOpen || !checkIn) return null;
-
+  // TODO we need a shared dialog modal primitive (not existing ModalRoute)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md transition-all">
       <Card className="bg-card animate-in fade-in zoom-in-95 border-border/50 w-full max-w-lg overflow-hidden shadow-2xl duration-300">
@@ -50,9 +51,13 @@ export default function CheckInModal({
             {/* Header */}
             <div className="border-border/50 bg-primary/5 flex items-start justify-between border-b p-6">
               <div className="flex items-center gap-4">
-                <div className="from-primary to-primary/60 text-primary-foreground shadow-primary/20 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg">
-                  <MessageSquare size={24} className="fill-current" />
-                </div>
+                <IconBox
+                  icon={MessageSquare}
+                  variant="ghost"
+                  size="lg"
+                  className="from-primary to-primary/60 text-primary-foreground shadow-primary/20 rounded-2xl bg-linear-to-br shadow-lg"
+                  iconClassName="fill-current"
+                />
                 <div>
                   <h3 className={`${typography.h4} text-foreground font-bold`}>Coach Check-In</h3>
                   <div className="mt-1 flex items-center gap-2">
@@ -72,19 +77,18 @@ export default function CheckInModal({
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
+              <Button
                 onClick={() => onDismiss(checkIn.id)}
                 className="text-muted-foreground hover:bg-background/80 hover:text-foreground rounded-full p-2 transition-colors"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
 
             <div className="p-6 pt-8">
               {/* Question */}
               <div className="bg-muted/50 relative mb-8 rounded-2xl p-6">
-                {/* Decorative quote mark */}
+                {/* Decorative quote mark TODO */}
                 <div className="text-primary/10 absolute -top-3 -left-2 text-6xl select-none">
                   “
                 </div>
@@ -130,7 +134,7 @@ export default function CheckInModal({
                   >
                     Remind Me Later
                   </Button>
-                  <div className="min-w-[140px]">
+                  <div className="min-w-35">
                     <form.SubmitButton label="Send Response" />
                   </div>
                 </div>

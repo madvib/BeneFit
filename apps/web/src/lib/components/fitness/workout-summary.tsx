@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Badge, typography } from '@/lib/components';
+import { Card, Badge, typography, IconBox } from '@/lib/components';
 import { Clock, Zap, CheckCircle2, TrendingUp, Sparkles } from 'lucide-react';
 import type { DailyWorkout, Activity } from '@bene/shared';
 import { getActivityIcon } from './constants';
@@ -23,9 +23,7 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
           <span>Session Complete</span>
         </div>
 
-        <div className="bg-primary/20 text-primary mb-6 flex h-20 w-20 items-center justify-center rounded-3xl">
-          <CheckCircle2 size={40} />
-        </div>
+        <IconBox icon={CheckCircle2} variant="default" size="xl" className="mb-6 rounded-3xl" />
 
         <h1 className={`${typography.h1} mb-2 capitalize`}>{workout.type} Summary</h1>
         <p className={`${typography.muted} max-w-md`}>
@@ -38,9 +36,7 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card className="border-primary/10 bg-card p-5 transition-shadow hover:shadow-md">
           <div className="flex items-center gap-4">
-            <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-2xl">
-              <Clock size={24} />
-            </div>
+            <IconBox icon={Clock} variant="default" size="lg" className="rounded-2xl" />
             <div>
               <p className={typography.labelXs}>Duration</p>
               <h3 className={typography.h3}>{workout.durationMinutes} min</h3>
@@ -50,9 +46,12 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
 
         <Card className="bg-card border-orange-500/10 p-5 transition-shadow hover:shadow-md">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500">
-              <TrendingUp size={24} />
-            </div>
+            <IconBox
+              icon={TrendingUp}
+              variant="ghost"
+              size="lg"
+              className="rounded-2xl bg-orange-500/10 text-orange-500"
+            />
             <div>
               <p className={typography.labelXs}>Intensity</p>
               <h3 className={typography.h3}>Moderate</h3>
@@ -62,9 +61,12 @@ export default function WorkoutSummary({ workout }: WorkoutSummaryProps) {
 
         <Card className="bg-card border-blue-500/10 p-5 transition-shadow hover:shadow-md">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500">
-              <Zap size={24} />
-            </div>
+            <IconBox
+              icon={Zap}
+              variant="ghost"
+              size="lg"
+              className="rounded-2xl bg-blue-500/10 text-blue-500"
+            />
             <div>
               <p className={typography.labelXs}>Energy</p>
               <h3 className={typography.h3}>Optimal</h3>

@@ -3,7 +3,7 @@ import { Target, Settings, Wand2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { fitnessPlan } from '@bene/react-api-client';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useAppForm } from '@/lib/components/app-form';
-import { Button, Stepper, typography } from '@/lib/components';
+import { Button, Stepper, typography, IconBox } from '@/lib/components';
 import { PrimaryGoalGrid, SecondaryGoalsList } from '@/lib/components/fitness/goal-selection-ui';
 import { CategorizedEquipmentSelection } from '@/lib/components/fitness/equipment-selection-ui';
 
@@ -150,11 +150,12 @@ export default function GoalSelectionForm({
                           className="accent-primary bg-muted h-2 w-full cursor-pointer appearance-none rounded-lg"
                           disabled={isLoading}
                         />
-                        <div
-                          className={`${typography.displayXs} bg-primary text-primary-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-lg`}
+                        <IconBox
+                          variant="ghost"
+                          className={`${typography.displayMd} bg-primary text-primary-foreground h-14 w-14 shrink-0 rounded-2xl shadow-lg`}
                         >
                           {workoutsPerWeek}
-                        </div>
+                        </IconBox>
                       </div>
                     </div>
                   );

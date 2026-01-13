@@ -31,14 +31,7 @@ export const mockActivePlan: fitnessPlan.GetActivePlanResponse = {
     startedAt: '2025-12-15T00:00:00Z',
     weeks: [
       {
-        id: 'week-1',
         weekNumber: 1,
-        startDate: '2025-12-15',
-        endDate: '2025-12-21',
-        focus: 'Foundation Week - Learning Movement Patterns',
-        targetWorkouts: 3,
-        workoutsCompleted: 3,
-        notes: 'Focus on form over weight',
         workouts: [
           {
             id: 'workout-1',
@@ -64,14 +57,7 @@ export const mockActivePlan: fitnessPlan.GetActivePlanResponse = {
         ],
       },
       {
-        id: 'week-4',
         weekNumber: 4,
-        startDate: '2026-01-05',
-        endDate: '2026-01-11',
-        focus: 'Deload Week - Recovery and Adaptation',
-        targetWorkouts: 3,
-        workoutsCompleted: 2,
-        notes: 'Reduce weight by 40%, focus on recovery',
         workouts: [
           {
             id: 'workout-10',

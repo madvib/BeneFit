@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Sparkles, Layout, Dumbbell, ArrowRight, Zap, Target, ShieldCheck } from 'lucide-react';
-import { Button, typography } from '@/lib/components';
+import { Button, typography, IconBox } from '@/lib/components';
 import { fitnessPlan } from '@bene/react-api-client';
 import GoalSelectionForm from './goal-selection-form';
 
@@ -63,9 +63,12 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
       <div className="grid w-full max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
         {/* AI Generation Card */}
         <div className="group relative overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5 p-8 transition-all hover:border-blue-500/40 hover:shadow-xl">
-          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500">
-            <Zap size={32} />
-          </div>
+          <IconBox
+            icon={Zap}
+            variant="ghost"
+            size="xl"
+            className="mb-6 rounded-2xl bg-blue-500/10 text-blue-500"
+          />
 
           <h3 className={`${typography.h3} text-foreground mb-3`}>Generate with AI</h3>
           <p className={`${typography.p} text-muted-foreground mb-8 leading-relaxed`}>
@@ -93,9 +96,7 @@ export default function PlanOnboarding({ onGenerate, onBrowse, isLoading }: Plan
 
         {/* Browse Templates Card */}
         <div className="group border-border bg-background hover:border-muted-foreground/30 relative overflow-hidden rounded-3xl border p-8 transition-all hover:shadow-lg">
-          <div className="bg-muted text-foreground mb-6 flex h-14 w-14 items-center justify-center rounded-2xl">
-            <Dumbbell size={32} />
-          </div>
+          <IconBox icon={Dumbbell} variant="muted" size="xl" className="mb-6 rounded-2xl" />
 
           <h3 className={`${typography.h3} text-foreground mb-3`}>Browse Programs</h3>
           <p className={`${typography.p} text-muted-foreground mb-8 leading-relaxed`}>

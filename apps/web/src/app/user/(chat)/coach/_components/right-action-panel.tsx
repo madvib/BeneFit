@@ -53,13 +53,14 @@ export default function RightActionPanel({
       className={`bg-background/80 border-border/50 hidden w-[320px] flex-col border-l backdrop-blur-xl transition-all duration-500 lg:flex ${
         isOpen
           ? 'mr-0 translate-x-0 opacity-100'
-          : '-mr-[320px] w-0 translate-x-[320px] overflow-hidden border-l-0 opacity-0'
+          : '-mr-80 w-0 translate-x-80 overflow-hidden border-l-0 opacity-0'
       }`}
     >
       <div className="flex h-full flex-col p-6">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/*TODO iconbox? */}
             <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
               <Layout size={16} />
             </div>
@@ -120,6 +121,8 @@ export default function RightActionPanel({
                 className="group bg-card/50 border-border/50 hover:border-primary/40 relative rounded-2xl border p-4 text-left transition-all duration-300 hover:shadow-xl disabled:opacity-50"
               >
                 <div className="flex items-start gap-4">
+                  {/*TODO iconbox? */}
+
                   <div className="bg-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-all duration-300">
                     <Sparkles size={16} />
                   </div>
@@ -139,7 +142,7 @@ export default function RightActionPanel({
               </button>
 
               {recommendations.map((rec, idx) => (
-                <button
+                <Button
                   key={idx}
                   className="group bg-card/50 border-border/50 hover:border-primary/40 relative rounded-2xl border p-4 text-left transition-all duration-300 hover:shadow-xl"
                 >
@@ -161,7 +164,7 @@ export default function RightActionPanel({
                     </div>
                   </div>
                   <div className="bg-primary/20 group-hover:bg-primary absolute top-4 right-4 h-2 w-2 rounded-full transition-colors" />
-                </button>
+                </Button>
               ))}
             </div>
           </div>
