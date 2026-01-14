@@ -2,7 +2,7 @@
 
 import { ReactNode, useState, useEffect } from 'react';
 
-export default function HeaderRoot({
+export function HeaderRoot({
   children,
   className = '',
 }: {

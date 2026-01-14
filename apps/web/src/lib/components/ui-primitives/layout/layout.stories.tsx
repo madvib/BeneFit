@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import PageContainer from './page-container';
-import TopTabNavigation from './top-tab-navigation';
-import DashboardShell from './dashboard-shell';
-import { Card, typography } from '@/lib/components';
 import { Activity, Calendar, Zap, TrendingUp } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Card, typography } from '@/lib/components';
+import { PageContainer } from './page-container';
+import { TopTabNavigation } from './top-tab-navigation';
+import { DashboardShell } from './dashboard-shell';
 
 const meta: Meta = {
   title: 'Primitives/Layout',
@@ -18,7 +18,7 @@ export const Container: StoryObj<typeof PageContainer> = {
   render: () => (
     <div className="bg-muted/10 h-screen w-full">
       <PageContainer variant="default">
-        <div className="bg-background border-primary/20 mt-8 flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-dashed shadow-xl">
+        <div className="bg-background border-primary/20 mt-8 flex min-h-100 flex-col items-center justify-center rounded-3xl border border-dashed shadow-xl">
           <h2 className={typography.h2}>Page Container</h2>
           <p className={typography.muted}>
             Content is constrained to a readable width with safe horizontal padding.
@@ -77,7 +77,7 @@ export const Dashboard: StoryObj<typeof DashboardShell> = {
           </div>
         }
       >
-        <Card title="Upcoming Schedule" icon={Calendar} className="min-h-[300px]">
+        <Card title="Upcoming Schedule" icon={Calendar} className="min-h-75">
           Schedule Content Area
         </Card>
       </DashboardShell>
@@ -97,19 +97,19 @@ export const Tabs: StoryObj<typeof TopTabNavigation> = {
       >
         {{
           overview: (
-            <Card className="min-h-[200px]">
+            <Card className="min-h-50">
               <h3 className={typography.h3}>Overview Content</h3>
               <p className={typography.p}>Welcome to your dashboard overview.</p>
             </Card>
           ),
           analytics: (
-            <Card className="min-h-[200px]">
+            <Card className="min-h-50">
               <h3 className={typography.h3}>Analytics Engine</h3>
               <p className={typography.p}>Deeper insights into your fitness trends.</p>
             </Card>
           ),
           settings: (
-            <Card className="min-h-[200px]">
+            <Card className="min-h-50">
               <h3 className={typography.h3}>Layout Settings</h3>
               <p className={typography.p}>Configure how your layout is structured.</p>
             </Card>

@@ -1,7 +1,7 @@
 'use client';
 
+import { Button, Card, DateDisplay, SectionHeader, typography } from '@/lib/components';
 import { Calendar, Users, ChevronRight } from 'lucide-react';
-import { Card, SectionHeader, Button, typography } from '@/lib/components';
 
 export interface Event {
   id: string;
@@ -27,10 +27,10 @@ interface ExploreViewProps {
 export default function ExploreView({ events, featuredTeams }: ExploreViewProps) {
   return (
     <div className="mx-auto max-w-400 p-4 md:p-6 lg:p-8">
-      {/* Hero Section */}
+      {/* Hero Section TODO is there a reusable primitive? */}
       <div className="bg-primary text-primary-foreground relative mb-12 overflow-hidden rounded-3xl px-8 py-16 md:px-16">
         <div className="relative z-10 max-w-2xl">
-          <h1 className={`${typography.displayLgResponsive} mb-4`}>
+          <h1 className={`${typography.h1Inherit} mb-4`}>
             Discover Your Next Challenge
           </h1>
           <p className={`${typography.lead} text-primary-foreground/80 mb-8`}>
@@ -41,14 +41,14 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
             <Button
               variant="surface"
               size="lg"
-              className={`${typography.labelSm} rounded-full px-6 py-6 transition-transform hover:scale-105`}
+              className={`${typography.p} rounded-full px-6 py-6 transition-transform hover:scale-105`}
             >
               Find Events
             </Button>
             <Button
               variant="glass"
               size="lg"
-              className={`${typography.labelSm} rounded-full px-6 py-6 transition-colors`}
+              className={`${typography.p} rounded-full px-6 py-6 transition-colors`}
             >
               Browse Teams
             </Button>
@@ -85,7 +85,7 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
               <div className={`${typography.small} text-muted-foreground space-y-2`}>
                 <div className="flex items-center gap-2">
                   <Calendar size={16} />
-                  <span>{new Date(event.date).toLocaleDateString()}</span>
+                  <DateDisplay date={event.date} format="short" as="span" />
                 </div>
                 <div className="flex items-center gap-2">
                   <Users size={16} />
@@ -126,7 +126,7 @@ export default function ExploreView({ events, featuredTeams }: ExploreViewProps)
                 <Users size={14} />
                 <span>{team.members} members</span>
               </div>
-              <Button variant="soft" className={`${typography.labelSm} mt-4 w-full rounded-xl`}>
+              <Button variant="soft" className={`${typography.p} mt-4 w-full rounded-xl`}>
                 Join Team
               </Button>
             </Card>

@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import DashboardNavigation from './dashboard-navigation';
-import MobileMenuToggle from './mobile-menu-toggle';
-import UnifiedHeader from './unified-header';
+import {DashboardNavigation,UnifiedHeader,AccountSidebar,AccountHeader} from './';
 
 const meta: Meta = {
   title: 'Components/Navigation',
@@ -12,7 +10,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const LinkNavigation: StoryObj<typeof DashboardNavigation> = {
+export const DashboardNav: StoryObj<typeof DashboardNavigation> = {
   render: () => (
     <div className="bg-muted/20 rounded-xl p-4">
       <DashboardNavigation />
@@ -20,31 +18,33 @@ export const LinkNavigation: StoryObj<typeof DashboardNavigation> = {
   ),
 };
 
-export const MobileToggle: StoryObj<typeof MobileMenuToggle> = {
-  render: () => (
-    <div className="flex gap-4">
-      <MobileMenuToggle openMenu={() => console.log('Open Menu')} />
-      <div className="bg-primary rounded p-2">
-        {/* Contrast check */}
-        <MobileMenuToggle openMenu={() => console.log('Open Menu')} />
-      </div>
-    </div>
-  ),
-};
-
-// --- Unified Header Stories ---
-
 export const HeaderMarketing: StoryObj<typeof UnifiedHeader> = {
   render: () => <UnifiedHeader variant="marketing" />,
   parameters: { layout: 'fullscreen' },
 };
 
 export const HeaderApplication: StoryObj<typeof UnifiedHeader> = {
-  render: () => <UnifiedHeader variant="application" />,
+  render: () => <UnifiedHeader variant="application" isLoggedIn={true} />,
   parameters: { layout: 'fullscreen' },
 };
+
 
 export const HeaderAuth: StoryObj<typeof UnifiedHeader> = {
   render: () => <UnifiedHeader variant="auth" />,
   parameters: { layout: 'fullscreen' },
+};
+
+
+
+export const AccountHeaderComponent: StoryObj<typeof AccountHeader> = {
+  render: () => <AccountHeader />,
+  parameters: { layout: 'fullscreen' },
+};
+
+export const AccountSidebarComponent: StoryObj<typeof AccountSidebar> = {
+  render: () => (
+    <div className="h-[600px] w-64 border-r">
+      <AccountSidebar />
+    </div>
+  ),
 };

@@ -1,8 +1,8 @@
 'use client';
 
+import { Button, Spacer, StatisticsSection, typography } from '@/lib/components';
 import { useState } from 'react';
 import { profile } from '@bene/react-api-client';
-import { Spacer, StatisticsSection, Button, typography } from '@/lib/components';
 import { AboutMeSection, ProfileSummary } from './_components';
 
 export interface ProfileViewProps {

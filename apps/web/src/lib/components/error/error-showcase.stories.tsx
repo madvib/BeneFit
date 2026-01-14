@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import ErrorPage from './page-error';
-import ErrorCard from './error-card';
-import InlineError from './inline-error';
+import {ErrorPage} from './page-error';
+import {ErrorCard} from './error-card';
+import {InlineError} from './inline-error';
 
 const meta: Meta = {
   title: 'Components/Errors',

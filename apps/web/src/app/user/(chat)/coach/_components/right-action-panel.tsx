@@ -8,7 +8,7 @@ import {
   Layout,
   MessageSquare,
 } from 'lucide-react';
-import { Button, typography } from '@/lib/components';
+import { Button, IconBox, typography } from '@/lib/components';
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -60,10 +60,7 @@ export default function RightActionPanel({
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/*TODO iconbox? */}
-            <div className="bg-primary/20 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
-              <Layout size={16} />
-            </div>
+            <IconBox icon={Layout} size="sm" variant="default" />
             <div>
               <h4
                 className={`${typography.h4} text-sm font-black tracking-tighter uppercase italic`}
@@ -121,8 +118,6 @@ export default function RightActionPanel({
                 className="group bg-card/50 border-border/50 hover:border-primary/40 relative rounded-2xl border p-4 text-left transition-all duration-300 hover:shadow-xl disabled:opacity-50"
               >
                 <div className="flex items-start gap-4">
-                  {/*TODO iconbox? */}
-
                   <div className="bg-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground rounded-xl p-2.5 transition-all duration-300">
                     <Sparkles size={16} />
                   </div>
@@ -144,7 +139,7 @@ export default function RightActionPanel({
               {recommendations.map((rec, idx) => (
                 <Button
                   key={idx}
-                  className="group bg-card/50 border-border/50 hover:border-primary/40 relative rounded-2xl border p-4 text-left transition-all duration-300 hover:shadow-xl"
+                  className="group bg-card/50 border-border/50 hover:border-primary/40 relative h-auto rounded-2xl border p-4 text-left transition-all duration-300 hover:shadow-xl"
                 >
                   <div className="flex items-start gap-4">
                     <div className="bg-accent/80 text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary rounded-xl p-2.5 transition-all duration-300">
@@ -152,12 +147,12 @@ export default function RightActionPanel({
                     </div>
                     <div>
                       <p
-                        className={`${typography.small} group-hover:text-primary text-sm font-black transition-colors`}
+                        className={`${typography.small} group-hover:text-primary text-sm font-black whitespace-normal transition-colors`}
                       >
                         {rec.title}
                       </p>
                       <p
-                        className={`${typography.muted} mt-1 text-[10px] leading-tight font-medium opacity-70`}
+                        className={`${typography.muted} mt-1 text-[10px] leading-tight font-medium whitespace-normal opacity-70`}
                       >
                         {rec.reason}
                       </p>

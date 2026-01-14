@@ -13,6 +13,7 @@ export const recommended = (name, projectDir) => [
   globalIgnores([
     '**/.next/**',
     '**/out/**',
+    '**/out-tsc/**',
     '**/build/**',
     '**/next-env.d.ts',
     '**/cloudflare-env.d.ts',
@@ -22,7 +23,12 @@ export const recommended = (name, projectDir) => [
   {
     name,
     files: [`${projectDir}/**/*.{ts,tsx,js,jsx,mjs}`],
-    ignores: ['cloudflare-env.d.ts', '**/.open-next/**'],
+    ignores: ['cloudflare-env.d.ts', '**/.open-next/**', '**/*.stories.ts', '**/*.stories.tsx'],
+    languageOptions: {
+      parserOptions: {
+        project: `${projectDir}/tsconfig.json`,
+      },
+    },
     extends: [nextVitals],
     plugins: {
       security,
@@ -143,6 +149,34 @@ export const recommended = (name, projectDir) => [
         },
       ],
       '@next/next/no-img-element': 'off',
+    },
+  },
+  {
+    name: `${name}-storybook`,
+    files: [
+      `${projectDir}/**/*.stories.ts`,
+      `${projectDir}/**/*.stories.tsx`,
+      `${projectDir}/.storybook/**/*.ts`,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: `${projectDir}/tsconfig.storybook.json`,
+      },
+    },
+    plugins: {
+      sonarjs,
+      unicorn,
+    },
+    rules: {
+      // Inherit same rules or customize for stories
+      ...unicorn.configs.unopinionated.rules,
+      ...sonarjs.configs.recommended.rules,
+      'sonarjs/todo-tag': 'warn',
+      'security/detect-object-injection': 'off',
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'sonarjs/no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-expressions': 'warn',
     },
   },
 ];

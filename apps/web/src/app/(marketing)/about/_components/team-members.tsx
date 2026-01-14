@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { typography } from '@/lib/components/theme/typography';
+import { typography } from '@/lib/components';
 
 export default function TeamMembers() {
   const teamMembers = [

@@ -6,5 +6,7 @@ export type WorkoutType =
   | 'running'
   | 'cycling'
   | 'strength'
+  | 'yoga'
+  | 'hiit'
   | 'rest'
   | 'custom';

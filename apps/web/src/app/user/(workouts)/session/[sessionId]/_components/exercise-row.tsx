@@ -1,21 +1,27 @@
 'use client';
 
+import { Badge, IconBox, typography } from '@/lib/components';
 import { Dumbbell, Info } from 'lucide-react';
-import { Badge, typography, IconBox } from '@/lib/components';
 import type { Exercise } from '@bene/shared';
-import SetTracker from './set-tracker';
+import {SetTracker} from './set-tracker';
+
+interface SetPerformanceData {
+  reps: number;
+  weight: number;
+  rpe?: number;
+}
 
 interface ExerciseRowProps {
   exercise: Exercise;
-  onSetComplete: (_setIndex: number, _data: any) => void;
-  completedSets: any[];
+  onSetComplete: (_setIndex: number, _data: SetPerformanceData) => void;
+  completedSets: SetPerformanceData[];
 }
 
-export default function ExerciseRow({
+export function ExerciseRow({
   exercise,
   onSetComplete,
   completedSets,
-}: ExerciseRowProps) {
+}: Readonly<ExerciseRowProps>) {
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between">

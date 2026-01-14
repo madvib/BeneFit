@@ -1,7 +1,7 @@
+import { ShieldCheck, AlertCircle, Info, Star, Zap, Flame, Timer } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge, MetricPill } from '../';
 import { typography } from '../../';
-import { ShieldCheck, AlertCircle, Info, Star, Zap, Flame, Timer } from 'lucide-react';
 
 const meta: Meta = {
   title: 'Primitives/Badges & Pills',

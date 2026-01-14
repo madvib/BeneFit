@@ -1,5 +1,6 @@
 'use client';
 
+import { Button, typography } from '@/lib/components';
 import * as React from 'react';
 import {
   AlertCircle,
@@ -13,7 +14,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, typography } from '@/lib/components';
 
 export const getSeverityColor = (severity?: string | null): string => {
   switch (severity) {
@@ -56,7 +56,7 @@ export function ErrorDisplay({
   backHref,
   actions,
   className,
-}: ErrorDisplayProps) {
+}: Readonly<ErrorDisplayProps>) {
   const router = useRouter();
   const [showTechnicalDetails, setShowTechnicalDetails] = React.useState(false);
 
@@ -203,4 +203,4 @@ export function ErrorDisplay({
   );
 }
 
-export default ErrorDisplay;
+

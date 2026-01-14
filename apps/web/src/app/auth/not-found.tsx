@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ROUTES } from '@/lib/constants';
-import { typography } from '@/lib/components/theme/typography';
+import { typography } from '@/lib/components';
 
 export default function NotFound() {
   // TODO replace with global not found page not just auth specific

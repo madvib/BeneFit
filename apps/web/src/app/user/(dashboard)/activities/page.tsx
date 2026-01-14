@@ -43,6 +43,7 @@ export default function ActivityFeedPage() {
   const renderSidebar = () => (
     <div className="space-y-6">
       {/* Weekly Progress Chart */}
+      {/*TODO there is likely a component to extract and share here...could handle its own data fetching. */}
       <ProgressChart
         data={[
           { date: 'Mon', value: 40 },
@@ -111,6 +112,7 @@ export default function ActivityFeedPage() {
     <DashboardShell
       overview={
         <>
+          {/*TODO sureley we don't need this div */}
           <div className="mb-2 flex items-center justify-between">
             <PageHeader title="My Activity" />
           </div>

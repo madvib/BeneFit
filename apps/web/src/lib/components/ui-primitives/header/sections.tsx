@@ -14,10 +14,10 @@ const HeaderRight = ({ children }: { children: ReactNode }) => (
 
 export { HeaderLeft, HeaderCenter, HeaderRight };
 
-const HeaderSections = {
+export const HeaderSections = {
   Left: HeaderLeft,
   Center: HeaderCenter,
   Right: HeaderRight,
 };
 
-export default HeaderSections;
+

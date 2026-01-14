@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Input from './input';
-import Select from './select';
-import Checkbox from './checkbox';
-import Label from './label';
-import FormSuccessMessage from './form-success-message';
-import { typography } from '@/lib/components/theme/typography';
+import {Input} from './input';
+import {Select} from './select';
+import {Checkbox} from './checkbox';
+import {Label} from './label';
+import {FormSuccessMessage} from './form-success-message';
+import { typography } from '@/lib/components';
 
 const meta: Meta = {
   title: 'Primitives/Form',

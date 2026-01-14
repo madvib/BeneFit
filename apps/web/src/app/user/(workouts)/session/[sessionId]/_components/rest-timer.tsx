@@ -9,7 +9,7 @@ interface RestTimerProps {
   onComplete: () => void;
 }
 
-export default function RestTimer({ durationSeconds, onComplete }: RestTimerProps) {
+export  function RestTimer({ durationSeconds, onComplete }: Readonly<RestTimerProps>) {
   const [timeLeft, setTimeLeft] = useState(durationSeconds);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function RestTimer({ durationSeconds, onComplete }: RestTimerProp
   const progress = (timeLeft / durationSeconds) * 100;
 
   return (
-    <div className="bg-background/95 animate-in fade-in fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 backdrop-blur-xl duration-500">
+    <div className="bg-background/95 animate-in fade-in fixed inset-0 z-100 flex flex-col items-center justify-center p-6 backdrop-blur-xl duration-500">
       <div className="relative mb-12 flex h-64 w-64 items-center justify-center">
         {/* Progress Ring */}
         <svg className="h-full w-full -rotate-90">

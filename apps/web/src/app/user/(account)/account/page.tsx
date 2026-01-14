@@ -1,8 +1,10 @@
 'use client';
 
+import { ErrorPage, LoadingSpinner, OAuthProviderList, PageHeader, PersonalInfoForm, SecurityForm, SessionInfo } from '@/lib/components';
 import { authClient } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage, PageHeader } from '@/lib/components';
-import { PersonalInfoForm, SecurityForm, OAuthProviderList, SessionInfo } from './_components';
+
+
+
 import { ROUTES } from '@/lib/constants';
 
 export default function AccountClient() {

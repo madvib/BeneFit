@@ -1,7 +1,7 @@
 'use client';
 
-import { typography, UpdatePasswordForm } from '@/lib/components';
 
+import { UpdatePasswordForm, typography } from '@/lib/components';
 export default function UpdatePasswordPage() {
   return (
     // TODO(UI) PageContainer and card here?

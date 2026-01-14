@@ -1,10 +1,10 @@
 'use client';
 
+import { LoadingSpinner, typography } from '@/lib/components';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertTriangle, Check } from 'lucide-react';
 import { authClient } from '@bene/react-api-client';
-import { LoadingSpinner, typography } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function EmailConfirmedPage() {

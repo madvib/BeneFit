@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { WorkoutPerformanceSchema } from './workout-performance.js';
 import { WorkoutVerificationSchema } from './workout-verification.js';
 import { ReactionSchema } from './reaction.js';
+import { WorkoutTypeSchema } from './workout-type.js';
 
 // Completed Workout Schemas
 
@@ -13,7 +14,8 @@ export const CompletedWorkoutSchema = z.object({
   weekNumber: z.number().optional(),
   dayNumber: z.number().optional(),
   // Workout details
-  workoutType: z.string(), // "Upper Body Strength", "5K Run", etc.
+  workoutType: WorkoutTypeSchema,
+  title: z.string().optional(),
   description: z.string().optional(),
   // Performance data
   performance: WorkoutPerformanceSchema,

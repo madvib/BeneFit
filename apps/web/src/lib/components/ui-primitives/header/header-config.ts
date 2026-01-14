@@ -22,7 +22,7 @@ export interface NavItem {
   disabled?: boolean;
 }
 
-const HEADER_CONFIG = {
+export const HEADER_CONFIG = {
   // Logo configuration
   logo: {
     src: '/logo.svg',
@@ -134,4 +134,4 @@ const HEADER_CONFIG = {
   },
 };
 
-export default HEADER_CONFIG;
+

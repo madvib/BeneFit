@@ -1,7 +1,7 @@
 'use client';
 
-import { PasswordResetForm } from '@/lib/components';
 
+import { PasswordResetForm } from '@/lib/components';
 export default function PasswordResetPage() {
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center p-8">

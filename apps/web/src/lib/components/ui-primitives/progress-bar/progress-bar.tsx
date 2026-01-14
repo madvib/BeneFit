@@ -42,7 +42,7 @@ interface ProgressBarProperties extends VariantProps<typeof progressBarVariants>
   showPercentage?: boolean;
 }
 
-export default function ProgressBar({
+export function ProgressBar({
   value,
   max,
   className = '',

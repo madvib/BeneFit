@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { WorkoutActivitySchema } from './workout-activity.js';
 import { LiveActivityProgressSchema } from './live-activity-progress.js';
+import { WorkoutTypeSchema } from './workout-type.js';
 import { SessionConfigurationSchema } from './session-configuration.js';
 import { SessionParticipantSchema } from './session-participant.js';
 import { SessionFeedItemSchema } from './session-feed-item.js';
@@ -22,7 +23,7 @@ export const WorkoutSessionSchema = z.object({
   planId: z.string().optional(),
   workoutTemplateId: z.string().optional(),
   // Workout structure
-  workoutType: z.string(), // "Upper Body", "5K Run", etc.
+  workoutType: WorkoutTypeSchema,
   activities: z.array(WorkoutActivitySchema),
   // Session state
   state: SessionStateSchema,

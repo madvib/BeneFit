@@ -26,11 +26,11 @@ export const workoutRoutes = new Hono<{
   .get('/today', async (c) => {
     const user = c.get('user');
 
-    const stub = c.env.USER_HUB.getByName(user.id);
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - Recursion limit only in client build (tsconfig.lib.json)    
-    const result = await stub.workouts.getTodaysWorkout({ userId: user.id });
+    const stub = c.env.USER_HUB.getByName(user.id).workouts();
+
+    const result = await stub.getTodaysWorkout({ userId: user.id });
 
     return handleResult<GetTodaysWorkoutResponse>(result, c);
   })

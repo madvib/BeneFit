@@ -1,0 +1,98 @@
+'use client';
+
+import { Button, IconBox, LoadingSpinner, OAuthButton, typography } from '@/lib/components';
+import { useState, useEffect } from 'react';
+import { Check, ExternalLink } from 'lucide-react';
+import { authClient } from '@bene/react-api-client';
+
+export function OAuthProviderList() {
+  const [providers, setProviders] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { data: session } = authClient.useSession();
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        setLoading(true);
+        // Get already linked providers
+        if (session?.user) {
+          const linkedAccounts = await authClient.listAccounts();
+          if (linkedAccounts.data) {
+            const linkedProviderIds = linkedAccounts.data
+              .map((account) => account.providerId)
+              .filter(Boolean) as string[];
+            setProviders(linkedProviderIds);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching providers:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session) {
+      fetchProviders();
+    }
+  }, [session]);
+
+  const unlinkProvider = async (providerId: string) => {
+    try {
+      const result = await authClient.unlinkAccount({
+        providerId,
+      });
+
+      if (!result.error) {
+        // Refresh the provider list
+        const linkedAccounts = await authClient.listAccounts();
+        if (linkedAccounts.data) {
+          const linkedProviderIds = linkedAccounts.data
+            .map((account) => account.providerId)
+            .filter(Boolean) as string[];
+          setProviders(linkedProviderIds);
+        }
+      }
+    } catch (err) {
+      console.error('Error unlinking provider:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  const googleConnected = providers.includes('google');
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between rounded-lg border p-4">
+        <div className="flex items-center gap-3">
+          <IconBox
+            icon={googleConnected ? Check : ExternalLink}
+            variant="muted"
+            size="md"
+            iconClassName={googleConnected ? 'text-green-500' : ''}
+          />
+          <div>
+            <div className={`${typography.h4} capitalize`}>Google</div>
+            <div className={`${typography.mutedXs} text-muted-foreground`}>
+              {googleConnected ? 'Connected' : 'Not connected'}
+            </div>
+          </div>
+        </div>
+
+        {googleConnected ? (
+          <Button variant="outline" size="sm" onClick={() => unlinkProvider('google')}>
+            Unlink
+          </Button>
+        ) : (
+          <OAuthButton provider="google" mode="link" text="Link" />
+        )}
+      </div>
+    </div>
+  );
+}

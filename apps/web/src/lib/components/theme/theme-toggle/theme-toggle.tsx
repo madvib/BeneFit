@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@/lib/components';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Button } from '@/lib/components';
 import { useHydrated } from '@/lib/hooks/use-hydrated';
 
 export function ThemeToggle() {

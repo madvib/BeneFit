@@ -1,6 +1,6 @@
-import { Button } from '@/lib/components';
 import Link from 'next/link';
 import { ROUTES } from '@/lib/constants';
+import { Button } from '@/lib/components';
 
 export default function CallToAction() {
   return (

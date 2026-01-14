@@ -1,4 +1,4 @@
-import { SpotlightCard, typography } from '@/lib/components';
+import { IconBox, SpotlightCard, typography } from '@/lib/components';
 
 interface Feature {
   icon: string;
@@ -19,8 +19,10 @@ export default function FeaturesSection({ title, features }: FeaturesSectionProp
         {features.map((feature, index) => (
           <SpotlightCard key={index} className="custom-spotlight-card">
             <div className="flex flex-col items-center text-center">
-              <div className={`${typography.displaySm} text-primary mb-4`}>{feature.icon}</div>
-              <h3 className={`${typography.h4} mb-2`}>{feature.title}</h3>
+              <IconBox size="lg" className="mb-4">
+                {feature.icon}
+              </IconBox>
+              <h3 className={`${typography.h3} mb-2`}>{feature.title}</h3>
               <p className="text-muted-foreground">{feature.description}</p>
             </div>
           </SpotlightCard>

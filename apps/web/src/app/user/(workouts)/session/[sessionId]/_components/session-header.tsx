@@ -1,7 +1,7 @@
 'use client';
 
+import { ProgressBar, typography } from '@/lib/components';
 import { Timer } from 'lucide-react';
-import { ProgressBar,typography } from '@/lib/components';
 
 
 interface SessionHeaderProps {
@@ -12,13 +12,13 @@ interface SessionHeaderProps {
   workoutType: string;
 }
 
-export default function SessionHeader({
+export function SessionHeader({
   title,
   elapsedSeconds,
   currentStep,
   totalSteps,
   workoutType,
-}: SessionHeaderProps) {
+}: Readonly<SessionHeaderProps>) {
   return (
     <div className="bg-background/80 sticky top-0 z-50 w-full border-b border-white/5 pb-4 backdrop-blur-xl">
       <div className="container mx-auto px-6 pt-6">

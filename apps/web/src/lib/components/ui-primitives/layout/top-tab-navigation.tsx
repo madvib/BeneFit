@@ -14,7 +14,7 @@ interface TopTabNavigationProperties {
   onTabChange?: (_tabId: string) => void;
 }
 
-export default function TopTabNavigation({
+export function TopTabNavigation({
   tabs,
   children,
   defaultActiveTab,

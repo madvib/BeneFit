@@ -1,10 +1,10 @@
 'use client';
-import { Modal, LoginForm } from '@/lib/components';
 
-export default function LoginModal() {
+import { LoginForm, Modal } from '@/lib/components';
+export default function LoginModalRoute() {
   return (
-    <Modal>
-      <LoginForm isModal />
+    <Modal isRoute size="sm" unstyled>
+      <LoginForm isModalRoute />
     </Modal>
   );
 }

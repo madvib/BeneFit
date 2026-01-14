@@ -1,6 +1,6 @@
 import { typography } from '@/lib/components';
 
-export default function FormSuccessMessage({ message }: { message: string | null }) {
+export function FormSuccessMessage({ message }: { message: string | null }) {
   if (!message) return null;
 
   return (

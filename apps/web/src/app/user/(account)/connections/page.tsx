@@ -1,7 +1,7 @@
 'use client';
 
+import { ErrorPage, InlineError, LoadingSpinner } from '@/lib/components';
 import { useState } from 'react';
-import { LoadingSpinner, ErrorPage, InlineError } from '@/lib/components';
 import { integrations } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import ConnectionsView from './connections-view';

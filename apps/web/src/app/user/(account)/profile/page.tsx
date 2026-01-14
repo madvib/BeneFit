@@ -1,7 +1,7 @@
 'use client';
 
+import { ErrorPage, LoadingSpinner } from '@/lib/components';
 import { profile } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import ProfileView from './profile-view';
 

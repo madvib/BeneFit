@@ -1,17 +1,35 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LoginForm } from './login-form';
-import { SignupForm } from './signup-form';
-import { PasswordResetForm } from './password-reset-form';
-import { OAuthButton } from './oauth-button';
-import UserAccountMenu from '../navigation/account-dropdown/account-dropdown';
-import { UpdatePasswordForm } from './update-password-form';
-import AuthCTA from '../navigation/auth-cta';
-import { ProtectedRoute } from './protected-route';
-import { RequireProfile } from './require-profile';
+import { LoginForm } from './forms/login-form';
+import { AccountSettingsForm } from './forms/account-settings-form';
+
+export const AccountSettingsFormStory: StoryObj<typeof AccountSettingsForm> = {
+  name: 'Account Settings Form',
+  render: () => (
+    <div className="max-w-xl p-4">
+      <AccountSettingsForm
+        initialName="John Doe"
+        initialEmail="john@example.com"
+        onSave={async (data) => {
+          console.log('Save Details', data);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }}
+        isLoading={false}
+      />
+    </div>
+  ),
+};
+
+import { SignupForm } from './forms/signup-form';
+import { PasswordResetForm } from './forms/password-reset-form';
+import { UpdatePasswordForm } from './forms/update-password-form';
+import { UserAccountMenu } from '../navigation/account/account-dropdown/account-dropdown';
+import { AuthCTA } from '../navigation/account/auth-cta';
 import { UIProvider } from '../../providers/ui-context';
+import { Carousel } from '../ui-primitives';
+import { typography } from '@/lib/components';
 
 const meta: Meta = {
-  title: 'Features/Auth',
+  title: 'Components/Auth',
   parameters: {
     layout: 'centered',
   },
@@ -19,100 +37,76 @@ const meta: Meta = {
 
 export default meta;
 
-export const Login: StoryObj<typeof LoginForm> = {
+export const AuthForms: StoryObj = {
   render: () => (
-    <div className="bg-background w-[400px] rounded-xl border p-6">
-      <LoginForm />
-    </div>
-  ),
-};
-
-export const LoginModal: StoryObj<typeof LoginForm> = {
-  render: () => (
-    <div className="bg-background w-[400px] rounded-xl border p-6">
-      <LoginForm isModal />
-    </div>
-  ),
-};
-
-export const Signup: StoryObj<typeof SignupForm> = {
-  render: () => (
-    <div className="bg-background w-[500px] rounded-xl border p-6">
-      <SignupForm />
-    </div>
-  ),
-};
-
-export const PasswordReset: StoryObj<typeof PasswordResetForm> = {
-  render: () => (
-    <div className="bg-background w-[400px] rounded-xl border p-6">
-      <PasswordResetForm />
-    </div>
-  ),
-};
-
-export const OAuthButtons: StoryObj = {
-  render: () => (
-    <div className="flex w-[300px] flex-col gap-4">
-      <OAuthButton provider="google" />
-      <OAuthButton provider="strava" />
-    </div>
-  ),
-};
-
-export const AccountDropdown: StoryObj<typeof UserAccountMenu> = {
-  render: () => (
-    <div className="flex w-64 justify-end">
-      <UIProvider>
-        <UserAccountMenu isLoggedIn={true} />
-      </UIProvider>
-    </div>
-  ),
-};
-
-export const AccountDropdownAccordian: StoryObj<typeof UserAccountMenu> = {
-  render: () => (
-    <div className="w-64 border p-4">
-      <UIProvider>
-        {/* Accordian variant usually for mobile */}
-        <UserAccountMenu isLoggedIn={true} variant="accordian" />
-      </UIProvider>
-    </div>
-  ),
-};
-
-export const CallToAction: StoryObj<typeof AuthCTA> = {
-  render: () => <AuthCTA showModal={false} />,
-};
-
-export const UpdatePassword: StoryObj<typeof UpdatePasswordForm> = {
-  render: () => (
-    <div className="w-96 rounded-lg border p-4">
-      <UpdatePasswordForm onPasswordUpdated={() => alert('Password Updated')} />
-    </div>
-  ),
-};
-
-export const ProtectedRouteWrapper: StoryObj<typeof ProtectedRoute> = {
-  render: () => (
-    <div className="border border-dashed p-4">
-      <ProtectedRoute>
-        <div className="rounded bg-green-100 p-4 text-green-800">
-          This content is protected and visible because the mock session is authenticated.
+    <div className="w-[500px]">
+      <Carousel>
+        {/* Login */}
+        <div className="flex flex-col items-center p-4">
+          <h3 className={`mb-4 ${typography.h4}`}>Login Form</h3>
+          <div className="bg-background w-full rounded-xl border p-6">
+            <LoginForm />
+          </div>
         </div>
-      </ProtectedRoute>
+
+        {/* Signup */}
+        <div className="flex flex-col items-center p-4">
+          <h3 className={`mb-4 ${typography.h4}`}>Signup Form</h3>
+          <div className="bg-background w-full rounded-xl border p-6">
+            <SignupForm />
+          </div>
+        </div>
+
+        {/* Reset Password */}
+        <div className="flex flex-col items-center p-4">
+          <h3 className={`mb-4 ${typography.h4}`}>Reset Password</h3>
+          <div className="bg-background w-full rounded-xl border p-6">
+            <PasswordResetForm />
+          </div>
+        </div>
+
+        {/* Update Password */}
+        <div className="flex flex-col items-center p-4">
+          <h3 className={`mb-4 ${typography.h4}`}>Update Password</h3>
+          <div className="bg-background w-full rounded-xl border p-6">
+            <UpdatePasswordForm onPasswordUpdated={() => alert('Updated!')} />
+          </div>
+        </div>
+      </Carousel>
     </div>
   ),
 };
 
-export const RequireProfileWrapper: StoryObj<typeof RequireProfile> = {
+export const NavigationElements: StoryObj = {
   render: () => (
-    <div className="border border-dashed p-4">
-      <RequireProfile>
-        <div className="rounded bg-blue-100 p-4 text-blue-800">
-          This content requires a profile and is visible.
+    <div className="w-[600px] space-y-8">
+      {/* Auth CTA */}
+      <div className="bg-background space-y-4 rounded-lg border p-6">
+        <div className="mb-4 border-b pb-2">
+          <h3 className={typography.label}>Guest Navigation (Auth CTA)</h3>
+          <p className={typography.muted}>Appears in navbar when user is not logged in</p>
         </div>
-      </RequireProfile>
+        <div className="bg-muted/30 flex items-center justify-between rounded-md p-4">
+          <span className={typography.label}>Bene</span>
+          <div className="flex gap-2">
+            <AuthCTA showModal={true} />
+          </div>
+        </div>
+      </div>
+
+      {/* Account Dropdown */}
+      <div className="bg-background space-y-4 rounded-lg border p-6">
+        <div className="mb-4 border-b pb-2">
+          <h3 className={typography.label}>User Navigation</h3>
+          <p className={typography.muted}>Appears in navbar when user is logged in</p>
+        </div>
+        <div className="bg-muted/30 flex items-center justify-between rounded-md p-4">
+          <span className={typography.label}>Bene</span>
+          <UIProvider>
+            <UserAccountMenu isLoggedIn={true} />
+          </UIProvider>
+        </div>
+      </div>
     </div>
   ),
 };

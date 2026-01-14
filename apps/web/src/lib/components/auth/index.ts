@@ -1,14 +1,22 @@
 // Auth Components - Barrel File
 
 // Form Components
-export { LoginForm } from './login-form';
-export { SignupForm } from './signup-form';
-export { PasswordResetForm } from './password-reset-form';
-export { UpdatePasswordForm } from './update-password-form';
+export { LoginForm } from './forms/login-form';
+export { SignupForm } from './forms/signup-form';
+export { PasswordResetForm } from './forms/password-reset-form';
+export { UpdatePasswordForm } from './forms/update-password-form';
+export * from './forms/account-settings-form';
+export * from './forms/personal-info-form';
+export * from './forms/security-form';
 
-// OAuth & Authentication Components
-export { OAuthButton } from './oauth-button';
-export { LogoutButton } from './logout-button/logout-button';
+// Protection
+export { ProtectedRoute } from './protection/protected-route';
+export { RequireProfile } from './protection/require-profile';
+export * from './protection/session-info';
 
-// Route Protection
-export { ProtectedRoute } from './protected-route';
+// Social
+export { OAuthButton } from './social/oauth-button';
+export * from './social/oauth-provider-list';
+
+// Actions
+export { LogoutButton } from './actions/logout-button/logout-button';

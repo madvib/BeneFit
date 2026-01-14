@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { ChartColumnBig, Gift, Zap } from 'lucide-react';
-import { Button, LogoLoop, typography } from '@/lib/components';
-import { FeaturesHero, FeatureCard } from './_components';
 import { ROUTES } from '@/lib/constants';
+import FeatureCard from './_components/feature-card';
+import { Button, LogoLoop, PageHeader, typography } from '@/lib/components';
 
 export default function FeaturesPage() {
   const features = [
@@ -54,9 +54,10 @@ export default function FeaturesPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <FeaturesHero
+      <PageHeader
         title="Powerful Features for Your Fitness Journey"
-        subtitle="BeneFit provides everything you need to track, analyze, and improve your fitness performance."
+        description="BeneFit provides everything you need to track, analyze, and improve your fitness performance."
+        className="mb-12 text-center"
       />
 
       <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

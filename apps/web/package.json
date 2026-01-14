@@ -38,10 +38,7 @@
           "command": "next dev",
           "cwd": "{projectRoot}"
         },
-        "continuous": true,
-        "dependsOn": [
-          "@bene/gateway:dev"
-        ]
+        "continuous": true
       },
       "build": {
         "executor": "nx:run-commands",

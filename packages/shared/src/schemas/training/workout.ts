@@ -14,6 +14,7 @@ export const ActivitySchema = z.object({
 export const CompletedWorkoutSummarySchema = z.object({
   id: z.string(),
   type: z.string(),
+  title: z.string().optional(),
   date: z.date(),
   durationMinutes: z.number(),
   perceivedExertion: z.number(),

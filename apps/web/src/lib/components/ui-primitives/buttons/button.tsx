@@ -48,13 +48,14 @@ export interface ButtonProps
   isLoading?: boolean;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, isLoading, children, ...props }, ref) => {
     return (
       <button
         className={buttonVariants({ variant, size, className })}
         ref={ref}
         disabled={isLoading || props.disabled}
+        type="button"
         {...props}
       >
         {isLoading && (
@@ -67,5 +68,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = 'Button';
 
-export default Button;
+
 export { buttonVariants };

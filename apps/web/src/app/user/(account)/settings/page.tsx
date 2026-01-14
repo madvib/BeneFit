@@ -1,16 +1,11 @@
 'use client';
 
+import { AccountSettingsForm, ErrorPage, FitnessGoalsForm, FitnessPreferences, LoadingSpinner, PageHeader, SectionHeader, TrainingConstraintsForm } from '@/lib/components';
 import { profile, authClient } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage, PageHeader } from '@/lib/components';
 import {
-  PrivacySettings,
-  FitnessPreferences,
-  AccountSettingsForm,
   NotificationPreferences,
-} from './_components';
-import { SectionHeader } from '@/lib/components';
-import { FitnessGoalsForm } from './_components/fitness-goals-form';
-import { TrainingConstraintsForm } from './_components/training-constraints-form';
+  PrivacySettings,
+} from '@/lib/components/settings';
 import { ROUTES } from '@/lib/constants';
 
 function SettingsContent({

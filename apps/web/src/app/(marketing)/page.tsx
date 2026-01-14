@@ -1,9 +1,9 @@
 'use client';
 
+import { ImageCard, LoadingSpinner } from '@/lib/components';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useSession } from '@bene/react-api-client';
-import { LoadingSpinner, ImageCard } from '@/lib/components';
 import { HomeHero, FeaturesSection } from './_components';
 import { ROUTES } from '@/lib/constants';
 

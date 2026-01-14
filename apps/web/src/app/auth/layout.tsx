@@ -1,4 +1,4 @@
-import { UnifiedHeader, PageContainer } from '@/lib/components';
+import { PageContainer, UnifiedHeader } from '@/lib/components';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

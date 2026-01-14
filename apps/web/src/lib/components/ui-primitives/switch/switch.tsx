@@ -41,7 +41,7 @@ export interface SwitchProps
   onCheckedChange?: (_checked: boolean) => void;
 }
 
-const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
+export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
   ({ className, checked = false, onCheckedChange, disabled, ...props }, ref) => {
     const handleClick = () => {
       if (!disabled && onCheckedChange) {
@@ -69,4 +69,4 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
 
 Switch.displayName = 'Switch';
 
-export default Switch;
+

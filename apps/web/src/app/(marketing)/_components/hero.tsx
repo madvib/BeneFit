@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button, typography } from '@/lib/components';
+import { Button, PageHeader } from '@/lib/components';
 
 interface HeroProps {
   title: string;
@@ -24,10 +24,7 @@ export default function HomeHero({
 }: HeroProps) {
   return (
     <div className="max-w-2xl flex-1 text-center lg:text-left">
-      <h1 className={`${typography.displayLgResponsive} mb-6`}>
-        {title} <span className="text-primary">{primaryWord}</span>
-      </h1>
-      <p className={`${typography.lead} text-muted-foreground mb-8 max-w-xl`}>{subtitle}</p>
+      <PageHeader title={`${title} ${primaryWord}`} description={subtitle} />
       <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
         <Link href={primaryLink.href}>
           <Button size="lg" className="w-full sm:w-auto">

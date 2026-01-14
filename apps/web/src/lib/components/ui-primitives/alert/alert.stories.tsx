@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Alert from './alert';
 import { typography } from '../../theme/typography';
+import {Alert} from './alert';
 
 const meta: Meta<typeof Alert> = {
   title: 'Primitives/Alert',
@@ -15,7 +15,7 @@ type Story = StoryObj<typeof Alert>;
 
 export const Showcase: Story = {
   render: () => (
-    <div className="flex w-[500px] flex-col gap-6 p-8">
+    <div className="flex w-125 flex-col gap-6 p-8">
       <Alert
         title="Information"
         description="Your sync will resume automatically once the connection is stable."

@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { LucideIcon } from 'lucide-react';
 import { ReactNode, forwardRef } from 'react';
+import { typography } from '@/lib/components';
 
-import { typography } from '@/lib/components/theme/typography';
 
 const cardVariants = cva(
   'flex flex-col overflow-hidden rounded-xl shadow-sm transition-all duration-300',
@@ -51,7 +51,7 @@ interface CardProps extends VariantProps<typeof cardVariants> {
   footerClassName?: string;
 }
 
-const Card = forwardRef<HTMLDivElement, CardProps>(
+export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
     {
       title,
@@ -112,5 +112,5 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 );
 Card.displayName = 'Card';
 
-export default Card;
+
 export { cardVariants };

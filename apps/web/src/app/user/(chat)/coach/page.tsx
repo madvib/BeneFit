@@ -1,14 +1,14 @@
 'use client';
 
+import { ChatInput, ChatLayout, ChatList, ChatMessage, ErrorPage, LoadingSpinner, type  MessageData } from '@/lib/components';
 import { useState, useCallback } from 'react';
 import { coach } from '@bene/react-api-client';
 import { useChatUI } from '@/lib/hooks/use-chat-ui';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
-import { ChatView, SavedChatsView, RightActionPanel } from './_components';
+import { SavedChatsView, RightActionPanel, CoachEmptyState } from './_components';
 import CheckInModal from './_components/check-in-modal';
 import { ROUTES } from '@/lib/constants';
-import type { MessageData } from './_components/types';
 
+//TODO try to use types from domain instead of below interfaces, reusable hook for message state etc?
 interface Recommendation {
   id: string;
   title: string;
@@ -37,7 +37,7 @@ interface CoachPageContentProps {
   historyData: NonNullable<coach.GetCoachHistoryResponse>;
 }
 
-function CoachPageContent({ historyData }: CoachPageContentProps) {
+export function CoachPageContent({ historyData }: CoachPageContentProps) {
   const { leftOpen, rightOpen, toggleLeft, toggleRight } = useChatUI();
 
   // Mutations
@@ -94,7 +94,13 @@ function CoachPageContent({ historyData }: CoachPageContentProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>(
     getInitialRecommendations,
   );
-  const [savedChats] = useState<{ id: string; title: string }[]>([]);
+  const [savedChats] = useState<{ id: string; title: string }[]>([
+    { id: 'c-1', title: 'Marathon Training Plan' },
+    { id: 'c-2', title: 'Nutrition Advice' },
+    { id: 'c-3', title: 'Recovery from Injury' },
+    { id: 'c-4', title: 'Strength Routine' },
+  ]);
+  const [dismissedCheckIns, setDismissedCheckIns] = useState<string[]>([]);
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -138,18 +144,18 @@ function CoachPageContent({ historyData }: CoachPageContentProps) {
       await respondToCheckInMutation.mutateAsync({
         json: { checkInId, response },
       });
-      // The hook invalidates history, which updates historyData in the parent,
-      // which will cause this component to re-render.
-      // Ideally, we might want to update local state or let the key change remount it if strictly synced,
-      // but typically chat history appends. If we re-mount, we lose scroll position.
-      // Since we initialized state, we might diverge from server.
-      // For chat, appending is usually fine.
+      // Dismiss after responding so it closes
+      setDismissedCheckIns((prev) => [...prev, checkInId]);
     } catch (err) {
       console.error('Failed to respond to check-in', err);
     }
   };
+  
+  const handleDismissCheckIn = (id: string) => {
+    setDismissedCheckIns((prev) => [...prev, id]);
+  };
 
-  const pendingCheckIn = historyData.pendingCheckIns?.[0];
+  const pendingCheckIn = historyData.pendingCheckIns?.find(c => !dismissedCheckIns.includes(c.id));
 
   const handleGenerateSummary = async () => {
     try {
@@ -160,27 +166,59 @@ function CoachPageContent({ historyData }: CoachPageContentProps) {
   };
 
   return (
-    <div className="relative flex flex-1 overflow-hidden">
-      <SavedChatsView
-        isOpen={leftOpen}
-        onClose={toggleLeft}
-        chats={savedChats}
-        onNewChat={handleNewChat}
-      />
-      <ChatView messages={messages} onSendMessage={sendMessage} />
-      <RightActionPanel
-        isOpen={rightOpen}
-        onClose={toggleRight}
-        recommendations={recommendations}
-        onGenerateSummary={handleGenerateSummary}
-        isGeneratingSummary={generateSummaryMutation.isPending}
-      />
+    <div className="relative flex flex-1 overflow-hidden h-full chat-container">
+      <ChatLayout
+         sidebar={
+            <SavedChatsView
+              isOpen={leftOpen}
+              onClose={toggleLeft}
+              chats={savedChats}
+              onNewChat={handleNewChat}
+            />
+         }
+         rightPanel={
+             <RightActionPanel
+              isOpen={rightOpen}
+              onClose={toggleRight}
+              recommendations={recommendations}
+              onGenerateSummary={handleGenerateSummary}
+              isGeneratingSummary={generateSummaryMutation.isPending}
+            />
+         }
+      >
+        {/* Main Chat Area */}
+          <div className="bg-background relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
+             {/* Background patterns */}
+              <div
+                className="bg-primary/5 pointer-events-none absolute inset-0 opacity-50"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(circle at 2px 2px, rgba(var(--primary), 0.1) 1px, transparent 0)',
+                  backgroundSize: '40px 40px',
+                }}
+              />
+
+              <ChatList 
+                emptyState={<CoachEmptyState onSuggestionClick={sendMessage} />}
+                typingIndicator={false} // TODO: Implement isTyping state
+              >
+                {messages.map((msg) => (
+                    <ChatMessage key={msg.id} {...msg} />
+                ))}
+              </ChatList>
+
+              <div className="from-background via-background z-10 shrink-0 bg-linear-to-t to-transparent p-6 pt-0">
+                  <ChatInput onSend={sendMessage} />
+              </div>
+          </div>
+      </ChatLayout>
+      
       {pendingCheckIn && (
         <CheckInModal
           checkIn={pendingCheckIn}
           isOpen={!!pendingCheckIn}
           onRespond={handleRespondToCheckIn}
-          onDismiss={(id) => console.log('Dismiss', id)}
+          onDismiss={handleDismissCheckIn}
           isLoading={respondToCheckInMutation.isPending}
         />
       )}
@@ -208,10 +246,6 @@ export default function CoachPage() {
 
   const historyData = historyQuery.data;
 
-  // Render content only when data is ready.
-  // We use key to force remount if history strictly changes and we want to reset?
-  // No, chat usually persists. Using basic composition is fine.
-  // The initial state pattern works for first load.
   if (!historyData) return null;
 
   return <CoachPageContent historyData={historyData} />;

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ErrorPage } from '@/lib/components';
+import { useEffect } from 'react';
 
 export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {

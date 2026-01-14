@@ -8,7 +8,7 @@ interface FormSectionProps {
   className?: string;
 }
 
-export default function FormSection({
+export function FormSection({
   title,
   children,
   description,

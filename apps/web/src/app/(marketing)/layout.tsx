@@ -1,7 +1,7 @@
 'use client';
 
-import { PageContainer, UnifiedHeader, Aurora, Footer } from '@/lib/components';
 
+import { Aurora, Footer, PageContainer, UnifiedHeader } from '@/lib/components';
 interface MarketingLayoutProperties {
   children: React.ReactNode;
 }

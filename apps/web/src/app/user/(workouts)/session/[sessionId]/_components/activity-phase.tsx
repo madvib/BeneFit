@@ -1,26 +1,45 @@
 'use client';
 
-import { Card, Badge,typography } from '@/lib/components';
+import { Badge, Card, typography } from '@/lib/components';
 import { Play, CheckCircle2, Lock } from 'lucide-react';
 import type { WorkoutActivity } from '@bene/shared';
-import ExerciseRow from './exercise-row';
+import {ExerciseRow} from './exercise-row';
 
+interface SetPerformanceData {
+  reps: number;
+  weight: number;
+  rpe?: number;
+}
 
 interface ActivityPhaseProps {
   activity: WorkoutActivity;
   isActive: boolean;
   isCompleted: boolean;
-  onSetComplete: (_exerciseIndex: number, _setIndex: number, _data: any) => void;
-  completedExercises: any[][];
+  onSetComplete: (_exerciseIndex: number, _setIndex: number, _data: SetPerformanceData) => void;
+  completedExercises: SetPerformanceData[][];
 }
 
-export default function ActivityPhase({
+export function ActivityPhase({
   activity,
   isActive,
   isCompleted,
   onSetComplete,
   completedExercises,
-}: ActivityPhaseProps) {
+}: Readonly<ActivityPhaseProps>) {
+  const getIcon = () => {
+    if (isCompleted) return <CheckCircle2 size={24} />;
+    if (isActive) return <Play size={22} className="fill-current" />;
+    return <Lock size={20} />;
+  };
+
+  const getStatusColors = () => {
+    if (isCompleted) return 'bg-emerald-500 text-white';
+    if (isActive) return 'bg-primary/20 text-primary animate-pulse';
+    return 'bg-white/5 text-white/20';
+  };
+
+  const statusColors = getStatusColors();
+
   return (
     <Card
       variant={isActive ? 'default' : 'ghost'}
@@ -32,21 +51,9 @@ export default function ActivityPhase({
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-4">
             <div
-              className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${
-                isCompleted
-                  ? 'bg-emerald-500 text-white'
-                  : isActive
-                    ? 'bg-primary/20 text-primary animate-pulse'
-                    : 'bg-white/5 text-white/20'
-              }`}
+              className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${statusColors}`}
             >
-              {isCompleted ? (
-                <CheckCircle2 size={24} />
-              ) : isActive ? (
-                <Play size={22} className="fill-current" />
-              ) : (
-                <Lock size={20} />
-              )}
+              {getIcon()}
             </div>
             <div>
               <h3

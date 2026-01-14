@@ -14,34 +14,34 @@ export default function LoginPage() {
 
         {/* Content Layer (z-10 to sit on top of gradient) */}
         <div className="text-primary-foreground relative z-10">
-          <h1 className={`${typography.h1} mb-4`}>Welcome Back!</h1>
-          <p className={`${typography.lead} max-w-md opacity-90`}>
+          <h1 className={`${typography.h1Inherit} mb-4`}>Welcome Back!</h1>
+          <p className={`${typography.leadInherit} max-w-md opacity-90`}>
             Join thousands of users achieving their fitness goals with our personalized approach.
           </p>
 
           <div className="mt-8 space-y-4">
             {/* Item 1 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 p-2">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <span className={typography.p}>Track your workouts and progress</span>
+              <span className={typography.pInherit}>Track your workouts and progress</span>
             </div>
 
             {/* Item 2 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 p-2">
                 <Zap className="h-6 w-6" />
               </div>
-              <span className={typography.p}>Customized fitness plans</span>
+              <span className={typography.pInherit}>Customized fitness plans</span>
             </div>
 
             {/* Item 3 */}
             <div className="flex items-center gap-3">
-              <div className="bg-primary-foreground/20 rounded-full p-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 p-2">
                 <BarChart3 className="h-6 w-6" />
               </div>
-              <span className={typography.p}>Health insights & analytics</span>
+              <span className={typography.pInherit}>Health insights & analytics</span>
             </div>
           </div>
         </div>

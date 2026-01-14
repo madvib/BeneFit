@@ -31,11 +31,11 @@ interface InlineErrorProps extends VariantProps<typeof inlineErrorVariants> {
   actions?: React.ReactNode;
 }
 
-export default function InlineError({
+export function InlineError({
   severity = 'error',
   className = '',
   ...props
-}: InlineErrorProps) {
+}: Readonly<InlineErrorProps>) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

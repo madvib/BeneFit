@@ -1,13 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ExploreView from './explore-view';
 import { mockEvents, mockTeams } from '@/lib/testing/fixtures';
-
-const MOCK_EVENTS = mockEvents;
-
-const MOCK_TEAMS = mockTeams;
+import { Carousel } from '@/lib/components';
 
 const meta: Meta = {
-  title: 'Features/Dashboard/Explore',
+  title: 'Features/Explore',
   component: ExploreView,
   parameters: {
     layout: 'fullscreen',
@@ -16,10 +13,11 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: StoryObj<typeof ExploreView> = {
-  render: () => <ExploreView events={MOCK_EVENTS} featuredTeams={MOCK_TEAMS} />,
-};
-
-export const Empty: StoryObj<typeof ExploreView> = {
-  render: () => <ExploreView events={[]} featuredTeams={[]} />,
+export const Showcase: StoryObj<typeof ExploreView> = {
+  render: () => (
+    <Carousel>
+      <ExploreView events={mockEvents} featuredTeams={mockTeams} />
+      <ExploreView events={[]} featuredTeams={[]} />
+    </Carousel>
+  ),
 };

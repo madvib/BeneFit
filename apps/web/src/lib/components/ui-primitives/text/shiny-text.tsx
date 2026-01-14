@@ -31,4 +31,4 @@ export const ShinyText: React.FC<ShinyTextProps> = ({
   );
 };
 
-export default ShinyText;
+

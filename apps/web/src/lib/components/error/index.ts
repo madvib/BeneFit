@@ -1,5 +1,5 @@
 // Error Components - Barrel File
 
-export { default as ErrorCard } from './error-card';
-export { default as ErrorPage } from './page-error';
-export { default as InlineError } from './inline-error';
+export * from './error-card';
+export * from './page-error';
+export * from './inline-error';

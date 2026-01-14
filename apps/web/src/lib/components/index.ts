@@ -18,3 +18,9 @@ export * from './navigation';
 
 // Theme Components
 export * from './theme';
+
+// Chat components
+export * from './chat';
+
+// Settings components
+export * from './settings';

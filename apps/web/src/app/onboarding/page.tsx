@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
-import OnboardingStepper from './_components/onboarding-stepper';
-import { Aurora, PageContainer } from '@/lib/components';
+import { Aurora, OnboardingStepper, PageContainer } from '@/lib/components';
+
 
 export const metadata: Metadata = {
   title: 'Setup Your Profile - BeneFit',

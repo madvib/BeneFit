@@ -1,7 +1,7 @@
 'use client';
 import { usePathname, redirect } from 'next/navigation';
 
-export default function ModalCatchAll() {
+export default function ModalRouteCatchAll() {
   const pathname = usePathname();
 
   switch (pathname) {

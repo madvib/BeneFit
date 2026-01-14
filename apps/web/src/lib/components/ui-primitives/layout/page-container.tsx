@@ -18,7 +18,7 @@ interface PageContainerProperties extends VariantProps<typeof pageContainerVaria
   className?: string;
 }
 
-export default function PageContainer({
+export function PageContainer({
   children,
   className = '',
   variant,

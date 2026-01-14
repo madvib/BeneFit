@@ -1,6 +1,6 @@
 import { AlertTriangle, Bug, Check, Info, X, LucideIcon } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { typography } from '@/lib/components/theme/typography';
+import { typography } from '@/lib/components';
 
 const alertVariants = cva('relative w-full rounded-2xl border p-4 shadow-sm transition-all', {
   variants: {
@@ -26,14 +26,14 @@ interface AlertProperties extends VariantProps<typeof alertVariants> {
   icon?: LucideIcon;
 }
 
-export default function Alert({
+export function Alert({
   title,
   description,
   variant = 'info',
   onClose,
   className = '',
   icon: CustomIcon,
-}: AlertProperties) {
+}: Readonly<AlertProperties>) {
   const Icon =
     CustomIcon ||
     {

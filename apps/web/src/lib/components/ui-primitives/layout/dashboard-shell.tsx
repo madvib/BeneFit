@@ -8,7 +8,7 @@ interface DashboardShellProps {
   children?: React.ReactNode;
 }
 
-export default function DashboardShell({
+export function DashboardShell({
   overview,
   schedule,
   suggestions,

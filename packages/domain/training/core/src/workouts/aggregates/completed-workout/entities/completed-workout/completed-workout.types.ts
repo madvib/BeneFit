@@ -17,6 +17,7 @@ interface CompletedWorkoutData {
 
   // Workout details
   workoutType: WorkoutType; // "Upper Body Strength", "5K Run", etc.
+  title: string;
   description?: string;
 
   // Performance data

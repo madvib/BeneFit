@@ -12,6 +12,8 @@ import {
   Badge,
   typography,
   IconBox,
+  DateDisplay,
+  MetricCard,
 } from '@/lib/components';
 
 // Define the shape of the workout data as returned by the API
@@ -59,12 +61,8 @@ export default function TodayView({
   }
 
   // --- Date Formatting ---
+
   const today = new Date();
-  const dateString = today.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
 
   if (!todaysWorkout) {
     return (
@@ -86,7 +84,7 @@ export default function TodayView({
 
           <h2 className={`${typography.h2} mb-3`}>Rest & Recovery</h2>
 
-          <p className={`${typography.muted} mb-8 max-w-[280px]`}>
+          <p className={`${typography.muted} mb-8 max-w-70`}>
             No workout specifically assigned for today. Take this time to recharge your energy for
             the next session.
           </p>
@@ -95,7 +93,7 @@ export default function TodayView({
             <Button
               variant="outline"
               onClick={() => {}}
-              className={`${typography.labelSm} border-primary/20 hover:bg-primary/5 h-12 w-full rounded-xl`}
+              className={`${typography.p} border-primary/20 hover:bg-primary/5 h-12 w-full rounded-xl`}
             >
               View Weeks Schedule
             </Button>
@@ -125,7 +123,9 @@ export default function TodayView({
                 <span className="bg-primary mr-2 h-1.5 w-1.5 rounded-full" />
                 Today&apos;s Protocol
               </Badge>
-              <p className={`${typography.mutedXs} opacity-60`}>{dateString}</p>
+              <p className={`${typography.mutedXs} opacity-60`}>
+                <DateDisplay date={today} format="long" />
+              </p>
             </div>
 
             <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
@@ -139,25 +139,23 @@ export default function TodayView({
               </div>
 
               {/* Key Stats */}
-              <div className="flex gap-6">
-                <div className="flex flex-col gap-1">
-                  <div className={`${typography.mutedXs} flex items-center gap-2`}>
-                    <Clock size={16} /> Duration
-                  </div>
-                  <h3 className={`${typography.h3} font-mono`}>
-                    {todaysWorkout.durationMinutes}
-                    <span className={`${typography.muted} ml-1 font-normal`}>min</span>
-                  </h3>
-                </div>
+              <div className="flex gap-4">
+                <MetricCard
+                  label="Duration"
+                  value={todaysWorkout.durationMinutes}
+                  unit="min"
+                  icon={Clock}
+                  className="bg-transparent border-none shadow-none p-0"
+                  bodyClassName="p-0 gap-1"
+                />
                 <div className="bg-border h-12 w-px" />
-                <div className="flex flex-col gap-1">
-                  <div className={`${typography.mutedXs} flex items-center gap-2`}>
-                    <Zap size={16} /> Activities
-                  </div>
-                  <h3 className={`${typography.h3} font-mono`}>
-                    {todaysWorkout.activities?.length || 0}
-                  </h3>
-                </div>
+                <MetricCard
+                  label="Activities"
+                  value={todaysWorkout.activities?.length || 0}
+                  icon={Zap}
+                  className="bg-transparent border-none shadow-none p-0"
+                  bodyClassName="p-0 gap-1"
+                />
               </div>
             </div>
           </div>
@@ -223,7 +221,7 @@ export default function TodayView({
                     disabled={isLoading || isStarting}
                     isLoading={isStarting}
                     size="lg"
-                    className={`${typography.labelSm} shadow-primary/20 w-full gap-2 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]`}
+                    className={`${typography.p} shadow-primary/20 w-full gap-2 shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]`}
                   >
                     {!isStarting && <Play size={20} className="fill-current" />}
                     Start Session
@@ -243,7 +241,7 @@ export default function TodayView({
 
               {/* Progress / Context */}
               <div className="border-border bg-card/50 rounded-2xl border p-6">
-                <p className={`${typography.labelSm} text-muted-foreground mb-3`}>
+                <p className={`${typography.small} text-muted-foreground mb-3`}>
                   Session Focus
                 </p>
                 <div className="flex flex-wrap gap-2">

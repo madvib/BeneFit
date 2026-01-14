@@ -1,8 +1,8 @@
 'use client';
 
+import { typography } from '@/lib/components';
 import { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { typography } from '@/lib/components';
 
 const sliderVariants = cva(
   'relative w-full cursor-pointer appearance-none rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
@@ -58,7 +58,7 @@ interface SliderProps
   getTickLabel?: (_val: number) => string;
 }
 
-const Slider = forwardRef<HTMLInputElement, SliderProps>(
+export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   ({ className, size, variant, ticks, getTickLabel, min = 0, max = 100, ...props }, ref) => {
     return (
       <div className="relative w-full">
@@ -105,4 +105,4 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(
 
 Slider.displayName = 'Slider';
 
-export default Slider;
+

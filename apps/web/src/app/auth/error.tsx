@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ErrorPage } from '@/lib/components';
+import { useEffect } from 'react';
 import { ROUTES } from '@/lib/constants';
 
 export default function AuthError({ error, reset }: { error: Error; reset: () => void }) {

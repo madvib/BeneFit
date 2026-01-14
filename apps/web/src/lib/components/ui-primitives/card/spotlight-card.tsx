@@ -15,7 +15,7 @@ interface SpotlightCardProps extends React.PropsWithChildren {
   darkSpotlightColor?: `rgba(${number}, ${number}, ${number}, ${number})`;
 }
 
-const SpotlightCard: React.FC<SpotlightCardProps> = ({
+export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = '',
   lightSpotlightColor = 'rgba(179, 215, 255, .3)',
@@ -80,4 +80,4 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   );
 };
 
-export default SpotlightCard;
+

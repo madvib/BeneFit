@@ -1,9 +1,9 @@
 'use client';
 
+import { ErrorPage, LoadingSpinner } from '@/lib/components';
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { integrations } from '@bene/react-api-client';
-import { LoadingSpinner, ErrorPage } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function IntegrationCallbackPage() {

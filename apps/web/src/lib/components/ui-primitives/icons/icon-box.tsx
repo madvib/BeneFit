@@ -12,12 +12,14 @@ const iconBoxVariants = cva(
         accent: 'bg-accent/10 text-accent-foreground',
         outline: 'border border-border bg-background text-foreground',
         ghost: 'bg-transparent text-foreground',
+        destructive: 'bg-destructive/10 text-destructive',
       },
       size: {
-        sm: 'h-8 w-8',
-        md: 'h-10 w-10',
-        lg: 'h-12 w-12',
-        xl: 'h-16 w-16',
+        xs: 'h-5 w-5 text-sm',
+        sm: 'h-8 w-8 text-lg',
+        md: 'h-10 w-10 text-xl',
+        lg: 'h-12 w-12 text-2xl',
+        xl: 'h-16 w-16 text-4xl',
       },
     },
     defaultVariants: {
@@ -34,7 +36,7 @@ export interface IconBoxProps extends VariantProps<typeof iconBoxVariants> {
   iconClassName?: string;
 }
 
-export default function IconBox({
+export function IconBox({
   icon: Icon,
   children,
   variant,
@@ -43,10 +45,11 @@ export default function IconBox({
   iconClassName,
 }: IconBoxProps) {
   const iconSizeMap = {
-    sm: 16,
-    md: 20,
-    lg: 24,
-    xl: 32,
+    xs: 14,
+    sm: 20,
+    md: 24,
+    lg: 32,
+    xl: 44,
   };
 
   return (

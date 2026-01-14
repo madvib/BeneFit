@@ -1,10 +1,10 @@
 'use client';
-import OnboardingStepper from '../../onboarding/_components/onboarding-stepper';
-import { Modal } from '@/lib/components';
 
-export default function OnboardingModal() {
+
+import { Modal, OnboardingStepper } from '@/lib/components';
+export default function OnboardingModalRoute() {
   return (
-    <Modal size="xl" containerClassName="overflow-hidden">
+    <Modal isRoute size="xl" containerClassName="overflow-hidden">
       <OnboardingStepper />
     </Modal>
   );

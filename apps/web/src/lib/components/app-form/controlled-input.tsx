@@ -1,7 +1,6 @@
 import { InputHTMLAttributes } from 'react';
-import { Input } from '../ui-primitives';
+import { Input, typography } from '@/lib/components';
 import { useFieldContext } from './app-form';
-import { typography } from '../theme/typography';
 
 type ControlledInputProps = {
   label: string;

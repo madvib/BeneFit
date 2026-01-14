@@ -1,4 +1,4 @@
-import { ProtectedRoute } from '@/lib/components/auth';
+import { ProtectedRoute } from '@/lib/components';
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (

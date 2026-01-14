@@ -15,7 +15,7 @@ export const mockWorkoutTemplate: WorkoutTemplate = {
   dayOfWeek: 1,
   scheduledDate: '2026-01-13',
   title: 'Upper Body Strength - Week 1',
-  type: 'Upper Body Strength',
+  type: 'strength',
   category: 'strength' as const,
   goals: {
     volume: {
@@ -169,7 +169,7 @@ export const mockCompletedWorkout: CompletedWorkout = {
   workoutTemplateId: 'workout-1',
   weekNumber: 1,
   dayNumber: 1,
-  workoutType: 'Upper Body Strength',
+  workoutType: 'strength',
   description: 'Great session, felt strong on the bench press.',
   performance: mockWorkoutPerformance,
   verification: mockWorkoutVerification,
@@ -180,7 +180,7 @@ export const mockCompletedWorkout: CompletedWorkout = {
 
 export const mockWorkoutSession: WorkoutSession = {
   id: 'session-1',
-  workoutType: 'Vinyasa Yoga',
+  workoutType: 'yoga',
   state: 'in_progress',
   currentActivityIndex: 0,
   activities: [],
@@ -210,7 +210,7 @@ export const mockWorkoutSession: WorkoutSession = {
 
 export const mockPushIntensitySession: WorkoutSession = {
   id: 'session-123',
-  workoutType: 'Push Intensity',
+  workoutType: 'strength',
   state: 'in_progress',
   currentActivityIndex: 0,
   completedActivities: [],
@@ -282,7 +282,7 @@ export const mockPushIntensitySession: WorkoutSession = {
 
 export const mockDetailedWorkoutSession: WorkoutSession = {
   id: 'session-123',
-  workoutType: 'Hypertrophy Upper',
+  workoutType: 'strength',
   state: 'in_progress',
   currentActivityIndex: 0,
   completedActivities: [],
@@ -335,7 +335,7 @@ export const mockDetailedWorkoutSession: WorkoutSession = {
 
 export const mockAbandonedSession: WorkoutSession = {
   id: 'session-2',
-  workoutType: 'HIIT Blast',
+  workoutType: 'hiit',
   state: 'abandoned',
   currentActivityIndex: 0,
   activities: [],
@@ -358,124 +358,222 @@ export const mockAbandonedSession: WorkoutSession = {
 };
 
 export const mockWorkoutHistory: workouts.GetWorkoutHistoryResponse = {
-  workouts: [
-    {
-      id: 'workout-history-1',
-      workoutType: 'strength',
-      performance: {
-        startedAt: '2026-01-05T09:05:00Z',
-        completedAt: '2026-01-05T10:00:00Z',
-        durationMinutes: 55,
-        perceivedExertion: 8,
-        enjoyment: 9,
-        energyLevel: 'high',
-        difficultyRating: 'just_right',
-        caloriesBurned: 450,
-        heartRate: {
-          average: 145,
-          max: 178,
-          zones: { '1': 300, '2': 1200, '3': 1800, '4': 600, '5': 100 },
-        },
-        notes: 'Felt strong today, increased weight on bench press.',
-        activities: [
-          {
-            activityType: 'warmup',
-            completed: true,
-            durationMinutes: 10,
-            notes: 'Dynamic stretching',
-            exercises: [],
+    workouts: [
+      {
+        id: 'workout-history-1',
+        workoutType: 'strength',
+        title: 'Chest Day Destruction',
+        performance: {
+          startedAt: '2026-01-05T09:05:00Z',
+          completedAt: '2026-01-05T10:00:00Z',
+          durationMinutes: 55,
+          perceivedExertion: 8,
+          enjoyment: 9,
+          energyLevel: 'high',
+          difficultyRating: 'just_right',
+          caloriesBurned: 450,
+          heartRate: {
+            average: 145,
+            max: 178,
+            zones: { '1': 300, '2': 1200, '3': 1800, '4': 600, '5': 100 },
           },
-          {
-            activityType: 'main',
-            completed: true,
-            durationMinutes: 45,
-            exercises: [
-              {
-                name: 'Barbell Bench Press',
-                setsCompleted: 4,
-                setsPlanned: 4,
-                reps: [10, 10, 8, 8],
-                weight: [60, 60, 65, 65],
-              },
-              {
-                name: 'Incline Dumbbell Fly',
-                setsCompleted: 3,
-                setsPlanned: 3,
-                reps: [12, 12, 12],
-                weight: [16, 16, 16],
-              },
-            ],
-          },
-        ],
-      },
-      verification: {
-        verified: true,
-        verifications: [],
-        sponsorEligible: false,
-      },
-      reactions: [],
-      isPublic: true,
-      recordedAt: '2026-01-05T10:00:00Z',
-    },
-    {
-      id: 'workout-history-2',
-      workoutType: 'cardio',
-      performance: {
-        startedAt: '2026-01-03T07:30:00Z',
-        completedAt: '2026-01-03T08:00:00Z',
-        durationMinutes: 30,
-        perceivedExertion: 8,
-        enjoyment: 6,
-        energyLevel: 'medium',
-        difficultyRating: 'too_hard',
-        caloriesBurned: 320,
-        heartRate: {
-          average: 155,
-          max: 180,
+          notes: 'Felt strong today, increased weight on bench press.',
+          activities: [
+            {
+              activityType: 'warmup',
+              completed: true,
+              durationMinutes: 10,
+              notes: 'Dynamic stretching',
+              exercises: [],
+            },
+            {
+              activityType: 'main',
+              completed: true,
+              durationMinutes: 45,
+              exercises: [
+                {
+                  name: 'Barbell Bench Press',
+                  setsCompleted: 4,
+                  setsPlanned: 4,
+                  reps: [10, 10, 8, 8],
+                  weight: [60, 60, 65, 65],
+                },
+                {
+                  name: 'Incline Dumbbell Fly',
+                  setsCompleted: 3,
+                  setsPlanned: 3,
+                  reps: [12, 12, 12],
+                  weight: [16, 16, 16],
+                },
+              ],
+            },
+          ],
         },
-        activities: [
-          {
-            activityType: 'main',
-            completed: true,
-            durationMinutes: 30,
-            exercises: [],
-            notes: 'Steady state run',
-          }
-        ],
+        verification: {
+          verified: true,
+          verifications: [],
+          sponsorEligible: false,
+        },
+        reactions: [],
+        isPublic: true,
+        recordedAt: '2026-01-05T10:00:00Z',
       },
-      verification: {
-        verified: false,
-        verifications: [],
-        sponsorEligible: false,
+      {
+        id: 'workout-history-2',
+        workoutType: 'cardio',
+        title: 'Morning Mental Reset',
+        performance: {
+          startedAt: '2026-01-03T07:30:00Z',
+          completedAt: '2026-01-03T08:00:00Z',
+          durationMinutes: 30,
+          perceivedExertion: 8,
+          enjoyment: 6,
+          energyLevel: 'medium',
+          difficultyRating: 'too_hard',
+          caloriesBurned: 320,
+          heartRate: {
+            average: 155,
+            max: 180,
+          },
+          activities: [
+            {
+              activityType: 'main',
+              completed: true,
+              durationMinutes: 30,
+              exercises: [],
+              notes: 'Steady state run',
+            }
+          ],
+        },
+        verification: {
+          verified: false,
+          verifications: [],
+          sponsorEligible: false,
+        },
+        reactions: [],
+        isPublic: false,
+        recordedAt: '2026-01-03T08:00:00Z',
       },
-      reactions: [],
-      isPublic: false,
-      recordedAt: '2026-01-03T08:00:00Z',
-    },
-  ],
-  total: 2,
-};
+      {
+        id: 'workout-history-3',
+        workoutType: 'hiit',
+        title: 'Lunch Break Sweat',
+        performance: {
+          startedAt: '2026-01-01T17:00:00Z',
+          completedAt: '2026-01-01T17:45:00Z',
+          durationMinutes: 45,
+          perceivedExertion: 9,
+          enjoyment: 8,
+          difficultyRating: 'too_hard',
+          energyLevel: 'high',
+          caloriesBurned: 600,
+          heartRate: { average: 165, max: 190 },
+          activities: [],
+          notes: 'Intense session, really pushed the intervals.',
+        },
+        verification: {
+          verified: true,
+          verifications: [{
+            method: 'wearable',
+            data: {
+              device: 'Apple Watch',
+              activityId: 'aw-123',
+              source: 'fitbit',
+              syncedAt: '2026-01-01T17:50:00Z'
+            }
+          }],
+          sponsorEligible: true,
+        },
+        reactions: [],
+        isPublic: true,
+        recordedAt: '2026-01-01T17:45:00Z',
+      },
+      {
+        id: 'workout-history-4',
+        workoutType: 'yoga',
+        title: 'Sunrise Flow',
+        description: 'Vinyasa Yoga',
+        performance: {
+          startedAt: '2025-12-30T06:00:00Z',
+          completedAt: '2025-12-30T07:00:00Z',
+          durationMinutes: 60,
+          perceivedExertion: 4,
+          enjoyment: 10,
+          difficultyRating: 'too_easy',
+          energyLevel: 'low',
+          caloriesBurned: 200,
+          heartRate: { average: 90, max: 110 },
+          activities: [],
+          notes: 'Morning flow, very relaxing.',
+        },
+        verification: {
+          verified: false,
+          verifications: [],
+          sponsorEligible: false,
+        },
+        reactions: [],
+        isPublic: true,
+        recordedAt: '2025-12-30T07:00:00Z',
+      },
+      {
+        id: 'workout-history-5',
+        workoutType: 'running',
+        title: 'Sunday Long Run',
+        description: 'Long Run',
+        performance: {
+          startedAt: '2025-12-28T08:00:00Z',
+          completedAt: '2025-12-28T09:30:00Z',
+          durationMinutes: 90,
+          perceivedExertion: 7,
+          enjoyment: 7,
+          difficultyRating: 'just_right',
+          energyLevel: 'medium',
+          caloriesBurned: 900,
+          heartRate: { average: 150, max: 170 },
+          activities: [],
+          notes: 'Solid pace, felt good until the last mile.',
+        },
+        verification: {
+          verified: true,
+          verifications: [{
+            method: 'gps',
+            data: {
+              latitude: 37.7749,
+              longitude: -122.4194,
+              accuracy: 5,
+              timestamp: '2025-12-28T09:30:00Z'
+            }
+          }],
+          sponsorEligible: true,
+        },
+        reactions: [],
+        isPublic: true,
+        recordedAt: '2025-12-28T09:30:00Z',
+      },
+    ],
+    total: 2,
+  };
 
-export const mockDailyWorkout: DailyWorkout = {
-  workoutId: 'workout-1',
-  planId: 'plan-123',
-  type: 'Upper Body Strength',
-  durationMinutes: 45,
-  activities: [
-    {
-      type: 'warmup',
-      instructions: 'Dynamic stretching and light cardio.',
-      durationMinutes: 10,
-    },
-    {
-      type: 'main',
-      instructions: 'Focus on Barbell Bench Press and Dumbbell Rows.',
-      durationMinutes: 30,
-    },
-    {
-      type: 'cooldown',
-      instructions: 'Static stretching and breathing exercises.',
-      durationMinutes: 5,
-    },
-  ],
-};
+  export const mockDailyWorkout: DailyWorkout = {
+    workoutId: 'workout-1',
+    planId: 'plan-123',
+    type: 'Upper Body Strength',
+    durationMinutes: 45,
+    activities: [
+      {
+        type: 'warmup',
+        instructions: 'Dynamic stretching and light cardio.',
+        durationMinutes: 10,
+      },
+      {
+        type: 'main',
+        instructions: 'Focus on Barbell Bench Press and Dumbbell Rows.',
+        durationMinutes: 30,
+      },
+      {
+        type: 'cooldown',
+        instructions: 'Static stretching and breathing exercises.',
+        durationMinutes: 5,
+      },
+    ],
+  };

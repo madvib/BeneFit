@@ -1,5 +1,5 @@
 import { InputHTMLAttributes } from 'react';
-import { typography } from '@/lib/components/theme/typography';
+import { typography } from '@/lib/components';
 
 type CheckboxProps = {
   label?: string;
@@ -7,7 +7,7 @@ type CheckboxProps = {
   description?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-export default function Checkbox({
+export function Checkbox({
   label,
   error,
   description,

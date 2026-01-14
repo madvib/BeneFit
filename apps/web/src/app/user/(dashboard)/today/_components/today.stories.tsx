@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import TodayView from './today-view';
+import { Carousel } from '@/lib/components';
 
 // Mock Data
 const MOCK_WORKOUT_TODAY = {
@@ -16,68 +17,57 @@ const MOCK_WORKOUT_TODAY = {
 };
 
 const meta: Meta = {
-  title: 'Features/Dashboard/Today',
+  title: 'Features/Today',
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
   },
 };
 
 export default meta;
 
-// --- Today View Stories ---
-
-export const WorkoutScheduled: StoryObj<typeof TodayView> = {
+export const Showcase: StoryObj<typeof TodayView> = {
   render: () => (
-    <TodayView
-      todaysWorkout={MOCK_WORKOUT_TODAY}
-      isLoading={false}
-      error={null}
-      onStartWorkout={() => alert('Start Workout')}
-      onSkipWorkout={async () => new Promise((r) => setTimeout(r, 1000))}
-      isStarting={false}
-      isSkipping={false}
-    />
-  ),
-};
-
-export const WorkoutLoading: StoryObj<typeof TodayView> = {
-  render: () => (
-    <TodayView
-      todaysWorkout={undefined}
-      isLoading={true}
-      error={null}
-      onStartWorkout={() => {}}
-      onSkipWorkout={async () => {}}
-      isStarting={false}
-      isSkipping={false}
-    />
-  ),
-};
-
-export const RestDay: StoryObj<typeof TodayView> = {
-  render: () => (
-    <TodayView
-      todaysWorkout={undefined}
-      isLoading={false}
-      error={null}
-      onStartWorkout={() => {}}
-      onSkipWorkout={async () => {}}
-      isStarting={false}
-      isSkipping={false}
-    />
+    <Carousel>
+      {/* Workout Scheduled */}
+      <div className="mx-auto w-full max-w-2xl">
+        <TodayView
+          todaysWorkout={MOCK_WORKOUT_TODAY}
+          isLoading={false}
+          error={null}
+          onStartWorkout={() => alert('Start Workout')}
+          onSkipWorkout={async () => new Promise((r) => setTimeout(r, 1000))}
+          isStarting={false}
+          isSkipping={false}
+        />
+      </div>
+      {/* Rest Day */}
+      <div className="mx-auto w-full max-w-2xl">
+        <TodayView
+          todaysWorkout={undefined}
+          isLoading={false}
+          error={null}
+          onStartWorkout={() => {}}
+          onSkipWorkout={async () => {}}
+          isStarting={false}
+          isSkipping={false}
+        />
+      </div>
+    </Carousel>
   ),
 };
 
 export const ErrorState: StoryObj<typeof TodayView> = {
   render: () => (
-    <TodayView
-      todaysWorkout={undefined}
-      isLoading={false}
-      error={new Error('Failed to fetch plan')}
-      onStartWorkout={() => {}}
-      onSkipWorkout={async () => {}}
-      isStarting={false}
-      isSkipping={false}
-    />
+    <div className="mx-auto w-full max-w-2xl">
+      <TodayView
+        todaysWorkout={undefined}
+        isLoading={false}
+        error={new Error('Failed to fetch plan')}
+        onStartWorkout={() => {}}
+        onSkipWorkout={async () => {}}
+        isStarting={false}
+        isSkipping={false}
+      />
+    </div>
   ),
 };

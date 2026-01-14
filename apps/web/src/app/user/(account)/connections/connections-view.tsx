@@ -1,21 +1,11 @@
 'use client';
 
+import { EmptyState, OAuthButton, PageHeader, typography } from '@/lib/components';
 import { integrations } from '@bene/react-api-client';
-import { OAuthButton } from '@/lib/components/auth/oauth-button';
-import { PageHeader, typography } from '@/lib/components';
+import { Share2, CheckCircle } from 'lucide-react';
 import { ServiceCard } from './_components';
 
-// Available services that can be connected
-// Exported for stories if needed, or kept internal
-export const AVAILABLE_SERVICES = [
-  {
-    id: 'strava',
-    serviceType: 'strava',
-    displayName: 'Strava',
-    description: 'Connect your Strava account to sync activities',
-    icon: 'https://cdn.simpleicons.org/strava/FC4C02',
-  },
-] as const;
+import { AVAILABLE_SERVICES } from '@/lib/constants/services';
 
 interface ConnectionsViewProps {
   connectedServices: integrations.ConnectedService[];
@@ -59,9 +49,13 @@ export default function ConnectionsView({
                 />
               ))
             ) : (
-              <div className="text-muted-foreground py-8 text-center">
-                No services connected yet
-              </div>
+              <EmptyState
+                icon={Share2}
+                title="No services connected yet"
+                description="Connect your favorite apps to sync data."
+                className="py-8"
+                iconClassName="opacity-50"
+              />
             )}
           </div>
         </div>
@@ -96,9 +90,13 @@ export default function ConnectionsView({
                 </div>
               ))
             ) : (
-              <div className="text-muted-foreground col-span-full py-8 text-center">
-                All available services are connected
-              </div>
+              <EmptyState
+                icon={CheckCircle}
+                title="All available services are connected"
+                description=""
+                className="col-span-full py-8"
+                iconClassName="text-green-500 bg-green-500/10"
+              />
             )}
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '../ui-primitives';
+import { Button, type ButtonProps } from '@/lib/components';
 import { useFormContext } from './app-form';
 
 interface SubmitButtonProps extends ButtonProps {
@@ -7,7 +7,7 @@ interface SubmitButtonProps extends ButtonProps {
   children?: React.ReactNode;
 }
 
-export function SubmitButton({ label, submitLabel, children, ...props }: SubmitButtonProps) {
+export function SubmitButton({ label, submitLabel, children, ...props }: Readonly<SubmitButtonProps>) {
   const form = useFormContext();
   return (
     <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>

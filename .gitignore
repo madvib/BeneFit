@@ -129,3 +129,4 @@ dist-types
 generated
 .temp
 .agent
+.zed

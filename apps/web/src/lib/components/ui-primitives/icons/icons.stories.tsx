@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Activity, Target, User, Dumbbell, Calendar, Sparkles } from 'lucide-react';
-import IconBox from './icon-box';
+import {IconBox} from './icon-box';
 import { GarminLogo, StravaLogo } from './service-logos';
-import LogoLoop from './logo-loop';
-import { typography } from '../../theme/typography';
+import {LogoLoop} from './logo-loop';
+import { typography } from '../..';
 
 const meta: Meta = {
   title: 'Primitives/Icons',

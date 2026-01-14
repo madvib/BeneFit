@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { WorkoutGoalsSchema } from './workout-goals.js';
 import { WorkoutActivitySchema } from './workout-activity.js';
-
-// Workout Template Schemas
-
-export const WorkoutTypeSchema = z.string(); // "Upper Body Strength", "5K Run", etc.
+import { WorkoutTypeSchema } from './workout-type.js';
 
 export const WorkoutCategorySchema = z.enum(['cardio', 'strength', 'recovery']);
 
@@ -49,7 +46,7 @@ export const WorkoutTemplateSchema = z.object({
 });
 
 // Export inferred types
-export type WorkoutType = z.infer<typeof WorkoutTypeSchema>;
+
 export type WorkoutCategory = z.infer<typeof WorkoutCategorySchema>;
 export type WorkoutStatus = z.infer<typeof WorkoutStatusSchema>;
 export type WorkoutImportance = z.infer<typeof WorkoutImportanceSchema>;

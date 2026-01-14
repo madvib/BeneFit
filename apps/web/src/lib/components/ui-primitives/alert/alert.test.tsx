@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Alert from './alert';
+import {Alert} from './alert';
 
 describe('Alert', () => {
   it('renders title correctly', () => {

@@ -1,12 +1,10 @@
 'use client';
 
-import { SignupForm } from '@/lib/components/auth';
-import { Modal } from '@/lib/components';
-
-export default function SignupModal() {
+import { Modal, SignupForm } from '@/lib/components';
+export default function SignupModalRoute() {
   return (
-    <Modal>
-      <SignupForm isModal={true} />
+    <Modal isRoute size="md" unstyled>
+      <SignupForm isModalRoute />
     </Modal>
   );
 }

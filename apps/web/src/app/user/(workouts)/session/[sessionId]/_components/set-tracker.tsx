@@ -1,8 +1,8 @@
 'use client';
 
 import { Check, Scale, Repeat } from 'lucide-react';
-import { Button, typography } from '@/lib/components';
 import { useState } from 'react';
+import { Button, typography } from '@/lib/components';
 
 interface SetTrackerProps {
   setNumber: number;
@@ -12,13 +12,13 @@ interface SetTrackerProps {
   isCompleted?: boolean;
 }
 
-export default function SetTracker({
+export function SetTracker({
   setNumber,
   plannedReps,
   plannedWeight,
   onComplete,
   isCompleted = false,
-}: SetTrackerProps) {
+}: Readonly<SetTrackerProps>) {
   const [reps, setReps] = useState(typeof plannedReps === 'number' ? plannedReps.toString() : '');
   const [weight, setWeight] = useState(plannedWeight?.toString() || '');
 

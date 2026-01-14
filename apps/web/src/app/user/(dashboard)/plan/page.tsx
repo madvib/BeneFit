@@ -12,12 +12,14 @@ import {
   typography,
   IconBox,
 } from '@/lib/components';
-import PlanOverview from './_components/plan-overview';
-import QuickActions from './_components/quick-actions';
-import WeeklySchedule from './_components/weekly-schedule';
-import PlanOnboarding from './_components/plan-onboarding';
-import PlanPreview from './_components/plan-preview';
-import WorkoutDetailModal from './_components/workout-detail-modal';
+import {
+  PlanOverview,
+  QuickActions,
+  WeeklySchedule,
+  PlanOnboarding,
+  PlanPreview,
+  WorkoutDetailModal,
+} from './_components';
 import { ROUTES } from '@/lib/constants';
 
 export default function PlanClient() {
@@ -55,6 +57,7 @@ export default function PlanClient() {
     await activatePlanMutation.mutateAsync(request);
     // Reset the generated plan by resetting the mutation
     generatePlanMutation.reset();
+    setShowNewProgramFlow(false);
   };
 
   const handlePausePlan = async () => {

@@ -10,6 +10,7 @@ import {
 export interface CreateCompletedWorkoutParams {
   userId: string;
   workoutType: WorkoutType;
+  title?: string;
   description?: string;
   performance: WorkoutPerformance;
   verification: WorkoutVerification;
@@ -39,6 +40,9 @@ export function createCompletedWorkout(
     Guard.againstEmptyString(params.workoutType, 'workoutType'),
   ];
 
+  if (params.title) {
+    guards.push(Guard.againstEmptyString(params.title, 'title'));
+  }
   if (params.description) {
     guards.push(Guard.againstTooLong(params.description, 500, 'description'));
   }
@@ -72,6 +76,7 @@ export function createCompletedWorkout(
     weekNumber: params.weekNumber,
     dayNumber: params.dayNumber,
     workoutType: params.workoutType,
+    title: params.title ?? params.workoutType,
     description: params.description,
     performance: params.performance,
     verification: params.verification,

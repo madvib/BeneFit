@@ -1,19 +1,20 @@
 import { ReactNode } from 'react';
 import { useFormContext } from './app-form';
-import { Card } from '../ui-primitives';
-import { typography } from '../theme/typography';
+import { Card, typography } from '@/lib/components';
+
+interface FormRootProps {
+  readonly title?: string;
+  readonly subtitle?: string;
+  readonly children: ReactNode;
+  readonly variant?: 'default' | 'borderless' | 'ghost';
+}
 
 export function Root({
   title,
   subtitle,
   children,
   variant = 'borderless',
-}: {
-  title?: string;
-  subtitle?: string;
-  children: ReactNode;
-  variant?: 'default' | 'borderless' | 'ghost';
-}) {
+}: Readonly<FormRootProps>) {
   const form = useFormContext();
   return (
     <Card variant={variant}>

@@ -1,8 +1,8 @@
 'use client';
 
+import { Button, Card, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Pencil, Check, X, Quote } from 'lucide-react';
-import { Button, Card, typography } from '@/lib/components';
 
 interface AboutMeSectionProps {
   aboutMe: string;

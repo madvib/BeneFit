@@ -28,7 +28,7 @@ interface ElectricBorderProps {
   style?: CSSProperties;
 }
 
-const ElectricBorder: React.FC<ElectricBorderProps> = ({
+export const ElectricBorder: React.FC<ElectricBorderProps> = ({
   children,
   color = '#5227FF',
   speed = 1,
@@ -358,4 +358,4 @@ const ElectricBorder: React.FC<ElectricBorderProps> = ({
   );
 };
 
-export default ElectricBorder;
+

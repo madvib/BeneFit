@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { Card, ElectricBorder } from '../ui-primitives';
+import { Card, ElectricBorder } from '@/lib/components';
 import { ErrorDisplay, getSeverityColor } from './error-display';
 
 interface ErrorCardProps {
@@ -16,11 +16,11 @@ interface ErrorCardProps {
   actions?: React.ReactNode;
 }
 
-export default function ErrorCard({
+export function ErrorCard({
   severity = 'error',
   className = '',
   ...props
-}: ErrorCardProps) {
+}: Readonly<ErrorCardProps>) {
   const severityColor = getSeverityColor(severity);
 
   return (

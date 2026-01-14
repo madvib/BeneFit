@@ -1,5 +1,4 @@
-import { ProtectedRoute } from '@/lib/components/auth';
-import { RequireProfile } from '@/lib/components/auth/require-profile';
+import { ProtectedRoute, RequireProfile } from '@/lib/components';
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (

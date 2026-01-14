@@ -1,5 +1,6 @@
-import { Camera, Trophy, Flame, Dumbbell } from 'lucide-react';
-import { CountUp, typography } from '@/lib/components';
+import { Camera } from 'lucide-react';
+import { PROFILE_STATS_CONFIG } from '@/lib/constants/training-ui';
+import { CountUp, MetricCard, typography } from '@/lib/components';
 
 interface ProfileSummaryProps {
   name: string;
@@ -28,32 +29,23 @@ export default function ProfileSummary({
 
   const stats = [
     {
-      label: 'Workouts',
+      key: 'workouts',
       value: totalWorkouts,
-      icon: Dumbbell,
-      color: 'text-blue-500',
-      bgCallback: 'bg-blue-500/10',
     },
     {
-      label: 'Streak',
+      key: 'streak',
       value: currentStreak,
-      icon: Flame,
-      color: 'text-orange-500',
-      bgCallback: 'bg-orange-500/10',
     },
     {
-      label: 'Trophies',
+      key: 'trophies',
       value: totalAchievements,
-      icon: Trophy,
-      color: 'text-yellow-500',
-      bgCallback: 'bg-yellow-500/10',
     },
   ];
 
   return (
     <div className="relative mb-4 flex flex-col items-center">
       {/* Hero Background */}
-      <div className="from-primary/10 to-background absolute inset-x-0 -top-16 -z-10 h-48 overflow-hidden rounded-b-[3rem] bg-gradient-to-b opacity-50 blur-xl" />
+      <div className="from-primary/10 to-background absolute inset-x-0 -top-16 -z-10 h-48 overflow-hidden rounded-b-[3rem] bg-linear-to-b opacity-50 blur-xl" />
 
       <div className="mb-4 flex flex-col items-center gap-4">
         <div className="group relative">
@@ -83,18 +75,23 @@ export default function ProfileSummary({
         </div>
 
         {/* Stats Grid */}
-        <div className="flex w-full items-center justify-center gap-10 py-2 sm:gap-14">
-          {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center">
-              <div className="mb-0.5 flex items-center gap-2">
-                <stat.icon size={16} className={`${stat.color} opacity-80`} />
-                <h3 className={typography.displayMd}>
-                  <CountUp from={0} to={stat.value} duration={1.5} />
-                </h3>
-              </div>
-              <p className={typography.displaySm}>{stat.label}</p>
-            </div>
-          ))}
+        <div className="flex w-full items-center justify-center gap-4 py-2 sm:gap-6">
+          {stats.map((stat) => {
+            const config = PROFILE_STATS_CONFIG[stat.key];
+            if (!config) return null;
+            
+            return (
+              <MetricCard
+                key={stat.key}
+                label={config.label}
+                value={<CountUp from={0} to={stat.value} duration={1.5} />}
+                icon={config.icon}
+                className="border-none bg-transparent shadow-none"
+                bodyClassName="items-center p-0"
+                iconClassName={config.iconClass}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

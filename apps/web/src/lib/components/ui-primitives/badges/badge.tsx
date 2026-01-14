@@ -35,7 +35,7 @@ export interface BadgeProps
   icon?: LucideIcon;
 }
 
-function Badge({
+export function Badge({
   className,
   variant,
   icon: Icon,
@@ -58,5 +58,5 @@ function Badge({
   );
 }
 
-export default Badge;
+
 export { badgeVariants };

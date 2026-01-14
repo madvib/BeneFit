@@ -1,8 +1,7 @@
 'use client';
 
+import { AccountHeader, AccountSidebar } from '@/lib/components';
 import { useState } from 'react';
-import AccountHeader from './_shared/account-header';
-import AccountSidebar from './_shared/account-sidebar';
 
 interface AccountLayoutProperties {
   children: React.ReactNode;

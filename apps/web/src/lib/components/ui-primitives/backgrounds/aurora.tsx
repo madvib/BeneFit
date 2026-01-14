@@ -134,7 +134,7 @@ interface AuroraProps {
   speed?: number;
 }
 
-export default function Aurora(props: AuroraProps) {
+export function Aurora(props: AuroraProps) {
   const {
     colorStops,
     lightColorStops = ['#034a95', '#b3d7ff', '#7cff67'],

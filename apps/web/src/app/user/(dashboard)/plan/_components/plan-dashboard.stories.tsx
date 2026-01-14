@@ -1,21 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import PlanOverview from './plan-overview';
-import WeeklySchedule from './weekly-schedule';
-import { WorkoutDetailSheet } from './workout-detail-sheet';
-import QuickActions from './quick-actions';
-import GoalSelectionForm from './goal-selection-form';
-import PlanSuggestions from './plan-suggestions';
-import PlanOnboarding from './plan-onboarding';
-import SuggestionsView from './suggestions-view';
-import WorkoutDetailModal from './workout-detail-modal';
-import { mockActivePlan, mockWorkoutTemplate } from '../../../../../lib/testing/fixtures';
-import { Dumbbell, Activity } from 'lucide-react';
+import { useState } from 'react';
+import { mockActivePlan, mockWorkoutTemplate } from '@/lib/testing/fixtures';
+import { Carousel, DashboardShell, WorkoutDetailSheet } from '@/lib/components';
+import{ PlanOverview, QuickActions, WeeklySchedule,PlanOnboarding,PlanPreview} from './index';
 
-// PlanOverview likely expects the plan object, not the full response
+// PlanOverview expects the plan object, not the full response
 const activePlan = mockActivePlan.plan!;
 
 const meta: Meta = {
-  title: 'Features/FitnessPlan',
+  title: 'Features/Fitness Plan',
   parameters: {
     layout: 'fullscreen',
   },
@@ -23,23 +16,82 @@ const meta: Meta = {
 
 export default meta;
 
-export const OverviewActive: StoryObj<typeof PlanOverview> = {
+const FullDashboardSimulator = () => {
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
+
+  // Derive selected workout from plan
+  const selectedWorkout = activePlan.weeks
+    .flatMap(w => w.workouts)
+    .find(w => w.id === selectedWorkoutId);
+
+  // Mock template from the selected workout ID (just using a single fixture for demo)
+  // In a real app we'd fetch the specific template. Here we just fallback to the mock if found.
+  const workoutDetail = selectedWorkout ? { ...mockWorkoutTemplate, id: selectedWorkout.id } : null;
+
+  return (
+    <>
+      <DashboardShell
+        overview={
+          <PlanOverview 
+            currentPlan={activePlan} 
+            onEditPlan={() => alert('Edit Plan')} 
+          />
+        }
+        schedule={
+          <WeeklySchedule
+            plan={activePlan}
+            selectedWeek={selectedWeek}
+            onWeekChange={setSelectedWeek}
+            onWorkoutClick={setSelectedWorkoutId}
+          />
+        }
+        actions={
+          <QuickActions
+            onCreatePlan={() => console.log('Create')}
+            onSavePlan={() => console.log('Save')}
+            onExportPlan={() => console.log('Export')}
+            onPausePlan={() => console.log('Pause')}
+            isLoading={false}
+          />
+        }
+      />
+      
+      {/* 
+        Note: The real page uses WorkoutDetailModal which wraps WorkoutDetailSheet.
+        We use the sheet directly here or the modal if exported 
+      */}
+      <WorkoutDetailSheet 
+        workout={workoutDetail} 
+        open={!!selectedWorkoutId} 
+        onOpenChange={(open) => !open && setSelectedWorkoutId(null)} 
+      />
+    </>
+  );
+};
+
+export const FullPage: StoryObj = {
+  render: () => <FullDashboardSimulator />,
+};
+
+export const PlanOverviewShowcase: StoryObj = {
+  name: 'Plan Overview Showcase',
   render: () => (
-    <div className="max-w-2xl p-6">
-      <PlanOverview currentPlan={activePlan} onEditPlan={() => alert('Edit Plan Clicked')} />
-    </div>
+    <Carousel>
+      {/* Active Plan */}
+      <div className="max-w-2xl p-6">
+        <PlanOverview currentPlan={activePlan} onEditPlan={() => alert('Edit Plan Clicked')} />
+      </div>
+      {/* Empty State */}
+      <div className="h-[400px] max-w-2xl p-6">
+        <PlanOverview currentPlan={null} onEditPlan={() => {}} />
+      </div>
+    </Carousel>
   ),
 };
 
-export const OverviewEmpty: StoryObj<typeof PlanOverview> = {
-  render: () => (
-    <div className="h-[400px] max-w-2xl p-6">
-      <PlanOverview currentPlan={null} onEditPlan={() => {}} />
-    </div>
-  ),
-};
-
-export const WeeklyScheduleView: StoryObj<typeof WeeklySchedule> = {
+export const WeeklyScheduleInteractive: StoryObj = {
+  name: 'Weekly Schedule Interactive',
   render: () => (
     <div className="max-w-4xl p-6">
       <WeeklySchedule
@@ -52,142 +104,67 @@ export const WeeklyScheduleView: StoryObj<typeof WeeklySchedule> = {
   ),
 };
 
-export const DashboardView: StoryObj = {
-  name: 'Full Dashboard (Composed)',
+export const QuickActionsBar: StoryObj = {
   render: () => (
-    <div className="max-w-5xl space-y-6 p-6">
-      <div className="grid gap-6 md:grid-cols-2">
-        <PlanOverview currentPlan={activePlan} onEditPlan={() => {}} />
-        <div className="border-muted bg-accent/5 flex h-full items-center justify-center rounded-3xl border border-dashed p-8">
-          <span className="text-muted-foreground">Stats Widget Placeholder</span>
-        </div>
-      </div>
-      <WeeklySchedule
-        plan={activePlan}
-        selectedWeek={1}
-        onWeekChange={() => {}}
-        onWorkoutClick={() => {}}
-      />
+    <div className="p-6">
+       <QuickActions
+            onCreatePlan={() => {}}
+            onSavePlan={() => {}}
+            onExportPlan={() => {}}
+            onPausePlan={() => {}}
+            isLoading={false}
+          />
     </div>
-  ),
+  )
 };
 
-export const WorkoutDetail: StoryObj<typeof WorkoutDetailSheet> = {
+export const Onboarding: StoryObj = {
+  render: () => (
+    <div className="h-screen w-full bg-background p-6">
+      <PlanOnboarding 
+        onGenerate={async () => new Promise(resolve => setTimeout(resolve, 2000))} 
+        onBrowse={() => {}}
+        isLoading={false}
+      />
+    </div>
+  )
+};
+
+export const WorkoutDetailModalStory: StoryObj<typeof WorkoutDetailSheet> = {
+  name: 'Workout Detail Sheet',
   render: () => (
     <WorkoutDetailSheet workout={mockWorkoutTemplate} open={true} onOpenChange={() => {}} />
   ),
 };
 
-export const PlanActions: StoryObj<typeof QuickActions> = {
-  render: () => (
-    <div className="max-w-md p-4">
-      <QuickActions
-        onCreatePlan={() => {}}
-        onSavePlan={() => {}}
-        onExportPlan={() => {}}
-        isLoading={false}
-        onPausePlan={() => {}}
-      />
-    </div>
-  ),
-};
+export const PlanPreviewStory: StoryObj = {
+  name: 'Plan Preview',
+  render: () => {
+    const mockPreviewData = {
+      planId: 'generated-plan-123',
+      name: 'Strength & Hypertrophy',
+      durationWeeks: 8,
+      workoutsPerWeek: 4,
+      preview: {
+        weekNumber: 1,
+        workouts: [
+          { day: 'Mon', summary: 'Upper Body Power', type: 'strength' },
+          { day: 'Tue', summary: 'Lower Body Hypertrophy', type: 'hypertrophy' },
+          { day: 'Thu', summary: 'Active Recovery', type: 'cardio' },
+          { day: 'Fri', summary: 'Full Body Circuit', type: 'conditioning' },
+        ],
+      },
+    };
 
-const mockSuggestions = [
-  {
-    id: '1',
-    title: 'Hypertrophy Focus',
-    category: 'Muscle Building',
-    rating: 4.8,
-    duration: '12 Weeks',
-    users: '2.5k',
-    image: <Dumbbell />,
+    return (
+      <div className="bg-background min-h-screen">
+        <PlanPreview
+          planData={mockPreviewData}
+          onActivate={(id) => console.log('Activate', id)}
+          onCancel={() => console.log('Cancel')}
+          isLoading={false}
+        />
+      </div>
+    );
   },
-  {
-    id: '2',
-    title: 'Fat Loss Accelerator',
-    category: 'Weight Loss',
-    rating: 4.6,
-    duration: '8 Weeks',
-    users: '5k',
-    image: <Activity />,
-  },
-];
-
-export const OnboardingHero: StoryObj<typeof PlanOnboarding> = {
-  render: () => (
-    <div className="bg-background min-h-screen">
-      <PlanOnboarding onGenerate={() => {}} onBrowse={() => {}} isLoading={false} />
-    </div>
-  ),
-};
-
-export const GoalSelection: StoryObj<typeof GoalSelectionForm> = {
-  render: () => (
-    <div className="container mx-auto max-w-3xl p-6">
-      <GoalSelectionForm onGenerate={(data) => console.log(data)} isLoading={false} />
-    </div>
-  ),
-};
-
-export const SuggestionsList: StoryObj<typeof PlanSuggestions> = {
-  render: () => (
-    <div className="max-w-4xl p-6">
-      <PlanSuggestions
-        suggestions={mockSuggestions}
-        onSelectPlan={(id) => alert(`Selected ${id}`)}
-      />
-    </div>
-  ),
-};
-
-export const SuggestionsViewFull: StoryObj<typeof SuggestionsView> = {
-  render: () => (
-    <div className="max-w-4xl">
-      <SuggestionsView
-        planSuggestions={[
-          {
-            id: '1',
-            name: 'Hypertrophy Focus',
-            difficulty: 'Intermediate',
-            duration: '12 Weeks',
-            category: 'Muscle Building',
-          },
-          {
-            id: '2',
-            name: 'Marathon Prep',
-            difficulty: 'Advanced',
-            duration: '16 Weeks',
-            category: 'Endurance',
-          },
-        ]}
-        onCreatePlan={() => {}}
-        onSavePlan={() => {}}
-        onExportPlan={() => {}}
-      />
-    </div>
-  ),
-};
-
-export const WorkoutModal: StoryObj<typeof WorkoutDetailModal> = {
-  render: () => (
-    <WorkoutDetailModal
-      isOpen={true}
-      onClose={() => {}}
-      workout={activePlan.weeks[1].workouts[2]} // Scheduled workout
-      onStart={() => {}}
-      onSkip={() => {}}
-    />
-  ),
-};
-
-export const WorkoutModalCompleted: StoryObj<typeof WorkoutDetailModal> = {
-  render: () => (
-    <WorkoutDetailModal
-      isOpen={true}
-      onClose={() => {}}
-      workout={activePlan.weeks[0].workouts[0]} // Completed workout
-      onStart={() => {}}
-      onSkip={() => {}}
-    />
-  ),
 };

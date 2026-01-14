@@ -1,25 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, ProgressBar,typography } from '@/lib/components';
-import { CheckCircle2, ChevronRight, Trophy, AlertTriangle } from 'lucide-react';
-import type { WorkoutSession, WorkoutActivity } from '@bene/shared';
-import SessionHeader from './_components/session-header';
-import ActivityPhase from './_components/activity-phase';
-import RestTimer from './_components/rest-timer';
+import { ChevronRight, Trophy } from 'lucide-react';
+import type { WorkoutSession } from '@bene/shared';
+import { Button, typography } from '@/lib/components';
+import {SessionHeader} from './_components/session-header';
+import {ActivityPhase }from './_components/activity-phase';
+import {RestTimer }from './_components/rest-timer';
 
+interface SetPerformanceData {
+  reps: number;
+  weight: number;
+  rpe?: number;
+}
 
 interface SessionViewProps {
   session: WorkoutSession;
-  onComplete: (_performance: any) => void;
+  onComplete: (_data: {
+    elapsedSeconds: number;
+    activityPerformance: SetPerformanceData[][][];
+  }) => void;
   onAbort: () => void;
 }
 
-export default function SessionView({ session, onComplete, onAbort }: SessionViewProps) {
+export default function SessionView({ session, onComplete, onAbort }: Readonly<SessionViewProps>) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [completedActivities, setCompletedActivities] = useState<number[]>([]);
-  const [activityPerformance, setActivityPerformance] = useState<any[][][]>(
+  const [activityPerformance, setActivityPerformance] = useState<SetPerformanceData[][][]>(
     session.activities.map((a) => (a.structure?.exercises || []).map(() => [])),
   );
   const [isResting, setIsResting] = useState(false);
@@ -36,10 +44,10 @@ export default function SessionView({ session, onComplete, onAbort }: SessionVie
     activityIdx: number,
     exerciseIdx: number,
     setIdx: number,
-    data: any,
+    data: SetPerformanceData,
   ) => {
     setActivityPerformance((prev) => {
-      const next = [...prev] as any;
+      const next = [...prev];
       const activity = [...(next[activityIdx] || [])];
       const exercise = [...(activity[exerciseIdx] || [])];
       exercise[setIdx] = data;
@@ -79,7 +87,6 @@ export default function SessionView({ session, onComplete, onAbort }: SessionVie
   };
 
   const totalPhases = session.activities.length;
-  const currentActivity = session.activities[currentActivityIndex];
 
   return (
     <div className="bg-background min-h-screen pb-40">
