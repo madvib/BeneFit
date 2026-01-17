@@ -16,10 +16,15 @@ import {
 } from '@bene/coach-domain';
 import { handleResult } from '../lib/handle-result';
 
+// Export client schemas (userId omitted) for use in fixtures
+export const SendMessageToCoachClientSchema = SendMessageToCoachRequestSchema.omit({ userId: true });
+export const DismissCheckInClientSchema = DismissCheckInRequestSchema.omit({ userId: true });
+export const RespondToCheckInClientSchema = RespondToCheckInRequestSchema.omit({ userId: true });
+
 export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .post(
     '/message',
-    zValidator('json', SendMessageToCoachRequestSchema.omit({ userId: true })),
+    zValidator('json', SendMessageToCoachClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -69,7 +74,7 @@ export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>
   })
   .post(
     '/check-in/dismiss',
-    zValidator('json', DismissCheckInRequestSchema.omit({ userId: true })),
+    zValidator('json', DismissCheckInClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -91,7 +96,7 @@ export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>
 
   .post(
     '/check-in/respond',
-    zValidator('json', RespondToCheckInRequestSchema.omit({ userId: true })),
+    zValidator('json', RespondToCheckInClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

@@ -1,4 +1,4 @@
-interface ServicePermissionsData {
+export interface ServicePermissionsData {
   readWorkouts: boolean;
   readHeartRate: boolean;
   readSleep: boolean;

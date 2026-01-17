@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { UserProfile, TrainingConstraints } from '@bene/training-core';
+import { UserProfile, TrainingConstraints, PlanGoalsSchema } from '@bene/training-core';
 import {
   FitnessPlanRepository,
   UserProfileRepository,
@@ -9,9 +9,12 @@ import {
   AIPlanGenerator,
   GeneratePlanInput,
 } from '../../services/ai-plan-generator.js';
-import { PlanGoalsSchema } from '@bene/shared';
 import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
-import { toDomainPlanGoals } from '../../mappers/index.js';
+
+// Helper function to convert from schema format to domain format (pass-through for now)
+const toDomainPlanGoals = (goals: any) => goals;
+
+
 
 // Single request schema with ALL fields
 export const GeneratePlanFromGoalsRequestSchema = z.object({
@@ -30,21 +33,21 @@ export type GeneratePlanFromGoalsRequest = z.infer<
 
 // Zod schema for response validation
 const WorkoutPreviewSchema = z.object({
-  day: z.string(),
-  type: z.string(),
-  summary: z.string(),
+  day: z.string().min(1).max(20),
+  type: z.string().min(1).max(50),
+  summary: z.string().min(1).max(200),
 });
 
 const PreviewSchema = z.object({
-  weekNumber: z.number(),
+  weekNumber: z.number().int().min(1).max(52),
   workouts: z.array(WorkoutPreviewSchema),
 });
 
 export const GeneratePlanFromGoalsResponseSchema = z.object({
   planId: z.string(),
-  name: z.string(),
-  durationWeeks: z.number(),
-  workoutsPerWeek: z.number(),
+  name: z.string().min(1).max(100),
+  durationWeeks: z.number().int().min(1).max(52),
+  workoutsPerWeek: z.number().int().min(1).max(7),
   preview: PreviewSchema,
 });
 

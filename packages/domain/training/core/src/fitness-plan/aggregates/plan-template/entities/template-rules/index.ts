@@ -7,3 +7,4 @@ export type {
   CustomizableParameter,
 } from './template-rules.types.js';
 export { createTemplateRules } from './template-rules.factory.js';
+export * from './test/template-rules.fixtures.js';

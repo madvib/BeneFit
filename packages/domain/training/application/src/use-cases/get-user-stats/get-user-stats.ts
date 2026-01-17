@@ -15,20 +15,20 @@ export type GetUserStatsRequest = z.infer<typeof GetUserStatsRequestSchema>;
 // Zod schema for response validation
 const AchievementSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().min(1).max(100),
   earnedAt: z.date(),
 });
 
 export const GetUserStatsResponseSchema = z.object({
-  totalWorkouts: z.number(),
-  totalMinutes: z.number(),
-  totalVolume: z.number(),
-  currentStreak: z.number(),
-  longestStreak: z.number(),
+  totalWorkouts: z.number().int().min(0).max(100000),
+  totalMinutes: z.number().int().min(0).max(1000000),
+  totalVolume: z.number().min(0).max(10000000),
+  currentStreak: z.number().int().min(0).max(1000),
+  longestStreak: z.number().int().min(0).max(1000),
   lastWorkoutDate: z.date().optional(),
   achievements: z.array(AchievementSchema),
   streakActive: z.boolean(),
-  daysSinceLastWorkout: z.number().nullable(),
+  daysSinceLastWorkout: z.number().int().min(0).max(10000).nullable(),
 });
 
 // Zod inferred type with original name

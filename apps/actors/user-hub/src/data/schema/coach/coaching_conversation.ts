@@ -1,29 +1,32 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
+import { CoachContext } from '@bene/coach-domain';
+
 export const coachingConversation = sqliteTable('coaching_conversation', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull(),
 
   // Context snapshot
-  contextJson: text('context_json', { mode: 'json' }), // CoachContext
+  contextJson: text('context_json', { mode: 'json' }).notNull().$type<CoachContext>(),
 
   // Message counters
-  totalMessages: integer('total_messages').default(0),
-  totalUserMessages: integer('total_user_messages').default(0),
-  totalCoachMessages: integer('total_coach_messages').default(0),
+  totalMessages: integer('total_messages').default(0).notNull(),
+  totalUserMessages: integer('total_user_messages').default(0).notNull(),
+  totalCoachMessages: integer('total_coach_messages').default(0).notNull(),
 
   // Check-in counters
-  totalCheckIns: integer('total_check_ins').default(0),
-  pendingCheckIns: integer('pending_check_ins').default(0),
+  totalCheckIns: integer('total_check_ins').default(0).notNull(),
+  pendingCheckIns: integer('pending_check_ins').default(0).notNull(),
 
   // Timestamps
-  startedAt: integer('started_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`),
-  lastMessageAt: integer('last_message_at', { mode: 'timestamp' }).default(
-    sql`(unixepoch())`,
-  ),
-  lastContextUpdateAt: integer('last_context_update_at', { mode: 'timestamp' }),
+  startedAt: integer('started_at', { mode: 'timestamp_ms' })
+    .default(sql`(unixepoch() * 1000)`)
+    .notNull(),
+  lastMessageAt: integer('last_message_at', { mode: 'timestamp_ms' })
+    .default(sql`(unixepoch() * 1000)`)
+    .notNull(),
+  lastContextUpdateAt: integer('last_context_update_at', { mode: 'timestamp_ms' }).notNull(),
 
   // Note: Messages are in separate coaching_messages table
   // Note: Check-ins are in separate check_ins table

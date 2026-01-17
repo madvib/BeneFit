@@ -65,8 +65,7 @@ export type {
   GetCurrentPlanResponse,
 } from './use-cases/get-current-plan/get-current-plan.js';
 export {
-  GetCurrentPlanRequestSchema,
-  GetCurrentPlanResponseSchema,
+  GetCurrentPlanRequestSchema
 } from './use-cases/get-current-plan/get-current-plan.js';
 
 // Profile module exports

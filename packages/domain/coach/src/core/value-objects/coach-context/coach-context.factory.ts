@@ -54,7 +54,7 @@ export function createCoachContext(props: {
     daysIntoCurrentWeek: props.daysIntoCurrentWeek,
     workoutsThisWeek: props.workoutsThisWeek,
     plannedWorkoutsThisWeek: props.plannedWorkoutsThisWeek,
-    reportedInjuries: props.reportedInjuries,
+    reportedInjuries: props.reportedInjuries || [],
     energyLevel: props.energyLevel,
     stressLevel: props.stressLevel,
     sleepQuality: props.sleepQuality,

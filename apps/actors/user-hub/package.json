@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "schema:generate": "drizzle-kit generate --config=drizzle.config.ts",
-    "db:studio": "drizzle-kit studio --config=drizzle.config.ts"
+    "db:studio": "drizzle-kit studio --config=drizzle.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@bene/coach-domain": "workspace:*",

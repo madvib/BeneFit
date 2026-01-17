@@ -59,9 +59,9 @@ describe('SendMessageToCoachUseCase', () => {
         userConstraints: {
           availableDays: [],
           availableEquipment: [],
-          location: 'home',
+          location: 'home' as const,
         },
-        experienceLevel: 'beginner',
+        experienceLevel: 'beginner' as const,
         trends: {
           volumeTrend: 'stable',
           adherenceTrend: 'stable',
@@ -91,18 +91,19 @@ describe('SendMessageToCoachUseCase', () => {
         'I understand you need help with your workout plan. Can you tell me more about your goals?',
       actions: [
         {
-          type: 'schedule_workout',
+          type: 'schedule_workout' as const,
           details: 'Schedule a strength workout for tomorrow',
+          appliedAt: new Date(),
         },
       ] as CoachAction[],
       suggestedFollowUps: ['What are your specific goals?'],
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.getResponse.mockResolvedValue(Result.ok(mockAIResponse));
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockAICoachService.getResponse).mockResolvedValue(Result.ok(mockAIResponse));
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -125,7 +126,7 @@ describe('SendMessageToCoachUseCase', () => {
     );
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'CoachMessageSent',
+        eventName: 'CoachMessageSent',
         userId,
         conversationId: 'conv-456',
       }),
@@ -137,20 +138,20 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'Hello coach!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.fail(new Error('Not found')),
     );
 
     const mockContext = {
       recentWorkouts: [],
       userGoals: {
-        primary: 'strength',
+        primary: 'strength' as const,
         secondary: [],
         motivation: 'test',
         successCriteria: [],
       },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
+      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' as const },
+      experienceLevel: 'beginner' as const,
       trends: {
         volumeTrend: 'stable',
         adherenceTrend: 'stable',
@@ -164,7 +165,7 @@ describe('SendMessageToCoachUseCase', () => {
       energyLevel: 'medium',
     };
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
 
     const mockAIResponse = {
       message:
@@ -173,8 +174,8 @@ describe('SendMessageToCoachUseCase', () => {
       suggestedFollowUps: [],
     };
 
-    mockAICoachService.getResponse.mockResolvedValue(Result.ok(mockAIResponse));
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockAICoachService.getResponse).mockResolvedValue(Result.ok(mockAIResponse));
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -193,10 +194,10 @@ describe('SendMessageToCoachUseCase', () => {
     const userId = 'user-123';
     const message = 'Hello coach!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.fail(new Error('Not found')),
     );
-    mockContextBuilder.buildContext.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(
       Result.fail(new Error('Failed to build coaching context')),
     );
 
@@ -210,7 +211,7 @@ describe('SendMessageToCoachUseCase', () => {
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.error).toBeInstanceOf(Error);
-      expect((result.error as Error).message).toBe('Failed to build coaching context');
+      expect((result.error as Error).message).toBe('Failed to build coaching context: Error: Failed to build coaching context');
     }
   });
 
@@ -260,10 +261,10 @@ describe('SendMessageToCoachUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.getResponse.mockResolvedValue(
+    vi.mocked(mockAICoachService.getResponse).mockResolvedValue(
       Result.fail(new Error('AI unavailable')),
     );
 

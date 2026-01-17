@@ -30,7 +30,7 @@ export interface ActivityPerformance {
 
 export type EnergyLevel = 'low' | 'medium' | 'high';
 export type DifficultyRating = 'too_easy' | 'just_right' | 'too_hard';
-interface WorkoutPerformanceData {
+export interface WorkoutPerformanceData {
   // Timing
   startedAt: Date;
   completedAt: Date;

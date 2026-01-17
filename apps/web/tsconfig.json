@@ -4,11 +4,7 @@
     "moduleResolution": "bundler",
     "module": "es2022",
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "react-jsx",
     "allowJs": true,
     "incremental": true,
@@ -22,14 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "types": [
-      "vitest/globals",
-      "@testing-library/jest-dom"
-    ]
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",
@@ -46,10 +37,5 @@
       "path": "../../packages/react-api-client"
     }
   ],
-  "exclude": [
-    "**/*.stories.ts",
-    "**/*.stories.js",
-    "**/*.stories.jsx",
-    "**/*.stories.tsx"
-  ]
+  "exclude": ["**/*.stories.ts", "**/*.stories.js", "**/*.stories.jsx", "**/*.stories.tsx"]
 }

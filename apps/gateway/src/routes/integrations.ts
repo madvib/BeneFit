@@ -12,10 +12,14 @@ import {
 } from '@bene/integrations-domain';
 import { handleResult } from '../lib/handle-result';
 
+// Export client schemas (userId omitted) for use in fixtures
+export const ConnectServiceClientSchema = ConnectServiceRequestSchema.omit({ userId: true });
+export const DisconnectServiceClientSchema = DisconnectServiceRequestSchema.omit({ userId: true });
+
 export const integrationRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .post(
     '/connect',
-    zValidator('json', ConnectServiceRequestSchema.omit({ userId: true })),
+    zValidator('json', ConnectServiceClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -36,7 +40,7 @@ export const integrationRoutes = new Hono<{ Bindings: Env; Variables: { user: an
   )
   .post(
     '/disconnect',
-    zValidator('json', DisconnectServiceRequestSchema.omit({ userId: true })),
+    zValidator('json', DisconnectServiceClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

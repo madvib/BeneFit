@@ -15,7 +15,7 @@ export interface SyncError {
   willRetryAt?: Date;
 }
 
-interface SyncStatusData {
+export interface SyncStatusData {
   state: SyncState;
   lastAttemptAt?: Date;
   lastSuccessAt?: Date;

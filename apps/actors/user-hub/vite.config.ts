@@ -3,9 +3,9 @@ import { cloudflare } from '@cloudflare/vite-plugin';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   envDir: '../../../',
-  plugins: [
+  plugins: mode === 'test' ? [viteTsConfigPaths()] : [
     cloudflare({
       persistState: { path: '../../../.wrangler/state' },
     }),
@@ -14,7 +14,7 @@ export default defineConfig({
       name: 'sql-loader',
       transform(code, id) {
         if (/[.]sql/i.test(id)) {
-          return `export default ${JSON.stringify(code)}`;
+          return `export default ${ JSON.stringify(code) }`;
         }
         return {
           code,
@@ -24,16 +24,17 @@ export default defineConfig({
     },
   ],
   resolve: {
-    // Handle @/* paths from your workspace packages
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
   optimizeDeps: {
-    // Don't pre-optimize workspace packages - bundle them directly
     exclude: ['cloudflare:*', '@bene/*'],
-
-    // Pre-optimize external deps
     include: ['agents', 'drizzle-orm'],
   },
-});
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['**/__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+  },
+}));

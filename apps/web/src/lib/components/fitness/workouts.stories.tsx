@@ -1,9 +1,8 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { mockDailyWorkout, mockWorkoutTemplate } from '@/lib/testing/fixtures';
 import { getActivityStatusConfig } from '@/lib/constants/training-ui';
-import { typography } from '../theme/typography/typography';
 import { Badge } from '@/lib/components';
+import { typography } from '../theme/typography/typography';
 import {
   WorkoutSummary,
   SkipWorkoutModal,
@@ -11,6 +10,78 @@ import {
   WorkoutDetailSheet,
   PerformanceForm,
 } from './index';
+
+import { fixtures } from '@bene/react-api-client';
+
+// Generate consistent workout data using fixtures
+const mockWorkoutResponse = fixtures.createGetUpcomingWorkoutsResponse(undefined, { seed: 100 });
+const baseWorkout = mockWorkoutResponse.workouts[0];
+
+// Adapt fixture to UI Model
+const mockDailyWorkout = {
+  id: baseWorkout.workoutId,
+  date: '2026-01-16',
+  title: 'Upper Body Power', // Not in fixture, manual add
+  type: baseWorkout.type as any,
+  status: baseWorkout.status as any,
+  duration: baseWorkout.durationMinutes,
+  activities: [ // Not in fixture, manual add for UI
+      { 
+        type: 'main', 
+        durationMinutes: 15 
+      },
+       { 
+        type: 'cooldown', 
+        durationMinutes: 5 
+      }
+  ],
+  exercises: [
+    { name: 'Bench Press', sets: 4, reps: 5, weight: 100 },
+    { name: 'Overhead Press', sets: 3, reps: 8, weight: 60 },
+  ],
+} as any;
+
+const mockWorkoutTemplate = {
+  id: 'template-1',
+  weekNumber: 1,
+  dayOfWeek: 1,
+  scheduledDate: '2026-01-16',
+  title: 'Upper Body Strength',
+  type: 'strength',
+  category: 'strength' as const,
+  goals: {
+    volume: {
+      totalSets: 12,
+      totalReps: 60,
+      targetWeight: 'moderate' as const,
+    },
+    completionCriteria: {
+      mustComplete: true,
+      minimumEffort: 80,
+      autoVerifiable: false,
+    },
+  },
+  activities: [
+    {
+      name: 'Bench Press',
+      type: 'main' as const,
+      order: 1,
+      structure: {
+        exercises: [
+          {
+            name: 'Bench Press',
+            sets: 4,
+            reps: 8,
+            weight: 100,
+            rest: 120,
+          },
+        ],
+      },
+    },
+  ],
+  status: 'scheduled' as const,
+  importance: 'key' as const,
+};
 
 const meta: Meta = {
   title: 'Components/Fitness/Workouts',
@@ -99,3 +170,4 @@ export const RpeSelection: StoryObj = {
     );
   },
 };
+

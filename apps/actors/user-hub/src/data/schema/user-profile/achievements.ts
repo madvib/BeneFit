@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
+import { AchievementType } from '@bene/training-core';
 import { profile } from './profile';
 
 export const achievements = sqliteTable(
@@ -12,17 +13,7 @@ export const achievements = sqliteTable(
     name: text('name').notNull(),
     description: text('description').notNull(),
     iconUrl: text('icon_url'),
-    achievementType: text('achievement_type', {
-      enum: [
-        'first_workout',
-        'streak_7',
-        'streak_30',
-        'pr_strength',
-        'pr_distance',
-        '100_workouts',
-        'plan_completed',
-      ],
-    }).notNull(),
+    achievementType: text('achievement_type').notNull().$type<AchievementType>(),
     earnedAt: integer('earned_at', { mode: 'timestamp' })
       .default(sql`(unixepoch())`)
       .notNull(),

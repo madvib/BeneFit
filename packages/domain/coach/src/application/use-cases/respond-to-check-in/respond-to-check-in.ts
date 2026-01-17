@@ -1,10 +1,11 @@
+
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
-import { AICoachService } from '@app/services/index.js';
-import { CheckInRespondedEvent, CoachActionPerformedEvent } from '@app/events/index.js';
-
+import { CoachConversationCommands } from '../../../core/index.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { AICoachService } from '../../services/index.js';
+import { CheckInRespondedEvent } from '../../events/check-in-responded.event.js';
+import { CoachActionPerformedEvent } from '../../events/coach-action-performed.event.js';
 
 
 // Single request schema with ALL fields
@@ -20,13 +21,13 @@ export const RespondToCheckInRequestSchema = z.object({
 export type RespondToCheckInRequest = z.infer<typeof RespondToCheckInRequestSchema>;
 
 const ActionSchema = z.object({
-  type: z.string(),
-  details: z.string(),
+  type: z.string().min(1).max(50),
+  details: z.string().min(1).max(1000),
 });
 
 export const RespondToCheckInResponseSchema = z.object({
   conversationId: z.string(),
-  coachAnalysis: z.string(),
+  coachAnalysis: z.string().min(1).max(2000),
   actions: z.array(ActionSchema),
 });
 

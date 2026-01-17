@@ -30,7 +30,7 @@ export interface CoachPreferences {
   receiveFormTips: boolean;
 }
 
-interface UserPreferencesData {
+export interface UserPreferencesData {
   // UI
   theme: Theme;
   units: Units;

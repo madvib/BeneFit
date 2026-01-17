@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { FitnessPlanQueries } from '@bene/training-core';
-import { Result, BaseUseCase, UpcomingWorkoutSchema } from '@bene/shared';
+import { Result, BaseUseCase } from '@bene/shared';
+// TODO: Create UpcomingWorkoutSchema in training-core
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 
 // Single request schema with ALL fields
@@ -16,6 +17,14 @@ export const GetUpcomingWorkoutsRequestSchema = z.object({
 export type GetUpcomingWorkoutsRequest = z.infer<
   typeof GetUpcomingWorkoutsRequestSchema
 >;
+
+const UpcomingWorkoutSchema = z.object({
+  workoutId: z.string(),
+  day: z.string().min(1).max(20),
+  type: z.string().min(1).max(50),
+  status: z.string().min(1).max(20),
+  durationMinutes: z.number().int().min(1).max(480),
+});
 
 export const GetUpcomingWorkoutsResponseSchema = z.object({
   workouts: z.array(UpcomingWorkoutSchema),

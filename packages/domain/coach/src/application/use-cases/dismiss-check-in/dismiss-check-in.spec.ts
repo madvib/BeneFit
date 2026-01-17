@@ -98,7 +98,7 @@ describe('DismissCheckInUseCase', () => {
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'CheckInDismissed',
+        eventName: 'CheckInDismissed',
         userId,
         checkInId,
       }),

@@ -19,10 +19,10 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
     sessionRepo = {
       findById: vi.fn(),
       save: vi.fn().mockResolvedValue(Result.ok()),
-    };
+    } as any;
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
-    };
+    } as any;
 
     useCase = new JoinMultiplayerWorkoutUseCase(sessionRepo, eventBus);
   });
@@ -36,7 +36,7 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
       activities: [{ activityType: 'run', instructions: 'Run' }],
       currentActivityIndex: 0,
     };
-    sessionRepo.findById.mockResolvedValue(Result.ok(mockSession));
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
     vi.mocked(workoutsDomain.WorkoutSessionCommands.joinSession).mockReturnValue(
       Result.ok({
         ...mockSession,
@@ -56,13 +56,13 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
     expect(sessionRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'UserJoinedWorkout',
+        eventName: 'UserJoinedWorkout',
       }),
     );
   });
 
   it('should fail if session not found', async () => {
-    sessionRepo.findById.mockResolvedValue(Result.fail('Not found'));
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
       userId: 'user-2',
@@ -81,7 +81,7 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
       id: 'session-1',
       configuration: { isMultiplayer: false },
     };
-    sessionRepo.findById.mockResolvedValue(Result.ok(mockSession));
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
 
     const request = {
       userId: 'user-2',
@@ -101,7 +101,7 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
       ownerId: 'user-1',
       configuration: { isMultiplayer: true, isPublic: false },
     };
-    sessionRepo.findById.mockResolvedValue(Result.ok(mockSession));
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
 
     const request = {
       userId: 'user-2',

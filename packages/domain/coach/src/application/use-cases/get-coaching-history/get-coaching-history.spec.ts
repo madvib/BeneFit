@@ -9,7 +9,7 @@ const mockConversationRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   save: vi.fn(),
-} as unknown as CoachConversationRepository;
+} as any;
 
 describe('GetCoachHistoryUseCase', () => {
   let useCase: GetCoachHistoryUseCase;
@@ -80,7 +80,7 @@ describe('GetCoachHistoryUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 
@@ -109,9 +109,9 @@ describe('GetCoachHistoryUseCase', () => {
     const messages: CoachMsg[] = [];
     for (let i = 0; i < 10; i++) {
       messages.push({
-        id: `msg-${i}`,
+        id: `msg-${ i }`,
         role: i % 2 === 0 ? 'user' : 'coach',
-        content: `Message ${i}`,
+        content: `Message ${ i }`,
         timestamp: new Date(),
       } as CoachMsg);
     }
@@ -166,7 +166,7 @@ describe('GetCoachHistoryUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 
@@ -188,8 +188,8 @@ describe('GetCoachHistoryUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
-      Result.fail(new Error('Not found')),
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.fail(new Error('No coaching history found')),
     );
 
     // Act

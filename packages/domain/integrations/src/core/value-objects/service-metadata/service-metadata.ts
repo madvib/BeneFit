@@ -1,4 +1,4 @@
-interface ServiceMetadataData {
+export interface ServiceMetadataData {
   // User's profile in that service
   externalUserId?: string;
   externalUsername?: string;

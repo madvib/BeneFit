@@ -1,21 +1,18 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
-  createUserProfile
-
-} from '@bene/training-core';
-import {
+  createUserProfile,
   ExperienceProfileSchema,
   FitnessGoalsSchema,
   TrainingConstraintsSchema,
-} from '@bene/shared';
+  fromExperienceProfileSchema,
+  fromFitnessGoalsSchema,
+  fromTrainingConstraintsSchema,
+} from '@bene/training-core';
+
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { ProfileCreatedEvent } from '../../events/profile-created.event.js';
-import {
-  toDomainExperienceProfile,
-  toDomainFitnessGoals,
-  toDomainTrainingConstraints,
-} from '../../mappers/index.js';
+
 
 
 // Single request schema with ALL fields (client data + server context)
@@ -69,9 +66,9 @@ export class CreateUserProfileUseCase extends BaseUseCase<
       userId: request.userId,
       displayName: request.displayName,
       timezone: request.timezone,
-      experienceProfile: toDomainExperienceProfile(request.experienceProfile),
-      fitnessGoals: toDomainFitnessGoals(request.fitnessGoals),
-      trainingConstraints: toDomainTrainingConstraints(request.trainingConstraints),
+      experienceProfile: fromExperienceProfileSchema(request.experienceProfile),
+      fitnessGoals: fromFitnessGoalsSchema(request.fitnessGoals),
+      trainingConstraints: fromTrainingConstraintsSchema(request.trainingConstraints),
       avatar: request.avatar,
       bio: request.bio,
       location: request.location,

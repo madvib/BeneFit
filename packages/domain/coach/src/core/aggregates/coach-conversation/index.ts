@@ -5,3 +5,6 @@ export { createCoachConversation } from './coach-conversation.factory.js';
 
 export * as CoachConversationCommands from './coach-conversation.commands.js';
 export * as CoachConversationQueries from './coach-conversation.queries.js';
+
+export * from './coach-conversation.presentation.js';
+export { createCoachConversationFixture } from './test/coach-conversation.fixtures.js';

@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase, FitnessGoalsSchema, type FitnessGoals } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase } from '@bene/shared';
+import type { FitnessGoals } from '@bene/training-core';
+import { FitnessGoalsSchema, toFitnessGoalsSchema } from '@bene/training-core';
 import { UserProfileCommands } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { FitnessGoalsUpdatedEvent } from '../../events/fitness-goals-updated.event.js';
-import { toDomainFitnessGoals } from '../../mappers/index.js';
 
 // Single request schema with ALL fields
 export const UpdateFitnessGoalsRequestSchema = z.object({
@@ -11,7 +12,7 @@ export const UpdateFitnessGoalsRequestSchema = z.object({
   userId: z.string(),
 
   // Client data
-  goals: FitnessGoalsSchema,
+  goals: z.unknown(),
 });
 
 export type UpdateFitnessGoalsRequest = {
@@ -22,7 +23,7 @@ export type UpdateFitnessGoalsRequest = {
 
 export const UpdateFitnessGoalsResponseSchema = z.object({
   userId: z.string(),
-  goals: FitnessGoalsSchema, // Using proper schema instead of z.unknown()
+  goals: FitnessGoalsSchema,
   suggestNewPlan: z.boolean(), // Should we suggest regenerating their plan?
 });
 
@@ -54,10 +55,10 @@ export class UpdateFitnessGoalsUseCase extends BaseUseCase<
     // 2. Check if goals changed significantly
     const primaryGoalChanged = profile.fitnessGoals.primary !== request.goals.primary;
 
-    // 3. Update goals using command
+    // 3. Update goals using command - request.goals is already in domain format
     const updatedProfileResult = UserProfileCommands.updateFitnessGoals(
       profile,
-      toDomainFitnessGoals(request.goals),
+      request.goals as FitnessGoals,
     );
     if (updatedProfileResult.isFailure) {
       return Result.fail(updatedProfileResult.error);
@@ -79,7 +80,7 @@ export class UpdateFitnessGoalsUseCase extends BaseUseCase<
 
     return Result.ok({
       userId: request.userId,
-      goals: request.goals,
+      goals: toFitnessGoalsSchema(updatedProfile.fitnessGoals),
       suggestNewPlan: primaryGoalChanged,
     });
   }

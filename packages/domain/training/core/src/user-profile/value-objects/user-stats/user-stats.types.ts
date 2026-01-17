@@ -17,9 +17,18 @@ export interface UserStats {
   joinedAt: Date;
 }
 
+export type AchievementType =
+  | 'first_workout'
+  | 'streak_7'
+  | 'streak_30'
+  | 'pr_strength'
+  | 'pr_distance'
+  | '100_workouts'
+  | 'plan_completed';
+
 interface AchievementData {
   id: string;
-  type: string; // "first_workout", "10_workouts", "30_day_streak", etc.
+  type: AchievementType;
   name: string;
   description: string;
   earnedAt: Date;

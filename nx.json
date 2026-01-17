@@ -15,7 +15,7 @@
     },
     {
       "plugin": "@nx/js/typescript",
-      "include": ["packages/**", "tools/**"],
+      "include": ["packages/**", "tools/**", "apps/**"],
       "options": {
         "build": false,
         "typecheck": {

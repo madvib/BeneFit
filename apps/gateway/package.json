@@ -17,10 +17,11 @@
     "user_auth:seed": "tsx src/lib/better-auth/seed_user_auth.ts"
   },
   "dependencies": {
-    "@bene/shared": "workspace:*",
-    "@bene/training-application": "workspace:*",
     "@bene/coach-domain": "workspace:*",
     "@bene/integrations-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
+    "@bene/training-application": "workspace:*",
+     "@bene/training-core": "workspace:*",
     "@hono/zod-validator": "0.7.5",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
@@ -32,12 +33,23 @@
       "build-client": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "tsc --project tsconfig.client.json",
+          "commands": [
+            "tsx scripts/generate-domain-fixtures.ts",
+            "tsx scripts/build-client.ts"
+          ],
+          "parallel": false,
           "cwd": "apps/gateway"
         },
         "outputs": [
           "{workspaceRoot}/packages/api-client/src/generated"
         ]
+      },
+      "test": {
+        "executor": "@nx/vite:test",
+        "options": {
+          "passWithNoTests": true,
+          "reportsDirectory": "../../coverage/apps/gateway"
+        }
       }
     },
     "tags": [
@@ -46,5 +58,8 @@
       "layer:api",
       "runtime:worker"
     ]
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.2.0"
   }
 }

@@ -16,6 +16,12 @@ import {
 } from '@bene/training-application';
 import { handleResult } from '../lib/handle-result';
 
+// Export client schemas (userId omitted) for use in fixtures
+export const CreateUserProfileClientSchema = CreateUserProfileRequestSchema.omit({ userId: true });
+export const UpdateFitnessGoalsClientSchema = UpdateFitnessGoalsRequestSchema.omit({ userId: true });
+export const UpdatePreferencesClientSchema = UpdatePreferencesRequestSchema.omit({ userId: true });
+export const UpdateTrainingConstraintsClientSchema = UpdateTrainingConstraintsRequestSchema.omit({ userId: true });
+
 export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
   .get('/', async (c) => {
     const user = c.get('user');
@@ -32,7 +38,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
 
     return handleResult<GetProfileResponse>(result, c);
   })
-  .post('/', zValidator('json', CreateUserProfileRequestSchema.omit({ userId: true })), async (c) => {
+  .post('/', zValidator('json', CreateUserProfileClientSchema), async (c) => {
     const user = c.get('user');
     const clientInput = c.req.valid('json');
 
@@ -50,7 +56,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
   })
   .patch(
     '/goals',
-    zValidator('json', UpdateFitnessGoalsRequestSchema.omit({ userId: true })),
+    zValidator('json', UpdateFitnessGoalsClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');
@@ -71,7 +77,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
   )
   .patch(
     '/preferences',
-    zValidator('json', UpdatePreferencesRequestSchema.omit({ userId: true })),
+    zValidator('json', UpdatePreferencesClientSchema),
 
     async (c) => {
       const user = c.get('user');
@@ -108,7 +114,7 @@ export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } 
   })
   .patch(
     '/constraints',
-    zValidator('json', UpdateTrainingConstraintsRequestSchema.omit({ userId: true })),
+    zValidator('json', UpdateTrainingConstraintsClientSchema),
     async (c) => {
       const user = c.get('user');
       const clientInput = c.req.valid('json');

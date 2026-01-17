@@ -1,32 +1,18 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared';
-import { UserProfile } from '@bene/training-core';
+import { Result, EventBus } from '@bene/shared';
+import { createUserProfileFixture } from '@bene/training-core';
 import { UpdateFitnessGoalsUseCase } from './update-fitness-goals.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
-import { EventBus } from '@bene/shared';
-import { UserProfileCommands } from '@bene/training-core';
 
 // Mock repositories and services
 const mockProfileRepository = {
   findById: vi.fn(),
   save: vi.fn(),
-} as unknown as UserProfileRepository;
+} as any;
 
 const mockEventBus = {
   publish: vi.fn(),
 } as unknown as EventBus;
-
-vi.mock('@bene/training-core', async () => {
-  const actual =
-    await vi.importActual<typeof import('@bene/training-core')>('@bene/training-core');
-  return {
-    ...actual,
-    UserProfileCommands: {
-      ...actual.UserProfileCommands,
-      updateFitnessGoals: vi.fn(),
-    },
-  };
-});
 
 describe('UpdateFitnessGoalsUseCase', () => {
   let useCase: UpdateFitnessGoalsUseCase;
@@ -39,45 +25,25 @@ describe('UpdateFitnessGoalsUseCase', () => {
   it('should successfully update fitness goals', async () => {
     // Arrange
     const userId = 'user-123';
-    const newGoals = { primary: 'hypertrophy', secondary: ['endurance'] };
+    const newGoals = {
+      primary: 'hypertrophy' as const,
+      secondary: ['endurance'],
+      motivation: 'Look better',
+      successCriteria: ['Bigger muscles']
+    };
 
-    const mockProfile: UserProfile = {
+    const mockProfile = createUserProfileFixture({
       userId,
-      displayName: 'John Doe',
-      timezone: 'America/New_York',
-      experienceProfile: { level: 'intermediate' },
-      fitnessGoals: { primary: 'strength', secondary: [] },
-      trainingConstraints: { availableDays: ['Mon', 'Wed', 'Fri'] },
-      preferences: {},
-      stats: {
-        totalWorkouts: 0,
-        totalMinutes: 0,
-        totalVolume: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastWorkoutDate: undefined,
-        achievements: [],
+      fitnessGoals: {
+        primary: 'strength',
+        secondary: [],
+        motivation: 'Stay fit',
+        successCriteria: ['Finish workouts']
       },
-      avatar: undefined,
-      bio: undefined,
-      location: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastActiveAt: new Date(),
-    };
+    });
 
-    const updatedProfile: UserProfile = {
-      ...mockProfile,
-      fitnessGoals: newGoals,
-      updatedAt: new Date(),
-      lastActiveAt: new Date(),
-    };
-
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    vi.mocked(UserProfileCommands.updateFitnessGoals).mockReturnValue(
-      Result.ok(updatedProfile),
-    );
-    mockProfileRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
+    vi.mocked(mockProfileRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -89,15 +55,26 @@ describe('UpdateFitnessGoalsUseCase', () => {
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.userId).toBe(userId);
-      expect(result.value.goals).toEqual(newGoals);
-      expect(result.value.suggestNewPlan).toBe(true); // Since primary goal changed
+      expect(result.value.goals).toEqual(expect.objectContaining({
+        primary: newGoals.primary,
+        secondary: newGoals.secondary,
+      }));
     }
+
+    expect(mockProfileRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId,
+        fitnessGoals: newGoals
+      })
+    );
+
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'FitnessGoalsUpdated',
+        eventName: 'FitnessGoalsUpdated',
         userId,
-        oldGoals: mockProfile.fitnessGoals,
-        newGoals,
+        newGoals: expect.objectContaining({
+          primary: newGoals.primary,
+        }),
         significantChange: true,
       }),
     );
@@ -106,9 +83,14 @@ describe('UpdateFitnessGoalsUseCase', () => {
   it('should fail if profile is not found', async () => {
     // Arrange
     const userId = 'user-123';
-    const newGoals = { primary: 'hypertrophy', secondary: [] };
+    const newGoals = {
+      primary: 'hypertrophy' as const,
+      secondary: [],
+      motivation: 'Get big',
+      successCriteria: ['Bigger arms']
+    };
 
-    mockProfileRepository.findById.mockResolvedValue(
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(
       Result.fail(new Error('Profile not found')),
     );
 

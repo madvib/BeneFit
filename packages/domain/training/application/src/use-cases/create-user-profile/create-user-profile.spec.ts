@@ -4,7 +4,7 @@ import { UserProfile } from '@bene/training-core';
 import { CreateUserProfileUseCase } from './create-user-profile.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { EventBus } from '@bene/shared';
-import { createUserProfile } from '@bene/training-core';
+import { createUserProfile, createUserProfileFixture } from '@bene/training-core';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -40,65 +40,42 @@ describe('CreateUserProfileUseCase', () => {
       userId,
       displayName: 'John Doe',
       timezone: 'America/New_York',
-      experienceProfile: { level: 'intermediate' },
-      fitnessGoals: { primary: 'strength', secondary: [] },
-      trainingConstraints: { availableDays: ['Mon', 'Wed', 'Fri'] },
-      bio: 'Fitness enthusiast',
-    };
-
-    const mockProfile: UserProfile = {
-      userId,
-      displayName: 'John Doe',
-      timezone: 'America/New_York',
       experienceProfile: {
-        level: 'intermediate',
-        history: undefined,
-        capabilities: undefined,
-        lastAssessmentDate: undefined,
+        level: 'intermediate' as const,
+        history: { previousPrograms: [], sports: [], certifications: [] },
+        capabilities: {
+          canDoFullPushup: true,
+          canDoFullPullup: false,
+          canRunMile: true,
+          canSquatBelowParallel: true,
+        },
+        lastAssessmentDate: new Date().toISOString(),
       },
       fitnessGoals: {
-        primary: 'strength',
+        primary: 'strength' as const,
         secondary: [],
-        motivation: '',
+        motivation: 'Get strong',
         successCriteria: [],
       },
       trainingConstraints: {
-        availableDays: ['Mon', 'Wed', 'Fri'],
+        availableDays: ['monday', 'wednesday', 'friday'],
         availableEquipment: [],
         location: 'home',
+        maxDuration: 60,
+        timeConstraints: [],
+        injuries: [],
       },
-      preferences: {
-        theme: 'light',
-        units: 'metric',
-        notifications: undefined,
-        privacy: undefined,
-        coaching: undefined,
-        showRestTimers: false,
-        autoProgressWeights: false,
-        useVoiceAnnouncements: false,
-      },
-      stats: {
-        totalWorkouts: 0,
-        totalMinutes: 0,
-        totalVolume: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastWorkoutDate: undefined,
-        achievements: [],
-        firstWorkoutDate: undefined,
-        joinedAt: undefined,
-      },
-      avatar: undefined,
       bio: 'Fitness enthusiast',
-      location: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastActiveAt: new Date(),
     };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found')); // No existing profile
+    const mockProfile = createUserProfileFixture({
+      userId,
+      displayName: 'John Doe',
+    });
+
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.fail(new Error('Not found'))); // No existing profile
     vi.mocked(createUserProfile).mockReturnValue(Result.ok(mockProfile)); // Mock factory
-    mockProfileRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockProfileRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute(request);
@@ -125,62 +102,38 @@ describe('CreateUserProfileUseCase', () => {
       userId,
       displayName: 'John Doe',
       timezone: 'America/New_York',
-      experienceProfile: { level: 'intermediate' },
-      fitnessGoals: { primary: 'strength', secondary: [] },
-      trainingConstraints: { availableDays: ['Mon', 'Wed', 'Fri'] },
-    };
-
-    const existingProfile: UserProfile = {
-      userId,
-      displayName: 'Jane Smith',
-      timezone: 'America/Los_Angeles',
       experienceProfile: {
-        level: 'advanced',
-        history: undefined,
-        capabilities: undefined,
-        lastAssessmentDate: undefined,
+        level: 'intermediate' as const,
+        history: { previousPrograms: [], sports: [], certifications: [] },
+        capabilities: {
+          canDoFullPushup: true,
+          canDoFullPullup: false,
+          canRunMile: true,
+          canSquatBelowParallel: true,
+        },
+        lastAssessmentDate: new Date().toISOString(),
       },
       fitnessGoals: {
-        primary: 'hypertrophy',
+        primary: 'strength' as const,
         secondary: [],
-        motivation: '',
+        motivation: 'Get strong',
         successCriteria: [],
       },
       trainingConstraints: {
-        availableDays: ['Tue', 'Thu', 'Sat'],
+        availableDays: ['monday', 'wednesday', 'friday'],
         availableEquipment: [],
         location: 'home',
+        maxDuration: 60,
+        timeConstraints: [],
+        injuries: [],
       },
-      preferences: {
-        theme: 'light',
-        units: 'metric',
-        notifications: undefined,
-        privacy: undefined,
-        coaching: undefined,
-        showRestTimers: false,
-        autoProgressWeights: false,
-        useVoiceAnnouncements: false,
-      },
-      stats: {
-        totalWorkouts: 50,
-        totalMinutes: 2500,
-        totalVolume: 5000,
-        currentStreak: 7,
-        longestStreak: 14,
-        lastWorkoutDate: new Date(),
-        achievements: [],
-        firstWorkoutDate: undefined,
-        joinedAt: undefined,
-      },
-      avatar: undefined,
-      bio: undefined,
-      location: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastActiveAt: new Date(),
     };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(existingProfile));
+    const existingProfile = createUserProfileFixture({
+      userId,
+    });
+
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(existingProfile));
 
     // Act
     const result = await useCase.execute(request);
@@ -202,12 +155,34 @@ describe('CreateUserProfileUseCase', () => {
       userId,
       displayName: 'John Doe',
       timezone: 'America/New_York',
-      experienceProfile: { level: 'intermediate' },
-      fitnessGoals: { primary: 'strength', secondary: [] },
-      trainingConstraints: { availableDays: ['Mon', 'Wed', 'Fri'] },
+      experienceProfile: {
+        level: 'intermediate' as const,
+        history: { previousPrograms: [], sports: [], certifications: [] },
+        capabilities: {
+          canDoFullPushup: true,
+          canDoFullPullup: false,
+          canRunMile: true,
+          canSquatBelowParallel: true,
+        },
+        lastAssessmentDate: new Date().toISOString(),
+      },
+      fitnessGoals: {
+        primary: 'strength' as const,
+        secondary: [],
+        motivation: 'Get strong',
+        successCriteria: [],
+      },
+      trainingConstraints: {
+        availableDays: ['monday', 'wednesday', 'friday'],
+        availableEquipment: [],
+        location: 'home',
+        maxDuration: 60,
+        timeConstraints: [],
+        injuries: [],
+      },
     };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.fail('Not found'));
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.fail(new Error('Not found')));
     vi.mocked(createUserProfile).mockReturnValue(
       Result.fail(new Error('Creation failed')),
     );

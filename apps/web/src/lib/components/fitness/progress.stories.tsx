@@ -1,10 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { mockUserStats } from '@/lib/testing/fixtures';
+import { fixtures } from '@bene/react-api-client';
 import {
   StatisticsSection,
   ProgressChart,
   AchievementPopup,
 } from './index';
+
+// Generate consistent user stats with seed
+const mockUserStats = fixtures.createGetUserStatsResponse(undefined, { seed: 500 });
 
 const meta: Meta = {
   title: 'Components/Fitness/Progress',
@@ -62,3 +65,4 @@ export const AchievementPopupStory: StoryObj<typeof AchievementPopup> = {
     </div>
   ),
 };
+

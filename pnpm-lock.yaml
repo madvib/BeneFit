@@ -25,6 +25,7 @@ catalogs:
 overrides:
   drizzle-orm: 0.45.1
   better-auth: 1.4.7
+  '@faker-js/faker': 10.2.0
 
 importers:
 
@@ -61,6 +62,9 @@ importers:
       '@eslint/js':
         specifier: ^9.38.0
         version: 9.39.2
+      '@faker-js/faker':
+        specifier: 10.2.0
+        version: 10.2.0
       '@libsql/client':
         specifier: ^0.15.15
         version: 0.15.15
@@ -247,6 +251,9 @@ importers:
       wrangler:
         specifier: ^4.59.1
         version: 4.59.1(@cloudflare/workers-types@4.20251218.0)
+      zod-schema-faker:
+        specifier: ^2.1.0
+        version: 2.1.0(zod@4.2.1)
 
   apps/actors/user-hub:
     dependencies:
@@ -304,6 +311,9 @@ importers:
       '@bene/training-application':
         specifier: workspace:*
         version: link:../../packages/domain/training/application
+      '@bene/training-core':
+        specifier: workspace:*
+        version: link:../../packages/domain/training/core
       '@hono/zod-validator':
         specifier: 0.7.5
         version: 0.7.5(hono@4.11.1)(zod@4.2.1)
@@ -319,6 +329,10 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.2.1
+    devDependencies:
+      '@faker-js/faker':
+        specifier: 10.2.0
+        version: 10.2.0
 
   apps/services/ai:
     dependencies:
@@ -454,6 +468,9 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.17
+      zod:
+        specifier: 'catalog:'
+        version: 4.2.1
 
   packages/persistence:
     dependencies:
@@ -2579,6 +2596,10 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@faker-js/faker@10.2.0':
+    resolution: {integrity: sha512-rTXwAsIxpCqzUnZvrxVh3L0QA0NzToqWBLAhV+zDV3MIIwiQhAZHMdPCIaj5n/yADu/tyk12wIPgL6YHGXJP+g==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@hono/node-server@1.19.7':
     resolution: {integrity: sha512-vUcD0uauS7EU2caukW8z5lJKtoGMokxNbJtBiwHgpqxEXokaHCBkQUmCHhjFB1VUTWdqj25QoMkMKzgjq+uhrw==}
@@ -6880,6 +6901,10 @@ packages:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
+  drange@1.1.1:
+    resolution: {integrity: sha512-pYxfDYpued//QpnLIm4Avk7rsNtAtQkUES2cwAYSvD/wd2pKD71gN2Ebj3e7klzXwjocvE8c5vx/1fxwpqmSxA==}
+    engines: {node: '>=4'}
+
   drizzle-kit@0.31.8:
     resolution: {integrity: sha512-O9EC/miwdnRDY10qRxM8P3Pg8hXe3LyU4ZipReKOgTwn4OqANmftj8XJz1UPUAS6NMHf0E2htjsbQujUTkncCg==}
     hasBin: true
@@ -10105,6 +10130,10 @@ packages:
   rambda@9.4.2:
     resolution: {integrity: sha512-++euMfxnl7OgaEKwXh9QqThOjMeta2HH001N1v4mYQzBjJBnmXBh2BCK6dZAbICFVXOFUVD3xFG0R3ZPU0mxXw==}
 
+  randexp@0.5.3:
+    resolution: {integrity: sha512-U+5l2KrcMNOUPYvazA3h5ekF80FHTUG+87SEAmHZmolh1M+i/WyTCxVzmi+tidIa1tM4BSe8g2Y/D3loWDjj+w==}
+    engines: {node: '>=4'}
+
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -10283,6 +10312,10 @@ packages:
   restore-cursor@3.1.0:
     resolution: {integrity: sha512-l+sSefzHpj5qimhFSE5a8nufZYAM3sBSVMAPtYkmC+4EH2anSGaEMXSD0izRQbu9nfyQ9y5JrVmp7E8oZrUjvA==}
     engines: {node: '>=8'}
+
+  ret@0.2.2:
+    resolution: {integrity: sha512-M0b3YWQs7R3Z917WRQy1HHA7Ba7D8hvZg6UE5mLykJxQVE2ju0IXbGlaHPPlkY+WN7wFP+wUMXmBFA0aV6vYGQ==}
+    engines: {node: '>=4'}
 
   retry@0.13.1:
     resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
@@ -11826,6 +11859,11 @@ packages:
 
   youch@4.1.0-beta.10:
     resolution: {integrity: sha512-rLfVLB4FgQneDr0dv1oddCVZmKjcJ6yX6mS4pU82Mq/Dt9a3cLZQ62pDBL4AUO+uVrCvtWz3ZFUL2HFAFJ/BXQ==}
+
+  zod-schema-faker@2.1.0:
+    resolution: {integrity: sha512-k1WaldYU6nOXUa6Pup8HhuvqvAu2HWZUnxF9RSSi6GvQTTBkdXlvVN6cT4oRMUPxeoIHCBAr9DHKMK+H1r1zWw==}
+    peerDependencies:
+      zod: ^3.25.0 || ^4.0.0
 
   zod-to-json-schema@3.25.0:
     resolution: {integrity: sha512-HvWtU2UG41LALjajJrML6uQejQhNJx+JBO9IflpSja4R03iNWfKXrj6W2h7ljuLyc1nKS+9yDyL/9tD1U/yBnQ==}
@@ -14402,6 +14440,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
+
+  '@faker-js/faker@10.2.0': {}
 
   '@hono/node-server@1.19.7(hono@4.11.0)':
     dependencies:
@@ -19741,6 +19781,8 @@ snapshots:
 
   dotenv@17.2.3: {}
 
+  drange@1.1.1: {}
+
   drizzle-kit@0.31.8:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
@@ -23414,6 +23456,11 @@ snapshots:
 
   rambda@9.4.2: {}
 
+  randexp@0.5.3:
+    dependencies:
+      drange: 1.1.1
+      ret: 0.2.2
+
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -23630,6 +23677,8 @@ snapshots:
     dependencies:
       onetime: 5.1.2
       signal-exit: 3.0.7
+
+  ret@0.2.2: {}
 
   retry@0.13.1: {}
 
@@ -25469,6 +25518,12 @@ snapshots:
       '@speed-highlight/core': 1.2.12
       cookie: 1.1.1
       youch-core: 0.3.3
+
+  zod-schema-faker@2.1.0(zod@4.2.1):
+    dependencies:
+      '@faker-js/faker': 10.2.0
+      randexp: 0.5.3
+      zod: 4.2.1
 
   zod-to-json-schema@3.25.0(zod@3.25.76):
     dependencies:

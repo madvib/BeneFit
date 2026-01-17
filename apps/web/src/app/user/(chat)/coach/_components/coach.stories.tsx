@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { mockCoachHistory } from '@/lib/testing/fixtures/coach';
+import { fixtures } from '@bene/react-api-client';
 import { CoachPageContent } from '../page';
 import { ChatHeader } from '@/lib/components';
+
+// Generate consistent coach history with seed
+const mockCoachHistory = fixtures.createGetCoachHistoryResponse(undefined, { seed: 300 });
 
 const meta: Meta<typeof CoachPageContent> = {
   title: 'Features/Coach',
@@ -36,12 +39,16 @@ const scrollMessages = Array.from({ length: 20 }).flatMap((_, i) => [
   {
     id: `u-${i}`,
     content: `User message ${i + 1}. This is multiple lines of text to ensure we take up some vertical space in the chat bubble.`,
-    sender: 'user',
+    role: 'user' as const,
+    timestamp: new Date(Date.now() - (20 - i) * 1000 * 60),
+    sender: 'user', // Backwards compatibility if component needs it
     sentAt: new Date(Date.now() - (20 - i) * 1000 * 60).toISOString(),
   },
   {
     id: `c-${i}`,
     content: `Coach response ${i + 1}. I am analyzing your request and providing detailed feedback based on your recent performance metrics and sleep data.`,
+    role: 'coach' as const,
+    timestamp: new Date(Date.now() - (20 - i) * 1000 * 60 + 30_000),
     sender: 'coach',
     sentAt: new Date(Date.now() - (20 - i) * 1000 * 60 + 30_000).toISOString(),
   },
@@ -53,7 +60,7 @@ export const WithMessages: Story = {
       <ChatHeader title="AI Coach" />
       <CoachPageContent {...args} />
     </div>
-  ),
+ ),
   args: {
     historyData: {
       ...mockCoachHistory,
@@ -81,3 +88,4 @@ export const WithCheckIn: Story = {
     },
   },
 };
+

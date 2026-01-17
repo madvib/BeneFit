@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { createCoachConversation, CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
-import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
-import {
-  CoachMessageSentEvent,
-  CoachAdjustedPlanEvent,
-  CoachScheduledFollowupEvent,
-} from '@app/events/index.js';
+import { createCoachConversation, CoachConversationCommands } from '../../../core/index.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '../../services/index.js';
+import { CoachMessageSentEvent } from '../../events/coach-message-sent.event.js';
+import { CoachAdjustedPlanEvent } from '../../events/coach-adjusted-plan.event.js';
+import { CoachScheduledFollowupEvent } from '../../events/coach-scheduled-followup.event.js';
 
 // Single request schema with ALL fields
 export const SendMessageToCoachRequestSchema = z.object({
@@ -24,15 +22,15 @@ export type SendMessageToCoachRequest = z.infer<typeof SendMessageToCoachRequest
 
 // Zod schema for response validation
 const ActionSchema = z.object({
-  type: z.string(),
-  details: z.string(),
+  type: z.string().min(1).max(50),
+  details: z.string().min(1).max(1000),
 });
 
 export const SendMessageToCoachResponseSchema = z.object({
   conversationId: z.string(),
-  coachResponse: z.string(),
+  coachResponse: z.string().min(1).max(5000),
   actions: z.array(ActionSchema).optional(),
-  suggestedFollowUps: z.array(z.string()).optional(),
+  suggestedFollowUps: z.array(z.string().min(1).max(200)).optional(),
 });
 
 // Zod inferred type with original name

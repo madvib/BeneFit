@@ -94,7 +94,7 @@ describe('DisconnectServiceUseCase', () => {
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'ServiceDisconnected',
+        eventName: 'ServiceDisconnected',
         userId,
         serviceId,
         serviceType: 'strava',

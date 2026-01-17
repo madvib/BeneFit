@@ -20,8 +20,8 @@ export type SyncServiceDataRequest = z.infer<typeof SyncServiceDataRequestSchema
 export const SyncServiceDataResponseSchema = z.object({
   serviceId: z.string(),
   success: z.boolean(),
-  activitiesSynced: z.number(),
-  error: z.string().optional(),
+  activitiesSynced: z.number().int().min(0).max(100),
+  error: z.string().min(1).max(1000).optional(),
 });
 
 export type SyncServiceDataResponse = z.infer<typeof SyncServiceDataResponseSchema>;

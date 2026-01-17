@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared';
-import { WorkoutPlan, WorkoutPlanQueries } from '@bene/training-core';
-import { WorkoutTemplate } from '@bene/training-core';
+import { FitnessPlanQueries, createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core';
 import { GetUpcomingWorkoutsUseCase } from './get-upcoming-workouts.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -25,43 +25,38 @@ describe('GetUpcomingWorkoutsUseCase', () => {
   it('should return upcoming workouts for the next 7 days when there is an active plan', async () => {
     // Arrange
     const userId = 'user-123';
-    const mockWorkout: WorkoutTemplate = {
+    const mockWorkout = createWorkoutTemplateFixture({
       id: 'workout-456',
       type: 'strength',
-      duration: 45,
       dayOfWeek: 1, // Monday
       status: 'scheduled',
-      activities: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const activePlan: WorkoutPlan = {
-      id: 'plan-789',
-      userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [
+      activities: [
         {
-          weekNumber: 1,
-          workouts: [mockWorkout],
-          workoutsCompleted: 0,
+          name: 'Bench Press',
+          type: 'main',
+          order: 1,
+          duration: 45,
+          instructions: ['Do 3 sets of 10 reps'],
         },
       ],
-      status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.ok(activePlan));
+    const activePlan = createFitnessPlanFixture({
+      id: 'plan-789',
+      userId,
+      weeks: [
+        createWeeklyScheduleFixture({
+          weekNumber: 1,
+          workouts: [mockWorkout],
+        }),
+      ],
+      currentPosition: { week: 1, day: 0 },
+      startDate: new Date(),
+    });
+
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(Result.ok(activePlan));
     // Mock the getUpcomingWorkouts function to return the workout for upcoming days
-    vi.spyOn(WorkoutPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
+    vi.spyOn(FitnessPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
 
     // Act
     const result = await useCase.execute({ userId });
@@ -77,43 +72,38 @@ describe('GetUpcomingWorkoutsUseCase', () => {
   it('should return upcoming workouts for specified number of days', async () => {
     // Arrange
     const userId = 'user-123';
-    const mockWorkout: WorkoutTemplate = {
+    const mockWorkout = createWorkoutTemplateFixture({
       id: 'workout-456',
       type: 'strength',
-      duration: 45,
       dayOfWeek: 1, // Monday
       status: 'scheduled',
-      activities: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const activePlan: WorkoutPlan = {
-      id: 'plan-789',
-      userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [
+      activities: [
         {
-          weekNumber: 1,
-          workouts: [mockWorkout],
-          workoutsCompleted: 0,
+          name: 'Bench Press',
+          type: 'main',
+          order: 1,
+          duration: 45,
+          instructions: ['Do 3 sets of 10 reps'],
         },
       ],
-      status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.ok(activePlan));
+    const activePlan = createFitnessPlanFixture({
+      id: 'plan-789',
+      userId,
+      weeks: [
+        createWeeklyScheduleFixture({
+          weekNumber: 1,
+          workouts: [mockWorkout],
+        }),
+      ],
+      currentPosition: { week: 1, day: 0 },
+      startDate: new Date(),
+    });
+
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(Result.ok(activePlan));
     // Mock the getUpcomingWorkouts function to return the workout for upcoming days
-    vi.spyOn(WorkoutPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
+    vi.spyOn(FitnessPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
 
     // Act
     const result = await useCase.execute({ userId, days: 3 });
@@ -130,7 +120,7 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
     );
 

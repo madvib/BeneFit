@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared';
-import { FitnessPlan, FitnessPlanCommands } from '@bene/training-core';
+import { FitnessPlanCommands, createFitnessPlanFixture } from '@bene/training-core';
 import { ActivatePlanUseCase } from './activate-plan.js';
 import { EventBus } from '@bene/shared';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
@@ -30,29 +30,19 @@ describe('ActivatePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: FitnessPlan = {
+    const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 }],
       status: 'draft',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 } as any], // simplifying week for test
+    });
 
-    const activatedPlan: FitnessPlan = {
+    const activatedPlan = {
       ...draftPlan,
-      status: 'active',
+      status: 'active' as const,
     };
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(draftPlan));
     vi.spyOn(FitnessPlanCommands, 'activatePlan').mockReturnValue(
       Result.ok(activatedPlan),
     );
@@ -72,7 +62,7 @@ describe('ActivatePlanUseCase', () => {
     expect(mockPlanRepository.save).toHaveBeenCalledWith(activatedPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'PlanActivated',
+        eventName: 'PlanActivated',
         userId,
         planId,
       }),
@@ -84,7 +74,7 @@ describe('ActivatePlanUseCase', () => {
     const userId = 'user-123';
     const planId = 'plan-456';
 
-    mockPlanRepository.findById.mockResolvedValue(
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
     );
 
@@ -107,24 +97,13 @@ describe('ActivatePlanUseCase', () => {
     const userId = 'user-123';
     const otherUserId = 'user-789';
     const planId = 'plan-456';
-    const draftPlan: FitnessPlan = {
+    const draftPlan = createFitnessPlanFixture({
       id: planId,
-      userId: otherUserId, // Different user
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, Fitnesss: [], FitnesssCompleted: 0 }],
+      userId: otherUserId,
       status: 'draft',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(draftPlan));
 
     // Act
     const result = await useCase.execute({
@@ -146,24 +125,13 @@ describe('ActivatePlanUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const planId = 'plan-456';
-    const draftPlan: FitnessPlan = {
+    const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [{ weekNumber: 1, Fitnesss: [], FitnesssCompleted: 0 }],
-      status: 'draft', // Correct status for activation
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      status: 'draft',
+    });
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(draftPlan));
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(draftPlan));
     vi.spyOn(FitnessPlanCommands, 'activatePlan').mockReturnValue(
       Result.fail(new Error('Cannot activate')),
     );

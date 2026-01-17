@@ -1,20 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import TodayView from './today-view';
 import { Carousel } from '@/lib/components';
+import { fixtures } from '@bene/react-api-client';
 
-// Mock Data
-const MOCK_WORKOUT_TODAY = {
-  workoutId: 'w_123',
-  planId: 'p_456',
-  type: 'Upper Body Power',
-  durationMinutes: 45,
-  activities: [
-    { type: 'warmup' as const, instructions: '5 min light jogging', durationMinutes: 5 },
-    { type: 'main' as const, instructions: '3 sets of 8 reps @ RPE 8', durationMinutes: 15 },
-    { type: 'main' as const, instructions: '3 sets to failure', durationMinutes: 10 },
-    { type: 'cooldown' as const, instructions: 'Static stretching', durationMinutes: 15 },
-  ],
-};
+// Mock Data using fixtures
+const mockWorkoutResponse = fixtures.createGetTodaysWorkoutResponse({
+  hasWorkout: true as any,
+  workout: {
+    workoutId: 'w_123',
+    planId: 'p_456',
+    type: 'Upper Body Power',
+    durationMinutes: 45,
+    activities: [
+      { type: 'warmup', instructions: '5 min light jogging', durationMinutes: 5 },
+      { type: 'main', instructions: '3 sets of 8 reps @ RPE 8', durationMinutes: 15 },
+      { type: 'main', instructions: '3 sets to failure', durationMinutes: 10 },
+      { type: 'cooldown', instructions: 'Static stretching', durationMinutes: 15 },
+    ],
+  } as any, 
+});
 
 const meta: Meta = {
   title: 'Features/Today',
@@ -31,7 +35,7 @@ export const Showcase: StoryObj<typeof TodayView> = {
       {/* Workout Scheduled */}
       <div className="mx-auto w-full max-w-2xl">
         <TodayView
-          todaysWorkout={MOCK_WORKOUT_TODAY}
+          todaysWorkout={mockWorkoutResponse.workout}
           isLoading={false}
           error={null}
           onStartWorkout={() => alert('Start Workout')}

@@ -2,8 +2,11 @@
   "name": "@bene/workout-session",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
+    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@bene/shared": "workspace:*",

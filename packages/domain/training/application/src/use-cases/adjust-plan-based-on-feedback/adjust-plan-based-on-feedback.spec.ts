@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result, EventBus } from '@bene/shared';
-import { FitnessPlan } from '@bene/training-core';
+import { createFitnessPlanFixture } from '@bene/training-core';
 import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { AIPlanGenerator } from '../../services/ai-plan-generator.js';
@@ -40,30 +40,14 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
 
-    const originalPlan: WorkoutPlan = {
+    const originalPlan = createFitnessPlanFixture({
       id: planId,
       userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [
-        {
-          weekNumber: 1,
-          workouts: [],
-          workoutsCompleted: 0,
-        },
-      ],
       status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 } as any],
+    });
 
-    const adjustedPlan: WorkoutPlan = {
+    const adjustedPlan = {
       ...originalPlan,
       title: 'Adjusted Strength Plan',
     };
@@ -76,8 +60,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       },
     ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
-    mockAIPlanGenerator.adjustPlan.mockResolvedValue(Result.ok(adjustedPlan));
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(originalPlan));
+    vi.mocked(mockAIPlanGenerator.adjustPlan).mockResolvedValue(Result.ok(adjustedPlan));
 
     // Act
     const result = await useCase.execute({
@@ -99,7 +83,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     expect(mockPlanRepository.save).toHaveBeenCalledWith(adjustedPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'PlanAdjusted',
+        eventName: 'PlanAdjusted',
         userId,
         planId,
         feedback,
@@ -120,7 +104,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       },
     ];
 
-    mockPlanRepository.findById.mockResolvedValue(
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
     );
 
@@ -146,28 +130,11 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
 
-    const originalPlan: WorkoutPlan = {
+    const originalPlan = createFitnessPlanFixture({
       id: planId,
-      userId: otherUserId, // Different user
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [
-        {
-          weekNumber: 1,
-          workouts: [],
-          workoutsCompleted: 0,
-        },
-      ],
+      userId: otherUserId,
       status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     const recentWorkouts = [
       {
@@ -177,7 +144,7 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       },
     ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(originalPlan));
 
     // Act
     const result = await useCase.execute({
@@ -200,28 +167,11 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     const planId = 'plan-456';
     const feedback = 'Too hard, need more rest days';
 
-    const originalPlan: WorkoutPlan = {
+    const originalPlan = createFitnessPlanFixture({
       id: planId,
       userId,
-      title: 'Strength Plan',
-      description: 'A plan for building strength',
-      planType: 'strength_program',
-      goals: { goalType: 'strength', target: 'build muscle' },
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [
-        {
-          weekNumber: 1,
-          workouts: [],
-          workoutsCompleted: 0,
-        },
-      ],
       status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     const recentWorkouts = [
       {
@@ -231,8 +181,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
       },
     ];
 
-    mockPlanRepository.findById.mockResolvedValue(Result.ok(originalPlan));
-    mockAIPlanGenerator.adjustPlan.mockResolvedValue(
+    vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(originalPlan));
+    vi.mocked(mockAIPlanGenerator.adjustPlan).mockResolvedValue(
       Result.fail(new Error('AI adjustment failed')),
     );
 

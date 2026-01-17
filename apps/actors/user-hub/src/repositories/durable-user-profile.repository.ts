@@ -15,15 +15,18 @@ import {
   toDomain,
   toProfileDatabase,
   toStatsDatabase,
+  achievementToDomain,
+  achievementToDatabase,
 } from '../mappers/user-profile.mapper.js';
 import {
   user_profile_schema,
   profile as profileTable,
   userStats,
+  achievements as achievementsTable,
 } from '../data/schema/index.js';
 
 export class DurableUserProfileRepository implements UserProfileRepository {
-  constructor(private db: DrizzleSqliteDODatabase<typeof user_profile_schema>) {}
+  constructor(private db: DrizzleSqliteDODatabase<typeof user_profile_schema>) { }
 
   async findById(userId: string): Promise<Result<UserProfile>> {
     try {
@@ -31,6 +34,7 @@ export class DurableUserProfileRepository implements UserProfileRepository {
         where: eq(profileTable.userId, userId),
         with: {
           stats: true,
+          achievements: true,
         },
       });
 
@@ -39,6 +43,12 @@ export class DurableUserProfileRepository implements UserProfileRepository {
       }
 
       const profile = toDomain(result);
+
+      // Map achievements from database to domain
+      if (result.achievements && result.achievements.length > 0) {
+        profile.stats.achievements = result.achievements.map(achievementToDomain);
+      }
+
       return Result.ok(profile);
     } catch (error) {
       return Result.fail(
@@ -56,6 +66,7 @@ export class DurableUserProfileRepository implements UserProfileRepository {
       const profileRow = toProfileDatabase(profile);
       const statsRow = toStatsDatabase(profile);
 
+      // Save profile and stats
       await Promise.all([
         this.db.insert(profileTable).values(profileRow).onConflictDoUpdate({
           target: profileTable.userId,
@@ -66,6 +77,20 @@ export class DurableUserProfileRepository implements UserProfileRepository {
           set: statsRow,
         }),
       ]);
+
+      // Save achievements (if any)
+      if (profile.stats.achievements && profile.stats.achievements.length > 0) {
+        const achievementRows = profile.stats.achievements.map((achievement) =>
+          achievementToDatabase(profile.userId, achievement)
+        );
+
+        // Insert achievements (ignore conflicts since achievements are immutable once earned)
+        await Promise.all(
+          achievementRows.map((row) =>
+            this.db.insert(achievementsTable).values(row).onConflictDoNothing()
+          )
+        );
+      }
 
       return Result.ok();
     } catch (error) {

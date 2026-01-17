@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@bene/shared": "workspace:*",
-    "@swc/helpers": "~0.5.11"
+    "@swc/helpers": "~0.5.11",
+    "zod":"catalog:"
   },
   "nx": {
     "sourceRoot": "packages/domain/training/core/src",

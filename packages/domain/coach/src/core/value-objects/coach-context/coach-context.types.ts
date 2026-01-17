@@ -61,7 +61,7 @@ export interface PerformanceTrends {
   enjoymentTrend: SubjectiveTrend;
 }
 
-interface CoachContextData {
+export interface CoachContextData {
   // Current plan state
   currentPlan?: CurrentPlanContext;
 

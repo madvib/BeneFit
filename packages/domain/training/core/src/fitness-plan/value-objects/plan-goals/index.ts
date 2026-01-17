@@ -13,3 +13,5 @@ export {
   createStrengthBuilding,
 } from './plan-goals.factory.js';
 export * as PlanGoalsCommands from './plan-goals.commands.js';
+export * from './plan-goals.presentation.js';
+export * from './test/plan-goals.fixtures.js';

@@ -116,7 +116,7 @@ export class AIPlanGenerator {
         goals: input.goals,
         progression: { type: 'adaptive' },
         constraints: input.constraints,
-        startDate: new Date().toISOString(),
+        startDate: new Date(),
         weeks,
       });
     } catch (error) {

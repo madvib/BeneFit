@@ -1,11 +1,11 @@
 import { Guard, Result, VALID_DAYS } from '@bene/shared';
+import { ConstraintsValidationError } from '@/shared/errors/index.js';
 import {
   TrainingConstraints,
   Injury,
   TrainingLocation,
   PreferredTime,
 } from './training-constraints.types.js';
-import { ConstraintsValidationError } from '@/shared/errors/index.js';
 
 export interface TrainingConstraintsProps {
   readonly injuries?: readonly Injury[];
@@ -30,7 +30,7 @@ export function createTrainingConstraints(
     if (!VALID_DAYS.includes(day)) {
       return Result.fail(
         new ConstraintsValidationError(
-          `Invalid day: ${day}. Must be one of: ${VALID_DAYS.join(', ')}`,
+          `Invalid day: ${ day }. Must be one of: ${ VALID_DAYS.join(', ') }`,
           { day, validDays: VALID_DAYS },
         ),
       );

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { AICoachService, CoachContextBuilder } from '@app/services/index.js';
-import { WeeklySummaryGeneratedEvent } from '@app/events/weekly-summary-generated.event.js';
+import { AICoachService, CoachContextBuilder } from '../../services/index.js';
+import { WeeklySummaryGeneratedEvent } from '../../events/weekly-summary-generated.event.js';
 
 
 
@@ -18,9 +18,9 @@ export type GenerateWeeklySummaryRequest = z.infer<
 
 // Zod schema for response validation
 export const GenerateWeeklySummaryResponseSchema = z.object({
-  summary: z.string(),
-  highlights: z.array(z.string()),
-  suggestions: z.array(z.string()),
+  summary: z.string().min(1).max(5000),
+  highlights: z.array(z.string().min(1).max(200)),
+  suggestions: z.array(z.string().min(1).max(500)),
 });
 
 // Zod inferred type with original name

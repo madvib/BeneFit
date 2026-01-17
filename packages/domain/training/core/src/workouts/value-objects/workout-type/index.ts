@@ -10,3 +10,5 @@ export type WorkoutType =
   | 'hiit'
   | 'rest'
   | 'custom';
+
+export * from './workout-type.presentation.js';

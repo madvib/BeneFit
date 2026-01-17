@@ -8,7 +8,7 @@ import {
   SessionFeedItem,
   WorkoutActivity
 } from '@bene/training-core';
-import { NewSessionMetadata, SessionMetadata } from '../data/schema/session_metadata';
+import { NewSessionMetadata, SessionMetadata, NewParticipant, NewSessionChat } from '../data/schema';
 
 export function toDatabase(session: WorkoutSession): NewSessionMetadata {
   return {
@@ -17,7 +17,7 @@ export function toDatabase(session: WorkoutSession): NewSessionMetadata {
 
     // Workout reference
     workoutId: session.id, // TODO: Verify correct mapping for workoutId
-    planId: session.planId ?? null, // Use null for nullable fields
+    planId: session.planId ?? null,
     workoutTemplateId: session.workoutTemplateId ?? null,
     workoutType: session.workoutType,
 
@@ -27,8 +27,7 @@ export function toDatabase(session: WorkoutSession): NewSessionMetadata {
     // Session configuration
     configurationJson: session.configuration,
 
-    // State
-    status: session.state as SessionState | null, // Cast might need adjustment to match enum
+    status: session.state as SessionMetadata['status'],
     currentActivityIndex: session.currentActivityIndex,
 
     // Live progress
@@ -55,6 +54,20 @@ export function toDatabase(session: WorkoutSession): NewSessionMetadata {
 }
 
 export function toDomain(row: SessionMetadata): WorkoutSession {
+  // Parse nested dates in liveProgressJson
+  const liveProgress = row.liveProgressJson as LiveActivityProgress | null;
+  const hydratedLiveProgress = liveProgress ? {
+    ...liveProgress,
+    activityStartedAt: new Date(liveProgress.activityStartedAt),
+  } : undefined;
+
+  // Parse nested dates in activityFeedJson
+  const activityFeedRaw = (row.activityFeedJson as SessionFeedItem[] | null) || [];
+  const hydratedActivityFeed = activityFeedRaw.map((item) => ({
+    ...item,
+    timestamp: new Date(item.timestamp),
+  }));
+
   return {
     id: row.id,
     ownerId: row.createdByUserId,
@@ -75,14 +88,14 @@ export function toDomain(row: SessionMetadata): WorkoutSession {
     currentActivityIndex: row.currentActivityIndex ?? 0,
 
     // Live progress
-    liveProgress: row.liveProgressJson as LiveActivityProgress,
+    liveProgress: hydratedLiveProgress,
 
     // Performance tracking
     completedActivities: row.completedActivitiesJson as ActivityPerformance[],
 
-    // Multiplayer elements (these may need to be populated separately)
-    participants: [] as SessionParticipant[], // Participants might be in a separate table
-    activityFeed: row.activityFeedJson as SessionFeedItem[],
+    // Multiplayer elements
+    participants: [] as SessionParticipant[], // Participants are in a separate table
+    activityFeed: hydratedActivityFeed,
 
     // Timing
     startedAt: row.startedAt ?? undefined,
@@ -95,5 +108,26 @@ export function toDomain(row: SessionMetadata): WorkoutSession {
     // Metadata
     createdAt: row.createdAt ?? new Date(),
     updatedAt: row.updatedAt ?? new Date(),
+  };
+}
+
+export function toParticipantDatabase(participant: SessionParticipant): NewParticipant {
+  return {
+    id: `part_${ participant.userId }`,
+    userId: participant.userId,
+    displayName: participant.userName,
+    avatarUrl: participant.avatar,
+    joinedAt: participant.joinedAt,
+    lastHeartbeatAt: new Date(),
+    status: participant.status === 'left' ? 'disconnected' : 'active',
+  };
+}
+
+export function toChatDatabase(sessionId: string, participantId: string, item: SessionFeedItem): NewSessionChat {
+  return {
+    id: item.id,
+    participantId: participantId,
+    message: item.content,
+    createdAt: item.timestamp,
   };
 }

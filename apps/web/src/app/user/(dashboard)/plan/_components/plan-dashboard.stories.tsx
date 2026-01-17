@@ -1,11 +1,71 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { mockActivePlan, mockWorkoutTemplate } from '@/lib/testing/fixtures';
+import * as fixtures from '@bene/react-api-client/fixtures';
 import { Carousel, DashboardShell, WorkoutDetailSheet } from '@/lib/components';
-import{ PlanOverview, QuickActions, WeeklySchedule,PlanOnboarding,PlanPreview} from './index';
+import { PlanOverview, QuickActions, WeeklySchedule, PlanOnboarding, PlanPreview } from './index';
+
+// Use the realistic domain-based fixture!
+// This now contains faker-generated data from domain fixtures
+const mockActivePlan = fixtures.fitnessplans.getCurrentPlanResponse;
 
 // PlanOverview expects the plan object, not the full response
 const activePlan = mockActivePlan.plan!;
+
+// Generate consistent workout template from fixture
+const mockPlanFixture = fixtures.fitnessplans.generatePlanFromGoalsResponse;
+const firstWorkout = mockPlanFixture.preview!.workouts[0];
+
+const mockWorkoutTemplate = {
+  id: 'workout-1',
+  weekNumber: 1,
+  dayOfWeek: 1,
+  scheduledDate: '2026-01-13',
+  title: firstWorkout.summary || 'Upper Body Strength',
+  type: firstWorkout.type || 'strength',
+  category: 'strength' as const,
+  goals: {
+    volume: {
+      totalSets: 12,
+      totalReps: 60,
+      targetWeight: 'moderate' as const,
+    },
+    completionCriteria: {
+      mustComplete: true,
+      minimumEffort: 80,
+      autoVerifiable: false,
+    },
+  },
+  activities: [
+    {
+      name: 'Barbell Bench Press',
+      type: 'main' as const,
+      order: 1,
+      structure: {
+        exercises: [
+          {
+            name: 'Barbell Bench Press',
+            sets: 4,
+            reps: 8,
+            weight: 100,
+            rest: 120,
+            notes: 'Focus on controlled descent',
+          },
+        ],
+      },
+      instructions: [
+        'Lie flat on bench with feet planted',
+        'Grip bar slightly wider than shoulder width',
+        'Lower bar to mid-chest with control',
+        'Press explosively to starting position',
+      ],
+      equipment: ['barbell', 'bench_press'],
+    },
+  ],
+  status: 'scheduled' as const,
+  coachNotes:
+    'This is your first upper body session. Focus on learning proper form rather than pushing for maximum weight.',
+  importance: 'key' as const,
+};
 
 const meta: Meta = {
   title: 'Features/Fitness Plan',
@@ -140,21 +200,8 @@ export const WorkoutDetailModalStory: StoryObj<typeof WorkoutDetailSheet> = {
 export const PlanPreviewStory: StoryObj = {
   name: 'Plan Preview',
   render: () => {
-    const mockPreviewData = {
-      planId: 'generated-plan-123',
-      name: 'Strength & Hypertrophy',
-      durationWeeks: 8,
-      workoutsPerWeek: 4,
-      preview: {
-        weekNumber: 1,
-        workouts: [
-          { day: 'Mon', summary: 'Upper Body Power', type: 'strength' },
-          { day: 'Tue', summary: 'Lower Body Hypertrophy', type: 'hypertrophy' },
-          { day: 'Thu', summary: 'Active Recovery', type: 'cardio' },
-          { day: 'Fri', summary: 'Full Body Circuit', type: 'conditioning' },
-        ],
-      },
-    };
+    // Use schema-driven fixture for plan preview
+    const mockPreviewData = fixtures.fitnessplans.generatePlanFromGoalsResponse;
 
     return (
       <div className="bg-background min-h-screen">
@@ -168,3 +215,4 @@ export const PlanPreviewStory: StoryObj = {
     );
   },
 };
+

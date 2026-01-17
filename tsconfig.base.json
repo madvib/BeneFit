@@ -14,7 +14,9 @@
     "emitDeclarationOnly": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": ["es2022"],
+    "lib": [
+      "es2022"
+    ],
     "strict": true,
     "importHelpers": false,
     "noUncheckedIndexedAccess": true,
@@ -24,7 +26,9 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "paths": {
-      "@/tools/*": ["./tools/*"]
+      "@/tools/*": [
+        "./tools/*"
+      ]
     }
   }
 }

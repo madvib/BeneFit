@@ -7,4 +7,6 @@ export type {
   TrainingHistory,
 } from './experience-profile.types.js';
 export { createExperienceProfile } from './experience-profile.factory.js';
+export * from './experience-profile.presentation.js';
+export * from './test/experience-profile.fixtures.js';
 export * as ExperienceProfileCommands from './experience-profile.commands.js';

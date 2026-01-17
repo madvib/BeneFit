@@ -89,7 +89,7 @@ describe('GenerateWeeklySummaryUseCase', () => {
     });
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'WeeklySummaryGenerated',
+        eventName: 'WeeklySummaryGenerated',
         userId,
         summary: mockSummary.summary,
       }),

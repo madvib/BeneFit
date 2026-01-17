@@ -7,6 +7,12 @@ import {
   UserProfileCommands,
   WorkoutType,
   FitnessPlanCommands,
+  AchievementSchema,
+  WorkoutPerformanceSchema,
+  WorkoutVerificationSchema,
+  UserStatsSchema,
+  fromWorkoutPerformanceSchema,
+  fromWorkoutVerificationSchema,
 } from '@bene/training-core';
 import type {
   UserProfileRepository,
@@ -14,17 +20,8 @@ import type {
   WorkoutSessionRepository,
   FitnessPlanRepository,
 } from '../../repositories/index.js';
-import {
-  WorkoutPerformanceSchema,
-  WorkoutVerificationSchema,
-  type WorkoutPerformance as WorkoutPerformanceType,
-  type WorkoutVerification as WorkoutVerificationType,
-} from '@bene/shared';
+
 import { WorkoutCompletedEvent } from '../../events/index.js';
-import {
-  toDomainWorkoutPerformance,
-  toDomainWorkoutVerification,
-} from '../../mappers/index.js';
 
 // Single request schema with ALL fields
 export const CompleteWorkoutRequestSchema = z.object({
@@ -36,37 +33,27 @@ export const CompleteWorkoutRequestSchema = z.object({
   performance: WorkoutPerformanceSchema,
   verification: WorkoutVerificationSchema,
   shareToFeed: z.boolean().optional(),
+  title: z.string(),
 });
 
-export type CompleteWorkoutRequest = {
-  userId: string;
-  sessionId: string;
-  performance: WorkoutPerformanceType;
-  verification: WorkoutVerificationType;
-  shareToFeed?: boolean;
-};
+export type CompleteWorkoutRequest = z.infer<typeof CompleteWorkoutRequestSchema>;
 
 
 
 // Zod schema for response validation
-const AchievementSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-});
-
-const StatsSchema = z.object({
-  totalWorkouts: z.number(),
-  totalVolume: z.number(),
-  totalMinutes: z.number(),
+// Use Pick to enforce consistency with shared UserStatsSchema while returning only relevant fields
+const StatsSubsetSchema = UserStatsSchema.pick({
+  totalWorkouts: true,
+  totalVolume: true,
+  totalMinutes: true,
 });
 
 export const CompleteWorkoutResponseSchema = z.object({
   workoutId: z.string(),
   // planUpdated: z.boolean(), // commented in original
   newStreak: z.number().optional(),
-  achievementsEarned: z.array(AchievementSchema),
-  stats: StatsSchema,
+  achievementsEarned: z.array(AchievementSchema), // Use shared AchievementSchema
+  stats: StatsSubsetSchema,
 });
 
 // Zod inferred type with original name
@@ -106,15 +93,13 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
         new UseCaseError(`Cannot complete workout in ${ session.state } state`, 'INVALID_STATE', { sessionId: request.sessionId, currentState: session.state }),
       );
     }
-    // 2. Create CompletedWorkout
-    const domainPerformance = toDomainWorkoutPerformance(request.performance);
-    const domainVerification = toDomainWorkoutVerification(request.verification);
-
+    // 2. Create CompletedWorkout - convert from schema format to domain format
     const completedWorkoutResult = createCompletedWorkout({
       userId: request.userId,
       workoutType: session.workoutType as WorkoutType,
-      performance: domainPerformance,
-      verification: domainVerification,
+      title: request.title,
+      performance: fromWorkoutPerformanceSchema(request.performance),
+      verification: fromWorkoutVerificationSchema(request.verification),
       planId: session.planId,
       workoutTemplateId: session.workoutTemplateId,
       multiplayerSessionId: session.id,
@@ -131,7 +116,7 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
 
     //Circular dependency...perhaps use queues or something
     // 4. Update plan if from a plan
-    let planUpdated = false;
+    // let planUpdated = false;
     if (session.planId && session.workoutTemplateId) {
       const planResult = await this.fitnessPlanRepository.findById(session.planId);
       if (planResult.isSuccess) {
@@ -144,7 +129,7 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
 
         if (updatedPlanResult.isSuccess) {
           await this.fitnessPlanRepository.save(updatedPlanResult.value);
-          planUpdated = true;
+          // planUpdated = true;
         }
       }
     }
@@ -153,7 +138,7 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     const profileResult = await this.profileRepository.findById(request.userId);
     if (profileResult.isSuccess) {
       const profile = profileResult.value;
-      const volume = this.calculateVolume(domainPerformance);
+      const volume = this.calculateVolume(fromWorkoutPerformanceSchema(request.performance));
 
       const updatedProfile = UserProfileCommands.recordWorkoutCompleted(
         profile,
@@ -224,13 +209,16 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     if (profileResult.isSuccess && profileResult.value.stats.totalWorkouts === 1) {
       achievements.push({
         id: 'first_workout',
+        type: 'milestone',
         name: 'First Steps',
         description: 'Completed your first workout!',
+        earnedAt: new Date().toISOString(),
       });
     }
 
     // Use the workout parameter (example: check workout type for achievements)
     if (workout.workoutType === 'cardio') {
+      // Placeholder for cardio specific achievements
     }
 
     return achievements;

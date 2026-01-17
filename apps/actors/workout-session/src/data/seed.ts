@@ -1,153 +1,78 @@
-import { drizzle } from 'drizzle-orm/durable-sqlite';
-import { sessionMetadata, NewSessionMetadata } from './schema/session_metadata.js';
-import { participants, NewParticipant } from './schema/participants.js';
-import { activityProgress, NewActivityProgress } from './schema/activity_progress.js';
-import { sessionChat, NewSessionChat } from './schema/session_chat.js';
-
-import { SEED_USER_IDS, SEED_USERS } from '@bene/shared';
-
-const now = Math.floor(Date.now() / 1000);
-
-// Use your schema types for type safety
-const sessions: NewSessionMetadata[] = [
-  {
-    id: 'session_001',
-    createdByUserId: SEED_USER_IDS.USER_001,
-    workoutId: 'workout_001',
-    planId: 'plan_001',
-    workoutTemplateId: 'wt_001',
-    workoutType: 'strength',
-    activitiesJson: [
-      { name: 'Squats', sets: 5, reps: 5, weightKg: 100 },
-      { name: 'Bench Press', sets: 4, reps: 6, weightKg: 80 },
-    ],
-    configurationJson: { privacy: 'private', capacity: 10 },
-    status: 'in_progress',
-    startedAt: new Date((now - 3600) * 1000), // Started 1 hour ago
-    createdAt: new Date((now - 3600) * 1000),
-    updatedAt: new Date(now * 1000),
-  },
-  {
-    id: 'session_002',
-    createdByUserId: SEED_USER_IDS.USER_002,
-    workoutId: 'workout_002',
-    planId: 'plan_002',
-    workoutTemplateId: 'wt_002',
-    workoutType: 'cardio',
-    activitiesJson: [
-      { name: 'Warm-up', duration: 15, type: 'easy_jog' },
-      { name: 'Intervals', details: '6 x 800m @ 5K pace', type: 'intervals' },
-      { name: 'Cool-down', duration: 15, type: 'easy_jog' },
-    ],
-    configurationJson: { privacy: 'public', capacity: 20 },
-    status: 'in_progress',
-    startedAt: new Date((now - 1800) * 1000), // Started 30 minutes ago
-    createdAt: new Date((now - 1800) * 1000),
-    updatedAt: new Date(now * 1000),
-  },
-];
-
-const participantsData: NewParticipant[] = SEED_USERS
-  .filter(u => u.id !== SEED_USER_IDS.USER_003) // Exclude USER_003 (Empty State)
-  .map((u, index) => ({
-    id: `part_00${ index + 1 }`,
-    userId: u.id,
-    displayName: u.name,
-    avatarUrl: u.avatarUrl,
-    joinedAt: new Date((now - (3600 - (index * 100))) * 1000),
-    lastHeartbeatAt: new Date((now - (60 * (index + 1))) * 1000),
-    status: 'active',
-  }));
-
-const progress: NewActivityProgress[] = [
-  {
-    id: 'ap_001',
-    participantId: 'part_001',
-    activityId: 'act_001',
-    activityName: 'Squats',
-    orderIndex: 0,
-    currentSet: 3,
-    currentRep: 5,
-    currentWeight: 100,
-    status: 'in_progress',
-    startedAt: new Date((now - 1800) * 1000),
-    updatedAt: new Date((now - 60) * 1000),
-  },
-  {
-    id: 'ap_002',
-    participantId: 'part_002',
-    activityId: 'act_002',
-    activityName: 'Running Intervals',
-    orderIndex: 1,
-    currentDistanceMeters: 800,
-    currentHeartRate: 155,
-    status: 'in_progress',
-    startedAt: new Date((now - 1200) * 1000),
-    updatedAt: new Date((now - 120) * 1000),
-  },
-  // Removed progress for part_003 (USER_003)
-];
-
-const chat: NewSessionChat[] = [
-  {
-    id: 'chat_001',
-    participantId: 'part_001',
-    message: 'Hey everyone! Ready to crush this leg day?',
-    createdAt: new Date((now - 3500) * 1000),
-  },
-  {
-    id: 'chat_002',
-    participantId: 'part_002',
-    message: 'Absolutely! I brought my pre-workout!',
-    createdAt: new Date((now - 3400) * 1000),
-  },
-  // Removed chat from part_003
-  {
-    id: 'chat_004',
-    participantId: 'part_001',
-    message: "In the squat rack area, we'll start with warm-up sets",
-    createdAt: new Date((now - 1750) * 1000),
-  },
-  // Removed chat_005 from part_003
-];
+import { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
+import {
+  createWorkoutSessionFixture,
+  createSessionParticipantFixture,
+  createSessionFeedItemFixture
+} from '@bene/training-core';
+import { SEED_USERS } from '@bene/shared';
+import * as schema from './schema/index.js';
+import { toDatabase, toParticipantDatabase, toChatDatabase } from '../mappers/workout-session.mapper.js';
 
 /**
- * Seeds the Workout Session database using Drizzle ORM and Durable Object Storage.
- * @param storage - The DurableObjectStorage instance to seed
+ * Seeds the Workout Session database using Drizzle ORM.
+ * This is a dynamic alternative to static seed-data files.
+ * 
+ * Works with both LibSQL (tests) and DurableObjectSQLite (staging)
  */
-export async function seedWorkoutSession(storage: DurableObjectStorage) {
-  console.log('🌱 Seeding Workout Session database with Drizzle ORM...');
-
-  // Create the Drizzle client using the provided storage
-  const db = drizzle(storage);
+export async function seedWorkoutSession(db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema>) {
+  console.log('🌱 Seeding Workout Session Data (Fixture-based)...');
 
   try {
+    // Clear all data first for a clean seed
     console.log('  - Clearing existing data...');
-    // Use Drizzle ORM for clear operations
-    await db.delete(sessionChat);
-    await db.delete(activityProgress);
-    await db.delete(participants);
-    await db.delete(sessionMetadata);
+    await db.delete(schema.sessionChat);
+    await db.delete(schema.activityProgress);
+    await db.delete(schema.participants);
+    await db.delete(schema.sessionMetadata);
 
-    // Insert data
-    console.log(`  - Inserting ${ sessions.length } session metadata...`);
-    const existing = await db.select().from(sessionMetadata).limit(1);
-    if (existing.length === 0) {
-      await db.insert(sessionMetadata).values(sessions);
-    }
+    // Seed for first user (DO normally handles one session)
+    const user = SEED_USERS[0];
+    console.log(`  - Seeding session for user: ${ user.name } (${ user.id })`);
 
-    console.log(`  - Inserting ${ participantsData.length } participants...`);
-    await db.insert(participants).values(participantsData);
+    // 1. Create Workout Session
+    const session = createWorkoutSessionFixture({
+      ownerId: user.id,
+      state: 'in_progress',
+    });
+    const sessionDb = toDatabase(session);
+    await db.insert(schema.sessionMetadata).values(sessionDb).onConflictDoNothing();
 
-    console.log(`  - Inserting ${ progress.length } activity progress records...`);
-    await db.insert(activityProgress).values(progress);
+    // 2. Add Participants
+    const ownerParticipant = createSessionParticipantFixture({
+      userId: user.id,
+      userName: user.name,
+      role: 'owner',
+      status: 'active',
+    });
+    const ownerDb = toParticipantDatabase(ownerParticipant);
+    await db.insert(schema.participants).values(ownerDb).onConflictDoNothing();
 
-    console.log(`  - Inserting ${ chat.length } chat messages...`);
-    await db.insert(sessionChat).values(chat);
+    // Add another participant
+    const otherUser = SEED_USERS[1];
+    const otherParticipant = createSessionParticipantFixture({
+      userId: otherUser.id,
+      userName: otherUser.name,
+      role: 'participant',
+      status: 'active',
+    });
+    const otherDb = toParticipantDatabase(otherParticipant);
+    await db.insert(schema.participants).values(otherDb).onConflictDoNothing();
 
-    console.log('✅ Workout Session database seeded successfully');
+    // 3. Add some chat messages
+    const chatItem = createSessionFeedItemFixture({
+      type: 'chat_message',
+      userId: otherUser.id,
+      userName: otherUser.name,
+      content: 'Let\'s go!',
+    });
+
+    const chatDb = toChatDatabase(session.id, otherDb.id, chatItem);
+    await db.insert(schema.sessionChat).values(chatDb).onConflictDoNothing();
+
+    console.log('✅ Seed Complete');
+
   } catch (error) {
-    console.error('❌ Error seeding Workout Session database:', error);
+    console.error('❌ Seed Failed:', error);
     throw error;
   }
 }

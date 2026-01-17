@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared';
-import { FitnessPlan } from '@bene/training-core';
+import { createFitnessPlanFixture } from '@bene/training-core';
 import { UserProfile } from '@bene/training-core';
 import { GeneratePlanFromGoalsUseCase } from './generate-plan-from-goals.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
@@ -45,38 +45,38 @@ describe('GeneratePlanFromGoalsUseCase', () => {
   it('should successfully generate a plan when user has no active plan', async () => {
     // Arrange
     const userId = 'user-123';
-    const goals = { goalType: 'strength', target: 'build muscle' };
+    const goals = { primary: 'strength' as const, secondary: [], targetMetrics: {} };
     const mockProfile: UserProfile = {
       id: userId,
       userId,
       experienceLevel: 'beginner',
-      trainingConstraints: { equipment: [], injuries: [], timeConstraints: [] },
+      trainingConstraints: {
+        availableDays: ['monday', 'wednesday', 'friday'],
+        availableEquipment: [],
+        injuries: [],
+        location: 'home',
+        maxDuration: 60,
+        timeConstraints: []
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const mockPlan: FitnessPlan = {
+    const mockPlan = createFitnessPlanFixture({
       id: 'plan-123',
       userId,
       title: 'Strength Plan',
       description: 'A plan for building strength',
       planType: 'strength_program',
       goals,
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [],
       status: 'draft',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
     );
-    mockAIPlanGenerator.generatePlan.mockResolvedValue(Result.ok(mockPlan));
-    mockPlanRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockAIPlanGenerator.generatePlan).mockResolvedValue(Result.ok(mockPlan));
+    vi.mocked(mockPlanRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -94,7 +94,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     expect(mockPlanRepository.save).toHaveBeenCalledWith(mockPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'PlanGenerated',
+        eventName: 'PlanGenerated',
         userId,
         planId: 'plan-123',
       }),
@@ -104,9 +104,9 @@ describe('GeneratePlanFromGoalsUseCase', () => {
   it('should fail if user profile is not found', async () => {
     // Arrange
     const userId = 'user-123';
-    const goals = { goalType: 'strength', target: 'build muscle' };
+    const goals = { primary: 'strength' as const, secondary: [], targetMetrics: {} };
 
-    mockProfileRepository.findById.mockResolvedValue(
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(
       Result.fail(new Error('User profile not found')),
     );
 
@@ -126,35 +126,32 @@ describe('GeneratePlanFromGoalsUseCase', () => {
   it('should fail if user already has an active plan', async () => {
     // Arrange
     const userId = 'user-123';
-    const goals = { goalType: 'strength', target: 'build muscle' };
-    const mockActivePlan: FitnessPlan = {
+    const goals = { primary: 'strength' as const, secondary: [], targetMetrics: {} };
+    const mockActivePlan = createFitnessPlanFixture({
       id: 'active-plan-456',
       userId,
-      title: 'Active Plan',
-      description: 'An active plan',
-      planType: 'strength_program',
-      goals,
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [],
       status: 'active',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      goals,
+    });
 
     const mockProfile: UserProfile = {
       id: 'profile-123',
       userId,
       experienceLevel: 'beginner',
-      trainingConstraints: { equipment: [], injuries: [], timeConstraints: [] },
+      trainingConstraints: {
+        availableDays: ['monday', 'wednesday', 'friday'],
+        availableEquipment: [],
+        injuries: [],
+        location: 'home',
+        maxDuration: 60,
+        timeConstraints: []
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(Result.ok(mockActivePlan));
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(Result.ok(mockActivePlan));
 
     // Act
     const result = await useCase.execute({
@@ -174,21 +171,28 @@ describe('GeneratePlanFromGoalsUseCase', () => {
   it('should fail if AI plan generation fails', async () => {
     // Arrange
     const userId = 'user-123';
-    const goals = { goalType: 'strength', target: 'build muscle' };
+    const goals = { primary: 'strength' as const, secondary: [], targetMetrics: {} };
     const mockProfile: UserProfile = {
       id: 'profile-123',
       userId,
       experienceLevel: 'beginner',
-      trainingConstraints: { equipment: [], injuries: [], timeConstraints: [] },
+      trainingConstraints: {
+        availableDays: ['monday', 'wednesday', 'friday'],
+        availableEquipment: [],
+        injuries: [],
+        location: 'home',
+        maxDuration: 60,
+        timeConstraints: []
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
     );
-    mockAIPlanGenerator.generatePlan.mockResolvedValue(
+    vi.mocked(mockAIPlanGenerator.generatePlan).mockResolvedValue(
       Result.fail(new Error('AI generation failed')),
     );
 
@@ -210,38 +214,38 @@ describe('GeneratePlanFromGoalsUseCase', () => {
   it('should fail if saving the plan fails', async () => {
     // Arrange
     const userId = 'user-123';
-    const goals = { goalType: 'strength', target: 'build muscle' };
+    const goals = { primary: 'strength' as const, secondary: [], targetMetrics: {} };
     const mockProfile: UserProfile = {
       id: 'profile-123',
       userId,
       experienceLevel: 'beginner',
-      trainingConstraints: { equipment: [], injuries: [], timeConstraints: [] },
+      trainingConstraints: {
+        availableDays: ['monday', 'wednesday', 'friday'],
+        availableEquipment: [],
+        injuries: [],
+        location: 'home',
+        maxDuration: 60,
+        timeConstraints: []
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const mockPlan: FitnessPlan = {
+    const mockPlan = createFitnessPlanFixture({
       id: 'plan-123',
       userId,
       title: 'Strength Plan',
       description: 'A plan for building strength',
       planType: 'strength_program',
       goals,
-      progression: { strategy: 'linear' },
-      constraints: { equipment: [], injuries: [], timeConstraints: [] },
-      weeks: [],
       status: 'draft',
-      currentPosition: { week: 1, day: 0 },
-      startDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    mockProfileRepository.findById.mockResolvedValue(Result.ok(mockProfile));
-    mockPlanRepository.findActiveByUserId.mockResolvedValue(
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
+    vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
     );
-    mockAIPlanGenerator.generatePlan.mockResolvedValue(Result.ok(mockPlan));
-    mockPlanRepository.save.mockResolvedValue(Result.fail(new Error('Save failed')));
+    vi.mocked(mockAIPlanGenerator.generatePlan).mockResolvedValue(Result.ok(mockPlan));
+    vi.mocked(mockPlanRepository.save).mockResolvedValue(Result.fail(new Error('Save failed')));
 
     // Act
     const result = await useCase.execute({

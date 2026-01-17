@@ -8,6 +8,13 @@ export function getRecentMessages(
   return conversation.messages.slice(-count);
 }
 
+export function getLatestMessage(
+  conversation: CoachConversation,
+): CoachMsg | undefined {
+  return conversation.messages[conversation.messages.length - 1];
+}
+
+
 export function getPendingCheckIns(conversation: CoachConversation): CheckIn[] {
   return conversation.checkIns.filter((c) => c.status === 'pending');
 }

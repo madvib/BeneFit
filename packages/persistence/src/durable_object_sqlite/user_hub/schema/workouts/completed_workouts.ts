@@ -18,6 +18,7 @@ export const completedWorkouts = sqliteTable(
     workoutType: text('workout_type', {
       enum: ['strength', 'cardio', 'flexibility', 'hybrid'],
     }).notNull(),
+    title: text('title').notNull(),
     description: text('description'),
 
     // Timing

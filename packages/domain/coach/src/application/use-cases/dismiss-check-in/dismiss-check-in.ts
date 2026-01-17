@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { CoachConversationCommands } from '@core/index.js';
-import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
-import { CheckInDismissedEvent } from '@app/events/check-in-dismissed.event.js';
+import { CoachConversationCommands } from '../../../core/index.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CheckInDismissedEvent } from '../../events/check-in-dismissed.event.js';
 
 
 

@@ -1,10 +1,9 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { UserProfileCommands } from '@bene/training-core';
+import { UserProfileCommands, TrainingConstraintsSchema, toTrainingConstraintsSchema } from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/index.js';
-import { TrainingConstraintsSchema, type TrainingConstraints } from '@bene/shared';
+import type { TrainingConstraints } from '@bene/training-core';
 import { TrainingConstraintsUpdatedEvent } from '../../events/index.js';
-import { toDomainTrainingConstraints } from '../../mappers/index.js';
 
 
 
@@ -25,7 +24,7 @@ export type UpdateTrainingConstraintsRequest = {
 // Zod schema for response validation
 export const UpdateTrainingConstraintsResponseSchema = z.object({
   userId: z.string(),
-  constraints: TrainingConstraintsSchema, // Using proper schema instead of z.unknown()
+  constraints: TrainingConstraintsSchema,
   shouldAdjustPlan: z.boolean(),
 });
 
@@ -64,10 +63,10 @@ export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
       JSON.stringify(profile.trainingConstraints.injuries) !==
       JSON.stringify(request.constraints.injuries);
 
-    // 3. Update constraints using command
+    // 3. Update constraints using command - request.constraints is already in domain format
     const updatedProfileResult = UserProfileCommands.updateTrainingConstraints(
       profile,
-      toDomainTrainingConstraints(request.constraints),
+      request.constraints as TrainingConstraints,
     );
     if (updatedProfileResult.isFailure) {
       return Result.fail(new Error(updatedProfileResult.error as unknown as string));
@@ -88,7 +87,7 @@ export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
 
     return Result.ok({
       userId: request.userId,
-      constraints: request.constraints,
+      constraints: toTrainingConstraintsSchema(updatedProfileResult.value.trainingConstraints),
       shouldAdjustPlan: availableDaysChanged || injuriesChanged,
     });
   }

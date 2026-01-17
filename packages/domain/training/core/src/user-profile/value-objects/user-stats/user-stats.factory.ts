@@ -1,4 +1,4 @@
-import { UserStats, Achievement } from './user-stats.types.js';
+import { UserStats, Achievement, AchievementType } from './user-stats.types.js';
 
 export function createUserStats(joinedAt: Date): UserStats {
   return {
@@ -13,7 +13,7 @@ export function createUserStats(joinedAt: Date): UserStats {
   };
 }
 
-export function createAchievement(id: string, type: string, name: string, description: string): Achievement {
+export function createAchievement(id: string, type: AchievementType, name: string, description: string): Achievement {
   return {
     id,
     type,

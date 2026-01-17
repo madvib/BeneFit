@@ -1,22 +1,40 @@
-import { CoachConversation } from '@bene/coach-domain';
+import { CoachConversation, CoachMsg, CheckIn } from '@bene/coach-domain';
 import { coachingConversation } from '../data/schema';
+
 export function toDomain(
   row: typeof coachingConversation.$inferSelect,
+  messages: CoachMsg[],
+  checkIns: CheckIn[],
 ): CoachConversation {
+  // Deeply rehydrate dates in the context snapshot
+  const context = {
+    ...row.contextJson,
+    userGoals: {
+      ...row.contextJson.userGoals,
+      targetDate: row.contextJson.userGoals.targetDate
+        ? new Date(row.contextJson.userGoals.targetDate)
+        : undefined,
+    },
+    recentWorkouts: row.contextJson.recentWorkouts.map((w) => ({
+      ...w,
+      date: new Date(w.date),
+    })),
+  };
+
   return {
     id: row.id,
     userId: row.userId,
-    context: row.contextJson as any,
-    messages: [], // Messages are stored in a separate table
-    checkIns: [], // Check-ins are stored in a separate table
-    totalMessages: row.totalMessages ?? 0,
-    totalUserMessages: row.totalUserMessages ?? 0,
-    totalCoachMessages: row.totalCoachMessages ?? 0,
-    totalCheckIns: row.totalCheckIns ?? 0,
-    pendingCheckIns: row.pendingCheckIns ?? 0,
-    startedAt: row.startedAt ?? new Date(),
-    lastMessageAt: row.lastMessageAt ?? new Date(),
-    lastContextUpdateAt: row.lastContextUpdateAt ?? new Date(),
+    context: context as CoachConversation['context'],
+    messages,
+    checkIns,
+    totalMessages: row.totalMessages,
+    totalUserMessages: row.totalUserMessages,
+    totalCoachMessages: row.totalCoachMessages,
+    totalCheckIns: row.totalCheckIns,
+    pendingCheckIns: row.pendingCheckIns,
+    startedAt: row.startedAt,
+    lastMessageAt: row.lastMessageAt,
+    lastContextUpdateAt: row.lastContextUpdateAt,
   };
 }
 

@@ -19,7 +19,7 @@ interface CreateDraftParams {
   goals: PlanGoals;
   progression: ProgressionStrategy;
   constraints: TrainingConstraints;
-  startDate: string;
+  startDate: Date;
   weeks?: WeeklySchedule[];
 }
 

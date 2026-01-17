@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { CompletedWorkout } from '@bene/shared';
-import { mockWorkoutHistory } from '@/lib/testing/fixtures';
+import { fixtures } from '@bene/react-api-client';
+import type { CompletedWorkout } from '@bene/react-api-client';
 import { ActivityFeedView } from './feed/activity-feed-view';
 import { WorkoutHistoryDetailModal } from './history/workout-history-detail-modal';
+
+// Generate consistent workout history with seed
+const mockWorkoutHistory = fixtures.createGetWorkoutHistoryResponse(undefined, { seed: 400 });
 
 const meta: Meta<typeof ActivityFeedView> = {
   title: 'Features/Activities',
@@ -41,3 +44,4 @@ const InteractiveFeed = ({ defaultTab = 'feed' }: { defaultTab?: 'feed' | 'histo
 export const Default: StoryObj<typeof ActivityFeedView> = {
   render: () => <InteractiveFeed />,
 };
+

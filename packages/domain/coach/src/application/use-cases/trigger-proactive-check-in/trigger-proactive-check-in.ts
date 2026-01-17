@@ -6,10 +6,10 @@ import {
   createCoachConversation,
   createCheckIn,
   CheckInTrigger,
-} from '@core/index.js';
-import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
-import { CoachContextBuilder, AICoachService } from '@app/services/index.js';
-import { ProactiveCheckInTriggeredEvent } from '@app/events/proactive-check-in-triggered.event.js';
+} from '../../../core/index.js';
+import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '../../services/index.js';
+import { ProactiveCheckInTriggeredEvent } from '../../events/proactive-check-in-triggered.event.js';
 
 
 export const TriggerProactiveCheckInRequestSchema = z.object({
@@ -22,8 +22,8 @@ export type TriggerProactiveCheckInRequest = z.infer<
 
 export const TriggerProactiveCheckInResponseSchema = z.object({
   checkInId: z.string(),
-  question: z.string(),
-  triggeredBy: z.string(),
+  question: z.string().min(1).max(500),
+  triggeredBy: z.string().min(1).max(200),
 });
 
 export type TriggerProactiveCheckInResponse = z.infer<

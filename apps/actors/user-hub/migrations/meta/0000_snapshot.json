@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5f28c788-b523-4173-b0e4-9e6116332e3d",
+  "id": "cb4a37c9-b062-44e9-b443-2fd266b79c92",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "check_ins": {
@@ -143,14 +143,14 @@
           "name": "context_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "total_messages": {
           "name": "total_messages",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -158,7 +158,7 @@
           "name": "total_user_messages",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -166,7 +166,7 @@
           "name": "total_coach_messages",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -174,7 +174,7 @@
           "name": "total_check_ins",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -182,7 +182,7 @@
           "name": "pending_check_ins",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -190,7 +190,7 @@
           "name": "started_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         },
@@ -198,7 +198,7 @@
           "name": "last_message_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         },
@@ -206,7 +206,7 @@
           "name": "last_context_update_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -320,8 +320,9 @@
           "name": "description",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
         },
         "plan_type": {
           "name": "plan_type",
@@ -333,6 +334,13 @@
         "template_id": {
           "name": "template_id",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "target_date": {
+          "name": "target_date",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -355,7 +363,7 @@
           "name": "constraints_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "current_position_json": {
@@ -369,7 +377,7 @@
           "name": "status",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "'draft'"
         },
@@ -406,8 +414,9 @@
           "name": "weeks_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "('[]')"
         },
         "started_at": {
           "name": "started_at",
@@ -434,7 +443,7 @@
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         },
@@ -442,7 +451,7 @@
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         }
@@ -616,6 +625,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "type": {
@@ -806,6 +822,13 @@
           "name": "preferences_json",
           "type": "text",
           "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "fitness_goals_target_date": {
+          "name": "fitness_goals_target_date",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
@@ -813,21 +836,28 @@
           "name": "fitness_goals_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "training_constraints_json": {
           "name": "training_constraints_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_assessment_date": {
+          "name": "last_assessment_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "experience_profile_json": {
           "name": "experience_profile_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -1098,6 +1128,20 @@
           "notNull": false,
           "autoincrement": false
         },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "plan_id": {
           "name": "plan_id",
           "type": "text",
@@ -1133,11 +1177,11 @@
           "notNull": true,
           "autoincrement": false
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "started_at": {
+          "name": "started_at",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "completed_at": {
@@ -1193,7 +1237,7 @@
           "name": "performance_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "total_volume": {
@@ -1221,14 +1265,15 @@
           "name": "verification_json",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": "('{\"verified\":false,\"verifications\":[],\"sponsorEligible\":false}')"
         },
         "is_public": {
           "name": "is_public",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": false
         },
@@ -1257,7 +1302,7 @@
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         }
@@ -1693,6 +1738,27 @@
           "name": "permissions",
           "type": "text",
           "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_sync_attempt": {
+          "name": "last_sync_attempt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_sync_success": {
+          "name": "last_sync_success",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "next_scheduled_sync": {
+          "name": "next_scheduled_sync",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
@@ -1700,21 +1766,21 @@
           "name": "sync_status",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "metadata": {
           "name": "metadata",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "is_active": {
           "name": "is_active",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": true
         },
@@ -1722,7 +1788,7 @@
           "name": "is_paused",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": false
         },
@@ -1730,7 +1796,7 @@
           "name": "connected_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         },
@@ -1745,7 +1811,7 @@
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         },
@@ -1753,7 +1819,7 @@
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "(unixepoch())"
         }

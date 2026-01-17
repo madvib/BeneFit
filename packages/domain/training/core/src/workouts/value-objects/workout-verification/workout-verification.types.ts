@@ -47,7 +47,7 @@ export type VerificationData =
   | { method: 'witness'; data: WitnessVerification }
   | { method: 'manual'; data: null };
 
-interface WorkoutVerificationData {
+export interface WorkoutVerificationData {
   verified: boolean;
   verifications: VerificationData[];
   sponsorEligible: boolean; // Can corporate sponsors count this?

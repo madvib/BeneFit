@@ -3,8 +3,8 @@ import { Result } from '@bene/shared';
 import { CoachConversation } from '@core/index.js';
 import { TriggerProactiveCheckInUseCase } from './trigger-proactive-check-in.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../ports/coach-context-builder.js';
-import { AICoachService } from '../../ports/ai-coach-service.js';
+import { CoachContextBuilder } from '../../services/index.js';
+import { AICoachService } from '../../services/index.js';
 import { EventBus } from '@bene/shared';
 
 // Mock repositories and services
@@ -67,7 +67,16 @@ describe('TriggerProactiveCheckInUseCase', () => {
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
-      currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
+      currentPlan: {
+        planId: 'plan-123',
+        planName: 'Strength Plan',
+        weekNumber: 1,
+        dayNumber: 1,
+        totalWeeks: 4,
+        totalDays: 12,
+        adherenceRate: 0.8,
+        completionRate: 0.8,
+      },
     };
 
     const mockConversation: CoachConversation = {
@@ -88,14 +97,14 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
     const mockQuestion = 'How are you feeling about your workout routine?';
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+    vi.mocked(mockAICoachService.generateCheckInQuestion).mockResolvedValue(
       Result.ok(mockQuestion),
     );
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -116,7 +125,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
     });
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'ProactiveCheckInTriggered',
+        eventName: 'ProactiveCheckInTriggered',
         userId,
         trigger: 'enjoyment_declining',
       }),
@@ -148,19 +157,28 @@ describe('TriggerProactiveCheckInUseCase', () => {
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
-      currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
+      currentPlan: {
+        planId: 'plan-123',
+        planName: 'Strength Plan',
+        weekNumber: 1,
+        dayNumber: 1,
+        totalWeeks: 4,
+        totalDays: 12,
+        adherenceRate: 0.8,
+        completionRate: 0.8,
+      },
     };
 
     const mockQuestion = 'How are you feeling about your workout routine?';
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.fail(new Error('Not found')),
     );
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+    vi.mocked(mockAICoachService.generateCheckInQuestion).mockResolvedValue(
       Result.ok(mockQuestion),
     );
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -176,7 +194,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
     // Arrange
     const userId = 'user-123';
 
-    mockContextBuilder.buildContext.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(
       Result.fail(new Error('Failed to build context')),
     );
 
@@ -236,8 +254,8 @@ describe('TriggerProactiveCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 
@@ -279,7 +297,16 @@ describe('TriggerProactiveCheckInUseCase', () => {
       workoutsThisWeek: 0,
       plannedWorkoutsThisWeek: 0,
       energyLevel: 'medium',
-      currentPlan: { adherenceRate: 0.8 }, // High adherence to trigger enjoyment declining
+      currentPlan: {
+        planId: 'plan-123',
+        planName: 'Strength Plan',
+        weekNumber: 1,
+        dayNumber: 1,
+        totalWeeks: 4,
+        totalDays: 12,
+        adherenceRate: 0.8,
+        completionRate: 0.8,
+      },
     };
 
     const mockConversation: CoachConversation = {
@@ -298,11 +325,11 @@ describe('TriggerProactiveCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.generateCheckInQuestion.mockResolvedValue(
+    vi.mocked(mockAICoachService.generateCheckInQuestion).mockResolvedValue(
       Result.fail(new Error('AI generation failed')),
     );
 

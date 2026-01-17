@@ -120,16 +120,23 @@ describe('SyncServiceDataUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.serviceId).toBe(serviceId);
       expect(result.value.success).toBe(true);
-      expect(result.value.workoutsSynced).toBe(1); // Only 1 workout
       expect(result.value.activitiesSynced).toBe(2); // 2 total activities
     }
     expect(mockServiceRepository.save).toHaveBeenCalled(); // Called for startSync and recordSyncSuccess
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'ServiceSynced',
+        eventName: 'ActivitiesSynced',
         userId,
         serviceId,
-        workoutsSynced: 1,
+        serviceType: 'strava',
+      }),
+    );
+    expect(mockEventBus.publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventName: 'ServiceSynced',
+        userId,
+        serviceId,
+        workoutsSynced: 0,
       }),
     );
   });

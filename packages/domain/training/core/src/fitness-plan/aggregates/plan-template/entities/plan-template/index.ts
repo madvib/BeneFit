@@ -4,3 +4,4 @@ export { createPlanTemplate } from './plan-template.factory.js';
 export type { CreateTemplateParams } from './plan-template.factory.js';
 export * as PlanTemplateCommands from './plan-template.commands.js';
 export * as PlanTemplateQueries from './plan-template.queries.js';
+export * from './test/plan-template.fixtures.js';

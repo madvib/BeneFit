@@ -3,7 +3,7 @@ import { Result } from '@bene/shared';
 import { CoachConversation, CheckIn } from '@core/index.js';
 import { RespondToCheckInUseCase } from './respond-to-check-in.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
-import { AICoachService } from '../../ports/ai-coach-service.js';
+import { AICoachService } from '../../services/ai-coach-service.js';
 import { EventBus } from '@bene/shared';
 
 // Mock repositories and services
@@ -95,17 +95,17 @@ describe('RespondToCheckInUseCase', () => {
     const mockAnalysis = {
       analysis: 'User reports feeling great, positive sentiment detected',
       actions: [
-        { type: 'maintain_current_plan', details: 'Continue with current routine' },
+        { type: 'maintain_current_plan', details: 'Continue with current routine', appliedAt: new Date() },
       ],
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(
+    vi.mocked(mockAICoachService.analyzeCheckInResponse).mockResolvedValue(
       Result.ok(mockAnalysis),
     );
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -128,7 +128,7 @@ describe('RespondToCheckInUseCase', () => {
     });
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'CheckInResponded',
+        eventName: 'CheckInResponded',
         userId,
         checkInId,
         actionsApplied: 1,
@@ -142,7 +142,7 @@ describe('RespondToCheckInUseCase', () => {
     const checkInId = 'checkin-456';
     const response = 'I feel great!';
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.fail(new Error('Conversation not found')),
     );
 
@@ -208,7 +208,7 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 
@@ -283,7 +283,7 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 
@@ -358,10 +358,10 @@ describe('RespondToCheckInUseCase', () => {
       lastContextUpdateAt: new Date(),
     };
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockAICoachService.analyzeCheckInResponse.mockResolvedValue(
+    vi.mocked(mockAICoachService.analyzeCheckInResponse).mockResolvedValue(
       Result.fail(new Error('AI analysis failed')),
     );
 

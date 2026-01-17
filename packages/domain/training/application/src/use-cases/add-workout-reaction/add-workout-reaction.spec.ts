@@ -27,7 +27,7 @@ describe('AddWorkoutReactionUseCase', () => {
       isPublic: true,
       reactions: [],
     };
-    completedWorkoutRepo.findById.mockResolvedValue(Result.ok(mockWorkout));
+    vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
       userId: 'user-2',
@@ -42,13 +42,13 @@ describe('AddWorkoutReactionUseCase', () => {
     expect(completedWorkoutRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'WorkoutReactionAdded',
+        eventName: 'WorkoutReactionAdded',
       }),
     );
   });
 
   it('should fail if workout not found', async () => {
-    completedWorkoutRepo.findById.mockResolvedValue(Result.fail('Not found'));
+    vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
       userId: 'user-2',
@@ -68,7 +68,7 @@ describe('AddWorkoutReactionUseCase', () => {
       id: 'workout-1',
       isPublic: false,
     };
-    completedWorkoutRepo.findById.mockResolvedValue(Result.ok(mockWorkout));
+    vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
       userId: 'user-2',

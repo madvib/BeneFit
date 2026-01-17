@@ -8,7 +8,7 @@ import { CoachConversationRepository } from '@app/ports/coach-conversation-repos
 // Zod schema for request validation
 export const GetCoachHistoryRequestSchema = z.object({
   userId: z.string(),
-  limit: z.number().optional(),
+  limit: z.number().int().min(1).max(100).optional(),
 });
 
 // Zod inferred type with original name
@@ -18,28 +18,28 @@ export type GetCoachHistoryRequest = z.infer<typeof GetCoachHistoryRequestSchema
 
 // Response-only DTO schemas (not shared - specific to this use case)
 const ActionSchema = z.object({
-  type: z.string(),
-  details: z.string(),
+  type: z.string().min(1).max(50),
+  details: z.string().min(1).max(1000),
 });
 
 const MessageSchema = z.object({
   id: z.string(),
   role: z.enum(['user', 'coach', 'system']),
-  content: z.string(),
+  content: z.string().min(1).max(5000),
   timestamp: z.date(),
   actions: z.array(ActionSchema).optional(),
 });
 
 const PendingCheckInSchema = z.object({
   id: z.string(),
-  question: z.string(),
-  triggeredBy: z.string().optional(),
+  question: z.string().min(1).max(500),
+  triggeredBy: z.string().min(1).max(200).optional(),
 });
 
 const StatsSchema = z.object({
-  totalMessages: z.number(),
-  totalCheckIns: z.number(),
-  actionsApplied: z.number(),
+  totalMessages: z.number().int().min(0).max(100000),
+  totalCheckIns: z.number().int().min(0).max(10000),
+  actionsApplied: z.number().int().min(0).max(10000),
 });
 
 export const GetCoachHistoryResponseSchema = z.object({

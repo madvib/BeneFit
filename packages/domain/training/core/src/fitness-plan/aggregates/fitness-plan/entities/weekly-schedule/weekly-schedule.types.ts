@@ -1,6 +1,6 @@
 import { WorkoutTemplate } from "../workout-template/index.js";
 
-interface WeeklyScheduleData {
+export interface WeeklyScheduleData {
   id: string;
   weekNumber: number;
   planId: string;

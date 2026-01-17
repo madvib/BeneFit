@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { mockConnectedServices, mockUserProfile, mockUserStats } from '@/lib/testing/fixtures';
+import { fixtures } from '@bene/react-api-client';
 import ConnectionsView from './connections/connections-view';
 import BillingPage from './billing/page'; 
 import ProfileView from './profile/profile-view';
@@ -7,6 +7,10 @@ import SettingsClient from './settings/page';
 import NotificationsPage from './notifications/page';
 import { AccountHeader, AccountSidebar, OAuthProviderList, PageContainer, PageHeader, PersonalInfoForm, SecurityForm, SessionInfo } from '@/lib/components';
 
+// Generate consistent fixtures with seeds
+const mockUserProfile = fixtures.createGetProfileResponse(undefined, { seed: 200 });
+const mockUserStats = fixtures.createGetUserStatsResponse(undefined, { seed: 201 });
+const mockConnectedServices = fixtures.createGetConnectedServicesResponse(undefined, { seed: 202 });
 
 // Mock AccountLayout
 function AccountLayoutMock({ children }: { children: React.ReactNode }) {
@@ -181,3 +185,4 @@ export const Notifications: StoryObj = {
     </AccountLayoutMock>
   ),
 };
+

@@ -2,7 +2,7 @@ import {
   WorkoutPerformance,
   WorkoutVerification,
   WorkoutType,
-} from '@/workouts/value-objects/index.js';
+} from '../../../../value-objects/index.js';
 import { Reaction } from '../reaction/reaction.types.js';
 
 interface CompletedWorkoutData {

@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import {
-  ExperienceLevelSchema,
   FITNESS_GOALS,
   EQUIPMENT_OPTIONS
 } from '../../index.js';
 
 // Onboarding form schema
 // This is the unified onboarding form for initial profile creation
+
+const ExperienceLevelSchema = z.enum(['beginner', 'intermediate', 'advanced', 'elite']);
 
 export const OnboardingFormSchema = z.object({
   displayName: z.string().min(1, 'Display name is required'),

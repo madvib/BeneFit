@@ -18,10 +18,13 @@ describe('Comprehensive Repository Testing', () => {
     const setup = await setupTestDb();
     db = setup.db;
     client = setup.client;
-    await seedUserHub(db as any);
+    await seedUserHub(db);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userRepo = new DurableUserProfileRepository(db as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     planRepo = new DurableFitnessPlanRepository(db as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workoutRepo = new DurableCompletedWorkoutRepository(db as any);
   });
 

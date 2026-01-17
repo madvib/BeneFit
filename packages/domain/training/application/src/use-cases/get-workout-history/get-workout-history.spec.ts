@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Result } from '@bene/shared';
 import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+import { createWorkoutListFixture } from '@bene/training-core';
 import { GetWorkoutHistoryUseCase } from './get-workout-history.js';
 
 describe('GetWorkoutHistoryUseCase', () => {
@@ -16,17 +17,9 @@ describe('GetWorkoutHistoryUseCase', () => {
   });
 
   it('should get workout history successfully', async () => {
-    const mockWorkouts = [
-      {
-        id: 'workout-1',
-        workoutType: 'strength',
-        recordedAt: new Date(),
-        performance: { durationMinutes: 45, perceivedExertion: 7, enjoyment: 8 },
-        verification: { verified: true },
-        reactions: [],
-      },
-    ];
-    completedWorkoutRepo.findByUserId.mockResolvedValue(Result.ok(mockWorkouts));
+    const mockWorkouts = createWorkoutListFixture(1);
+
+    vi.mocked(completedWorkoutRepo.findByUserId).mockResolvedValue(Result.ok(mockWorkouts));
 
     const request = {
       userId: 'user-1',
@@ -41,7 +34,7 @@ describe('GetWorkoutHistoryUseCase', () => {
   });
 
   it('should fail if repo fails', async () => {
-    completedWorkoutRepo.findByUserId.mockResolvedValue(
+    vi.mocked(completedWorkoutRepo.findByUserId).mockResolvedValue(
       Result.fail(new Error('Error')),
     );
 

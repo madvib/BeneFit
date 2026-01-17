@@ -12,7 +12,7 @@ export const coachingMessages = sqliteTable(
     role: text('role', { enum: ['user', 'assistant'] }).notNull(),
     content: text('content').notNull(),
     contextJson: text('context_json', { mode: 'json' }), // nullable - relevant workout data
-    createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).default(sql`(unixepoch() * 1000)`),
   },
   (table) => [
     index('coaching_messages_conversation_id_created_at_idx').on(

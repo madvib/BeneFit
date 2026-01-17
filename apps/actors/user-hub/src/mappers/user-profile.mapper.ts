@@ -1,9 +1,5 @@
 import {
   UserProfile,
-  ExperienceProfile,
-  FitnessGoals,
-  TrainingConstraints,
-  UserPreferences,
   Achievement,
 } from '@bene/training-core';
 import type {
@@ -14,26 +10,33 @@ import type {
   Achievement as DbAchievement,
 } from '../data/schema';
 type ProfileWithRelations = Profile & {
-  stats: UserStats | null;
+  stats: UserStats; // Always loaded with the query
 };
 
 // Domain to Database (Profile) - MUCH SIMPLER
 export function toProfileDatabase(profile: UserProfile): NewProfile {
+  // Extract lastAssessmentDate from experienceProfile
+  const { lastAssessmentDate, ...experienceData } = profile.experienceProfile;
+
+  // Extract targetDate from fitnessGoals
+  const { targetDate: fitnessGoalsTargetDate, ...fitnessGoalsData } = profile.fitnessGoals;
+
   return {
     userId: profile.userId,
 
     // Personal info
     displayName: profile.displayName,
-    avatarUrl: profile.avatar || null,
-    bio: profile.bio || null,
-    location: profile.location || null,
+    avatarUrl: profile.avatar,
+    bio: profile.bio,
+    location: profile.location,
     timezone: profile.timezone,
 
-    // Everything as JSON - no extraction needed
-    experienceProfileJson: profile.experienceProfile as unknown,
-    fitnessGoalsJson: profile.fitnessGoals as unknown,
-    trainingConstraintsJson: profile.trainingConstraints as unknown,
-    preferencesJson: profile.preferences as unknown,
+    lastAssessmentDate,
+    experienceProfileJson: experienceData,
+    fitnessGoalsTargetDate: fitnessGoalsTargetDate || null,
+    fitnessGoalsJson: fitnessGoalsData,
+    trainingConstraintsJson: profile.trainingConstraints,
+    preferencesJson: profile.preferences,
 
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
@@ -52,7 +55,7 @@ export function toStatsDatabase(profile: UserProfile): NewUserStats {
 
     currentStreakDays: profile.stats.currentStreak,
     longestStreakDays: profile.stats.longestStreak,
-    lastWorkoutDate: profile.stats.lastWorkoutDate || null,
+    lastWorkoutDate: profile.stats.lastWorkoutDate,
 
     updatedAt: new Date(),
   };
@@ -60,60 +63,34 @@ export function toStatsDatabase(profile: UserProfile): NewUserStats {
 
 // Database to Domain
 export function toDomain(row: ProfileWithRelations): UserProfile {
-  const stats = row.stats || {
-    userId: row.userId,
-    totalWorkoutsCompleted: 0,
-    totalMinutesTrained: 0,
-    totalVolumeKg: 0,
-    currentStreakDays: 0,
-    longestStreakDays: 0,
-    lastWorkoutDate: null,
-    updatedAt: row.updatedAt,
-  };
-
   return {
     userId: row.userId,
 
     displayName: row.displayName,
-    avatar: row.avatarUrl || undefined,
-    bio: row.bio || undefined,
-    location: row.location || undefined,
+    avatar: row.avatarUrl ?? undefined,
+    bio: row.bio ?? undefined,
+    location: row.location ?? undefined,
     timezone: row.timezone,
 
-    // Source of truth from JSON (with fallbacks for nullable fields)
-    experienceProfile: (row.experienceProfileJson as ExperienceProfile) || {
-      level: 'beginner',
-      yearsTraining: 0,
-      sportBackground: [],
-      injuryHistory: [],
-      equipmentAccess: [],
+    // Merge lastAssessmentDate back into experienceProfile
+    experienceProfile: {
+      ...row.experienceProfileJson,
+      lastAssessmentDate: row.lastAssessmentDate,
     },
-    fitnessGoals: (row.fitnessGoalsJson as FitnessGoals) || {
-      primary: 'general_fitness',
-      secondary: [],
-      targetBodyFat: null,
-      targetWeight: null,
-      deadlines: [],
+    fitnessGoals: {
+      ...row.fitnessGoalsJson,
+      targetDate: row.fitnessGoalsTargetDate || undefined,
     },
-    trainingConstraints: (row.trainingConstraintsJson as TrainingConstraints) || {
-      daysPerWeek: 3,
-      minutesPerSession: 45,
-      preferredDays: [],
-      blackoutDates: [],
-    },
-    preferences: (row.preferencesJson as UserPreferences) || {
-      units: 'metric',
-      theme: 'light',
-      notifications: { email: true, push: true },
-    },
+    trainingConstraints: row.trainingConstraintsJson,
+    preferences: row.preferencesJson,
 
     stats: {
-      totalWorkouts: stats.totalWorkoutsCompleted,
-      totalMinutes: stats.totalMinutesTrained,
-      totalVolume: stats.totalVolumeKg,
-      currentStreak: stats.currentStreakDays,
-      longestStreak: stats.longestStreakDays,
-      lastWorkoutDate: stats.lastWorkoutDate || undefined,
+      totalWorkouts: row.stats.totalWorkoutsCompleted,
+      totalMinutes: row.stats.totalMinutesTrained,
+      totalVolume: row.stats.totalVolumeKg,
+      currentStreak: row.stats.currentStreakDays,
+      longestStreak: row.stats.longestStreakDays,
+      lastWorkoutDate: row.stats.lastWorkoutDate ?? undefined,
       achievements: [], // Loaded separately
       firstWorkoutDate: row.createdAt,
       joinedAt: row.createdAt,
@@ -141,7 +118,7 @@ export function achievementToDatabase(userId: string, achievement: Achievement) 
   return {
     id: achievement.id,
     userId,
-    type: achievement.type,
+    achievementType: achievement.type,
     name: achievement.name,
     description: achievement.description,
     iconUrl: achievement.iconUrl || null,

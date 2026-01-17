@@ -18,11 +18,11 @@ export type GetConnectedServicesRequest = z.infer<
 // Response-only DTO schemas (not shared - specific to this use case)
 const ServiceSchema = z.object({
   id: z.string(),
-  serviceType: z.string(),
+  serviceType: z.string().min(1).max(50),
   isActive: z.boolean(),
   isPaused: z.boolean(),
   lastSyncAt: z.date().optional(),
-  syncStatus: z.string(),
+  syncStatus: z.string().min(1).max(50),
 });
 
 export const GetConnectedServicesResponseSchema = z.object({

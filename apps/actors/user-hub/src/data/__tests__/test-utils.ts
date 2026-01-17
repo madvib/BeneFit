@@ -16,19 +16,15 @@ export async function setupTestDb() {
 
   const db = drizzle(client, { schema });
 
-  // Run migrations
-  // Note: We might need to adjust how migrations are loaded for tests 
-  // if standard migrator expects a different format or if we don't have direct access to migration files in build.
-  // For now assuming source access to migrations folder.
-
-  // Actually, drizzle-orm/libsql/migrator might not work directly with relative paths if looking for .sql files in build.
-  // But since we are in a repo source context (tests), it should verify.
-
-  // Alternative: push schema directly using drizzle-kit logic or just raw verify.
-  // For 'smoke test' of seed, we can just ensure tables exist.
-  // But proper way is using migrate.
-
-  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
+  try {
+    await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
+  } catch (error) {
+    console.error('Migration failed:', error);
+    // If migration from folder fails, we might want to try referencing the schema directly 
+    // or just let it fail if tables are strictly required.
+    // For now logging is enough to debug.
+    throw error;
+  }
 
   return { client, db };
 }

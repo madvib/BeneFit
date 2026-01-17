@@ -13,16 +13,16 @@ export type GetProfileRequest = z.infer<typeof GetProfileRequestSchema>;
 // Zod schema for response validation
 export const GetProfileResponseSchema = z.object({
   userId: z.string(),
-  displayName: z.string(),
-  avatar: z.string().optional(),
-  bio: z.string().optional(),
-  location: z.string().optional(),
-  experienceLevel: z.string(),
-  primaryGoal: z.string(),
-  totalWorkouts: z.number(),
-  totalMinutes: z.number(),
-  totalAchievements: z.number(),
-  currentStreak: z.number(),
+  displayName: z.string().min(1).max(100),
+  avatar: z.string().url().optional(),
+  bio: z.string().min(1).max(500).optional(),
+  location: z.string().min(1).max(100).optional(),
+  experienceLevel: z.string().min(1).max(50),
+  primaryGoal: z.string().min(1).max(50),
+  totalWorkouts: z.number().int().min(0).max(100000),
+  totalMinutes: z.number().int().min(0).max(1000000),
+  totalAchievements: z.number().int().min(0).max(1000),
+  currentStreak: z.number().int().min(0).max(3650),
   preferences: z.any(), // Add preferences - simplified for now as it's a deep object
 });
 

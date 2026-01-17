@@ -106,7 +106,7 @@ describe('ConnectServiceUseCase', () => {
     );
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'ServiceConnected',
+        eventName: 'ServiceConnected',
         userId,
         serviceType,
       }),
@@ -116,7 +116,7 @@ describe('ConnectServiceUseCase', () => {
   it('should fail if service type is not supported', async () => {
     // Arrange
     const userId = 'user-123';
-    const serviceType = 'unsupported-service';
+    const serviceType = 'unsupported-service' as any;
     const authorizationCode = 'auth-code-456';
     const redirectUri = 'https://example.com/callback';
 

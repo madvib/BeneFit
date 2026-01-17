@@ -23,6 +23,11 @@
     "build:shared": "nx run-many -t build --projects=tag:scope:shared",
     "wrangler:types:env": "nx run-many -t types:env --projects=tag:runtime:worker,tag:runtime:durable-object ",
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
+    "test:mappers": "nx run-many -t test --all -- mappers --passWithNoTests",
+    "test:mappers:repo": "nx run-many -t test -p @bene/user-hub -- mappers --passWithNoTests",
+    "test:mappers:app": "nx run-many -t test --projects=tag:type:domain -- mappers --passWithNoTests",
+    "test:fixtures": "nx test @bene/web src/lib/testing/fixtures/__tests__",
+    "test:schema": "pnpm test:mappers && pnpm test:fixtures",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
     "nx:affected": "nx affected -t lint test build",
     "inspect-eslint": "eslint --inspect-config"
@@ -35,6 +40,7 @@
     "@cloudflare/vitest-pool-workers": "^0.11.1",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
+    "@faker-js/faker": "^10.2.0",
     "@libsql/client": "^0.15.15",
     "@nerdfolio/drizzle-d1-helpers": "^0.1.4",
     "@next/eslint-plugin-next": "^16.0.0",
@@ -96,12 +102,14 @@
     "vite-plugin-dts": "~4.5.4",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "^4.0.16",
-    "wrangler": "^4.59.1"
+    "wrangler": "^4.59.1",
+    "zod-schema-faker": "^2.1.0"
   },
   "pnpm": {
     "overrides": {
       "drizzle-orm": "catalog:",
-      "better-auth": "catalog:"
+      "better-auth": "catalog:",
+      "@faker-js/faker": "10.2.0"
     },
     "onlyBuiltDependencies": [
       "esbuild"

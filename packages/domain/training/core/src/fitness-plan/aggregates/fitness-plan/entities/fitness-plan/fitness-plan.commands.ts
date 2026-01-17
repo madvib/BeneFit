@@ -34,7 +34,7 @@ export function addWeek(plan: FitnessPlan, week: WeeklySchedule): Result<Fitness
   if (week.weekNumber !== expectedWeekNumber) {
     return Result.fail(
       new PlanStateError(
-        `Expected week ${expectedWeekNumber}, got ${week.weekNumber}`,
+        `Expected week ${ expectedWeekNumber }, got ${ week.weekNumber }`,
         { expectedWeekNumber, actualWeekNumber: week.weekNumber, planId: plan.id },
       ),
     );
@@ -193,7 +193,7 @@ export function pausePlan(plan: FitnessPlan, reason?: string): Result<FitnessPla
 
   // Use the reason parameter to potentially trigger additional logic
   if (reason) {
-    console.log(`Plan paused for reason: ${reason}`); // Use the reason parameter
+    console.log(`Plan paused for reason: ${ reason }`); // Use the reason parameter
   }
 
   return Result.ok(touch(updatedPlan));
@@ -220,7 +220,7 @@ export function advanceDay(plan: FitnessPlan): Result<FitnessPlan> {
     const updatedPlan: FitnessPlan = {
       ...plan,
       status: 'completed',
-      endDate: new Date().toISOString(),
+      endDate: new Date(),
     };
     return Result.ok(touch(updatedPlan));
   }

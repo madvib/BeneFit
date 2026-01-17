@@ -10,17 +10,17 @@ import type { WorkoutSessionRepository } from '../../repositories/workout-sessio
 import { WorkoutStartedEvent } from '../../events/workout-started.event.js';
 
 // Simplified schema for WorkoutActivity - we'll use unknown for now and convert at runtime
-const WorkoutActivitySchema = z
+export const WorkoutActivitySchema = z
   .object({
-    name: z.string(),
+    name: z.string().min(1),
     type: z.enum(['warmup', 'main', 'cooldown', 'interval', 'circuit']),
-    order: z.number(),
+    order: z.number().int().nonnegative(),
     structure: z.unknown().optional(),
     instructions: z.array(z.string()).optional(),
-    distance: z.number().optional(),
-    duration: z.number().optional(),
+    distance: z.number().nonnegative().optional(),
+    duration: z.number().nonnegative().optional(),
     pace: z.string().optional(),
-    videoUrl: z.string().optional(),
+    videoUrl: z.string().url().optional(),
     equipment: z.array(z.string()).optional(),
     alternativeExercises: z.array(z.string()).optional(),
   })
@@ -31,10 +31,10 @@ const WorkoutActivitySchema = z
 // Single request schema with ALL fields
 export const StartWorkoutRequestSchema = z.object({
   // Server context
-  userId: z.string(),
+  userId: z.string().min(1), // Should ideally be UUID but min(1) is safer for legacy mocks
 
   // Client data
-  userName: z.string(),
+  userName: z.string().min(1),
   userAvatar: z.string().optional(),
   fromPlan: z.boolean().optional(),
   workoutType: z.string().optional(),
