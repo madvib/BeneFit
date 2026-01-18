@@ -1,8 +1,10 @@
-import { Guard, Result } from '@bene/shared';
-import { TemplateRules } from '../template-rules/template-rules.types.js';
-import { TemplateStructure } from '../template-structure/template-structure.types.js';
-import { TemplateAuthor, WorkoutPreview, PlanTemplate } from './plan-template.types.js';
 import { randomUUID } from 'crypto';
+import { Guard, Result } from '@bene/shared';
+import { WorkoutPreview } from '@/fitness-plan/value-objects/index.js';
+import { type TemplateRules, toTemplateRulesView } from '../template-rules/index.js';
+import { type TemplateStructure, toTemplateStructureView } from '../template-structure/index.js';
+import { TemplateAuthor, PlanTemplate, PlanTemplateView } from './plan-template.types.js';
+import { estimateTemplateDuration, getTemplateFrequency } from './plan-template.queries.js';
 
 export interface CreateTemplateParams {
   name: string;
@@ -56,4 +58,28 @@ export function createPlanTemplate(params: CreateTemplateParams): Result<PlanTem
     previewWorkouts: params.previewWorkouts,
     version: version,
   });
+}
+
+export function toPlanTemplateView(template: PlanTemplate): PlanTemplateView {
+  return {
+    id: template.id,
+    name: template.name,
+    description: template.description,
+    author: { ...template.author },
+    tags: [...template.tags],
+    structure: toTemplateStructureView(template.structure),
+    rules: toTemplateRulesView(template.rules),
+    metadata: {
+      ...template.metadata,
+      createdAt: template.metadata.createdAt.toISOString(),
+      updatedAt: template.metadata.updatedAt.toISOString(),
+      publishedAt: template.metadata.publishedAt?.toISOString(),
+    },
+    previewWorkouts: template.previewWorkouts ? template.previewWorkouts.map(ws => ({ ...ws })) : undefined,
+    version: template.version,
+
+    // Computed
+    estimatedDuration: estimateTemplateDuration(template),
+    frequency: getTemplateFrequency(template),
+  };
 }

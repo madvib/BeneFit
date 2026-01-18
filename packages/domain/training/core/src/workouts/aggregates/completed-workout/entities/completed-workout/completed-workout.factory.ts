@@ -1,12 +1,13 @@
-import { Guard, Result } from '@bene/shared';
-import { CompletedWorkout } from './completed-workout.types.js';
 import { randomUUID } from 'crypto';
+import { Guard, Result } from '@bene/shared';
 import {
   WorkoutPerformance,
   WorkoutType,
-  WorkoutVerification,
+  WorkoutVerification, toWorkoutPerformanceView, toWorkoutVerificationView
 } from '@/workouts/value-objects/index.js';
-
+import { toReactionView } from '../reaction/reaction.factory.js';
+import { CompletedWorkout, CompletedWorkoutView } from './completed-workout.types.js';
+import * as Queries from './completed-workout.queries.js';
 export interface CreateCompletedWorkoutParams {
   userId: string;
   workoutType: WorkoutType;
@@ -86,4 +87,32 @@ export function createCompletedWorkout(
     createdAt: now,
     recordedAt: params.performance.completedAt,
   });
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+export function toCompletedWorkoutView(
+  entity: CompletedWorkout,
+): CompletedWorkoutView {
+  const performanceView = toWorkoutPerformanceView(entity.performance);
+  const verificationView = toWorkoutVerificationView(entity.verification);
+
+  return {
+    ...entity,
+    createdAt: entity.createdAt.toISOString(),
+    recordedAt: entity.recordedAt.toISOString(),
+    performance: {
+      ...performanceView,
+      totalVolume: Queries.getTotalVolume(entity),
+      totalSets: Queries.getTotalSets(entity),
+      totalExercises: Queries.getTotalExercises(entity),
+      completionRate: Queries.getCompletionRate(entity),
+    },
+    verification: verificationView,
+    reactions: entity.reactions.map(toReactionView),
+    isVerified: entity.verification.verified,
+    reactionCount: Queries.getReactionCount(entity),
+  };
 }

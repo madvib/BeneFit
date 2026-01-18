@@ -55,6 +55,10 @@ describe('SkipWorkoutUseCase', () => {
     expect(result.isSuccess).toBe(true);
     expect(planRepo.save).toHaveBeenCalled();
 
+    expect(result.value.planId).toBe('plan-1');
+    expect(result.value.skippedWorkoutId).toBe('workout-1');
+    expect(result.value.message).toBeDefined();
+
     // Updated event expectation based on observed failures
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({

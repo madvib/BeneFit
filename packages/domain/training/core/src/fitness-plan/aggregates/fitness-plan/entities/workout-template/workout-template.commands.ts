@@ -17,7 +17,7 @@ export function startWorkout(template: WorkoutTemplate): Result<WorkoutTemplate>
   if (template.status !== 'scheduled') {
     return Result.fail(
       new WorkoutStateTransitionError(
-        `Cannot start workout with status: ${template.status}`,
+        `Cannot start workout with status: ${ template.status }`,
       ),
     );
   }
@@ -45,7 +45,7 @@ export function markComplete(
   if (template.status !== 'scheduled' && template.status !== 'in_progress') {
     return Result.fail(
       new WorkoutStateTransitionError(
-        `Cannot complete workout with status: ${template.status}`,
+        `Cannot complete workout with status: ${ template.status }`,
       ),
     );
   }
@@ -70,7 +70,7 @@ export function skipWorkout(
   if (template.status !== 'scheduled') {
     return Result.fail(
       new WorkoutStateTransitionError(
-        `Cannot skip workout with status: ${template.status}`,
+        `Cannot skip workout with status: ${ template.status }`,
       ),
     );
   }
@@ -92,16 +92,25 @@ export function rescheduleWorkout(
   if (template.status !== 'scheduled') {
     return Result.fail(
       new WorkoutStateTransitionError(
-        `Cannot reschedule workout with status: ${template.status}`,
+        `Cannot reschedule workout with status: ${ template.status }`,
       ),
     );
   }
   // ... new date validation logic remains the same ...
 
+  const dateObj = new Date(newDate);
+  if (isNaN(dateObj.getTime())) {
+    return Result.fail(
+      new WorkoutTemplateValidationError('Invalid date format for rescheduling', {
+        date: newDate,
+      }),
+    );
+  }
+
   return Result.ok({
     ...template,
     status: 'rescheduled',
-    rescheduledTo: newDate,
+    rescheduledTo: dateObj,
   });
 }
 

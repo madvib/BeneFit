@@ -9,8 +9,8 @@ export function createWeeklyScheduleFixture(overrides?: Partial<WeeklySchedule>)
     id: faker.string.uuid(),
     weekNumber,
     planId: faker.string.uuid(),
-    startDate: faker.date.future().toISOString(),
-    endDate: faker.date.future().toISOString(),
+    startDate: faker.date.future(),
+    endDate: faker.date.future(),
     focus: faker.company.catchPhrase(),
     targetWorkouts: faker.number.int({ min: 3, max: 6 }),
     workouts: [

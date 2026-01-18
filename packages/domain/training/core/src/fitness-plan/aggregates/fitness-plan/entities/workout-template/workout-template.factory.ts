@@ -1,6 +1,6 @@
 // workout-template.factory.ts
 import { Result, Guard } from '@bene/shared';
-import { WorkoutTemplate, WorkoutTemplateData } from './workout-template.types.js';
+import { WorkoutTemplate, WorkoutTemplateData, WorkoutTemplateView } from './workout-template.types.js';
 import { WorkoutTemplateValidationError } from '../../../../errors/fitness-plan-errors.js';
 
 type CreateTemplateParams = Omit<WorkoutTemplateData, 'status'> & { id: string };
@@ -51,4 +51,28 @@ export function workoutTemplateFromPersistence(
   data: WorkoutTemplateData,
 ): Result<WorkoutTemplate> {
   return Result.ok(data);
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+import { getEstimatedDuration, isPastDue, isCompleted } from './workout-template.queries.js';
+
+/**
+ * Map WorkoutTemplate entity to view model (API presentation)
+ * Notes: 
+ * - Dates are converted to ISO strings
+ * - Value objects (Goals, Activities) are reused directly as they have no client-sensitive data
+ * - Enriched with computed properties (estimatedDuration, isPastDue)
+ */
+export function toWorkoutTemplateView(template: WorkoutTemplate): WorkoutTemplateView {
+  return {
+    ...template,
+    scheduledDate: template.scheduledDate.toISOString(),
+    rescheduledTo: template.rescheduledTo?.toISOString(),
+    estimatedDuration: getEstimatedDuration(template),
+    isPastDue: isPastDue(template),
+    isCompleted: isCompleted(template),
+  };
 }

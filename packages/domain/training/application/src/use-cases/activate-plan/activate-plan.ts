@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { FitnessPlanCommands, FitnessPlanQueries } from '@bene/training-core';
+import { FitnessPlanCommands } from '@bene/training-core';
+import type { FitnessPlanView } from '@bene/training-core';
+import { toFitnessPlanView } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { PlanActivatedEvent } from '../../events/plan-activated.event.js';
 
@@ -16,20 +18,9 @@ export const ActivatePlanRequestSchema = z.object({
 
 export type ActivatePlanRequest = z.infer<typeof ActivatePlanRequestSchema>;
 
-export const ActivatePlanResponseSchema = z.object({
-  planId: z.string(),
-  status: z.string(),
-  startDate: z.date(),
-  todaysWorkout: z
-    .object({
-      workoutId: z.string(),
-      type: z.string(),
-      durationMinutes: z.number(),
-    })
-    .optional(),
-});
-
-export type ActivatePlanResponse = z.infer<typeof ActivatePlanResponseSchema>;
+export interface ActivatePlanResponse {
+  plan: FitnessPlanView;
+}
 
 export class ActivatePlanUseCase extends BaseUseCase<
   ActivatePlanRequest,
@@ -77,24 +68,9 @@ export class ActivatePlanUseCase extends BaseUseCase<
       }),
     );
 
-    // 6. Get today's workout if available using functional query
-    const todaysWorkout = FitnessPlanQueries.getCurrentWorkout(activatedPlan);
-
+    // 6. Return full plan view
     return Result.ok({
-      planId: activatedPlan.id,
-      status: activatedPlan.status,
-      startDate: new Date(startDateStr),
-      todaysWorkout: todaysWorkout
-        ? {
-          workoutId: todaysWorkout.id,
-          type: todaysWorkout.type,
-          durationMinutes:
-            (todaysWorkout.activities as { duration?: number }[]).reduce(
-              (sum: number, a) => sum + (a.duration || 10),
-              0,
-            ) || 30,
-        }
-        : undefined,
+      plan: toFitnessPlanView(activatedPlan),
     });
   }
 }

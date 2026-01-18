@@ -1,12 +1,11 @@
 import { fake } from 'zod-schema-faker/v4';
 import { faker } from '@faker-js/faker';
 import { SEED_USERS } from '@bene/shared';
+import { createUnverifiedWorkoutFixture, createMinimalPerformanceFixture } from '@/workouts/value-objects/index.js';
+import { createFireReactionFixture, createStrongReactionFixture } from '../../reaction/index.js';
 import { CompletedWorkout } from '../completed-workout.types.js';
 import { CompletedWorkoutSchema } from '../completed-workout.presentation.js';
 import { createCompletedWorkout } from '../completed-workout.factory.js';
-import { createMinimalPerformanceFixture } from '../../../../../value-objects/workout-performance/index.js';
-import { createUnverifiedWorkoutFixture } from '../../../../../value-objects/workout-verification/index.js';
-import { createFireReactionFixture, createStrongReactionFixture } from '../../reaction/index.js';
 
 /**
  * Canonical Fixtures for CompletedWorkout

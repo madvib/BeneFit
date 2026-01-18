@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { TemplateRules, ExperienceLevel, LocationType } from '../template-rules.types.js';
+import { TemplateRules, LocationType } from '../template-rules.types.js';
+import { ExperienceLevel } from '@bene/shared';
 
 export function createTemplateRulesFixture(overrides?: Partial<TemplateRules>): TemplateRules {
   return {

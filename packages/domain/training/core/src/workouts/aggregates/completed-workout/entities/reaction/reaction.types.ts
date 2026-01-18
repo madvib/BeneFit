@@ -1,3 +1,5 @@
+import { SerializeDates } from '@bene/shared';
+
 export type ReactionType =
   | 'fire' // 🔥 killed it
   | 'strong' // 💪 strong work
@@ -14,3 +16,6 @@ export interface ReactionData {
 }
 
 export type Reaction = Readonly<ReactionData>;
+
+
+export type ReactionView = SerializeDates<Reaction>;

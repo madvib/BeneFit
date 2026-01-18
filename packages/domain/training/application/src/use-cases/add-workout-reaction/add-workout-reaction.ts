@@ -18,14 +18,10 @@ export const AddWorkoutReactionRequestSchema = z.object({
 
 export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;
 
-export const AddWorkoutReactionResponseSchema = z.object({
-  workoutId: z.string(),
-  totalReactions: z.number(),
-});
-
-export type AddWorkoutReactionResponse = z.infer<
-  typeof AddWorkoutReactionResponseSchema
->;
+export interface AddWorkoutReactionResponse {
+  workoutId: string;
+  totalReactions: number;
+}
 
 export class AddWorkoutReactionUseCase extends BaseUseCase<
   AddWorkoutReactionRequest,

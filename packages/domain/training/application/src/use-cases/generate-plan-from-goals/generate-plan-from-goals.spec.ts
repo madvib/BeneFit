@@ -69,6 +69,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
       planType: 'strength_program',
       goals,
       status: 'draft',
+      weeks: [{ weekNumber: 1, workouts: [], targetWorkouts: 3, workoutsCompleted: 0 } as any],
     });
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(mockProfile));
@@ -88,8 +89,11 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.planId).toBe('plan-123');
-      expect(result.value.name).toBe('Strength Plan');
+      expect(result.value.preview).toBeDefined();
+      expect(result.value.preview.weekNumber).toBe(1);
+      expect(result.value.preview.workouts).toHaveLength(0); // firstWeek.workouts is empty in mock
+      // Basic check for preview structure
+      expect(Array.isArray(result.value.preview.workouts)).toBe(true);
     }
     expect(mockPlanRepository.save).toHaveBeenCalledWith(mockPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(

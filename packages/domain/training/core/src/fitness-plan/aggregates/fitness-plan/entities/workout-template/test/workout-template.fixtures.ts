@@ -9,7 +9,7 @@ export function createWorkoutTemplateFixture(overrides?: Partial<WorkoutTemplate
     planId: faker.string.uuid(),
     weekNumber: faker.number.int({ min: 1, max: 12 }),
     dayOfWeek: faker.number.int({ min: 0, max: 6 }),
-    scheduledDate: faker.date.future().toISOString(),
+    scheduledDate: faker.date.future(),
     title: faker.word.words(3),
     description: faker.lorem.sentence(),
     type: 'strength', // stringified WorkoutType

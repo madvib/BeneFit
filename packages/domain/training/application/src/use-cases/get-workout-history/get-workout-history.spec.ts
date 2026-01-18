@@ -30,6 +30,7 @@ describe('GetWorkoutHistoryUseCase', () => {
     expect(result.isSuccess).toBe(true);
     expect(result.value.workouts).toHaveLength(1);
     expect(result.value.total).toBe(1);
+    expect(result.value.workouts[0].id).toBe(mockWorkouts[0].id);
     expect(completedWorkoutRepo.findByUserId).toHaveBeenCalledWith('user-1', 20, 0);
   });
 

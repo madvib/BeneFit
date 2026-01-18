@@ -1,5 +1,7 @@
-import { TemplateStructure } from '../template-structure/template-structure.types.js';
-import { TemplateRules } from '../template-rules/template-rules.types.js';
+import { CreateView } from '@bene/shared';
+import { WorkoutPreview } from '../../../../value-objects/workout-preview/index.js';
+import { TemplateStructure, TemplateStructureView } from '../template-structure/index.js';
+import { TemplateRules, TemplateRulesView } from '../template-rules/index.js';
 
 export interface TemplateAuthor {
   userId?: string;
@@ -16,12 +18,6 @@ export interface TemplateMetadata {
   createdAt: Date;
   updatedAt: Date;
   publishedAt?: Date;
-}
-
-export interface WorkoutPreview {
-  weekNumber: number;
-  dayOfWeek: number;
-  workoutSummary: string; // Human-readable preview
 }
 
 interface PlanTemplateData {
@@ -42,3 +38,23 @@ interface PlanTemplateData {
 }
 
 export type PlanTemplate = Readonly<PlanTemplateData>;
+
+// View Interface
+
+export type PlanTemplateView = CreateView<
+  PlanTemplate,
+  'structure' | 'rules',
+  {
+    structure: TemplateStructureView;
+    rules: TemplateRulesView;
+    // Computed fields
+    estimatedDuration: {
+      minWeeks: number;
+      maxWeeks: number;
+    };
+    frequency: {
+      minWorkouts: number;
+      maxWorkouts: number;
+    };
+  }
+>;

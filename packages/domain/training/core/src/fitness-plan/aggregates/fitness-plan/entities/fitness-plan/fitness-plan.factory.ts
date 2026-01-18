@@ -1,15 +1,19 @@
 // workout-plan.factory.ts
+import { randomUUID } from 'crypto';
 import { Result, Guard } from '@bene/shared';
-import { PlanType, FitnessPlan } from './fitness-plan.types.js';
+import { PlanType, FitnessPlan, FitnessPlanView } from './fitness-plan.types.js';
 import { TrainingConstraints } from '@/shared/index.js';
 import {
   createPlanPosition,
   PlanGoals,
   ProgressionStrategy,
+  toPlanGoalsView,
 } from '@/fitness-plan/value-objects/index.js';
-import { randomUUID } from 'crypto';
 
 import { WeeklySchedule } from '../weekly-schedule/index.js';
+import { toWeeklyScheduleView } from '../weekly-schedule/weekly-schedule.factory.js';
+import { toWorkoutTemplateView } from '../workout-template/workout-template.factory.js';
+import * as Queries from './fitness-plan.queries.js';
 
 interface CreateDraftParams {
   userId: string;
@@ -68,4 +72,47 @@ export function createDraftFitnessPlan(params: CreateDraftParams): Result<Fitnes
  */
 export function workoutPlanFromPersistence(data: FitnessPlan): Result<FitnessPlan> {
   return Result.ok(data);
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+/**
+ * Map FitnessPlan entity to view model (API presentation)
+ * 
+ * - Serializes Date → ISO string
+ * - Enriches with computed fields (currentWorkout, currentWeek, summary)
+ * - Omits internal fields (templateId)
+ */
+export function toFitnessPlanView(plan: FitnessPlan): FitnessPlanView {
+  const currentWorkout = Queries.getCurrentWorkout(plan);
+  const currentWeek = Queries.getCurrentWeek(plan);
+  const summary = Queries.getWorkoutSummary(plan);
+
+  return {
+    // Entity fields (auto-typed via Omit)
+    id: plan.id,
+    userId: plan.userId,
+    title: plan.title,
+    description: plan.description,
+    planType: plan.planType,
+    goals: toPlanGoalsView(plan.goals),
+    progression: plan.progression,
+    constraints: plan.constraints,
+    weeks: plan.weeks.map(toWeeklyScheduleView),
+    status: plan.status,
+    currentPosition: plan.currentPosition,
+
+    // Date serialization
+    startDate: plan.startDate.toISOString(),
+    endDate: plan.endDate?.toISOString(),
+    createdAt: plan.createdAt.toISOString(),
+    updatedAt: plan.updatedAt?.toISOString(),
+
+    // Enriched fields
+    currentWorkout: currentWorkout ? toWorkoutTemplateView(currentWorkout) : undefined,
+    currentWeek: currentWeek ? toWeeklyScheduleView(currentWeek) : undefined,
+    summary,
+  };
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { WeeklyScheduleSchema, toWeeklyScheduleSchema } from '../weekly-schedule.presentation.js';
+import { WeeklyScheduleSchema, toWeeklyScheduleSchema } from '../weekly-schedule.schema.js';
 import { createWeeklyScheduleFixture } from './weekly-schedule.fixtures.js';
 
 describe('WeeklySchedule Presentation', () => {

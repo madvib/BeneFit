@@ -1,3 +1,5 @@
 export * from './base-classes/index.js';
 export * from './errors/index.js';
 export * from './constants.js';
+export * from './types/view-utils.js';
+

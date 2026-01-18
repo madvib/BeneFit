@@ -1,9 +1,10 @@
-import { LiveActivityProgress } from '../../value-objects/live-activity-progress/live-activity-progress.types.js';
-import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.types.js';
-import { SessionFeedItem } from '../../value-objects/session-feed-item/session-feed-item.types.js';
-import { SessionParticipant } from '../../value-objects/session-participant/session-participant.types.js';
-import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';
-import { ActivityPerformance } from '../../value-objects/workout-performance/workout-performance.types.js';
+import { CreateView } from '@bene/shared';
+import {
+  LiveActivityProgress, SessionParticipant, SessionConfiguration,
+  WorkoutActivity,
+  ActivityPerformance,
+  SessionFeedItem
+} from '../../value-objects/index.js';
 
 export type SessionState =
   | 'preparing' // Created but not started
@@ -51,3 +52,16 @@ interface WorkoutSessionData {
 }
 
 export type WorkoutSession = Readonly<WorkoutSessionData>;
+
+// ============================================
+// View Interface (API Presentation)
+// ============================================
+
+export type WorkoutSessionView = CreateView<
+  WorkoutSession,
+  never,
+  {
+    activeDuration: number;
+    completionPercentage: number;
+  }
+>;

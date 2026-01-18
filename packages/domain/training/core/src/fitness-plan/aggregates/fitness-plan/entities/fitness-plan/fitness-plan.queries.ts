@@ -139,3 +139,29 @@ export function getWorkoutSummary(plan: FitnessPlan): {
   );
 }
 
+/**
+ * QUERY: Generates a preview of the plan (typically the first week).
+ */
+export function getPlanPreview(plan: FitnessPlan): import('./fitness-plan.types.js').PlanPreview {
+  const firstWeek = plan.weeks[0] || { workouts: [] };
+
+  return {
+    weekNumber: 1,
+    workouts: firstWeek.workouts.map((w) => {
+      // Calculate duration from activities
+      const duration =
+        (w.activities as { duration?: number }[])?.reduce(
+          (sum: number, a) => sum + (a.duration || 10),
+          0,
+        ) || 30;
+
+      return {
+        weekNumber: 1,
+        dayOfWeek: w.dayOfWeek || 0,
+        type: w.type,
+        workoutSummary: `${ w.type } workout - ${ duration } minutes`,
+      };
+    }),
+  };
+}
+

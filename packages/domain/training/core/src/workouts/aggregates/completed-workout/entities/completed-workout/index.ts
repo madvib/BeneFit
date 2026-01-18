@@ -1,6 +1,6 @@
 // Export all parts of the CompletedWorkout entity
-export type { CompletedWorkout } from './completed-workout.types.js';
-export { createCompletedWorkout } from './completed-workout.factory.js';
+export type { CompletedWorkout, CompletedWorkoutView } from './completed-workout.types.js';
+export { createCompletedWorkout, toCompletedWorkoutView } from './completed-workout.factory.js';
 export * as CompletedWorkoutCommands from './completed-workout.commands.js';
 export * as CompletedWorkoutQueries from './completed-workout.queries.js';
 export * from './completed-workout.presentation.js';

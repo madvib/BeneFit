@@ -7,13 +7,13 @@ import {
   UserProfileCommands,
   WorkoutType,
   FitnessPlanCommands,
-  AchievementSchema,
-  WorkoutPerformanceSchema,
-  WorkoutVerificationSchema,
-  UserStatsSchema,
   fromWorkoutPerformanceSchema,
   fromWorkoutVerificationSchema,
+  toCompletedWorkoutView,
+  WorkoutPerformanceSchema,
+  WorkoutVerificationSchema,
 } from '@bene/training-core';
+import type { Achievement, UserStats, CompletedWorkoutView } from '@bene/training-core';
 import type {
   UserProfileRepository,
   CompletedWorkoutRepository,
@@ -39,25 +39,13 @@ export const CompleteWorkoutRequestSchema = z.object({
 export type CompleteWorkoutRequest = z.infer<typeof CompleteWorkoutRequestSchema>;
 
 
-
-// Zod schema for response validation
-// Use Pick to enforce consistency with shared UserStatsSchema while returning only relevant fields
-const StatsSubsetSchema = UserStatsSchema.pick({
-  totalWorkouts: true,
-  totalVolume: true,
-  totalMinutes: true,
-});
-
-export const CompleteWorkoutResponseSchema = z.object({
-  workoutId: z.string(),
-  // planUpdated: z.boolean(), // commented in original
-  newStreak: z.number().optional(),
-  achievementsEarned: z.array(AchievementSchema), // Use shared AchievementSchema
-  stats: StatsSubsetSchema,
-});
-
-// Zod inferred type with original name
-export type CompleteWorkoutResponse = z.infer<typeof CompleteWorkoutResponseSchema>;
+// Response Interface
+export interface CompleteWorkoutResponse {
+  workout: CompletedWorkoutView;
+  newStreak?: number;
+  achievementsEarned: Achievement[];
+  stats: Pick<UserStats, 'totalWorkouts' | 'totalVolume' | 'totalMinutes'>;
+}
 
 export class CompleteWorkoutUseCase extends BaseUseCase<
   CompleteWorkoutRequest,
@@ -170,8 +158,7 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     const stats = updatedProfile.isSuccess ? updatedProfile.value.stats : null;
 
     return Result.ok({
-      workoutId: completedWorkout.id,
-      // planUpdated,
+      workout: toCompletedWorkoutView(completedWorkout),
       newStreak: stats?.currentStreak,
       achievementsEarned: achievements,
       stats: stats
@@ -200,19 +187,19 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     return volume;
   }
 
-  private async checkAchievements(userId: string, workout: CompletedWorkout) {
+  private async checkAchievements(userId: string, workout: CompletedWorkout): Promise<Achievement[]> {
     // Would check various achievement conditions
-    const achievements = [];
+    const achievements: Achievement[] = [];
 
     // Example: First workout
     const profileResult = await this.profileRepository.findById(userId);
     if (profileResult.isSuccess && profileResult.value.stats.totalWorkouts === 1) {
       achievements.push({
         id: 'first_workout',
-        type: 'milestone',
+        type: 'first_workout',
         name: 'First Steps',
         description: 'Completed your first workout!',
-        earnedAt: new Date().toISOString(),
+        earnedAt: new Date(),
       });
     }
 

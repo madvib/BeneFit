@@ -48,16 +48,25 @@ async function run() {
     const files = readdirSync(OUTPUT_DIR, { withFileTypes: true });
     for (const file of files) {
       const fullPath = join(OUTPUT_DIR, file.name);
-      // Keep only .d.ts files
-      if (file.isFile() && file.name.endsWith('.d.ts')) {
+
+      // 1. Skip preserved directories
+      if (file.isDirectory() && keepDirs.has(file.name)) {
         continue;
       }
-      // Delete everything else (js files, folders, etc) except fixtures
-      if (file.isDirectory() && !keepDirs.has(file.name)) {
+
+      // 2. Remove other directories
+      if (file.isDirectory()) {
         rmSync(fullPath, { recursive: true, force: true });
-      } else if (!keepFiles.has(file.name) && file.name !== 'client.js' && file.name !== 'index.ts') {
-        unlinkSync(fullPath);
+        continue;
       }
+
+      // 3. Skip preserved files and types
+      if (file.isFile() && (file.name.endsWith('.d.ts') || keepFiles.has(file.name) || file.name === 'client.js' || file.name === 'index.ts')) {
+        continue;
+      }
+
+      // 4. Remove other files
+      unlinkSync(fullPath);
     }
   } catch (err) {
     console.warn('Warning during cleanup:', err);

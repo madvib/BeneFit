@@ -1,9 +1,11 @@
+import { CreateView, SerializeDates } from '@bene/shared';
 import {
   WorkoutPerformance,
   WorkoutVerification,
   WorkoutType,
-} from '../../../../value-objects/index.js';
-import { Reaction } from '../reaction/reaction.types.js';
+  WorkoutVerificationView,
+} from '@/workouts/value-objects/index.js';
+import { Reaction, ReactionView } from '../reaction/reaction.types.js';
 
 interface CompletedWorkoutData {
   id: string;
@@ -39,3 +41,28 @@ interface CompletedWorkoutData {
 }
 
 export type CompletedWorkout = Readonly<CompletedWorkoutData>;
+
+// ============================================
+// View Interface (API Presentation)
+// ============================================
+
+export interface EnrichedWorkoutPerformance extends WorkoutPerformance {
+  totalVolume: number;
+  totalSets: number;
+  totalExercises: number;
+  completionRate: number;
+}
+
+
+
+export type CompletedWorkoutView = CreateView<
+  CompletedWorkout,
+  'performance' | 'reactions',
+  {
+    performance: SerializeDates<EnrichedWorkoutPerformance>;
+    reactions: ReactionView[];
+    isVerified: boolean;
+    reactionCount: number;
+    verification: WorkoutVerificationView;
+  }
+>;

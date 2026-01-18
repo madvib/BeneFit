@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { WorkoutSessionCommands } from '@bene/training-core';
+import { WorkoutSessionCommands, toWorkoutSessionSchema } from '@bene/training-core';
+import type { WorkoutSessionPresentation as WorkoutSessionView } from '@bene/training-core';
 import { UserJoinedWorkoutEvent } from '../../events/index.js';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 
@@ -20,29 +21,9 @@ export type JoinMultiplayerWorkoutRequest = z.infer<
   typeof JoinMultiplayerWorkoutRequestSchema
 >;
 
-// Zod schema for response validation
-const ParticipantSchema = z.object({
-  userId: z.string(),
-  userName: z.string(),
-  status: z.string(),
-});
-
-const CurrentActivitySchema = z.object({
-  type: z.string(),
-  instructions: z.array(z.string()),
-});
-
-export const JoinMultiplayerWorkoutResponseSchema = z.object({
-  sessionId: z.string(),
-  workoutType: z.string(),
-  participants: z.array(ParticipantSchema),
-  currentActivity: CurrentActivitySchema,
-});
-
-// Zod inferred type with original name
-export type JoinMultiplayerWorkoutResponse = z.infer<
-  typeof JoinMultiplayerWorkoutResponseSchema
->;
+export interface JoinMultiplayerWorkoutResponse {
+  session: WorkoutSessionView;
+}
 
 export class JoinMultiplayerWorkoutUseCase extends BaseUseCase<
   JoinMultiplayerWorkoutRequest,
@@ -105,24 +86,8 @@ export class JoinMultiplayerWorkoutUseCase extends BaseUseCase<
     );
 
     // 6. Return session details
-    const currentActivity =
-      joinedSession.activities[joinedSession.currentActivityIndex];
-
     return Result.ok({
-      sessionId: joinedSession.id,
-      workoutType: joinedSession.workoutType,
-      participants: joinedSession.participants.map((p) => ({
-        userId: p.userId,
-        userName: p.userName,
-        status: p.status,
-      })),
-      currentActivity: {
-        type: currentActivity ? currentActivity.type : 'warmup',
-        instructions:
-          currentActivity && currentActivity.instructions
-            ? [...currentActivity.instructions]
-            : [],
-      },
+      session: toWorkoutSessionSchema(joinedSession),
     });
   }
 }

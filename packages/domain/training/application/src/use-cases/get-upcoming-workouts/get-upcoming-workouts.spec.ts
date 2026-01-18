@@ -65,7 +65,8 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.workouts).toBeDefined();
-      expect(result.value.workouts.length).toBeGreaterThanOrEqual(0); // Can vary based on actual plan content
+      expect(result.value.workouts.length).toBe(1);
+      expect(result.value.workouts[0].id).toBe('workout-456');
     }
   });
 

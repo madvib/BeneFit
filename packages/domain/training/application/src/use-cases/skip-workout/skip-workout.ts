@@ -23,14 +23,12 @@ export type SkipWorkoutRequest = z.infer<typeof SkipWorkoutRequestSchema>;
 
 
 // Zod schema for response validation
-export const SkipWorkoutResponseSchema = z.object({
-  planId: z.string(),
-  skippedWorkoutId: z.string(),
-  message: z.string(),
-});
-
-// Zod inferred type with original name
-export type SkipWorkoutResponse = z.infer<typeof SkipWorkoutResponseSchema>;
+// Response Interface
+export interface SkipWorkoutResponse {
+  planId: string;
+  skippedWorkoutId: string;
+  message: string;
+}
 
 export class SkipWorkoutUseCase extends BaseUseCase<
   SkipWorkoutRequest,

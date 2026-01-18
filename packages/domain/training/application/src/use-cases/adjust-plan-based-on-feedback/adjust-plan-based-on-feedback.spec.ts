@@ -74,8 +74,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.planId).toBe(planId);
-      expect(result.value.adjustmentsMade).toBeDefined();
+      expect(result.value.plan.id).toBe(planId);
+      expect(result.value.plan.title).toBe('Adjusted Strength Plan');
       expect(result.value.message).toBe(
         'Your plan has been adjusted based on your feedback',
       );

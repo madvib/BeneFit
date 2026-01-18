@@ -1,7 +1,9 @@
+// weekly-schedule.factory.ts
 import { Result, Guard } from '@bene/shared';
 import { randomUUID } from 'crypto';
-import { WeeklySchedule } from './weekly-schedule.types.js';
+import { WeeklySchedule, WeeklyScheduleView } from './weekly-schedule.types.js';
 import { ScheduleValidationError } from '../../../../errors/fitness-plan-errors.js';
+import { toWorkoutTemplateView } from '../workout-template/workout-template.factory.js';
 
 type CreateScheduleParams = Omit<WeeklySchedule, 'id' | 'workoutsCompleted'>;
 
@@ -38,9 +40,7 @@ export function createWeeklySchedule(
     );
   }
   // Date validation
-  const start = new Date(params.startDate);
-  const end = new Date(params.endDate);
-  if (start >= end) {
+  if (params.startDate >= params.endDate) {
     return Result.fail(
       new ScheduleValidationError('Start date must be before end date', {
         startDate: params.startDate,
@@ -81,4 +81,24 @@ export function weeklyScheduleFromPersistence(
 ): Result<WeeklySchedule> {
   // Perform any necessary data transformation or re-validation here if needed
   return Result.ok(data);
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+import { getWeekStatus } from './weekly-schedule.queries.js';
+
+/**
+ * Map WeeklySchedule entity to view model (API presentation)
+ */
+export function toWeeklyScheduleView(schedule: WeeklySchedule): WeeklyScheduleView {
+  return {
+    ...schedule,
+    startDate: schedule.startDate.toISOString(),
+    endDate: schedule.endDate.toISOString(),
+    // Workouts mapped to their view representation
+    workouts: schedule.workouts.map(toWorkoutTemplateView),
+    progress: getWeekStatus(schedule),
+  };
 }

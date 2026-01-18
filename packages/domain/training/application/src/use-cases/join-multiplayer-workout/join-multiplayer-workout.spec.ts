@@ -8,6 +8,7 @@ vi.mock('@bene/training-core', () => ({
   WorkoutSessionCommands: {
     joinSession: vi.fn(),
   },
+  toWorkoutSessionSchema: vi.fn((session) => session),
 }));
 
 describe('JoinMultiplayerWorkoutUseCase', () => {
@@ -53,6 +54,9 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
     const result = await useCase.execute(request);
 
     expect(result.isSuccess).toBe(true);
+    expect(result.value.session.id).toBe('session-1');
+    expect(result.value.session.participants).toHaveLength(2);
+
     expect(sessionRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({

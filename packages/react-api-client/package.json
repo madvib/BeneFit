@@ -25,7 +25,7 @@
     "hono": "4.11.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "zod": "catalog:"    
+    "zod": "catalog:"
   },
   "nx": {
     "implicitDependencies": [
@@ -34,13 +34,10 @@
     "targets": {
       "build": {
         "dependsOn": [
-          "@bene/training-core:build",
-          "@bene/training-application:build",
-          "@bene/coach-domain:build",
-          "@bene/integrations-domain:build",
           "@bene/gateway:build-client",
           "default"
-        ]
+        ],
+        "parallel": false
       }
     },
     "tags": [

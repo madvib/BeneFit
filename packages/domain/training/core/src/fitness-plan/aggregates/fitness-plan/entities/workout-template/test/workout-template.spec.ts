@@ -1,21 +1,43 @@
 import { describe, it, expect } from 'vitest';
-import { createWorkoutActivity } from '../../../../../../workouts/index.js';
-import { createWorkoutTemplate } from '../workout-template.factory.js';
-import {
-  startWorkout,
-  markComplete,
-  skipWorkout,
-  updateGoals,
-} from '../workout-template.commands.js';
+import { createWorkoutActivity, createWorkoutActivityFixture, WorkoutActivity } from '@/workouts/index.js';
 import {
   createDistanceWorkout,
   createDurationWorkout,
   createVolumeWorkout,
   createWorkoutGoals,
-} from '../../../../../../fitness-plan/value-objects/index.js';
+} from '@/fitness-plan/value-objects/index.js';
+import {
+  startWorkout,
+  markComplete,
+  skipWorkout,
+  updateGoals,
+  rescheduleWorkout,
+} from '../workout-template.commands.js';
+import { createWorkoutTemplate, toWorkoutTemplateView } from '../workout-template.factory.js';
+import { createWorkoutTemplateFixture } from './workout-template.fixtures.js';
 
-describe('WorkoutTemplate', () => {
+describe('WorkoutTemplate Aggegrate', () => {
+
+  // ============================================
+  // FACTORY & COMMANDS
+  // ============================================
+
+  // Canonical test object with valid defaults
+  const validWorkoutTemplateProps = {
+    id: 'workout-canonical',
+    planId: 'plan-1',
+    weekNumber: 1,
+    dayOfWeek: 1,
+    scheduledDate: '2027-11-26',
+    title: 'Valid Workout',
+    type: 'running' as const,
+    category: 'cardio' as const,
+    importance: 'key' as const,
+    activities: [] as WorkoutActivity[],
+  };
+
   describe('create', () => {
+
     it('should create a workout template with duration goals', () => {
       // Create WorkoutGoals - must check Result before using .value
       const goalsResult = createDurationWorkout(
@@ -37,17 +59,10 @@ describe('WorkoutTemplate', () => {
       }).value;
 
       const workoutResult = createWorkoutTemplate({
-        id: 'workout-1',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: '2027-11-26',
+        ...validWorkoutTemplateProps,
         title: 'Morning Run',
-        type: 'running',
-        category: 'cardio',
         goals: goals, // Now guaranteed to be WorkoutGoals, not undefined
         activities: [sampleActivity],
-        importance: 'key',
       });
 
       expect(workoutResult.isSuccess).toBe(true);
@@ -77,9 +92,8 @@ describe('WorkoutTemplate', () => {
       }).value;
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-2',
-        planId: 'plan-1',
-        weekNumber: 1,
         dayOfWeek: 2,
         scheduledDate: '2027-11-27',
         title: 'Upper Body Strength',
@@ -114,17 +128,13 @@ describe('WorkoutTemplate', () => {
       }).value;
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-3',
-        planId: 'plan-1',
-        weekNumber: 1,
         dayOfWeek: 3,
         scheduledDate: '2027-11-28',
         title: '5K Tempo Run',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
         activities: [sampleActivity],
-        importance: 'key',
       });
 
       expect(workoutResult.isSuccess).toBe(true);
@@ -139,16 +149,11 @@ describe('WorkoutTemplate', () => {
       expect(goalsResult.isSuccess).toBe(true);
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-4',
-        planId: 'plan-1',
-        weekNumber: 1,
         dayOfWeek: 7, // Invalid - must be 0-6
-        scheduledDate: '2027-11-26',
         title: 'Invalid Workout',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
-        activities: [],
         importance: 'optional',
       });
 
@@ -164,16 +169,11 @@ describe('WorkoutTemplate', () => {
       expect(goalsResult.isSuccess).toBe(true);
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-5',
-        planId: 'plan-1',
         weekNumber: 0, // Invalid - must be >= 1
-        dayOfWeek: 1,
-        scheduledDate: '2027-11-26',
         title: 'Invalid Week',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
-        activities: [],
         importance: 'optional',
       });
 
@@ -191,9 +191,8 @@ describe('WorkoutTemplate', () => {
       expect(goalsResult.isSuccess).toBe(true);
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'rest-1',
-        planId: 'plan-1',
-        weekNumber: 1,
         dayOfWeek: 0,
         scheduledDate: '2027-11-24',
         title: 'Rest Day',
@@ -222,17 +221,11 @@ describe('WorkoutTemplate', () => {
       }).value;
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-6',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: new Date().toISOString(),
         title: "Today's Workout",
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
         activities: [sampleActivity],
-        importance: 'key',
       });
 
       expect(workoutResult.isSuccess).toBe(true);
@@ -255,17 +248,10 @@ describe('WorkoutTemplate', () => {
       });
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-7',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: new Date().toISOString(),
         title: 'Completable Workout',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
-        activities: [],
-        importance: 'key',
       });
 
       if (workoutResult.isSuccess) {
@@ -294,16 +280,10 @@ describe('WorkoutTemplate', () => {
       });
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-8',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: new Date().toISOString(),
         title: 'Skippable Workout',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
-        activities: [],
         importance: 'optional',
       });
 
@@ -315,6 +295,39 @@ describe('WorkoutTemplate', () => {
         if (skipResult.isSuccess) {
           expect(skipResult.value.status).toBe('skipped');
         }
+      }
+    });
+
+    it('should allow rescheduling a scheduled workout with valid date', () => {
+      const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
+        id: 'workout-reschedule',
+        title: 'Reschedule Me',
+      });
+
+      if (workoutResult.isSuccess) {
+        const workout = workoutResult.value;
+        const newDate = '2027-12-01T10:00:00Z';
+        const result = rescheduleWorkout(workout, newDate);
+
+        expect(result.isSuccess).toBe(true);
+        if (result.isSuccess) {
+          expect(result.value.status).toBe('rescheduled');
+          expect(result.value.rescheduledTo).toBeInstanceOf(Date);
+          expect(result.value.rescheduledTo?.toISOString()).toBe(newDate);
+        }
+      }
+    });
+
+    it('should fail rescheduling with invalid date format', () => {
+      const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
+        id: 'workout-reschedule-fail',
+      });
+
+      if (workoutResult.isSuccess) {
+        const result = rescheduleWorkout(workoutResult.value, 'not-a-date');
+        expect(result.isFailure).toBe(true);
       }
     });
   });
@@ -331,17 +344,10 @@ describe('WorkoutTemplate', () => {
       );
 
       const workoutResult = createWorkoutTemplate({
+        ...validWorkoutTemplateProps,
         id: 'workout-9',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: '2025-11-26',
         title: 'Hard Workout',
-        type: 'running',
-        category: 'cardio',
         goals: goalsResult.value,
-        activities: [],
-        importance: 'key',
       });
 
       if (workoutResult.isSuccess) {
@@ -414,6 +420,48 @@ describe('WorkoutTemplate', () => {
         expect(goalsResult.error).toBeDefined();
         // Handle the error appropriately
       }
+    });
+  });
+
+  // ============================================
+  // VIEW MAPPER
+  // ============================================
+  // ============================================
+  // VIEW MAPPER
+  // ============================================
+  describe('View Mapper', () => {
+    it('should map a valid workout template entity to view model with enriched fields', () => {
+      const template = createWorkoutTemplateFixture({
+        activities: [
+          createWorkoutActivityFixture({ duration: 10 }),
+          createWorkoutActivityFixture({ duration: 20 }),
+        ]
+      });
+      const view = toWorkoutTemplateView(template);
+
+      expect(view.id).toBe(template.id);
+      expect(view.title).toBe(template.title);
+      expect(view.activities).toEqual(template.activities);
+
+      // Check enriched fields
+      expect(view.estimatedDuration).toBe(30);
+      expect(typeof view.isPastDue).toBe('boolean');
+      expect(typeof view.isCompleted).toBe('boolean');
+    });
+
+    it('should handle optional fields correctly', () => {
+      const template = createWorkoutTemplateFixture({
+        description: undefined,
+        userNotes: undefined,
+        alternatives: undefined,
+        activities: []
+      });
+      const view = toWorkoutTemplateView(template);
+
+      expect(view.description).toBeUndefined();
+      expect(view.userNotes).toBeUndefined();
+      expect(view.alternatives).toBeUndefined();
+      expect(view.estimatedDuration).toBe(0);
     });
   });
 });

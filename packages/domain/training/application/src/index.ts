@@ -6,7 +6,6 @@ export type {
 } from './use-cases/generate-plan-from-goals/generate-plan-from-goals.js';
 export {
   GeneratePlanFromGoalsRequestSchema,
-  GeneratePlanFromGoalsResponseSchema,
 } from './use-cases/generate-plan-from-goals/generate-plan-from-goals.js';
 
 export { ActivatePlanUseCase } from './use-cases/activate-plan/activate-plan.js';
@@ -16,7 +15,6 @@ export type {
 } from './use-cases/activate-plan/activate-plan.js';
 export {
   ActivatePlanRequestSchema,
-  ActivatePlanResponseSchema,
 } from './use-cases/activate-plan/activate-plan.js';
 
 export { GetTodaysWorkoutUseCase } from './use-cases/get-todays-workout/get-todays-workout.js';
@@ -26,7 +24,6 @@ export type {
 } from './use-cases/get-todays-workout/get-todays-workout.js';
 export {
   GetTodaysWorkoutRequestSchema,
-  GetTodaysWorkoutResponseSchema,
 } from './use-cases/get-todays-workout/get-todays-workout.js';
 
 export { AdjustPlanBasedOnFeedbackUseCase } from './use-cases/adjust-plan-based-on-feedback/adjust-plan-based-on-feedback.js';
@@ -36,7 +33,6 @@ export type {
 } from './use-cases/adjust-plan-based-on-feedback/adjust-plan-based-on-feedback.js';
 export {
   AdjustPlanBasedOnFeedbackRequestSchema,
-  AdjustPlanBasedOnFeedbackResponseSchema,
 } from './use-cases/adjust-plan-based-on-feedback/adjust-plan-based-on-feedback.js';
 
 export { PausePlanUseCase } from './use-cases/pause-plan/pause-plan.js';
@@ -46,7 +42,6 @@ export type {
 } from './use-cases/pause-plan/pause-plan.js';
 export {
   PausePlanRequestSchema,
-  PausePlanResponseSchema,
 } from './use-cases/pause-plan/pause-plan.js';
 
 export { GetUpcomingWorkoutsUseCase } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
@@ -56,7 +51,6 @@ export type {
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 export {
   GetUpcomingWorkoutsRequestSchema,
-  GetUpcomingWorkoutsResponseSchema,
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 
 export { GetCurrentPlanUseCase } from './use-cases/get-current-plan/get-current-plan.js';
@@ -138,7 +132,6 @@ export type {
 } from './use-cases/skip-workout/skip-workout.js';
 export {
   SkipWorkoutRequestSchema,
-  SkipWorkoutResponseSchema,
 } from './use-cases/skip-workout/skip-workout.js';
 
 export { AddWorkoutReactionUseCase } from './use-cases/add-workout-reaction/add-workout-reaction.js';
@@ -148,7 +141,6 @@ export type {
 } from './use-cases/add-workout-reaction/add-workout-reaction.js';
 export {
   AddWorkoutReactionRequestSchema,
-  AddWorkoutReactionResponseSchema,
 } from './use-cases/add-workout-reaction/add-workout-reaction.js';
 
 export { CompleteWorkoutUseCase } from './use-cases/complete-workout/complete-workout.js';
@@ -158,7 +150,6 @@ export type {
 } from './use-cases/complete-workout/complete-workout.js';
 export {
   CompleteWorkoutRequestSchema,
-  CompleteWorkoutResponseSchema,
 } from './use-cases/complete-workout/complete-workout.js';
 
 export { GetWorkoutHistoryUseCase } from './use-cases/get-workout-history/get-workout-history.js';
@@ -168,7 +159,6 @@ export type {
 } from './use-cases/get-workout-history/get-workout-history.js';
 export {
   GetWorkoutHistoryRequestSchema,
-  GetWorkoutHistoryResponseSchema,
 } from './use-cases/get-workout-history/get-workout-history.js';
 
 export { JoinMultiplayerWorkoutUseCase } from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
@@ -178,7 +168,6 @@ export type {
 } from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
 export {
   JoinMultiplayerWorkoutRequestSchema,
-  JoinMultiplayerWorkoutResponseSchema,
 } from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
 
 export { StartWorkoutUseCase } from './use-cases/start-workout/start-workout.js';
@@ -188,7 +177,6 @@ export type {
 } from './use-cases/start-workout/start-workout.js';
 export {
   StartWorkoutRequestSchema,
-  StartWorkoutResponseSchema,
 } from './use-cases/start-workout/start-workout.js';
 
 // Events

@@ -25,9 +25,8 @@ export function isPastDue(template: WorkoutTemplate): boolean {
   if (template.status !== 'scheduled') {
     return false;
   }
-  const scheduled = new Date(template.scheduledDate);
   const now = new Date();
-  return now > scheduled;
+  return now > template.scheduledDate;
 }
 
 /**
@@ -45,7 +44,7 @@ export function getDisplayInfo(template: WorkoutTemplate): {
     title: template.title,
     type: template.type,
     status: template.status,
-    scheduledDate: template.scheduledDate,
+    scheduledDate: template.scheduledDate.toISOString(),
     estimatedDuration: getEstimatedDuration(template),
     isPastDue: isPastDue(template),
   };

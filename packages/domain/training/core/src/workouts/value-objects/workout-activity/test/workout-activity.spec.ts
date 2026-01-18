@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import { createIntervalStructure, createExerciseStructure } from '../../activity-structure/index.js';
+import { getTotalDuration } from '../../activity-structure/activity-structure.queries.js';
 import { createWorkoutActivity, createWarmup, createCooldown, createDistanceRun, createIntervalSession, createCircuit } from '../workout-activity.factory.js';
 import { isWarmup, isCooldown, isMainActivity, isActivityIntervalBased, isCircuit, activityRequiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from '../workout-activity.queries.js';
+import { toWorkoutActivityView } from '../workout-activity.factory.js';
 import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from '../workout-activity.commands.js';
-import { createIntervalStructure, createExerciseStructure } from '../../activity-structure/activity-structure.factory.js';
-import { getTotalDuration } from '../../activity-structure/activity-structure.queries.js';
 
 describe('WorkoutActivity', () => {
   describe('create', () => {
@@ -666,5 +667,53 @@ describe('WorkoutActivity', () => {
         expect(hasVideo(result.value)).toBe(true);
       }
     });
+  });
+});
+
+
+describe('toWorkoutActivityView', () => {
+  it('should map domain entity to view with computed fields', () => {
+    const result = createWorkoutActivity({
+      name: 'Bench Press',
+      type: 'main',
+      order: 1,
+      equipment: ['Barbell', 'Bench'],
+      duration: 45,
+      instructions: ['Lift heavy'],
+    });
+
+    if (result.isSuccess) {
+      const view = toWorkoutActivityView(result.value);
+
+      // Base fields
+      expect(view.name).toBe('Bench Press');
+      expect(view.type).toBe('main');
+
+      // Computed fields check
+      expect(view.estimatedDuration).toBe(45);
+      expect(view.requiresEquipment).toBe(true);
+      expect(view.equipmentList).toEqual(['Barbell', 'Bench']);
+      expect(view.instructionsList).toContain('Lift heavy');
+      expect(view.shortDescription).toContain('45min');
+
+      // Type helpers check
+      expect(view.isMainActivity).toBe(true);
+      expect(view.isWarmup).toBe(false);
+    }
+  });
+
+  it('should handle computed fields from structure', () => {
+    const structureResult = createIntervalStructure([
+      { duration: 60, intensity: 'sprint', rest: 60 },
+    ], 5); // 5 rounds * (60+60) = 600s = 10min
+
+    if (structureResult.isSuccess) {
+      const result = createIntervalSession('Sprints', structureResult.value, 1);
+      if (result.isSuccess) {
+        const view = toWorkoutActivityView(result.value);
+        expect(view.estimatedDuration).toBe(10);
+        expect(view.estimatedCalories).toBeGreaterThan(0);
+      }
+    }
   });
 });

@@ -1,3 +1,5 @@
+import { CreateView } from '@bene/shared';
+
 export type VerificationMethod =
   | 'gps' // Location tracking
   | 'gym_checkin' // Gym partner integration
@@ -55,3 +57,5 @@ export interface WorkoutVerificationData {
 }
 
 export type WorkoutVerification = Readonly<WorkoutVerificationData>;
+
+export type WorkoutVerificationView = CreateView<WorkoutVerification>;

@@ -1,4 +1,5 @@
-export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
+import { ExperienceLevel } from '@bene/shared';
+
 export type LocationType = 'gym' | 'home' | 'outdoor';
 
 export interface CustomizableParameter {
@@ -24,6 +25,16 @@ export interface TemplateRestrictions {
 }
 
 interface TemplateRulesData {
+  requiredEquipment?: string[];
+  minExperienceLevel: ExperienceLevel;
+  maxExperienceLevel: ExperienceLevel;
+  requiredDaysPerWeek?: number;
+  restrictions?: TemplateRestrictions;
+  customizableParameters?: CustomizableParameter[];
+}
+
+// View Interface
+export interface TemplateRulesView {
   requiredEquipment?: string[];
   minExperienceLevel: ExperienceLevel;
   maxExperienceLevel: ExperienceLevel;

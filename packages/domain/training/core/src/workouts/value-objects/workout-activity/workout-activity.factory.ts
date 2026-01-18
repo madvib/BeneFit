@@ -1,14 +1,14 @@
-// workout-activity.factory.ts
+import { URL } from 'url';
 import { Result, Guard } from '@bene/shared';
 import { ActivityValidationError } from '../../errors/workout-errors.js';
-import { WorkoutActivity } from './workout-activity.types.js';
 import { ActivityStructure } from '../activity-structure/activity-structure.types.js';
 import {
   isIntervalBased,
   isExerciseBased,
 } from '../activity-structure/activity-structure.queries.js';
 import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
-import { URL } from 'url';
+import { WorkoutActivity, WorkoutActivityView } from './workout-activity.types.js';
+import * as Queries from './workout-activity.queries.js'
 
 /**
  * FACTORY: Creates a new WorkoutActivity instance with validation.
@@ -128,7 +128,7 @@ export function createDistanceRun(
   order: number,
 ): Result<WorkoutActivity> {
   return createWorkoutActivity({
-    name: `${distance}m run`,
+    name: `${ distance }m run`,
     type: 'main',
     order,
     distance,
@@ -187,4 +187,30 @@ export function createCircuit(
     equipment,
     duration: getTotalDuration(structure) / 60,
   });
+}
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+
+export function toWorkoutActivityView(
+  activity: WorkoutActivity,
+): WorkoutActivityView {
+  return {
+    ...activity,
+    // Computed fields
+    estimatedDuration: Queries.getEstimatedDuration(activity),
+    estimatedCalories: Queries.getEstimatedCalories(activity),
+    shortDescription: Queries.getShortDescription(activity),
+    detailedDescription: Queries.getDetailedDescription(activity),
+    instructionsList: Queries.getInstructionsList(activity),
+    requiresEquipment: Queries.activityRequiresEquipment(activity),
+    equipmentList: Queries.getEquipmentList(activity),
+    // Type helpers
+    isWarmup: Queries.isWarmup(activity),
+    isCooldown: Queries.isCooldown(activity),
+    isMainActivity: Queries.isMainActivity(activity),
+    isIntervalBased: Queries.isActivityIntervalBased(activity),
+    isCircuit: Queries.isCircuit(activity),
+  };
 }

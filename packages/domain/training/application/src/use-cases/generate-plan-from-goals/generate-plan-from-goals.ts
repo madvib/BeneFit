@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { UserProfile, TrainingConstraints, PlanGoalsSchema } from '@bene/training-core';
+import { UserProfile, TrainingConstraints, PlanGoalsSchema, FitnessPlanQueries, type PlanPreview } from '@bene/training-core';
 import {
   FitnessPlanRepository,
   UserProfileRepository,
@@ -12,7 +12,7 @@ import {
 import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
 
 // Helper function to convert from schema format to domain format (pass-through for now)
-const toDomainPlanGoals = (goals: any) => goals;
+const toDomainPlanGoals = (goals: z.infer<typeof PlanGoalsSchema>) => goals;
 
 
 
@@ -31,30 +31,14 @@ export type GeneratePlanFromGoalsRequest = z.infer<
   typeof GeneratePlanFromGoalsRequestSchema
 >;
 
-// Zod schema for response validation
-const WorkoutPreviewSchema = z.object({
-  day: z.string().min(1).max(20),
-  type: z.string().min(1).max(50),
-  summary: z.string().min(1).max(200),
-});
-
-const PreviewSchema = z.object({
-  weekNumber: z.number().int().min(1).max(52),
-  workouts: z.array(WorkoutPreviewSchema),
-});
-
-export const GeneratePlanFromGoalsResponseSchema = z.object({
-  planId: z.string(),
-  name: z.string().min(1).max(100),
-  durationWeeks: z.number().int().min(1).max(52),
-  workoutsPerWeek: z.number().int().min(1).max(7),
-  preview: PreviewSchema,
-});
-
-// Zod inferred type with original name
-export type GeneratePlanFromGoalsResponse = z.infer<
-  typeof GeneratePlanFromGoalsResponseSchema
->;
+// Response Interface using domain types
+export interface GeneratePlanFromGoalsResponse {
+  planId: string;
+  name: string;
+  durationWeeks: number;
+  workoutsPerWeek: number;
+  preview: PlanPreview;
+}
 
 export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
   GeneratePlanFromGoalsRequest,
@@ -126,32 +110,13 @@ export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
       }),
     );
 
-    // 6. Return DTO with preview
-    const firstWeek = plan.weeks[0] || { workouts: [] };
-
+    // 6. Return DTO with preview from domain query
     return Result.ok({
       planId: plan.id,
       name: plan.title,
       durationWeeks: plan.weeks.length,
       workoutsPerWeek: plan.weeks[0]?.workouts.length || 0,
-      preview: {
-        weekNumber: 1,
-        workouts: firstWeek.workouts.map((w) => {
-          // Calculate duration from activities
-          const duration =
-            (w.activities as { duration?: number }[])?.reduce(
-              (sum: number, a) => sum + (a.duration || 10),
-              0,
-            ) || 30;
-          return {
-            day:
-              ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][w.dayOfWeek || 0] ||
-              'Unknown',
-            type: w.type,
-            summary: `${ w.type } workout - ${ duration } minutes`,
-          };
-        }),
-      },
+      preview: FitnessPlanQueries.getPlanPreview(plan),
     });
   }
 }

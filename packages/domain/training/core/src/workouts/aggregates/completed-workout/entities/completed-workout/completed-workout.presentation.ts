@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { WorkoutPerformanceSchema, WorkoutTypeSchema } from '../../../../value-objects/index.js';
-import { ReactionSchema, toReactionPresentation } from '../reaction/reaction.presentation.js';
-import { CompletedWorkout } from './completed-workout.types.js';
-import * as Queries from './completed-workout.queries.js';
+import { ReactionSchema } from '../reaction/reaction.presentation.js';
+import { CompletedWorkout, CompletedWorkoutView } from './completed-workout.types.js';
 
 // Completed Workout Schemas
 
@@ -48,46 +47,11 @@ export const CompletedWorkoutSchema = z.object({
   recordedAt: z.iso.datetime(),
 });
 
-export type CompletedWorkoutPresentation = z.infer<typeof CompletedWorkoutSchema>;
+export type CompletedWorkoutPresentation = CompletedWorkoutView;
 
-export function toCompletedWorkoutSchema(entity: CompletedWorkout): CompletedWorkoutPresentation {
-  return {
-    id: entity.id,
-    userId: entity.userId,
-    planReference: entity.planId ? {
-      planId: entity.planId,
-      weekNumber: entity.weekNumber,
-      dayNumber: entity.dayNumber,
-    } : undefined,
-    workoutTemplateId: entity.workoutTemplateId,
 
-    workoutType: entity.workoutType,
-    title: entity.title,
-    description: entity.description,
-
-    performance: {
-      ...entity.performance,
-      totalVolume: Queries.getTotalVolume(entity),
-      totalSets: Queries.getTotalSets(entity),
-      totalExercises: Queries.getTotalExercises(entity),
-      completionRate: Queries.getCompletionRate(entity),
-      // Ensure these are passed through if they exist in performance, otherwise fallback or from query?
-      // entity.performance has them.
-      perceivedExertion: entity.performance.perceivedExertion,
-      enjoyment: entity.performance.enjoyment,
-
-      startedAt: entity.performance.startedAt instanceof Date ? entity.performance.startedAt.toISOString() : entity.performance.startedAt,
-      completedAt: entity.performance.completedAt instanceof Date ? entity.performance.completedAt.toISOString() : entity.performance.completedAt,
-    },
-
-    isVerified: entity.verification.verified,
-
-    reactions: entity.reactions.map(toReactionPresentation),
-    reactionCount: Queries.getReactionCount(entity),
-
-    isPublic: entity.isPublic,
-    multiplayerSessionId: entity.multiplayerSessionId,
-
-    recordedAt: entity.recordedAt.toISOString(),
-  };
+// Deprecated: Use toCompletedWorkoutView from factory instead
+export function toCompletedWorkoutSchema(entity: CompletedWorkout): CompletedWorkoutView {
+  // Logic moved to factory
+  throw new Error("Use toCompletedWorkoutView from factory");
 }

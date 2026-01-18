@@ -1,5 +1,5 @@
+import { EXPERIENCE_LEVELS, ExperienceLevel } from '@bene/shared';
 import { TrainingConstraints } from '@/shared/value-objects/index.js';
-import { ExperienceLevel } from '../template-rules/template-rules.types.js';
 import { PlanTemplate } from './plan-template.types.js';
 
 export interface TemplateCompatibilityResult {
@@ -15,19 +15,18 @@ export function canUserCustomizeTemplate(
   const reasons: string[] = [];
 
   // Check experience level
-  const levels: ExperienceLevel[] = ['beginner', 'intermediate', 'advanced'];
-  const userLevel = levels.indexOf(userExperienceLevel);
-  const minLevel = levels.indexOf(template.rules.minExperienceLevel);
-  const maxLevel = levels.indexOf(template.rules.maxExperienceLevel);
+  const userLevel = EXPERIENCE_LEVELS.indexOf(userExperienceLevel);
+  const minLevel = EXPERIENCE_LEVELS.indexOf(template.rules.minExperienceLevel);
+  const maxLevel = EXPERIENCE_LEVELS.indexOf(template.rules.maxExperienceLevel);
 
   if (userLevel < minLevel) {
     reasons.push(
-      `This template requires ${template.rules.minExperienceLevel} experience`,
+      `This template requires ${ template.rules.minExperienceLevel } experience`,
     );
   }
   if (userLevel > maxLevel) {
     reasons.push(
-      `This template is designed for ${template.rules.maxExperienceLevel} level`,
+      `This template is designed for ${ template.rules.maxExperienceLevel } level`,
     );
   }
 
@@ -41,7 +40,7 @@ export function canUserCustomizeTemplate(
       .map((injury) => injury.bodyPart);
 
     if (conflictingInjuryNames.length > 0) {
-      reasons.push(`Not suitable with: ${conflictingInjuryNames.join(', ')}`);
+      reasons.push(`Not suitable with: ${ conflictingInjuryNames.join(', ') }`);
     }
   }
 
@@ -51,7 +50,7 @@ export function canUserCustomizeTemplate(
       (equipment) => !userConstraints.availableEquipment.includes(equipment),
     );
     if (missingEquipment.length > 0) {
-      reasons.push(`Requires equipment: ${missingEquipment.join(', ')}`);
+      reasons.push(`Requires equipment: ${ missingEquipment.join(', ') }`);
     }
   }
 
@@ -71,7 +70,7 @@ export function canUserCustomizeTemplate(
 
     if (!hasRequiredLocation) {
       reasons.push(
-        `Requires location: ${template.rules.restrictions.requiresLocation.join(' or ')}`,
+        `Requires location: ${ template.rules.restrictions.requiresLocation.join(' or ') }`,
       );
     }
   }
@@ -79,7 +78,7 @@ export function canUserCustomizeTemplate(
   // Check available days
   if (template.rules.requiredDaysPerWeek) {
     if (userConstraints.availableDays.length < template.rules.requiredDaysPerWeek) {
-      reasons.push(`Requires ${template.rules.requiredDaysPerWeek} days per week`);
+      reasons.push(`Requires ${ template.rules.requiredDaysPerWeek } days per week`);
     }
   }
 
@@ -90,7 +89,7 @@ export function canUserCustomizeTemplate(
       userConstraints.maxDuration < template.rules.restrictions.minSessionMinutes
     ) {
       reasons.push(
-        `Requires at least ${template.rules.restrictions.minSessionMinutes} minutes per session`,
+        `Requires at least ${ template.rules.restrictions.minSessionMinutes } minutes per session`,
       );
     }
   }

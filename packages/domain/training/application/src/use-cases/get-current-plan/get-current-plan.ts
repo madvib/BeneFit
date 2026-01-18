@@ -9,7 +9,7 @@ import { FitnessPlanRepository } from '../../repositories/fitness-plan-repositor
 // ============================================
 
 export const GetCurrentPlanRequestSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
 });
 
 export type GetCurrentPlanRequest = z.infer<typeof GetCurrentPlanRequestSchema>;
@@ -18,9 +18,9 @@ export type GetCurrentPlanRequest = z.infer<typeof GetCurrentPlanRequestSchema>;
 // Response (Plain TypeScript)
 // ============================================
 
-export type GetCurrentPlanResponse =
-  | { hasPlan: false; message?: string }
-  | { hasPlan: true; plan: FitnessPlanView };
+export interface GetCurrentPlanResponse {
+  plan: FitnessPlanView;
+}
 
 // ============================================
 // Use Case
@@ -42,11 +42,7 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
 
     if (planResult.isFailure) {
       console.log(`[GetCurrentPlan] No active plan found for user ${ request.userId }. Reason: ${ planResult.error }`);
-
-      return Result.ok({
-        hasPlan: false,
-        message: 'No active plan. Create a plan to get started!',
-      });
+      return Result.fail(new Error('No active plan found'));
     }
 
     const plan = planResult.value;
@@ -54,7 +50,6 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
 
     // 2. Convert to view model
     return Result.ok({
-      hasPlan: true,
       plan: toFitnessPlanView(plan),
     });
   }

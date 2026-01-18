@@ -24,16 +24,19 @@
       "path": "../actors/user-hub"
     },
     {
-      "path": "../../packages/domain/integrations"
+      "path": "../../packages/domain/training/core"
     },
     {
-      "path": "../../packages/domain/coach"
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/domain/integrations"
     },
     {
       "path": "../../packages/domain/training/application"
     },
     {
-      "path": "../../packages/shared"
+      "path": "../../packages/domain/coach"
     }
   ]
 }

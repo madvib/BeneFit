@@ -1,3 +1,5 @@
+import { SerializeDates } from '@bene/shared';
+
 export interface TargetLiftWeight {
   readonly exercise: string;
   readonly weight: number; // kg or lbs
@@ -23,3 +25,5 @@ export interface PlanGoals {
   readonly targetMetrics: TargetMetrics;
   readonly targetDate?: Date;
 }
+
+export type PlanGoalsView = SerializeDates<PlanGoals>;

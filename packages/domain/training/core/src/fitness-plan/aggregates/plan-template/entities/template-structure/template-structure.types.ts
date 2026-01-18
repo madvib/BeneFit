@@ -33,3 +33,12 @@ interface TemplateStructureData {
 }
 
 export type TemplateStructure = Readonly<TemplateStructureData>;
+
+// View Interface
+export interface TemplateStructureView {
+  duration: TemplateDuration;
+  frequency: TemplateFrequency;
+  weeks: WeekTemplate[];
+  deloadWeeks?: number[];
+  progressionFormula?: string;
+}

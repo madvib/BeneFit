@@ -1,11 +1,14 @@
+import { CreateView } from '@bene/shared';
 import {
   PlanGoals,
+  PlanGoalsView,
   ProgressionStrategy,
   PlanPosition,
+  WorkoutPreview,
 } from '@/fitness-plan/value-objects/index.js';
 import { TrainingConstraints } from '@/shared/index.js';
-import { WeeklySchedule } from '../weekly-schedule/index.js';
-import { WorkoutTemplate } from '../workout-template/index.js';
+import { WeeklySchedule, WeeklyScheduleView } from '../weekly-schedule/index.js';
+import { WorkoutTemplateView } from '../workout-template/index.js';
 
 export type PlanType =
   | 'event_training'
@@ -45,23 +48,31 @@ export type FitnessPlan = Readonly<FitnessPlanData>;
  * FitnessPlan view for API consumption
  * 
  * Differences from entity:
- * - Dates serialized as ISO strings
+ * - Dates serialized as ISO strings (handled by CreateView)
  * - Enriched with computed fields (currentWorkout, currentWeek, summary)
  * - Omits templateId (internal detail)
  */
-export interface FitnessPlanView extends Omit<FitnessPlan, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt' | 'templateId'> {
-  // Date fields as ISO strings for JSON serialization
-  startDate: string;
-  endDate?: string;
-  createdAt: string;
-  updatedAt?: string;
+export type FitnessPlanView = CreateView<
+  FitnessPlan,
+  'templateId' | 'weeks', // Omitted fields
+  {
+    weeks: WeeklyScheduleView[];
+    // Computed/enriched fields
+    // Note: 'goals' is auto-converted by CreateView > SerializeDates if not omitted
+    // But we can explicitly override if we want to enforce the named type
+    goals: PlanGoalsView;
 
-  // Computed/enriched fields
-  currentWorkout?: WorkoutTemplate;
-  currentWeek?: WeeklySchedule;
-  summary: {
-    total: number;
-    completed: number;
-  };
+    currentWorkout?: WorkoutTemplateView;
+    currentWeek?: WeeklyScheduleView;
+    summary: {
+      total: number;
+      completed: number;
+    };
+  }
+>;
+
+export interface PlanPreview {
+  weekNumber: number;
+  workouts: WorkoutPreview[];
 }
 

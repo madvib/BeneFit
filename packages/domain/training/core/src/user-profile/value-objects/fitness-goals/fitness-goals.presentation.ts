@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FitnessGoals, PrimaryFitnessGoal, TargetWeight } from './fitness-goals.types.js';
+import { FitnessGoals } from './fitness-goals.types.js';
 
 export const PrimaryFitnessGoalSchema = z.enum([
   'strength',
@@ -29,7 +29,7 @@ export const FitnessGoalsSchema = z.object({
   successCriteria: z.array(z.string().min(1).max(500)),
 });
 
-export type FitnessGoalsPresentation = z.infer<typeof FitnessGoalsSchema>;
+type FitnessGoalsPresentation = z.infer<typeof FitnessGoalsSchema>;
 
 // DOMAIN to PRESENTATION (Schema)
 export function toFitnessGoalsSchema(goals: FitnessGoals): FitnessGoalsPresentation {

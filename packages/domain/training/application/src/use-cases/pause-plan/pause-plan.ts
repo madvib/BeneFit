@@ -18,15 +18,12 @@ export const PausePlanRequestSchema = z.object({
 export type PausePlanRequest = z.infer<typeof PausePlanRequestSchema>;
 
 
-// Zod schema for response validation
-export const PausePlanResponseSchema = z.object({
-  planId: z.string(),
-  status: z.string(),
-  pausedAt: z.date(),
-});
-
-// Zod inferred type with original name
-export type PausePlanResponse = z.infer<typeof PausePlanResponseSchema>;
+// Response Interface
+export interface PausePlanResponse {
+  planId: string;
+  status: string;
+  pausedAt: Date;
+}
 
 export class PausePlanUseCase extends BaseUseCase<PausePlanRequest, PausePlanResponse> {
   constructor(

@@ -1,5 +1,5 @@
 import { Guard, Result } from '@bene/shared';
-import { Reaction, ReactionType } from './reaction.types.js';
+import { Reaction, ReactionType, ReactionView } from './reaction.types.js';
 import { randomUUID } from 'crypto';
 
 export function createReaction(props: {
@@ -28,3 +28,15 @@ export function createReaction(props: {
     createdAt: new Date(),
   });
 }
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+export function toReactionView(reaction: Reaction): ReactionView {
+  return {
+    ...reaction,
+    createdAt: reaction.createdAt.toISOString(),
+  };
+}
+

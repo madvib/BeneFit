@@ -1,11 +1,12 @@
-import { WorkoutTemplate } from "../workout-template/index.js";
+import { CreateView } from '@bene/shared';
+import { WorkoutTemplate, WorkoutTemplateView } from "../workout-template/index.js";
 
 export interface WeeklyScheduleData {
   id: string;
   weekNumber: number;
   planId: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   focus: string;
   targetWorkouts: number;
   notes?: string;
@@ -18,3 +19,25 @@ export interface TemplateCompatibilityResult {
   canUse: boolean;
   reasons: string[];
 }
+
+// ============================================
+// View Interface (API Presentation)
+// ============================================
+
+
+
+export type WeeklyScheduleView = CreateView<
+  WeeklySchedule,
+  'workouts',
+  {
+    workouts: WorkoutTemplateView[];
+    startDate: string;
+    endDate: string;
+    progress: {
+      onTrack: boolean;
+      completionRate: number;
+      workoutsRemaining: number;
+      daysRemaining: number;
+    };
+  }
+>;

@@ -5,7 +5,9 @@ import {
   WorkoutActivity,
   WorkoutSessionCommands,
   createWorkoutActivity,
+  toWorkoutSessionSchema,
 } from '@bene/training-core';
+import type { WorkoutSessionPresentation as WorkoutSessionView } from '@bene/training-core';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import { WorkoutStartedEvent } from '../../events/workout-started.event.js';
 
@@ -49,19 +51,9 @@ export type StartWorkoutRequest = z.infer<typeof StartWorkoutRequestSchema>;
 
 
 // Zod schema for response validation
-export const StartWorkoutResponseSchema = z.object({
-  sessionId: z.string(),
-  workoutType: z.string(),
-  totalActivities: z.number(),
-  estimatedDurationMinutes: z.number(),
-  currentActivity: z.object({
-    type: z.string(),
-    instructions: z.array(z.string()),
-  }),
-});
-
-// Zod inferred type with original name
-export type StartWorkoutResponse = z.infer<typeof StartWorkoutResponseSchema>;
+export interface StartWorkoutResponse {
+  session: WorkoutSessionView;
+}
 
 export class StartWorkoutUseCase extends BaseUseCase<
   StartWorkoutRequest,
@@ -149,36 +141,8 @@ export class StartWorkoutUseCase extends BaseUseCase<
     );
 
     // 6. Return session details
-    const firstActivity = session.activities[0];
-
     return Result.ok({
-      sessionId: session.id,
-      workoutType: session.workoutType,
-      totalActivities: session.activities.length,
-      estimatedDurationMinutes: session.activities.reduce((sum, a) => {
-        // Use duration if available, otherwise estimate based on structure
-        if (a.duration) return sum + a.duration;
-        if (!a.structure) return sum + 30;
-
-        // Calculate based on intervals if present
-        if (a.structure.intervals && a.structure.intervals.length > 0) {
-          const totalIntervalTime = a.structure.intervals.reduce(
-            (total, interval) => total + interval.duration + interval.rest,
-            0,
-          );
-          const rounds = a.structure.rounds || 1;
-          return sum + Math.ceil((totalIntervalTime * rounds) / 60);
-        }
-
-        return sum + 30; // Default fallback
-      }, 0),
-      currentActivity: {
-        type: firstActivity ? firstActivity.type : 'warmup',
-        instructions:
-          firstActivity && firstActivity.instructions
-            ? [...firstActivity.instructions]
-            : [],
-      },
+      session: toWorkoutSessionSchema(session),
     });
   }
 }

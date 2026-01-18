@@ -1,3 +1,5 @@
+import { CreateView } from '@bene/shared';
+
 export interface HeartRateData {
   average?: number;
   max?: number;
@@ -55,3 +57,5 @@ export interface WorkoutPerformanceData {
   modifications?: string[]; // Changes made during workout
 }
 export type WorkoutPerformance = Readonly<WorkoutPerformanceData>;
+
+export type WorkoutPerformanceView = CreateView<WorkoutPerformance>;

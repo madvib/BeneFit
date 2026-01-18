@@ -4,11 +4,15 @@ import {
   createDurationWorkout,
   createWorkoutGoals,
   createVolumeWorkout,
-} from '../../../../../../fitness-plan/value-objects/workout-goals/workout-goals.factory.js';
-import { createWorkoutTemplate } from '../../workout-template/workout-template.factory.js';
-import { createWeeklySchedule } from '../weekly-schedule.factory.js';
+} from '@/fitness-plan/value-objects/index.js';
+import { createWorkoutTemplate } from '../../workout-template/index.js';
+import { createWeeklySchedule, toWeeklyScheduleView } from '../index.js';
+import { createWeeklyScheduleFixture } from './weekly-schedule.fixtures.js';
 
 describe('WeeklySchedule', () => {
+  // ============================================
+  // FACTORY
+  // ============================================
   describe('create', () => {
     it('should create a weekly schedule with valid properties', () => {
       // First, create valid WorkoutGoals
@@ -106,6 +110,31 @@ describe('WeeklySchedule', () => {
 
       const goals = goalsResult.value; // ✅ Type-safe after guard!
       expect(goals).toBeDefined();
+    });
+  });
+
+  // ============================================
+  // VIEW MAPPER
+  // ============================================
+  describe('View Mapper', () => {
+    it('should map a valid weekly schedule entity to view model', () => {
+      const schedule = createWeeklyScheduleFixture();
+      const view = toWeeklyScheduleView(schedule);
+
+      expect(view.id).toBe(schedule.id);
+      expect(view.weekNumber).toBe(schedule.weekNumber);
+      expect(view.focus).toBe(schedule.focus);
+    });
+
+    it('should map workouts', () => {
+      const schedule = createWeeklyScheduleFixture();
+      const view = toWeeklyScheduleView(schedule);
+
+      expect(Array.isArray(view.workouts)).toBe(true);
+      expect(view.workouts.length).toBe(schedule.workouts.length);
+      expect(view.progress).toBeDefined();
+      expect(typeof view.progress.completionRate).toBe('number');
+      expect(typeof view.progress.onTrack).toBe('boolean');
     });
   });
 });

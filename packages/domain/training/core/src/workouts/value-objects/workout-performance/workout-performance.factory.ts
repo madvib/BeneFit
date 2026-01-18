@@ -5,6 +5,7 @@ import {
   DifficultyRating,
   HeartRateData,
   WorkoutPerformance,
+  WorkoutPerformanceView,
 } from './workout-performance.types.js';
 
 export function createWorkoutPerformance(props: {
@@ -137,4 +138,18 @@ export function createWorkoutPerformance(props: {
     injuries: props.injuries,
     modifications: props.modifications,
   });
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+export function toWorkoutPerformanceView(
+  performance: WorkoutPerformance,
+): WorkoutPerformanceView {
+  return {
+    ...performance,
+    startedAt: performance.startedAt.toISOString(),
+    completedAt: performance.completedAt.toISOString(),
+  };
 }

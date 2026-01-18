@@ -25,15 +25,13 @@ export type AdjustPlanBasedOnFeedbackRequest = z.infer<
   typeof AdjustPlanBasedOnFeedbackRequestSchema
 >;
 
-export const AdjustPlanBasedOnFeedbackResponseSchema = z.object({
-  planId: z.string(),
-  adjustmentsMade: z.array(z.string()),
-  message: z.string(),
-});
+import type { FitnessPlanView } from '@bene/training-core';
+import { toFitnessPlanView } from '@bene/training-core';
 
-export type AdjustPlanBasedOnFeedbackResponse = z.infer<
-  typeof AdjustPlanBasedOnFeedbackResponseSchema
->;
+export interface AdjustPlanBasedOnFeedbackResponse {
+  plan: FitnessPlanView;
+  message: string;
+}
 
 export class AdjustPlanBasedOnFeedbackUseCase extends BaseUseCase<
   AdjustPlanBasedOnFeedbackRequest,
@@ -92,13 +90,9 @@ export class AdjustPlanBasedOnFeedbackUseCase extends BaseUseCase<
     );
 
     // 6. Return adjustments summary
+    // 6. Return new plan view
     return Result.ok({
-      planId: adjustedPlan.id,
-      adjustmentsMade: [
-        'Reduced volume by 10%',
-        'Added extra rest day',
-        'Modified progression strategy',
-      ], // Would come from AI response
+      plan: toFitnessPlanView(adjustedPlan),
       message: 'Your plan has been adjusted based on your feedback',
     });
   }

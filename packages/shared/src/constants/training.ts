@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // Equipment organized by category
 export const EQUIPMENT_CATEGORIES = {
   'Free Weights': ['dumbbells', 'barbell', 'kettlebells', 'weight_plates'],
@@ -37,6 +39,7 @@ export type SecondaryGoal = (typeof SECONDARY_GOALS)[number];
 // Experience Levels
 export const EXPERIENCE_LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
 export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number];
+export const ExperienceLevelSchema = z.enum(EXPERIENCE_LEVELS);
 
 // Injury Severity
 export const INJURY_SEVERITY_LEVELS = ['minor', 'moderate', 'serious'] as const;

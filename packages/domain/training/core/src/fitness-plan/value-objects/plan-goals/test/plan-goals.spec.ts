@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   createPlanGoals,
   createEventTraining,
-  createStrengthBuilding,
-  createHabitBuilding,
+  createStrengthBuilding, createHabitBuilding,
+  toPlanGoalsView,
 } from '../../index.js';
 import {
   hasTargetWeights,
@@ -252,4 +252,36 @@ describe('PlanGoals', () => {
   });
 
   // More tests for withUpdatedTargetWeight, withAdjustedTargetMetrics, etc...
+  describe('toPlanGoalsView', () => {
+    it('should serialize targetDate to string', () => {
+      const targetDate = new Date('2026-01-01T12:00:00Z');
+      const result = createPlanGoals({
+        primary: 'Test',
+        secondary: [],
+        targetMetrics: {},
+        targetDate,
+      });
+
+      if (result.isSuccess) {
+        const view = toPlanGoalsView(result.value);
+
+        expect(view.targetDate).toBe('2026-01-01T12:00:00.000Z');
+        expect(typeof view.targetDate).toBe('string');
+      }
+    });
+
+    it('should handle missing targetDate', () => {
+      const result = createPlanGoals({
+        primary: 'Test',
+        secondary: [],
+        targetMetrics: {},
+      });
+
+      if (result.isSuccess) {
+        const view = toPlanGoalsView(result.value);
+
+        expect(view.targetDate).toBeUndefined();
+      }
+    });
+  });
 });

@@ -1,3 +1,4 @@
+import { CreateView } from '@bene/shared';
 import { WorkoutGoals } from '@/fitness-plan/value-objects/index.js';
 import { WorkoutActivity, WorkoutType } from '@/workouts/index.js';
 
@@ -21,7 +22,7 @@ export interface WorkoutTemplateData {
   planId: string;
   weekNumber: number;
   dayOfWeek: number;
-  scheduledDate: string;
+  scheduledDate: Date;
   title: string;
   description?: string;
   type: WorkoutType;
@@ -31,7 +32,7 @@ export interface WorkoutTemplateData {
   status: WorkoutStatus;
   completedWorkoutId?: string;
   userNotes?: string;
-  rescheduledTo?: string;
+  rescheduledTo?: Date;
   coachNotes?: string;
   importance: WorkoutImportance;
   alternatives?: WorkoutAlternative[];
@@ -39,3 +40,21 @@ export interface WorkoutTemplateData {
 
 // The core data structure is an immutable interface
 export type WorkoutTemplate = Readonly<WorkoutTemplateData>;
+
+// ============================================
+// View Interface (API Presentation)
+// ============================================
+
+export type WorkoutTemplateView = CreateView<
+  WorkoutTemplate,
+  never,
+  {
+    scheduledDate: string;
+    rescheduledTo?: string;
+    // Computed fields from queries
+    estimatedDuration: number;
+    isPastDue: boolean;
+    isCompleted: boolean;
+  }
+>;
+

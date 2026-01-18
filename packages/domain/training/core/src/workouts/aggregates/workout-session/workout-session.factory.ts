@@ -1,9 +1,8 @@
-import { Guard, Result } from '@bene/shared';
-import { createDefaultSessionConfig } from '../../value-objects/session-configuration/session-configuration.factory.js';
-import { SessionConfiguration } from '../../value-objects/session-configuration/session-configuration.types.js';
-import { WorkoutActivity } from '../../value-objects/workout-activity/workout-activity.types.js';
-import { WorkoutSession } from './workout-session.types.js';
 import { randomUUID } from 'crypto';
+import { Guard, Result } from '@bene/shared';
+import { createDefaultSessionConfig, SessionConfiguration, WorkoutActivity } from '../../value-objects/index.js';
+import { WorkoutSession, WorkoutSessionView } from './workout-session.types.js';
+import * as Queries from './workout-session.queries.js';
 
 export interface CreateWorkoutSessionParams {
   ownerId: string;
@@ -59,4 +58,43 @@ export function createWorkoutSession(
     createdAt: now,
     updatedAt: now,
   });
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+export function toWorkoutSessionView(session: WorkoutSession): WorkoutSessionView {
+  return {
+    ...session,
+    startedAt: session.startedAt?.toISOString(),
+    pausedAt: session.pausedAt?.toISOString(),
+    resumedAt: session.resumedAt?.toISOString(),
+    completedAt: session.completedAt?.toISOString(),
+    abandonedAt: session.abandonedAt?.toISOString(),
+    createdAt: session.createdAt.toISOString(),
+    updatedAt: session.updatedAt.toISOString(),
+
+    // Computed fields
+    activeDuration: Queries.getActiveDuration(session),
+    completionPercentage: Queries.getCompletionPercentage(session),
+
+    liveProgress: session.liveProgress
+      ? {
+        ...session.liveProgress,
+        activityStartedAt: session.liveProgress.activityStartedAt.toISOString(),
+      }
+      : undefined,
+
+    participants: session.participants.map((p) => ({
+      ...p,
+      joinedAt: p.joinedAt.toISOString(),
+      leftAt: p.leftAt?.toISOString(),
+    })),
+
+    activityFeed: session.activityFeed.map((f) => ({
+      ...f,
+      timestamp: f.timestamp.toISOString(),
+    })),
+  };
 }

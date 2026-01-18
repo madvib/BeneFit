@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
-import { CompletedWorkoutSchema, toCompletedWorkoutSchema } from '@bene/training-core';
+import { toCompletedWorkoutView, type CompletedWorkoutView } from '@bene/training-core';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 
 
@@ -20,13 +20,10 @@ export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSc
 
 
 
-export const GetWorkoutHistoryResponseSchema = z.object({
-  workouts: z.array(CompletedWorkoutSchema),
-  total: z.number().int().min(0).max(1000000),
-});
-
-// Zod inferred type with original name
-export type GetWorkoutHistoryResponse = z.infer<typeof GetWorkoutHistoryResponseSchema>;
+export interface GetWorkoutHistoryResponse {
+  workouts: CompletedWorkoutView[];
+  total: number;
+}
 
 
 export class GetWorkoutHistoryUseCase extends BaseUseCase<
@@ -53,7 +50,7 @@ export class GetWorkoutHistoryUseCase extends BaseUseCase<
     const workouts = workoutsResult.value;
 
     return Result.ok({
-      workouts: workouts.map(toCompletedWorkoutSchema),
+      workouts: workouts.map(toCompletedWorkoutView),
       total: workouts.length,
     });
   }

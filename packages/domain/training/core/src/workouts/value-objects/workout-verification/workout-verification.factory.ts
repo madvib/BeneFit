@@ -1,5 +1,5 @@
-import { Guard, Result } from '@bene/shared';
-import { VerificationData, WorkoutVerification } from './workout-verification.types.js';
+import { Guard, Result, SerializeDates } from '@bene/shared';
+import { WorkoutVerification, WorkoutVerificationView, VerificationData } from './workout-verification.types.js';
 
 export function createWorkoutVerification(props: {
   verifications: VerificationData[];
@@ -82,4 +82,69 @@ export function createWorkoutVerification(props: {
     sponsorEligible,
     verifiedAt: verified ? new Date() : undefined,
   });
+}
+
+// ============================================
+// CONVERSION (Entity → API View)
+// ============================================
+
+
+function toVerificationDataView(data: VerificationData): SerializeDates<VerificationData> {
+  switch (data.method) {
+    case 'gps':
+      return {
+        ...data,
+        data: {
+          ...data.data,
+          timestamp: data.data.timestamp.toISOString(),
+        },
+      };
+    case 'gym_checkin':
+      return {
+        ...data,
+        data: {
+          ...data.data,
+          checkinTime: data.data.checkinTime.toISOString(),
+          checkoutTime: data.data.checkoutTime?.toISOString(),
+        },
+      };
+    case 'wearable':
+      return {
+        ...data,
+        data: {
+          ...data.data,
+          syncedAt: data.data.syncedAt.toISOString(),
+        },
+      };
+    case 'photo':
+      return {
+        ...data,
+        data: {
+          ...data.data,
+          uploadedAt: data.data.uploadedAt.toISOString(),
+        },
+      };
+    case 'witness':
+      return {
+        ...data,
+        data: {
+          ...data.data,
+          verifiedAt: data.data.verifiedAt.toISOString(),
+        },
+      };
+    case 'manual':
+      return data;
+    default:
+      return data as never;
+  }
+}
+
+export function toWorkoutVerificationView(
+  verification: WorkoutVerification,
+): WorkoutVerificationView {
+  return {
+    ...verification,
+    verifiedAt: verification.verifiedAt?.toISOString(),
+    verifications: verification.verifications.map(toVerificationDataView),
+  };
 }

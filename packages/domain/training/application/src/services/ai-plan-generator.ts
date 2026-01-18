@@ -92,8 +92,8 @@ export class AIPlanGenerator {
         return createWeeklySchedule({
           weekNumber: week.weekNumber,
           planId: tempPlanId,
-          startDate: weekStart.toISOString(),
-          endDate: weekEnd.toISOString(),
+          startDate: weekStart,
+          endDate: weekEnd,
           focus: `Week ${ week.weekNumber }`,
           targetWorkouts: workouts.length,
           workouts,

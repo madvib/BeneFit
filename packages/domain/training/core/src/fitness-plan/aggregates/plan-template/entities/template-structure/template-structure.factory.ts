@@ -4,6 +4,7 @@ import {
   TemplateFrequency,
   WeekTemplate,
   TemplateStructure,
+  TemplateStructureView,
 } from './template-structure.types.js';
 
 export function createTemplateStructure(props: {
@@ -70,7 +71,7 @@ export function createTemplateStructure(props: {
     }
     const workoutLenResult = Guard.isTrue(
       week.workouts.length > 0,
-      `week ${week.weekNumber} must have at least one workout`,
+      `week ${ week.weekNumber } must have at least one workout`,
     );
     if (workoutLenResult.isFailure) return Result.fail(workoutLenResult.error);
 
@@ -102,4 +103,23 @@ export function createTemplateStructure(props: {
     deloadWeeks: props.deloadWeeks,
     progressionFormula: props.progressionFormula,
   });
+}
+
+export function toTemplateStructureView(structure: TemplateStructure): TemplateStructureView {
+  return {
+    duration: structure.duration,
+    frequency: structure.frequency,
+    weeks: structure.weeks.map(week => ({
+      ...week,
+      workouts: week.workouts.map(workout => ({
+        ...workout,
+        activities: workout.activities.map(activity => ({
+          ...activity,
+          variables: { ...activity.variables }
+        }))
+      }))
+    })),
+    deloadWeeks: structure.deloadWeeks ? [...structure.deloadWeeks] : undefined,
+    progressionFormula: structure.progressionFormula,
+  };
 }

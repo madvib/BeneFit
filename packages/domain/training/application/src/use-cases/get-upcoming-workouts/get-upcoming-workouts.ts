@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { FitnessPlanQueries } from '@bene/training-core';
+import { FitnessPlanQueries, toWorkoutTemplateView } from '@bene/training-core';
+import type { WorkoutTemplateView } from '@bene/training-core';
 import { Result, BaseUseCase } from '@bene/shared';
 // TODO: Create UpcomingWorkoutSchema in training-core
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
@@ -18,22 +19,9 @@ export type GetUpcomingWorkoutsRequest = z.infer<
   typeof GetUpcomingWorkoutsRequestSchema
 >;
 
-const UpcomingWorkoutSchema = z.object({
-  workoutId: z.string(),
-  day: z.string().min(1).max(20),
-  type: z.string().min(1).max(50),
-  status: z.string().min(1).max(20),
-  durationMinutes: z.number().int().min(1).max(480),
-});
-
-export const GetUpcomingWorkoutsResponseSchema = z.object({
-  workouts: z.array(UpcomingWorkoutSchema),
-});
-
-// Zod inferred type with original name
-export type GetUpcomingWorkoutsResponse = z.infer<
-  typeof GetUpcomingWorkoutsResponseSchema
->;
+export interface GetUpcomingWorkoutsResponse {
+  workouts: WorkoutTemplateView[];
+}
 
 
 export class GetUpcomingWorkoutsUseCase extends BaseUseCase<
@@ -64,22 +52,7 @@ export class GetUpcomingWorkoutsUseCase extends BaseUseCase<
 
     // 3. Map to DTO
     return Result.ok({
-      workouts: upcomingWorkouts.map((workout) => {
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const dayName = dayNames[workout.dayOfWeek || 0] || 'Unknown';
-
-        return {
-          workoutId: workout.id,
-          day: dayName,
-          type: workout.type,
-          status: workout.status,
-          durationMinutes:
-            (workout.activities as { duration?: number }[]).reduce(
-              (sum: number, a) => sum + (a.duration || 10),
-              0,
-            ) || 30,
-        };
-      }),
+      workouts: upcomingWorkouts.map(toWorkoutTemplateView),
     });
   }
 }

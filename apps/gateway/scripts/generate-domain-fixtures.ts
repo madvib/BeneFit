@@ -7,7 +7,21 @@ const ROOT_DIR = join(__dirname, '../../..');
 const OUTPUT_DIR = join(ROOT_DIR, 'packages/react-api-client/src/generated/fixtures');
 
 // Import fixture builders (these use domain fixtures + presentation mappers)
-import { buildGetCurrentPlanResponse } from './fixture-builders/get-current-plan.builder.js';
+import {
+  buildGetCurrentPlanResponse,
+  buildGeneratePlanFromGoalsResponse,
+  buildActivatePlanResponse,
+  buildPausePlanResponse,
+  buildAdjustPlanBasedOnFeedbackResponse,
+  buildGetTodaysWorkoutResponse,
+  buildGetUpcomingWorkoutsResponse,
+  buildGetWorkoutHistoryResponse,
+  buildSkipWorkoutResponse,
+  buildStartWorkoutResponse,
+  buildCompleteWorkoutResponse,
+  buildJoinMultiplayerWorkoutResponse,
+  buildAddWorkoutReactionResponse,
+} from './fixture-builders/index.js';
 
 // Import schemas for other use cases (still using zod-schema-faker for now)
 import {
@@ -20,14 +34,10 @@ import {
 } from '@bene/coach-domain';
 
 import {
-  GeneratePlanFromGoalsResponseSchema,
-  ActivatePlanResponseSchema,
-  GetUpcomingWorkoutsResponseSchema,
-  GetWorkoutHistoryResponseSchema,
-  GetTodaysWorkoutResponseSchema,
   GetProfileResponseSchema,
   GetUserStatsResponseSchema,
 } from '@bene/training-application';
+
 
 import {
   GetConnectedServicesResponseSchema,
@@ -127,15 +137,21 @@ async function run() {
     },
     'fitness-plans': {
       // ✅ Uses domain fixture pattern!
-      getCurrentPlanResponse: buildGetCurrentPlanResponse('with-plan'),
-      // ❌ Still using zod-schema-faker (TODO: migrate these)
-      generatePlanFromGoalsResponse: GeneratePlanFromGoalsResponseSchema,
-      activatePlanResponse: ActivatePlanResponseSchema,
+      getCurrentPlanResponse: buildGetCurrentPlanResponse(),
+      generatePlanFromGoalsResponse: buildGeneratePlanFromGoalsResponse(),
+      activatePlanResponse: buildActivatePlanResponse(),
+      pausePlanResponse: buildPausePlanResponse(),
+      adjustPlanBasedOnFeedbackResponse: buildAdjustPlanBasedOnFeedbackResponse(),
     },
     workouts: {
-      getUpcomingWorkoutsResponse: GetUpcomingWorkoutsResponseSchema,
-      getWorkoutHistoryResponse: GetWorkoutHistoryResponseSchema,
-      getTodaysWorkoutResponse: GetTodaysWorkoutResponseSchema,
+      getUpcomingWorkoutsResponse: buildGetUpcomingWorkoutsResponse(),
+      getWorkoutHistoryResponse: buildGetWorkoutHistoryResponse(),
+      getTodaysWorkoutResponse: buildGetTodaysWorkoutResponse(),
+      skipWorkoutResponse: buildSkipWorkoutResponse(),
+      startWorkoutResponse: buildStartWorkoutResponse(),
+      completeWorkoutResponse: buildCompleteWorkoutResponse(),
+      joinMultiplayerWorkoutResponse: buildJoinMultiplayerWorkoutResponse(),
+      addWorkoutReactionResponse: buildAddWorkoutReactionResponse(),
     },
     profile: {
       getProfileResponse: GetProfileResponseSchema,

@@ -1,6 +1,7 @@
-import { Result, Guard } from '@bene/shared';
+import { Result } from '@bene/shared';
 import { GoalsValidationError } from '../../errors/fitness-plan-errors.js';
-import { PlanGoals, TargetMetrics, TargetLiftWeight } from './plan-goals.types.js';
+import { PlanGoals, TargetMetrics, TargetLiftWeight, PlanGoalsView } from './plan-goals.types.js';
+import { PlanGoalsSchema } from './plan-goals.schema.js';
 
 export interface PlanGoalsProps {
   readonly primary: string;
@@ -10,85 +11,42 @@ export interface PlanGoalsProps {
 }
 
 export function createPlanGoals(props: PlanGoalsProps): Result<PlanGoals> {
-  // Validate primary goal
-  const guardResult = Guard.againstEmptyString(props.primary, 'primary goal');
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
-  }
+  // Use Zod schema for validation
+  const validationResult = PlanGoalsSchema.safeParse(props);
 
-  // Validate secondary goals (no empty strings)
-  for (const goal of props.secondary) {
-    const secondaryGuard = Guard.againstEmptyString(goal, 'secondary goal');
-    if (secondaryGuard.isFailure) {
-      return Result.fail(secondaryGuard.error);
+  if (!validationResult.success) {
+    // Map Zod error to our domain error
+    const zodError = validationResult.error;
+    // console.log('PlanGoals validation error:', JSON.stringify(zodError, null, 2));
+
+    // ZodError has .issues, .errors is sometimes an alias or missing depending on version/context
+    const issues = zodError.issues || (zodError as any).errors;
+
+    if (!issues || issues.length === 0) {
+      return Result.fail(new GoalsValidationError('Unknown validation error', { original: zodError }));
     }
+
+    const firstError = issues[0];
+    if (!firstError) {
+      return Result.fail(new GoalsValidationError('Unknown validation error (empty issues)', { original: zodError }));
+    }
+
+    return Result.fail(
+      new GoalsValidationError(firstError.message, {
+        path: firstError.path.join('.'),
+        code: firstError.code,
+      }),
+    );
   }
 
-  // Validate target date is in the future (if provided)
+  // Double check target date logic if it wasn't caught by schema (Zod handles types/structure)
+  // Schema handles "future date" validation if we add refinements, but let's keep domain rule explicit for now
   if (props.targetDate && props.targetDate <= new Date()) {
     return Result.fail(
       new GoalsValidationError('Target date must be in the future', {
         targetDate: props.targetDate,
       }),
     );
-  }
-
-  // Validate target metrics
-  if (
-    props.targetMetrics.targetPace !== undefined &&
-    props.targetMetrics.targetPace <= 0
-  ) {
-    return Result.fail(
-      new GoalsValidationError('Target pace must be positive', {
-        targetPace: props.targetMetrics.targetPace,
-      }),
-    );
-  }
-
-  if (
-    props.targetMetrics.targetDistance !== undefined &&
-    props.targetMetrics.targetDistance <= 0
-  ) {
-    return Result.fail(
-      new GoalsValidationError('Target distance must be positive', {
-        targetDistance: props.targetMetrics.targetDistance,
-      }),
-    );
-  }
-
-  if (
-    props.targetMetrics.totalWorkouts !== undefined &&
-    props.targetMetrics.totalWorkouts <= 0
-  ) {
-    return Result.fail(
-      new GoalsValidationError('Total workouts must be positive', {
-        totalWorkouts: props.targetMetrics.totalWorkouts,
-      }),
-    );
-  }
-
-  if (
-    props.targetMetrics.minStreakDays !== undefined &&
-    props.targetMetrics.minStreakDays <= 0
-  ) {
-    return Result.fail(
-      new GoalsValidationError('Minimum streak days must be positive', {
-        minStreakDays: props.targetMetrics.minStreakDays,
-      }),
-    );
-  }
-
-  // Validate target weights
-  if (props.targetMetrics.targetWeights) {
-    for (const weight of props.targetMetrics.targetWeights) {
-      const weightGuard = Guard.combine([
-        Guard.againstEmptyString(weight.exercise, 'exercise name'),
-        Guard.againstNegativeOrZero(weight.weight, 'weight'),
-      ]);
-      if (weightGuard.isFailure) {
-        return Result.fail(weightGuard.error);
-      }
-    }
   }
 
   return Result.ok(props);
@@ -102,10 +60,10 @@ export function createEventTraining(
   targetPace: number, // seconds per km or mile
 ): Result<PlanGoals> {
   return createPlanGoals({
-    primary: `${eventName} Training`,
+    primary: `${ eventName } Training`,
     secondary: [
-      `Run ${distance / 1000}km`,
-      `Run at pace of ${Math.floor(targetPace / 60)}:${targetPace % 60}/km`,
+      `Run ${ distance / 1000 }km`,
+      `Run at pace of ${ Math.floor(targetPace / 60) }:${ targetPace % 60 }/km`,
     ],
     targetMetrics: {
       targetDistance: distance,
@@ -122,7 +80,7 @@ export function createStrengthBuilding(
 ): Result<PlanGoals> {
   return createPlanGoals({
     primary,
-    secondary: targetWeights.map((w) => `Lift ${w.weight}kg in ${w.exercise}`),
+    secondary: targetWeights.map((w) => `Lift ${ w.weight }kg in ${ w.exercise }`),
     targetMetrics: {
       targetWeights,
     },
@@ -136,11 +94,19 @@ export function createHabitBuilding(
   targetDate?: Date,
 ): Result<PlanGoals> {
   return createPlanGoals({
-    primary: `${habit} Habit Building`,
-    secondary: [`Maintain ${habit} for at least ${minStreakDays} days in a row`],
+    primary: `${ habit } Habit Building`,
+    secondary: [`Maintain ${ habit } for at least ${ minStreakDays } days in a row`],
     targetMetrics: {
       minStreakDays,
     },
     targetDate,
   });
+}
+
+// Mapper: Entity -> View (handles Date serialization)
+export function toPlanGoalsView(goals: PlanGoals): PlanGoalsView {
+  return {
+    ...goals,
+    targetDate: goals.targetDate?.toISOString(),
+  };
 }

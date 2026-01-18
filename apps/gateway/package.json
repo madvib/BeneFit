@@ -21,7 +21,7 @@
     "@bene/integrations-domain": "workspace:*",
     "@bene/shared": "workspace:*",
     "@bene/training-application": "workspace:*",
-     "@bene/training-core": "workspace:*",
+    "@bene/training-core": "workspace:*",
     "@hono/zod-validator": "0.7.5",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
@@ -34,6 +34,10 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
+            "nx run @bene/training-core:build",
+            "nx run @bene/training-application:build",
+            "nx run @bene/coach-domain:build",
+            "nx run @bene/integrations-domain:build",
             "tsx scripts/generate-domain-fixtures.ts",
             "tsx scripts/build-client.ts"
           ],

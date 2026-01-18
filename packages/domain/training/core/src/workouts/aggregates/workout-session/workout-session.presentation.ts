@@ -19,9 +19,9 @@ import {
   SessionParticipantSchema,
   toSessionParticipantSchema
 } from '../../value-objects/session-participant/index.js';
-import { ActivityPerformanceSchema } from '../../value-objects/workout-performance/workout-performance.presentation.js';
+import { ActivityPerformanceSchema } from '../../value-objects/workout-performance/workout-performance.schema.js';
 // Using direct import for now if index doesn't export schema, checking index in next step but assuming it works or I fix it.
-import { WorkoutSession } from './workout-session.types.js';
+import { WorkoutSession, WorkoutSessionView } from './workout-session.types.js';
 import * as Queries from './workout-session.queries.js';
 
 
@@ -55,9 +55,9 @@ export const WorkoutSessionSchema = z.object({
   completionPercentage: z.number().min(0).max(1),
 });
 
-export type WorkoutSessionPresentation = z.infer<typeof WorkoutSessionSchema>;
+export type WorkoutSessionPresentation = WorkoutSessionView;
 
-export function toWorkoutSessionSchema(session: WorkoutSession): WorkoutSessionPresentation {
+export function toWorkoutSessionSchema(session: WorkoutSession): WorkoutSessionView {
   return {
     id: session.id,
     ownerId: session.ownerId,
@@ -80,11 +80,8 @@ export function toWorkoutSessionSchema(session: WorkoutSession): WorkoutSessionP
     completedAt: session.completedAt?.toISOString(),
     abandonedAt: session.abandonedAt?.toISOString(),
     totalPausedSeconds: session.totalPausedSeconds,
-    createdAt: session.createdAt.toISOString(),
-    updatedAt: session.updatedAt.toISOString(),
-
     // Computed
     activeDuration: Queries.getActiveDuration(session),
     completionPercentage: Queries.getCompletionPercentage(session),
-  };
+  } as unknown as WorkoutSessionView;
 }

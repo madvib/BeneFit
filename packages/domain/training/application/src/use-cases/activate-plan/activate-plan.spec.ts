@@ -56,8 +56,8 @@ describe('ActivatePlanUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.planId).toBe(planId);
-      expect(result.value.status).toBe('active');
+      expect(result.value.plan.id).toBe(planId);
+      expect(result.value.plan.status).toBe('active');
     }
     expect(mockPlanRepository.save).toHaveBeenCalledWith(activatedPlan);
     expect(mockEventBus.publish).toHaveBeenCalledWith(

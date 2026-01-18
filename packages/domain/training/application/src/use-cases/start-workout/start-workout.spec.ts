@@ -23,10 +23,18 @@ describe('StartWorkoutUseCase', () => {
 
   it('should start a custom workout successfully', async () => {
     const request = {
-      ...fake(StartWorkoutRequestSchema),
       userId: 'user-1',
+      userName: 'User 1',
       workoutType: 'strength',
-      activities: [fake(WorkoutActivitySchema)],
+      activities: [
+        {
+          name: 'Push ups',
+          type: 'main', // Explicit valid enum
+          order: 1,
+          instructions: ['Do 10 reps'],
+          duration: 60,
+        },
+      ],
     };
 
     const result = await useCase.execute(request);
@@ -36,7 +44,13 @@ describe('StartWorkoutUseCase', () => {
 
     // Note: UseCase.execute calls creates a session and starts it.
 
+    if (result.isFailure) {
+      console.error('StartWorkout failed:', result.error);
+    }
     expect(result.isSuccess).toBe(true);
+    expect(result.value.session.id).toBeDefined();
+    expect(result.value.session.workoutType).toBe('strength');
+
     expect(sessionRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({

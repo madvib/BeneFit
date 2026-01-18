@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
-import { FitnessPlanQueries } from '@bene/training-core';
-// TODO: Create DailyWorkoutSchema in training-core
+import { FitnessPlanQueries, toWorkoutTemplateView } from '@bene/training-core';
+import type { WorkoutTemplateView } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 export const GetTodaysWorkoutRequestSchema = z.object({
   userId: z.string(),
@@ -9,25 +9,11 @@ export const GetTodaysWorkoutRequestSchema = z.object({
 
 export type GetTodaysWorkoutRequest = z.infer<typeof GetTodaysWorkoutRequestSchema>;
 
-export const GetTodaysWorkoutResponseSchema = z.object({
-  hasWorkout: z.boolean(),
-  workout: z.object({
-    workoutId: z.string(),
-    planId: z.string(),
-    type: z.string().min(1).max(50),
-    description: z.string().min(1).max(500).optional(),
-    durationMinutes: z.number().int().min(1).max(480),
-    activities: z.array(z.object({
-      type: z.enum(['warmup', 'main', 'cooldown']),
-      instructions: z.string().min(1).max(1000),
-      durationMinutes: z.number().int().min(1).max(120),
-    })),
-  }).optional(),
-  message: z.string().min(1).max(200).optional(), // "Rest day!" or "No active plan"
-});
-
-// Zod inferred type with original name
-export type GetTodaysWorkoutResponse = z.infer<typeof GetTodaysWorkoutResponseSchema>;
+export interface GetTodaysWorkoutResponse {
+  hasWorkout: boolean;
+  workout?: WorkoutTemplateView;
+  message?: string;
+}
 
 
 export class GetTodaysWorkoutUseCase extends BaseUseCase<
@@ -72,38 +58,9 @@ export class GetTodaysWorkoutUseCase extends BaseUseCase<
     }
 
     // 4. Return workout details
-    const activities =
-      todaysWorkout.activities?.map((a) => {
-        // Handle the case where a.instructions could be an array or a string
-        let instructionsText = '';
-        if (Array.isArray(a.instructions)) {
-          instructionsText = a.instructions.join('. ');
-        } else if (typeof a.instructions === 'string') {
-          instructionsText = a.instructions;
-        }
-        return {
-          type: (a.type as 'warmup' | 'main' | 'cooldown') || 'main',
-          instructions: instructionsText,
-          durationMinutes: a.duration || 10,
-        };
-      }) || [];
-
-    const totalDuration =
-      activities.reduce(
-        (sum: number, a: { durationMinutes: number }) => sum + a.durationMinutes,
-        0,
-      ) || 30;
-
     return Result.ok({
       hasWorkout: true,
-      workout: {
-        workoutId: todaysWorkout.id,
-        planId: plan.id,
-        type: todaysWorkout.type,
-        description: todaysWorkout.description,
-        durationMinutes: totalDuration,
-        activities,
-      },
+      workout: toWorkoutTemplateView(todaysWorkout),
     });
   }
 }
