@@ -1,4 +1,4 @@
-export { createInitialSyncStatus, createSyncError } from './sync-status.js';
-export type { SyncStatus, SyncState, SyncError, SyncStatusData } from './sync-status.js';
-export * from './sync-status.presentation.js';
-export { createSyncStatusFixture, createSyncErrorFixture } from './test/sync-status.fixtures.js';
+// Export all parts of the SyncStatus value object
+export * from './sync-status.types.js';
+export * from './sync-status.factory.js';
+export * from './sync-status.view.js';

@@ -1,67 +1,67 @@
-import { CreateView } from '@bene/shared';
+import { z } from 'zod';
+import type { DomainBrandTag } from '@bene/shared';
 import {
-  LiveActivityProgress, SessionParticipant, SessionConfiguration,
-  WorkoutActivity,
-  ActivityPerformance,
-  SessionFeedItem
+  LiveActivityProgressSchema,
+  SessionParticipantSchema,
+  SessionConfigurationSchema,
+  WorkoutActivitySchema,
+  ActivityPerformanceSchema,
+  SessionFeedItemSchema,
 } from '../../value-objects/index.js';
 
-export type SessionState =
-  | 'preparing' // Created but not started
-  | 'in_progress' // Active workout
-  | 'paused' // Temporarily paused
-  | 'completed' // Finished successfully
-  | 'abandoned'; // Stopped early
+export const SessionStateSchema = z.enum([
+  'preparing',
+  'in_progress',
+  'paused',
+  'completed',
+  'abandoned',
+]);
 
-interface WorkoutSessionData {
-  id: string;
-  ownerId: string; // User who created the session
+export type SessionState = z.infer<typeof SessionStateSchema>;
+
+/**
+ * 1. DEFINE CORE SCHEMA
+ */
+export const WorkoutSessionSchema = z.object({
+  id: z.uuid(),
+  ownerId: z.uuid(),
 
   // Source workout (if from a plan)
-  planId?: string;
-  workoutTemplateId?: string;
+  planId: z.uuid().optional(),
+  workoutTemplateId: z.uuid().optional(),
 
   // Workout structure
-  workoutType: string; // "Upper Body", "5K Run", etc.
-  activities: WorkoutActivity[];
+  workoutType: z.string().min(1).max(50),
+  activities: z.array(WorkoutActivitySchema).min(1),
 
   // Session state
-  state: SessionState;
-  currentActivityIndex: number;
-  liveProgress?: LiveActivityProgress;
+  state: SessionStateSchema,
+  currentActivityIndex: z.number().int().min(0).max(100),
+  liveProgress: LiveActivityProgressSchema.optional(),
 
   // Performance tracking
-  completedActivities: ActivityPerformance[];
+  completedActivities: z.array(ActivityPerformanceSchema),
 
   // Multiplayer
-  configuration: SessionConfiguration;
-  participants: SessionParticipant[];
-  activityFeed: SessionFeedItem[];
+  configuration: SessionConfigurationSchema,
+  participants: z.array(SessionParticipantSchema),
+  activityFeed: z.array(SessionFeedItemSchema),
 
   // Timing
-  startedAt?: Date; // When workout actually started
-  pausedAt?: Date;
-  resumedAt?: Date;
-  completedAt?: Date;
-  abandonedAt?: Date;
-  totalPausedSeconds: number;
+  startedAt: z.coerce.date<Date>().optional(),
+  pausedAt: z.coerce.date<Date>().optional(),
+  resumedAt: z.coerce.date<Date>().optional(),
+  completedAt: z.coerce.date<Date>().optional(),
+  abandonedAt: z.coerce.date<Date>().optional(),
+  totalPausedSeconds: z.number().int().min(0).max(86400),
 
   // Metadata
-  createdAt: Date;
-  updatedAt: Date;
-}
+  createdAt: z.coerce.date<Date>(),
+  updatedAt: z.coerce.date<Date>(),
+}).brand<DomainBrandTag>();
 
-export type WorkoutSession = Readonly<WorkoutSessionData>;
+/**
+ * 2. INFER TYPES
+ */
+export type WorkoutSession = Readonly<z.infer<typeof WorkoutSessionSchema>>;
 
-// ============================================
-// View Interface (API Presentation)
-// ============================================
-
-export type WorkoutSessionView = CreateView<
-  WorkoutSession,
-  never,
-  {
-    activeDuration: number;
-    completionPercentage: number;
-  }
->;

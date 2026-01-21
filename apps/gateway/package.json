@@ -34,15 +34,14 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
-            "nx run @bene/training-core:build",
-            "nx run @bene/training-application:build",
-            "nx run @bene/coach-domain:build",
-            "nx run @bene/integrations-domain:build",
-            "tsx scripts/generate-domain-fixtures.ts",
-            "tsx scripts/build-client.ts"
+            "pnpm nx run @bene/training-core:build",
+            "pnpm nx run @bene/training-application:build",
+            "pnpm nx run @bene/coach-domain:build",
+            "pnpm nx run @bene/integrations-domain:build",
+            "tsx {projectRoot}/scripts/build-client.ts"
           ],
           "parallel": false,
-          "cwd": "apps/gateway"
+          "cwd": "{workspaceRoot}"
         },
         "outputs": [
           "{workspaceRoot}/packages/api-client/src/generated"

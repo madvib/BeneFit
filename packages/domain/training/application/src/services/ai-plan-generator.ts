@@ -1,7 +1,7 @@
 import { AIError, ParseError, Result, parseJsonResponse } from '@bene/shared';
 import type { FitnessPlan, PlanGoals, TrainingConstraints } from '@bene/training-core';
 import {
-  createDraftFitnessPlan,
+  CreateDraftFitnessPlanSchema,
   createWeeklySchedule,
   type WorkoutTemplate,
 } from '@bene/training-core';
@@ -108,7 +108,7 @@ export class AIPlanGenerator {
 
       const weeks = weeksResults.map((result: Result<any>) => result.value);
 
-      return createDraftFitnessPlan({
+      const planParseResult = CreateDraftFitnessPlanSchema.safeParse({
         userId: input.userId,
         title: planData.name,
         description: `Custom generated plan for ${ input.goals.primary }`,
@@ -119,6 +119,12 @@ export class AIPlanGenerator {
         startDate: new Date(),
         weeks,
       });
+
+      if (!planParseResult.success) {
+        return Result.fail(new Error(`Failed to create domain plan: ${ planParseResult.error.message }`));
+      }
+
+      return Result.ok(planParseResult.data);
     } catch (error) {
       console.error('Error generating plan:', error);
       return Result.fail(

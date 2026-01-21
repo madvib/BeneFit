@@ -1,38 +1,32 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase, ValidationError, UseCaseError } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase, ValidationError, UseCaseError, mapZodError } from '@bene/shared';
 import {
-  createConnectedService,
-  OAuthCredentials,
+  ServiceTypeSchema,
+  CreateConnectedServiceSchema,
+  CreateOAuthCredentialsSchema,
+  toConnectedServiceView,
+  type ConnectedServiceView,
 } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { IntegrationClient } from '@app/ports/integration-client.js';
 import { ServiceConnectedEvent } from '@app/events/service-connected.event.js';
 
-// Single request schema with ALL fields
+/**
+ * Input schema - composes from domain schemas
+ */
 export const ConnectServiceRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-
-  serviceType: z.enum(['strava', 'garmin']),
-  authorizationCode: z.string(),
-  redirectUri: z.string(),
+  userId: z.uuid(),
+  serviceType: ServiceTypeSchema, // ✅ Compose from domain schema
+  authorizationCode: z.string().min(1),
+  redirectUri: z.url(),
 });
 
-// Zod inferred type with original name
 export type ConnectServiceRequest = z.infer<typeof ConnectServiceRequestSchema>;
 
-// Zod schema for response validation
-export const ConnectServiceResponseSchema = z.object({
-  serviceId: z.string(),
-  serviceType: z.string(),
-  connected: z.boolean(),
-  permissions: z.unknown(), // ServicePermissions - using z.unknown to allow proper typing at runtime
-});
-
-// Zod inferred type with original name
-export type ConnectServiceResponse = z.infer<typeof ConnectServiceResponseSchema>;
+/**
+ * Response type - uses domain view
+ */
+export type ConnectServiceResponse = ConnectedServiceView;
 
 export class ConnectServiceUseCase extends BaseUseCase<
   ConnectServiceRequest,
@@ -52,7 +46,13 @@ export class ConnectServiceUseCase extends BaseUseCase<
     // 1. Get appropriate integration client
     const client = this.integrationClients.get(request.serviceType);
     if (!client) {
-      return Result.fail(new ValidationError(`Unsupported service type: ${ request.serviceType }`, 'UNSUPPORTED_SERVICE', { serviceType: request.serviceType }));
+      return Result.fail(
+        new ValidationError(
+          `Unsupported service type: ${ request.serviceType }`,
+          'UNSUPPORTED_SERVICE',
+          { serviceType: request.serviceType }
+        )
+      );
     }
 
     // 2. Exchange authorization code for access token
@@ -63,7 +63,14 @@ export class ConnectServiceUseCase extends BaseUseCase<
 
     if (tokenResult.isFailure) {
       const error = Array.isArray(tokenResult.error) ? tokenResult.error[0] : tokenResult.error;
-      return Result.fail(new UseCaseError(`OAuth exchange failed: ${ error }`, 'OAUTH_EXCHANGE_FAILED', { serviceType: request.serviceType }, error));
+      return Result.fail(
+        new UseCaseError(
+          `OAuth exchange failed: ${ error }`,
+          'OAUTH_EXCHANGE_FAILED',
+          { serviceType: request.serviceType },
+          error
+        )
+      );
     }
 
     const tokens = tokenResult.value;
@@ -73,25 +80,35 @@ export class ConnectServiceUseCase extends BaseUseCase<
     if (profileResult.isFailure) {
       const error = Array.isArray(profileResult.error) ? profileResult.error[0] : profileResult.error;
       return Result.fail(
-        new UseCaseError(`Failed to get user profile: ${ error }`, 'PROFILE_FETCH_FAILED', { serviceType: request.serviceType }, error),
+        new UseCaseError(
+          `Failed to get user profile: ${ error }`,
+          'PROFILE_FETCH_FAILED',
+          { serviceType: request.serviceType },
+          error
+        )
       );
     }
 
     const externalProfile = profileResult.value;
 
-    // 4. Create ConnectedService aggregate
-    const credentials: OAuthCredentials = {
+    // 4. Create OAuthCredentials value object
+    const credentialsResult = CreateOAuthCredentialsSchema.safeParse({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       expiresAt: tokens.expiresAt,
       scopes: tokens.scopes,
       tokenType: 'Bearer',
-    };
+    });
 
-    const serviceResult = createConnectedService({
+    if (!credentialsResult.success) {
+      return Result.fail(mapZodError(credentialsResult.error));
+    }
+
+    // 5. Create ConnectedService aggregate
+    const serviceResult = CreateConnectedServiceSchema.safeParse({
       userId: request.userId,
       serviceType: request.serviceType,
-      credentials,
+      credentials: credentialsResult.data,
       permissions: tokens.permissions,
       metadata: {
         externalUserId: externalProfile.id,
@@ -103,16 +120,16 @@ export class ConnectServiceUseCase extends BaseUseCase<
       },
     });
 
-    if (serviceResult.isFailure) {
-      return Result.fail(serviceResult.error);
+    if (!serviceResult.success) {
+      return Result.fail(mapZodError(serviceResult.error));
     }
 
-    const service = serviceResult.value;
+    const service = serviceResult.data;
 
-    // 5. Save to repository
+    // 6. Save to repository
     await this.serviceRepository.save(service);
 
-    // 6. Emit event (triggers initial sync)
+    // 7. Emit event (triggers initial sync)
     await this.eventBus.publish(
       new ServiceConnectedEvent({
         userId: request.userId,
@@ -121,11 +138,7 @@ export class ConnectServiceUseCase extends BaseUseCase<
       }),
     );
 
-    return Result.ok({
-      serviceId: service.id,
-      serviceType: service.serviceType,
-      connected: true,
-      permissions: service.permissions,
-    });
+    // 8. Map to view and return
+    return Result.ok(toConnectedServiceView(service));
   }
 }

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { ActivityStructure, Exercise, Interval, IntensityLevel } from '../activity-structure.types.js';
-import { createActivityStructure } from '../activity-structure.factory.js';
+import { activityStructureFromPersistence } from '../activity-structure.factory.js';
 
 /**
  * Creates a mock Exercise structure
@@ -30,20 +30,22 @@ export function createIntervalFixture(overrides?: Partial<Interval>): Interval {
 }
 
 /**
- * Creates a mock ActivityStructure using the official factory
+ * Creates a mock ActivityStructure using activityStructureFromPersistence.
  * Ensures domain invariants (like not having both intervals and exercises) are respected.
  */
 export function createActivityStructureFixture(overrides?: Partial<ActivityStructure>): ActivityStructure {
   const isInterval = faker.datatype.boolean();
 
-  const props = {
+  // Build unbranded data with faker
+  const data = {
     intervals: isInterval ? Array.from({ length: 3 }, () => createIntervalFixture()) : undefined,
     rounds: isInterval ? faker.number.int({ min: 1, max: 5 }) : 1,
     exercises: !isInterval ? Array.from({ length: 3 }, () => createExerciseFixture()) : undefined,
     ...overrides,
   };
 
-  const result = createActivityStructure(props);
+  // Rehydrate through fromPersistence
+  const result = activityStructureFromPersistence(data);
 
   if (result.isFailure) {
     const errorMsg = Array.isArray(result.error)

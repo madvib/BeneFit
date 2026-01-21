@@ -1,9 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { CoachConversation } from '../coach-conversation.types.js';
-import { createCoachContextFixture } from '../../../value-objects/coach-context/test/coach-context.fixtures.js';
-import { createCoachMsgFixture } from '../../../value-objects/coach-msg/test/coach-msg.fixtures.js';
-import { createCheckInFixture } from '../../../value-objects/check-in/test/check-in.fixtures.js';
+import {
+  createCoachContextFixture,
+  createCoachMsgFixture,
+  createCheckInFixture
+} from '../../../../fixtures.js';
+import { coachConversationFromPersistence } from '../coach-conversation.factory.js';
 
+/**
+ * Creates a CoachConversation fixture for testing.
+ * Uses coachConversationFromPersistence to ensure branding and type safety.
+ */
 export function createCoachConversationFixture(
   overrides?: Partial<CoachConversation>
 ): CoachConversation {
@@ -22,7 +29,7 @@ export function createCoachConversationFixture(
   const lastMessageAt = faker.date.recent({ days: 7 });
   const lastContextUpdateAt = faker.date.recent({ days: 3 });
 
-  return {
+  const data = {
     id: faker.string.uuid(),
     userId: faker.string.uuid(),
     context: createCoachContextFixture(),
@@ -38,4 +45,12 @@ export function createCoachConversationFixture(
     lastContextUpdateAt,
     ...overrides,
   };
+
+  const result = coachConversationFromPersistence(data as CoachConversation);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create CoachConversation fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

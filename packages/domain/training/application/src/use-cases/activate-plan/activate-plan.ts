@@ -8,11 +8,8 @@ import { PlanActivatedEvent } from '../../events/plan-activated.event.js';
 
 // Single request schema with ALL fields
 export const ActivatePlanRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  planId: z.string(),
+  userId: z.uuid(),
+  planId: z.uuid(),
   startDate: z.date().optional(),
 });
 

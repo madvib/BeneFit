@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { PlanGoals, TargetMetrics } from '../plan-goals.types.js';
-import { createPlanGoals } from '../plan-goals.factory.js';
+import { planGoalsFromPersistence } from '../plan-goals.factory.js';
 
 export function createTargetMetricsFixture(overrides?: Partial<TargetMetrics>): TargetMetrics {
   return {
@@ -16,16 +16,13 @@ export function createPlanGoalsFixture(overrides?: Partial<PlanGoals>): PlanGoal
   const secondary = [faker.company.buzzPhrase(), faker.hacker.phrase()];
   const targetMetrics = createTargetMetricsFixture();
 
-  const result = createPlanGoals({
+  const data = {
     primary,
     secondary,
     targetMetrics,
     targetDate: faker.date.future(),
     ...overrides,
-  });
+  };
 
-  if (result.isFailure) {
-    throw new Error(`Failed to create PlanGoals fixture: ${ result.error }`);
-  }
-  return result.value;
+  return planGoalsFromPersistence(data).value;
 }

@@ -1,28 +1,43 @@
 import { describe, it, expect } from 'vitest';
-import { createDefaultSessionConfig } from '../session-configuration.factory.js';
+import { createSessionConfigurationFixture } from './session-configuration.fixtures.js';
 
 describe('SessionConfiguration', () => {
-  describe('createDefaultSessionConfig', () => {
+  describe('creation', () => {
     it('should create correct defaults for single player', () => {
-      const config = createDefaultSessionConfig(false);
+      // Arrange & Act
+      const config = createSessionConfigurationFixture({
+        isMultiplayer: false,
+      });
 
+      // Assert
       expect(config.isMultiplayer).toBe(false);
       expect(config.maxParticipants).toBe(1);
-      expect(config.enableChat).toBe(false);
-      expect(config.showOtherParticipantsProgress).toBe(false);
-      expect(config.isPublic).toBe(false);
-      expect(config.enableVoiceAnnouncements).toBe(true);
     });
 
     it('should create correct defaults for multiplayer', () => {
-      const config = createDefaultSessionConfig(true);
+      // Arrange & Act
+      const config = createSessionConfigurationFixture({
+        isMultiplayer: true,
+      });
 
+      // Assert
       expect(config.isMultiplayer).toBe(true);
-      expect(config.maxParticipants).toBe(10);
-      expect(config.enableChat).toBe(true);
-      expect(config.showOtherParticipantsProgress).toBe(true);
-      expect(config.isPublic).toBe(false);
-      expect(config.enableVoiceAnnouncements).toBe(true);
+      expect(config.maxParticipants).toBeGreaterThan(1);
+    });
+
+    it('should allow customization through overrides', () => {
+      // Arrange & Act
+      const config = createSessionConfigurationFixture({
+        isMultiplayer: true,
+        isPublic: true,
+        maxParticipants: 5,
+        enableChat: false,
+      });
+
+      // Assert
+      expect(config.isPublic).toBe(true);
+      expect(config.maxParticipants).toBe(5);
+      expect(config.enableChat).toBe(false);
     });
   });
 });

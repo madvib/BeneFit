@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
-import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { CompletedWorkoutCommands } from '@bene/training-core';
+import { Result, type EventBus, BaseUseCase, mapZodError } from '@bene/shared';
+import { CompletedWorkoutCommands, CreateReactionSchema, ReactionTypeSchema } from '@bene/training-core';
 import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
 import { WorkoutReactionAddedEvent } from '../../events/workout-reaction-added.event.js';
 
-// Single request schema with ALL fields
+/**
+ * Request schema
+ */
 export const AddWorkoutReactionRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
+  userId: z.uuid(),
   userName: z.string(),
-
-  // Client data
-  workoutId: z.string(),
-  reactionType: z.enum(['fire', 'strong', 'clap', 'heart', 'smile']),
+  workoutId: z.uuid(),
+  reactionType: ReactionTypeSchema,
 });
 
 export type AddWorkoutReactionRequest = z.infer<typeof AddWorkoutReactionRequestSchema>;
@@ -52,13 +50,17 @@ export class AddWorkoutReactionUseCase extends BaseUseCase<
     }
 
     // 3. Add reaction
-    const reaction = {
-      id: randomUUID(),
+    const reactionParseResult = CreateReactionSchema.safeParse({
       userId: request.userId,
       userName: request.userName,
       type: request.reactionType,
-      createdAt: new Date(),
-    };
+    });
+
+    if (!reactionParseResult.success) {
+      return Result.fail(mapZodError(reactionParseResult.error));
+    }
+
+    const reaction = reactionParseResult.data;
 
     const updatedWorkoutResult = CompletedWorkoutCommands.addReaction(
       workout,

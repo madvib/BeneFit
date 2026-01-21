@@ -6,7 +6,7 @@ import {
   Achievement,
 } from '../../value-objects/index.js';
 import { UserProfile } from './user-profile.types.js';
-import { TrainingConstraints } from '@/shared/index.js';
+import { TrainingConstraints } from '../../../shared/index.js';
 export function updateDisplayName(
   profile: UserProfile,
   displayName: string,
@@ -21,7 +21,7 @@ export function updateDisplayName(
     ...profile,
     displayName,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updateAvatar(
@@ -35,7 +35,7 @@ export function updateAvatar(
     ...profile,
     avatar: avatarUrl,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updateBio(profile: UserProfile, bio: string): Result<UserProfile> {
@@ -46,7 +46,7 @@ export function updateBio(profile: UserProfile, bio: string): Result<UserProfile
     ...profile,
     bio,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updateFitnessGoals(
@@ -60,7 +60,7 @@ export function updateFitnessGoals(
     ...profile,
     fitnessGoals: goals,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updateTrainingConstraints(
@@ -74,7 +74,7 @@ export function updateTrainingConstraints(
     ...profile,
     trainingConstraints: constraints,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updateExperienceProfile(
@@ -91,7 +91,7 @@ export function updateExperienceProfile(
     ...profile,
     experienceProfile,
     updatedAt: new Date(),
-  });
+  } as UserProfile);
 }
 
 export function updatePreferences(

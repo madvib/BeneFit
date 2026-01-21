@@ -1,85 +1,124 @@
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Guard, Result } from '@bene/shared';
-import { WorkoutPreview } from '@/fitness-plan/value-objects/index.js';
-import { type TemplateRules, toTemplateRulesView } from '../template-rules/index.js';
-import { type TemplateStructure, toTemplateStructureView } from '../template-structure/index.js';
-import { TemplateAuthor, PlanTemplate, PlanTemplateView } from './plan-template.types.js';
-import { estimateTemplateDuration, getTemplateFrequency } from './plan-template.queries.js';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { PlanTemplate, PlanTemplateSchema } from './plan-template.types.js';
 
-export interface CreateTemplateParams {
-  name: string;
-  description: string;
-  author: TemplateAuthor;
-  tags: string[];
-  structure: TemplateStructure;
-  rules: TemplateRules;
-  isPublic?: boolean;
-  previewWorkouts?: WorkoutPreview[];
-  version?: number;
+/**
+ * ============================================================================
+ * PLAN TEMPLATE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (3 exports):
+ * 1. planTemplateFromPersistence() - For fixtures & DB hydration
+ * 2. CreatePlanTemplateSchema - Zod transform for API boundaries
+ * 3. createTemplateRevision() - For creating new versions
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands data with PlanTemplateSchema */
+function validateAndBrand(data: unknown): Result<PlanTemplate> {
+  const parseResult = PlanTemplateSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data);
 }
 
-export function createPlanTemplate(params: CreateTemplateParams): Result<PlanTemplate> {
-  const guardResult = Guard.combine([
-    Guard.againstNullOrUndefinedBulk([
-      { argument: params.name, argumentName: 'name' },
-      { argument: params.description, argumentName: 'description' },
-      { argument: params.author, argumentName: 'author' },
-      { argument: params.tags, argumentName: 'tags' },
-      { argument: params.structure, argumentName: 'structure' },
-      { argument: params.rules, argumentName: 'rules' },
-    ]),
-    Guard.againstEmptyString(params.name, 'name'),
-    Guard.againstTooLong(params.name, 200, 'name'),
-    Guard.againstTooLong(params.description, 1000, 'description'),
-    Guard.againstNullOrUndefined(params.author.name, 'author.name'),
-  ]);
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-  if (guardResult.isFailure) return Result.fail(guardResult.error);
+/**
+ * Rehydrates PlanTemplate from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function planTemplateFromPersistence(
+  data: Unbrand<PlanTemplate>,
+): Result<PlanTemplate> {
+  return Result.ok(data as PlanTemplate);
+}
 
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating a new PlanTemplate.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreatePlanTemplateSchema>
+ */
+export const CreatePlanTemplateSchema: z.ZodType<PlanTemplate> = PlanTemplateSchema.pick({
+  name: true,
+  description: true,
+  author: true,
+  structure: true,
+  rules: true,
+}).extend({
+  id: z.uuid().optional(),
+  tags: z.array(z.string()).optional(),
+  createdAt: z.coerce.date<Date>().optional(),
+  updatedAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  // Build the entity with defaults
   const now = new Date();
-  const version = params.version ?? 1; // Default to 1 if not provided
-
-  return Result.ok({
-    id: randomUUID(),
-    name: params.name,
-    description: params.description,
-    author: params.author,
-    tags: params.tags,
-    structure: params.structure,
-    rules: params.rules,
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    tags: input.tags ?? [],
     metadata: {
-      isPublic: params.isPublic ?? false,
+      isPublic: false,
       isFeatured: false,
       isVerified: false,
       usageCount: 0,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: input.createdAt || now,
+      updatedAt: input.updatedAt || now,
     },
-    previewWorkouts: params.previewWorkouts,
-    version: version,
-  });
-}
-
-export function toPlanTemplateView(template: PlanTemplate): PlanTemplateView {
-  return {
-    id: template.id,
-    name: template.name,
-    description: template.description,
-    author: { ...template.author },
-    tags: [...template.tags],
-    structure: toTemplateStructureView(template.structure),
-    rules: toTemplateRulesView(template.rules),
-    metadata: {
-      ...template.metadata,
-      createdAt: template.metadata.createdAt.toISOString(),
-      updatedAt: template.metadata.updatedAt.toISOString(),
-      publishedAt: template.metadata.publishedAt?.toISOString(),
-    },
-    previewWorkouts: template.previewWorkouts ? template.previewWorkouts.map(ws => ({ ...ws })) : undefined,
-    version: template.version,
-
-    // Computed
-    estimatedDuration: estimateTemplateDuration(template),
-    frequency: getTemplateFrequency(template),
+    version: 1,
   };
+
+  // Validate and brand
+  const validationResult = validateAndBrand(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// 3. REVISION (for versioning)
+// ============================================================================
+
+/**
+ * Creates a new revision (version) of an existing template.
+ * Use this directly for revisions - simpler than Zod transform for this use case.
+ */
+export function createTemplateRevision(
+  baseTemplate: PlanTemplate,
+  updates: {
+    name?: string;
+    description?: string;
+    author?: z.infer<typeof PlanTemplateSchema>['author'];
+    tags?: string[];
+  } = {},
+): Result<PlanTemplate> {
+  const now = new Date();
+
+  const data = {
+    ...baseTemplate,
+    ...updates,
+    metadata: {
+      ...baseTemplate.metadata,
+      isPublic: false,
+      publishedAt: undefined,
+      updatedAt: now,
+      createdAt: now,
+    },
+    version: baseTemplate.version + 1,
+  };
+
+  return validateAndBrand(data);
 }

@@ -1,53 +1,88 @@
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Guard, Result } from '@bene/shared';
-import { createDefaultSessionConfig, SessionConfiguration, WorkoutActivity } from '../../value-objects/index.js';
-import { WorkoutSession, WorkoutSessionView } from './workout-session.types.js';
-import * as Queries from './workout-session.queries.js';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import {
+  createDefaultSessionConfig,
+  SessionConfigurationSchema
+} from '../../value-objects/index.js';
+import { WorkoutSession, WorkoutSessionSchema } from './workout-session.types.js';
 
-export interface CreateWorkoutSessionParams {
-  ownerId: string;
-  workoutType: string;
-  activities: WorkoutActivity[];
-  isMultiplayer?: boolean;
-  configuration?: Partial<SessionConfiguration>;
+/**
+ * ============================================================================
+ * WORKOUT SESSION FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. workoutSessionFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWorkoutSessionSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-  // Optional plan reference
-  planId?: string;
-  workoutTemplateId?: string;
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands WorkoutSession */
+function validateWorkoutSession(data: unknown): Result<WorkoutSession> {
+  const parseResult = WorkoutSessionSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  return Result.ok(parseResult.data);
 }
 
-export function createWorkoutSession(
-  params: CreateWorkoutSessionParams,
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates WorkoutSession from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function workoutSessionFromPersistence(
+  data: Unbrand<WorkoutSession>,
 ): Result<WorkoutSession> {
-  const guardResult = Guard.combine([
-    Guard.againstNullOrUndefinedBulk([
-      { argument: params.ownerId, argumentName: 'ownerId' },
-      { argument: params.workoutType, argumentName: 'workoutType' },
-      { argument: params.activities, argumentName: 'activities' },
-    ]),
+  return Result.ok(data as WorkoutSession);
+}
 
-    Guard.againstEmptyString(params.ownerId, 'ownerId'),
-    Guard.againstEmptyString(params.workoutType, 'workoutType'),
-    Guard.isTrue(params.activities.length > 0, 'activities cannot be empty'),
-  ]);
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
-  }
-  const isMultiplayer = params.isMultiplayer ?? false;
+/**
+ * Zod transform for creating WorkoutSession with domain validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateWorkoutSessionSchema>
+ */
+export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSessionSchema.pick({
+  ownerId: true,
+  workoutType: true,
+  activities: true,
+  planId: true,
+  workoutTemplateId: true,
+}).extend({
+  id: z.uuid().optional(),
+  isMultiplayer: z.boolean().optional(),
+  configuration: SessionConfigurationSchema.partial().optional(),
+  createdAt: z.coerce.date<Date>().optional(),
+  updatedAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const isMultiplayer = input.isMultiplayer ?? false;
   const config = {
     ...createDefaultSessionConfig(isMultiplayer),
-    ...params.configuration,
+    ...input.configuration,
   };
   const now = new Date();
 
-  return Result.ok({
-    id: randomUUID(),
-    ownerId: params.ownerId,
-    planId: params.planId,
-    workoutTemplateId: params.workoutTemplateId,
-    workoutType: params.workoutType,
-    activities: params.activities,
+  // Initial state logic
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
     state: 'preparing',
     currentActivityIndex: 0,
     completedActivities: [],
@@ -55,46 +90,28 @@ export function createWorkoutSession(
     participants: [],
     activityFeed: [],
     totalPausedSeconds: 0,
-    createdAt: now,
-    updatedAt: now,
-  });
-}
-
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-export function toWorkoutSessionView(session: WorkoutSession): WorkoutSessionView {
-  return {
-    ...session,
-    startedAt: session.startedAt?.toISOString(),
-    pausedAt: session.pausedAt?.toISOString(),
-    resumedAt: session.resumedAt?.toISOString(),
-    completedAt: session.completedAt?.toISOString(),
-    abandonedAt: session.abandonedAt?.toISOString(),
-    createdAt: session.createdAt.toISOString(),
-    updatedAt: session.updatedAt.toISOString(),
-
-    // Computed fields
-    activeDuration: Queries.getActiveDuration(session),
-    completionPercentage: Queries.getCompletionPercentage(session),
-
-    liveProgress: session.liveProgress
-      ? {
-        ...session.liveProgress,
-        activityStartedAt: session.liveProgress.activityStartedAt.toISOString(),
-      }
-      : undefined,
-
-    participants: session.participants.map((p) => ({
-      ...p,
-      joinedAt: p.joinedAt.toISOString(),
-      leftAt: p.leftAt?.toISOString(),
-    })),
-
-    activityFeed: session.activityFeed.map((f) => ({
-      ...f,
-      timestamp: f.timestamp.toISOString(),
-    })),
+    createdAt: input.createdAt || now,
+    updatedAt: input.updatedAt || now,
   };
+
+  // Validate and brand
+  const validationResult = validateWorkoutSession(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWorkoutSessionSchema or call via transform.
+ */
+export function createWorkoutSession(
+  params: z.input<typeof CreateWorkoutSessionSchema>,
+): Result<WorkoutSession> {
+  const parseResult = CreateWorkoutSessionSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data as WorkoutSession);
 }

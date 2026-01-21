@@ -1,8 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { UserPreferences, Theme, Units, CheckInFrequency, CoachTone } from '../user-preferences.types.js';
+import { userPreferencesFromPersistence } from '../user-preferences.factory.js';
 
 export function createUserPreferencesFixture(overrides?: Partial<UserPreferences>): UserPreferences {
-  return {
+  const data = {
     theme: faker.helpers.arrayElement(['light', 'dark', 'auto'] as Theme[]),
     units: faker.helpers.arrayElement(['metric', 'imperial'] as Units[]),
     notifications: {
@@ -34,4 +35,12 @@ export function createUserPreferencesFixture(overrides?: Partial<UserPreferences
     useVoiceAnnouncements: false,
     ...overrides,
   };
+
+  const result = userPreferencesFromPersistence(data);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create UserPreferences fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

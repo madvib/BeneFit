@@ -4,42 +4,36 @@ import {
   createUserProfile,
   ExperienceProfileSchema,
   FitnessGoalsSchema,
+  UserProfileView,
+  toUserProfileView,
   TrainingConstraintsSchema,
-  fromExperienceProfileSchema,
-  fromFitnessGoalsSchema,
-  fromTrainingConstraintsSchema,
 } from '@bene/training-core';
 
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { ProfileCreatedEvent } from '../../events/profile-created.event.js';
 
-
-
-// Single request schema with ALL fields (client data + server context)
+// Request schema for create-profile (mostly client provided)
 export const CreateUserProfileRequestSchema = z.object({
   // Server context (injected by gateway)
-  userId: z.string(),
+  userId: z.uuid(),
 
   // Client data
-  displayName: z.string(),
-  timezone: z.string(),
-  experienceProfile: ExperienceProfileSchema,
+  displayName: z.string().min(1).max(100),
+  timezone: z.string().min(1).max(50),
+  // We use the Props schemas minus the fields we generate (like dates)
+  // For simplicity, we can omit specific generating fields or just use the full schema if client provides them
+  experienceProfile: ExperienceProfileSchema.omit({ lastAssessmentDate: true }),
   fitnessGoals: FitnessGoalsSchema,
   trainingConstraints: TrainingConstraintsSchema,
-  avatar: z.string().optional(),
-  bio: z.string().optional(),
-  location: z.string().optional(),
+  avatar: z.url().optional(),
+  bio: z.string().max(500).optional(),
+  location: z.string().max(100).optional(),
 });
 
 export type CreateUserProfileRequest = z.infer<typeof CreateUserProfileRequestSchema>;
 
-export const CreateUserProfileResponseSchema = z.object({
-  userId: z.string(),
-  displayName: z.string(),
-  profileComplete: z.boolean(),
-});
-
-export type CreateUserProfileResponse = z.infer<typeof CreateUserProfileResponseSchema>;
+// Response is the created profile view
+export type CreateUserProfileResponse = UserProfileView;
 
 export class CreateUserProfileUseCase extends BaseUseCase<
   CreateUserProfileRequest,
@@ -62,16 +56,9 @@ export class CreateUserProfileUseCase extends BaseUseCase<
     }
 
     // 2. Create profile using factory
+    // Note: The factory now handles generating dates/stats/preferences if not provided
     const profileResult = createUserProfile({
-      userId: request.userId,
-      displayName: request.displayName,
-      timezone: request.timezone,
-      experienceProfile: fromExperienceProfileSchema(request.experienceProfile),
-      fitnessGoals: fromFitnessGoalsSchema(request.fitnessGoals),
-      trainingConstraints: fromTrainingConstraintsSchema(request.trainingConstraints),
-      avatar: request.avatar,
-      bio: request.bio,
-      location: request.location,
+      ...request,
     });
 
     if (profileResult.isFailure) {
@@ -93,10 +80,7 @@ export class CreateUserProfileUseCase extends BaseUseCase<
       }),
     );
 
-    return Result.ok({
-      userId: profile.userId,
-      displayName: profile.displayName,
-      profileComplete: true,
-    });
+    // 5. Return view
+    return Result.ok(toUserProfileView(profile));
   }
 }

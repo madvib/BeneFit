@@ -1,60 +1,57 @@
-import { CreateView } from '@bene/shared';
-import { WorkoutPreview } from '../../../../value-objects/workout-preview/index.js';
-import { TemplateStructure, TemplateStructureView } from '../template-structure/index.js';
-import { TemplateRules, TemplateRulesView } from '../template-rules/index.js';
+import { z } from 'zod';
+import { DomainBrandTag } from '@bene/shared';
+import {
 
-export interface TemplateAuthor {
-  userId?: string;
-  name: string;
-  credentials?: string; // e.g., "NASM-CPT, CSCS"
-}
+  WorkoutPreviewSchema,
+} from '@/fitness-plan/value-objects/workout-preview/index.js';
+import {
 
-export interface TemplateMetadata {
-  isPublic: boolean;
-  isFeatured: boolean;
-  isVerified: boolean; // Verified by BeneFit team
-  rating?: number; // 0-5
-  usageCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt?: Date;
-}
+  TemplateStructureSchema,
+} from '../template-structure/index.js';
+import {
+  TemplateRulesSchema,
+} from '../template-rules/index.js';
 
-interface PlanTemplateData {
-  id: string;
-  name: string;
-  description: string;
-  author: TemplateAuthor;
-  tags: string[]; // e.g., ["strength", "hypertrophy", "beginner"]
+export const TemplateAuthorSchema = z.object({
+  userId: z.uuid().optional(),
+  name: z.string().min(1).max(100),
+  credentials: z.string().min(1).max(200).optional(),
+});
+export type TemplateAuthor = z.infer<typeof TemplateAuthorSchema>;
 
-  structure: TemplateStructure;
-  rules: TemplateRules;
+export const TemplateMetadataSchema = z.object({
+  isPublic: z.boolean(),
+  isFeatured: z.boolean(),
+  isVerified: z.boolean(),
+  rating: z.number().min(0).max(5).optional(),
+  usageCount: z.number().int().min(0).max(1000000),
+  createdAt: z.coerce.date<Date>(),
+  updatedAt: z.coerce.date<Date>(),
+  publishedAt: z.coerce.date<Date>().optional(),
+});
+export type TemplateMetadata = z.infer<typeof TemplateMetadataSchema>;
 
-  metadata: TemplateMetadata;
-  previewWorkouts?: WorkoutPreview[];
+/**
+ * 1. DEFINE PROPS SCHEMA
+ */
+export const PlanTemplateSchema = z
+  .object({
+    id: z.uuid(),
+    name: z.string().min(1).max(100),
+    description: z.string().min(1).max(1000),
+    author: TemplateAuthorSchema,
+    tags: z.array(z.string().min(1).max(50)),
+    structure: TemplateStructureSchema,
+    rules: TemplateRulesSchema,
+    metadata: TemplateMetadataSchema,
+    previewWorkouts: z.array(WorkoutPreviewSchema).optional(),
+    version: z.number().int().min(1).max(1000),
+  })
+  .brand<DomainBrandTag>();
 
-  // Versioning
-  version: number;
-}
+/**
+ * 2. INFER TYPES
+ */
 
-export type PlanTemplate = Readonly<PlanTemplateData>;
+export type PlanTemplate = Readonly<z.infer<typeof PlanTemplateSchema>>;
 
-// View Interface
-
-export type PlanTemplateView = CreateView<
-  PlanTemplate,
-  'structure' | 'rules',
-  {
-    structure: TemplateStructureView;
-    rules: TemplateRulesView;
-    // Computed fields
-    estimatedDuration: {
-      minWeeks: number;
-      maxWeeks: number;
-    };
-    frequency: {
-      minWorkouts: number;
-      maxWorkouts: number;
-    };
-  }
->;

@@ -1,6 +1,6 @@
-export type * from './workout-activity.types.js';
-export * from './workout-activity.factory.js';
+// Export all parts of the WorkoutActivity value object
 export * from './workout-activity.types.js';
 export * from './workout-activity.factory.js';
-export * from './test/workout-activity.fixtures.js';
-export * from './workout-activity.schema.js';
+export * from './workout-activity.view.js';
+export * as WorkoutActivityCommands from './workout-activity.commands.js';
+export * as WorkoutActivityQueries from './workout-activity.queries.js';

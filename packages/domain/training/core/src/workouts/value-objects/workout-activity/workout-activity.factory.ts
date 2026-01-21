@@ -1,98 +1,126 @@
-import { URL } from 'url';
-import { Result, Guard } from '@bene/shared';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { ActivityValidationError } from '../../errors/workout-errors.js';
-import { ActivityStructure } from '../activity-structure/activity-structure.types.js';
 import {
   isIntervalBased,
   isExerciseBased,
+  getTotalDuration
 } from '../activity-structure/activity-structure.queries.js';
-import { getTotalDuration } from '../activity-structure/activity-structure.queries.js';
-import { WorkoutActivity, WorkoutActivityView } from './workout-activity.types.js';
-import * as Queries from './workout-activity.queries.js'
+import { ActivityStructure } from '../activity-structure/index.js';
+import { WorkoutActivity, WorkoutActivitySchema } from './workout-activity.types.js';
 
 /**
- * FACTORY: Creates a new WorkoutActivity instance with validation.
+ * ============================================================================
+ * WORKOUT ACTIVITY FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. workoutActivityFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWorkoutActivitySchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
  */
-export function createWorkoutActivity(props: {
-  name: string;
-  type: 'warmup' | 'main' | 'cooldown' | 'interval' | 'circuit';
-  order: number;
-  structure?: ActivityStructure;
-  instructions?: readonly string[];
-  distance?: number;
-  duration?: number;
-  pace?: string;
-  videoUrl?: string;
-  equipment?: readonly string[];
-  alternativeExercises?: readonly string[];
-}): Result<WorkoutActivity> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(props.name, 'activity name'),
-    Guard.againstNullOrUndefined(props.type, 'activity type'),
-    Guard.againstNullOrUndefined(props.order, 'order'),
-  ]);
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates WorkoutActivity with domain-specific business rules */
+function validateWorkoutActivity(data: unknown): Result<WorkoutActivity> {
+  // Parse with Zod schema
+  const parseResult = WorkoutActivitySchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  // Validate order
-  if (props.order < 0) {
-    return Result.fail(
-      new ActivityValidationError('Order must be >= 0', { order: props.order }),
-    );
+  const validated = parseResult.data;
+
+  // Domain validation: order must be >= 0
+  if (validated.order < 0) {
+    return Result.fail(new ActivityValidationError('Order must be >= 0', { order: validated.order }));
   }
 
-  // Validate distance
-  if (props.distance !== undefined && props.distance <= 0) {
-    return Result.fail(
-      new ActivityValidationError('Distance must be positive', {
-        distance: props.distance,
-      }),
-    );
-  }
+  // Return branded entity
+  return Result.ok(validated);
+}
 
-  // Validate duration
-  if (props.duration !== undefined && props.duration <= 0) {
-    return Result.fail(
-      new ActivityValidationError('Duration must be positive', {
-        duration: props.duration,
-      }),
-    );
-  }
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-  // Validate video URL format (basic check)
-  if (props.videoUrl !== undefined) {
-    try {
-      new URL(props.videoUrl);
-    } catch {
-      return Result.fail(
-        new ActivityValidationError('Invalid video URL', { videoUrl: props.videoUrl }),
-      );
-    }
-  }
+/**
+ * Rehydrates WorkoutActivity from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function workoutActivityFromPersistence(
+  data: Unbrand<WorkoutActivity>,
+): Result<WorkoutActivity> {
+  return Result.ok(data as WorkoutActivity);
+}
 
-  // Validate equipment array
-  if (props.equipment) {
-    for (const item of props.equipment) {
-      const equipGuard = Guard.againstEmptyString(item, 'equipment item');
-      if (equipGuard.isFailure) {
-        return Result.fail(equipGuard.error);
-      }
-    }
-  }
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
-  return Result.ok(props);
+/**
+ * Zod transform for creating WorkoutActivity with validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateWorkoutActivitySchema>
+ */
+export const CreateWorkoutActivitySchema = WorkoutActivitySchema.pick({
+  name: true,
+  type: true,
+  order: true,
+  structure: true,
+  instructions: true,
+  distance: true,
+  duration: true,
+  pace: true,
+  videoUrl: true,
+  equipment: true,
+  alternativeExercises: true,
+}).transform((input, ctx) => {
+  // Build entity with defaults
+  const data = {
+    ...input,
+    instructions: input.instructions || [],
+    equipment: input.equipment || [],
+    alternativeExercises: input.alternativeExercises || [],
+  };
+
+  // Validate and brand
+  const validationResult = validateWorkoutActivity(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<WorkoutActivity>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWorkoutActivitySchema or workoutActivityFromPersistence.
+ * Kept for test compatibility.
+ */
+export function createWorkoutActivity(
+  params: z.input<typeof CreateWorkoutActivitySchema>,
+): Result<WorkoutActivity> {
+  const data = {
+    ...params,
+    instructions: params.instructions || [],
+    equipment: params.equipment || [],
+    alternativeExercises: params.alternativeExercises || [],
+  };
+
+  return validateWorkoutActivity(data);
 }
 
 /**
- * FACTORY: Creates a warmup activity.
+ * @deprecated Use CreateWorkoutActivitySchema with appropriate defaults.
  */
-export function createWarmup(
-  name: string,
-  duration: number,
-  order: number = 0,
-): Result<WorkoutActivity> {
+export function createWarmup(name: string, duration: number, order: number = 0): Result<WorkoutActivity> {
   return createWorkoutActivity({
     name,
     type: 'warmup',
@@ -103,13 +131,9 @@ export function createWarmup(
 }
 
 /**
- * FACTORY: Creates a cooldown activity.
+ * @deprecated Use CreateWorkoutActivitySchema with appropriate defaults.
  */
-export function createCooldown(
-  name: string,
-  duration: number,
-  order: number,
-): Result<WorkoutActivity> {
+export function createCooldown(name: string, duration: number, order: number): Result<WorkoutActivity> {
   return createWorkoutActivity({
     name,
     type: 'cooldown',
@@ -120,37 +144,24 @@ export function createCooldown(
 }
 
 /**
- * FACTORY: Creates a distance run activity.
+ * @deprecated Use CreateWorkoutActivitySchema with appropriate defaults.
  */
-export function createDistanceRun(
-  distance: number,
-  pace: string,
-  order: number,
-): Result<WorkoutActivity> {
+export function createDistanceRun(distance: number, pace: string, order: number): Result<WorkoutActivity> {
   return createWorkoutActivity({
     name: `${ distance }m run`,
     type: 'main',
     order,
     distance,
     pace,
-    equipment: [],
   });
 }
 
 /**
- * FACTORY: Creates an interval session activity.
+ * @deprecated Use CreateWorkoutActivitySchema with appropriate defaults.
  */
-export function createIntervalSession(
-  name: string,
-  structure: ActivityStructure,
-  order: number,
-): Result<WorkoutActivity> {
+export function createIntervalSession(name: string, structure: ActivityStructure, order: number): Result<WorkoutActivity> {
   if (!isIntervalBased(structure)) {
-    return Result.fail(
-      new ActivityValidationError('Structure must be interval-based', {
-        structureType: 'not-interval',
-      }),
-    );
+    return Result.fail(new ActivityValidationError('Structure must be interval-based', { structureType: 'not-interval' }));
   }
 
   return createWorkoutActivity({
@@ -158,25 +169,16 @@ export function createIntervalSession(
     type: 'interval',
     order,
     structure,
-    duration: getTotalDuration(structure) / 60, // Convert seconds to minutes
+    duration: getTotalDuration(structure) / 60,
   });
 }
 
 /**
- * FACTORY: Creates a circuit activity.
+ * @deprecated Use CreateWorkoutActivitySchema with appropriate defaults.
  */
-export function createCircuit(
-  name: string,
-  structure: ActivityStructure,
-  order: number,
-  equipment?: string[],
-): Result<WorkoutActivity> {
+export function createCircuit(name: string, structure: ActivityStructure, order: number, equipment?: string[]): Result<WorkoutActivity> {
   if (!isExerciseBased(structure)) {
-    return Result.fail(
-      new ActivityValidationError('Structure must be exercise-based', {
-        structureType: 'not-exercise',
-      }),
-    );
+    return Result.fail(new ActivityValidationError('Structure must be exercise-based', { structureType: 'not-exercise' }));
   }
 
   return createWorkoutActivity({
@@ -187,30 +189,4 @@ export function createCircuit(
     equipment,
     duration: getTotalDuration(structure) / 60,
   });
-}
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-
-export function toWorkoutActivityView(
-  activity: WorkoutActivity,
-): WorkoutActivityView {
-  return {
-    ...activity,
-    // Computed fields
-    estimatedDuration: Queries.getEstimatedDuration(activity),
-    estimatedCalories: Queries.getEstimatedCalories(activity),
-    shortDescription: Queries.getShortDescription(activity),
-    detailedDescription: Queries.getDetailedDescription(activity),
-    instructionsList: Queries.getInstructionsList(activity),
-    requiresEquipment: Queries.activityRequiresEquipment(activity),
-    equipmentList: Queries.getEquipmentList(activity),
-    // Type helpers
-    isWarmup: Queries.isWarmup(activity),
-    isCooldown: Queries.isCooldown(activity),
-    isMainActivity: Queries.isMainActivity(activity),
-    isIntervalBased: Queries.isActivityIntervalBased(activity),
-    isCircuit: Queries.isCircuit(activity),
-  };
 }

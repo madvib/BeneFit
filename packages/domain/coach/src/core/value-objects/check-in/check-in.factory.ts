@@ -1,34 +1,90 @@
-import { Result, Guard } from '@bene/shared';
-import { CheckInType, CheckInTrigger, CheckIn } from './check-in.types.js';
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { CheckIn, CheckInSchema } from './check-in.types.js';
 
-export function createCheckIn(props: {
-  type: CheckInType;
-  question: string;
-  triggeredBy?: CheckInTrigger;
-}): Result<CheckIn> {
-  const guardResult = Guard.combine([
-    Guard.againstNullOrUndefinedBulk([
-      { argument: props.type, argumentName: 'type' },
-      { argument: props.question, argumentName: 'question' },
-    ]),
-    Guard.againstEmptyString(props.question, 'question'),
-    props.question
-      ? Guard.againstTooLong(props.question, 500, 'question')
-      : Result.ok(),
-  ]);
+/**
+ * ============================================================================
+ * CHECK-IN FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. checkInFromPersistence() - For fixtures & DB hydration
+ * 2. CreateCheckInSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands CheckIn */
+function validateCheckIn(data: unknown): Result<CheckIn> {
+  const parseResult = CheckInSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  return Result.ok({
-    id: randomUUID(),
-    type: props.type,
-    triggeredBy: props.triggeredBy,
-    question: props.question,
+  return Result.ok(parseResult.data);
+}
+
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates CheckIn from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function checkInFromPersistence(
+  data: Unbrand<CheckIn>,
+): Result<CheckIn> {
+  return Result.ok(data as CheckIn);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating CheckIn with validation.
+ */
+export const CreateCheckInSchema = CheckInSchema.pick({
+  type: true,
+  triggeredBy: true,
+  question: true,
+}).extend({
+  id: z.uuid().optional(),
+  createdAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
     actions: [],
-    status: 'pending',
-    createdAt: new Date(),
-  });
+    status: 'pending' as const,
+    createdAt: input.createdAt || new Date(),
+  };
+
+  const validationResult = validateCheckIn(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<CheckIn>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateCheckInSchema or checkInFromPersistence.
+ */
+export function createCheckIn(
+  params: z.input<typeof CreateCheckInSchema>,
+): Result<CheckIn> {
+  const result = CreateCheckInSchema.safeParse(params);
+  if (!result.success) {
+    return Result.fail(mapZodError(result.error));
+  }
+  return Result.ok(result.data);
 }

@@ -1,91 +1,79 @@
-import type {
-  FitnessGoals,
-  Injury,
-  TrainingConstraints,
-  UserExperienceLevel,
-} from '@bene/training-core';
+import { z } from 'zod';
+import { FitnessGoalsSchema, TrainingConstraintsSchema, InjuryPropsSchema } from '@bene/training-core';
+import { ExperienceLevelSchema, DomainBrandTag } from '@bene/shared';
 
-export interface CurrentPlanContext {
-  planId: string;
-  planName: string;
-  weekNumber: number;
-  dayNumber: number;
-  totalWeeks: number;
-  adherenceRate: number; // 0-1
-  completionRate: number; // 0-1
-}
+/**
+ * 1. DEFINE SCHEMAS (Zod as Source of Truth)
+ */
+export const CurrentPlanContextSchema = z.object({
+  planId: z.uuid(),
+  planName: z.string().min(1).max(200),
+  weekNumber: z.number().int().min(1).max(52),
+  dayNumber: z.number().int().min(0).max(6),
+  totalWeeks: z.number().int().min(1).max(52),
+  adherenceRate: z.number().min(0).max(1),
+  completionRate: z.number().min(0).max(1),
+});
 
-export interface RecentWorkoutSummary {
-  workoutId: string;
-  date: Date;
-  type: string;
-  durationMinutes: number;
-  perceivedExertion: number; // 1-10
-  enjoyment: number; // 1-5
-  difficultyRating: 'too_easy' | 'just_right' | 'too_hard';
-  completed: boolean;
-  notes?: string;
-}
+export const DifficultyRatingSchema = z.enum(['too_easy', 'just_right', 'too_hard']);
 
-export const TREND_MAPS = {
-  quantity: {
-    1: 'increasing',
-    0: 'stable',
-    [-1]: 'decreasing',
-  } as const,
+export const RecentWorkoutSummarySchema = z.object({
+  workoutId: z.uuid(),
+  date: z.coerce.date<Date>(),
+  type: z.string().min(1).max(100),
+  durationMinutes: z.number().int().min(0).max(600),
+  perceivedExertion: z.number().int().min(1).max(10),
+  enjoyment: z.number().int().min(1).max(5),
+  difficultyRating: DifficultyRatingSchema,
+  completed: z.boolean(),
+  notes: z.string().max(500).optional(),
+});
 
-  relative: {
-    1: 'high',
-    0: 'medium',
-    [-1]: 'low',
-  } as const,
+export const QuantityTrendSchema = z.enum(['increasing', 'stable', 'decreasing']);
+export const RelativeTrendSchema = z.enum(['high', 'medium', 'low']);
+export const SubjectiveTrendSchema = z.enum(['improving', 'stable', 'declining']);
 
-  subjective: {
-    1: 'improving',
-    0: 'stable',
-    [-1]: 'declining',
-  } as const,
-} as const;
+export const PerformanceTrendsSchema = z.object({
+  volumeTrend: QuantityTrendSchema,
+  adherenceTrend: SubjectiveTrendSchema,
+  energyTrend: RelativeTrendSchema,
+  exertionTrend: QuantityTrendSchema,
+  enjoymentTrend: SubjectiveTrendSchema,
+});
 
-// Extract types from the mappings
-type QuantityTrend = (typeof TREND_MAPS.quantity)[keyof typeof TREND_MAPS.quantity];
-type RelativeTrend = (typeof TREND_MAPS.relative)[keyof typeof TREND_MAPS.relative];
-type SubjectiveTrend =
-  (typeof TREND_MAPS.subjective)[keyof typeof TREND_MAPS.subjective];
+export const EnergyLevelSchema = z.enum(['low', 'medium', 'high']);
+export const StressLevelSchema = z.enum(['low', 'medium', 'high']);
+export const SleepQualitySchema = z.enum(['poor', 'fair', 'good']);
 
-export interface PerformanceTrends {
-  volumeTrend: QuantityTrend;
-  adherenceTrend: SubjectiveTrend;
-  energyTrend: RelativeTrend;
-  exertionTrend: QuantityTrend;
-  enjoymentTrend: SubjectiveTrend;
-}
+export const CoachContextSchema = z
+  .object({
+    currentPlan: CurrentPlanContextSchema.optional(),
+    recentWorkouts: z.array(RecentWorkoutSummarySchema),
+    userGoals: FitnessGoalsSchema,
+    userConstraints: TrainingConstraintsSchema,
+    experienceLevel: ExperienceLevelSchema,
+    trends: PerformanceTrendsSchema,
+    daysIntoCurrentWeek: z.number().int().min(0).max(6),
+    workoutsThisWeek: z.number().int().min(0).max(20),
+    plannedWorkoutsThisWeek: z.number().int().min(0).max(20),
+    reportedInjuries: z.array(InjuryPropsSchema).optional(),
+    energyLevel: EnergyLevelSchema,
+    stressLevel: StressLevelSchema.optional(),
+    sleepQuality: SleepQualitySchema.optional(),
+  })
+  .brand<DomainBrandTag>();
 
-export interface CoachContextData {
-  // Current plan state
-  currentPlan?: CurrentPlanContext;
-
-  // Recent workout history
-  recentWorkouts: RecentWorkoutSummary[];
-
-  // User profile (at time of conversation)
-  userGoals: FitnessGoals;
-  userConstraints: TrainingConstraints;
-  experienceLevel: UserExperienceLevel;
-
-  // Performance trends
-  trends: PerformanceTrends;
-
-  // Current state
-  daysIntoCurrentWeek: number;
-  workoutsThisWeek: number;
-  plannedWorkoutsThisWeek: number;
-
-  // Health signals
-  reportedInjuries?: Injury[];
-  energyLevel: 'low' | 'medium' | 'high';
-  stressLevel?: 'low' | 'medium' | 'high';
-  sleepQuality?: 'poor' | 'fair' | 'good';
-}
-
-export type CoachContext = Readonly<CoachContextData>;
+/**
+ * 2. INFER TYPES (Derived directly from Zod)
+ */
+export type CurrentPlanContext = z.infer<typeof CurrentPlanContextSchema>;
+export type DifficultyRating = z.infer<typeof DifficultyRatingSchema>;
+export type RecentWorkoutSummary = z.infer<typeof RecentWorkoutSummarySchema>;
+export type QuantityTrend = z.infer<typeof QuantityTrendSchema>;
+export type RelativeTrend = z.infer<typeof RelativeTrendSchema>;
+export type SubjectiveTrend = z.infer<typeof SubjectiveTrendSchema>;
+export type PerformanceTrends = z.infer<typeof PerformanceTrendsSchema>;
+export type EnergyLevel = z.infer<typeof EnergyLevelSchema>;
+export type StressLevel = z.infer<typeof StressLevelSchema>;
+export type SleepQuality = z.infer<typeof SleepQualitySchema>;
+export type CoachContext = Readonly<z.infer<typeof CoachContextSchema>>;

@@ -8,11 +8,11 @@ import type { CompletedWorkoutRepository } from '../../repositories/completed-wo
 // Single request schema with ALL fields
 export const GetWorkoutHistoryRequestSchema = z.object({
   // Server context
-  userId: z.string(),
+  userId: z.uuid(),
 
   // Client data
-  limit: z.number().optional(),
-  offset: z.number().optional(),
+  limit: z.number().int().min(1).max(100).optional(),
+  offset: z.number().int().min(0).optional(),
 });
 
 // Zod inferred type with original name

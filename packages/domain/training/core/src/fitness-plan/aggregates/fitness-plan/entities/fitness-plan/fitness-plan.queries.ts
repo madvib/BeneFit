@@ -1,7 +1,6 @@
-// workout-plan.queries.ts
-import { WorkoutTemplate } from '../workout-template/index.js';
 import { WeeklySchedule } from '../weekly-schedule/index.js';
-import { FitnessPlan } from './fitness-plan.types.js';
+import { WorkoutTemplate } from '../workout-template/index.js';
+import { FitnessPlan, PlanPreview } from './fitness-plan.types.js';
 
 /**
  * QUERY: Gets the workout scheduled for the current day and week.
@@ -142,7 +141,7 @@ export function getWorkoutSummary(plan: FitnessPlan): {
 /**
  * QUERY: Generates a preview of the plan (typically the first week).
  */
-export function getPlanPreview(plan: FitnessPlan): import('./fitness-plan.types.js').PlanPreview {
+export function getPlanPreview(plan: FitnessPlan): PlanPreview {
   const firstWeek = plan.weeks[0] || { workouts: [] };
 
   return {

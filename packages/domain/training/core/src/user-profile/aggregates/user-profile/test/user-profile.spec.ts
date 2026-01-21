@@ -1,13 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { createUserProfile, CreateUserProfileParams } from '../user-profile.factory.js';
-import { createUserProfileFixture } from './user-profile.fixtures.js';
+import { z } from 'zod';
+import { describe, it, expect, beforeAll } from 'vitest';
+
+import { createTrainingConstraintsFixture } from '@/shared/index.js';
 import {
   createExperienceProfileFixture,
   createFitnessGoalsFixture,
-  createUserPreferencesFixture,
-  createUserStatsFixture
-} from '../../../value-objects/index.js';
-import { createTrainingConstraintsFixture } from '../../../../shared/index.js';
+  createUserStatsFixture,
+} from '@/user-profile/value-objects/index.js';
+import { ExperienceProfile, FitnessGoals } from '@/user-profile/value-objects/index.js';
+import { TrainingConstraints } from '@/shared/index.js';
+
 import {
   updateDisplayName,
   updateBio,
@@ -19,141 +21,173 @@ import {
   getDaysSinceLastWorkout,
   getAverageWorkoutDuration,
 } from '../user-profile.queries.js';
+import { CreateUserProfileSchema } from '../user-profile.factory.js';
+import { createUserProfileFixture } from './user-profile.fixtures.js';
+
+type CreateUserProfileInput = z.input<typeof CreateUserProfileSchema>;
 
 describe('UserProfile Aggregate', () => {
-  const validExperienceProfile = createExperienceProfileFixture({
-    level: 'intermediate',
-    capabilities: {
-      canDoFullPushup: true,
-      canDoFullPullup: false,
-      canRunMile: true,
-      canSquatBelowParallel: true,
-      estimatedMaxes: { unit: 'kg' },
-    },
-  });
+  let validExperienceProfile: ExperienceProfile;
+  let validFitnessGoals: FitnessGoals;
+  let validConstraints: TrainingConstraints;
+  let validParams: CreateUserProfileInput;
 
-  const validFitnessGoals = createFitnessGoalsFixture({
-    primary: 'strength',
-    motivation: 'Get stronger',
-  });
+  beforeAll(() => {
+    validExperienceProfile = createExperienceProfileFixture({
+      level: 'intermediate',
+      capabilities: {
+        canDoFullPushup: true,
+        canDoFullPullup: false,
+        canRunMile: true,
+        canSquatBelowParallel: true,
+        estimatedMaxes: { unit: 'kg' },
+      },
+    });
 
-  const validConstraints = createTrainingConstraintsFixture({
-    availableDays: ['Monday', 'Wednesday', 'Friday'],
-    availableEquipment: [],
-    location: 'home',
-  });
+    validFitnessGoals = createFitnessGoalsFixture({
+      primary: 'strength',
+      motivation: 'Get stronger',
+    });
 
-  const validParams: CreateUserProfileParams = {
-    userId: 'user-123',
-    displayName: 'John Doe',
-    timezone: 'UTC',
-    experienceProfile: validExperienceProfile,
-    fitnessGoals: validFitnessGoals,
-    trainingConstraints: validConstraints,
-    bio: 'Fitness enthusiast',
-    avatar: 'https://example.com/avatar.jpg',
-    location: 'New York',
-  };
+    validConstraints = createTrainingConstraintsFixture({
+      availableDays: ['Monday', 'Wednesday', 'Friday'],
+      availableEquipment: [],
+      location: 'home',
+    });
+
+    validParams = {
+      userId: '550e8400-e29b-41d4-a716-446655440000',
+      displayName: 'John Doe',
+      timezone: 'UTC',
+      experienceProfile: validExperienceProfile,
+      fitnessGoals: validFitnessGoals,
+      trainingConstraints: validConstraints,
+      bio: 'Fitness enthusiast',
+      avatar: 'https://example.com/avatar.jpg',
+      location: 'New York',
+    };
+  });
 
   describe('Factory', () => {
     it('should create a valid user profile', () => {
-      const result = createUserProfile(validParams);
+      // Act
+      const result = CreateUserProfileSchema.safeParse(validParams);
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        const profile = result.value;
-        expect(profile.userId).toBe('user-123');
-        expect(profile.displayName).toBe('John Doe');
-        expect(profile.experienceProfile).toEqual(validExperienceProfile);
-        expect(profile.fitnessGoals).toEqual(validFitnessGoals);
-        expect(profile.preferences).toBeDefined();
-        expect(profile.stats).toBeDefined();
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toMatchObject({
+          userId: validParams.userId,
+          displayName: 'John Doe',
+          experienceProfile: validExperienceProfile,
+          fitnessGoals: validFitnessGoals,
+        });
+        expect(result.data.preferences).toBeDefined();
+        expect(result.data.stats).toBeDefined();
       }
     });
 
-    it('should fail with empty userId', () => {
-      const result = createUserProfile({
+    it('should fail with invalid userId', () => {
+      // Act
+      const result = CreateUserProfileSchema.safeParse({
         ...validParams,
-        userId: '',
+        userId: 'not-a-uuid',
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/invalid[\s\S]*uuid/i);
+      }
     });
 
     it('should fail with empty displayName', () => {
-      const result = createUserProfile({
+      // Act
+      const result = CreateUserProfileSchema.safeParse({
         ...validParams,
         displayName: '',
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small[\s\S]*minimum[\s\S]*1/i);
+      }
     });
 
     it('should fail with display name too long', () => {
-      const result = createUserProfile({
+      // Act
+      const result = CreateUserProfileSchema.safeParse({
         ...validParams,
         displayName: 'A'.repeat(101),
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_big[\s\S]*maximum[\s\S]*100/i);
+      }
     });
   });
 
   describe('Commands', () => {
     it('should update display name', () => {
-      const profile = createUserProfileFixture(validParams);
+      // Arrange
+      const profile = createUserProfileFixture();
+
+      // Act
       const updatedResult = updateDisplayName(profile, 'Jane Doe');
 
+      // Assert
       expect(updatedResult.isSuccess).toBe(true);
-      if (updatedResult.isSuccess) {
-        const updatedProfile = updatedResult.value;
-        expect(updatedProfile.displayName).toBe('Jane Doe');
-        // Since both operations happen quickly, we just check that updated date is set
-        expect(updatedProfile.updatedAt).toBeDefined();
-      }
+      expect(updatedResult.value.displayName).toBe('Jane Doe');
+      expect(updatedResult.value.updatedAt).toBeDefined();
     });
 
     it('should fail to update with empty display name', () => {
-      const profile = createUserProfileFixture(validParams);
+      // Arrange
+      const profile = createUserProfileFixture();
+
+      // Act
       const updatedResult = updateDisplayName(profile, '');
 
+      // Assert
       expect(updatedResult.isFailure).toBe(true);
     });
 
     it('should update bio', () => {
-      const profile = createUserProfileFixture(validParams);
+      // Arrange
+      const profile = createUserProfileFixture();
+
+      // Act
       const updatedResult = updateBio(profile, 'New bio');
 
+      // Assert
       expect(updatedResult.isSuccess).toBe(true);
-      if (updatedResult.isSuccess) {
-        const updatedProfile = updatedResult.value;
-        expect(updatedProfile.bio).toBe('New bio');
-        // Since both operations happen quickly, we just check that updated date is set
-        expect(updatedProfile.updatedAt).toBeDefined();
-      }
+      expect(updatedResult.value.bio).toBe('New bio');
+      expect(updatedResult.value.updatedAt).toBeDefined();
     });
 
     it('should update fitness goals', () => {
-      const profile = createUserProfileFixture(validParams);
+      // Arrange
+      const profile = createUserProfileFixture();
       const newGoals = createFitnessGoalsFixture({
         primary: 'hypertrophy',
         motivation: 'Build muscle',
       });
 
+      // Act
       const updatedResult = updateFitnessGoals(profile, newGoals);
 
+      // Assert
       expect(updatedResult.isSuccess).toBe(true);
-      if (updatedResult.isSuccess) {
-        const updatedProfile = updatedResult.value;
-        expect(updatedProfile.fitnessGoals.primary).toBe('hypertrophy');
-        // Since both operations happen quickly, we just check that updated date is set
-        expect(updatedProfile.updatedAt).toBeDefined();
-      }
+      expect(updatedResult.value.fitnessGoals.primary).toBe('hypertrophy');
+      expect(updatedResult.value.updatedAt).toBeDefined();
     });
 
     it('should record workout completed', () => {
+      // Arrange
       const profile = createUserProfileFixture({
-        ...validParams,
         stats: createUserStatsFixture({
           totalWorkouts: 0,
           totalMinutes: 0,
@@ -162,41 +196,55 @@ describe('UserProfile Aggregate', () => {
         })
       });
       const workoutDate = new Date();
+
+      // Act
       const updatedProfile = recordWorkoutCompleted(profile, workoutDate, 60, 500);
 
-      expect(updatedProfile.stats.totalWorkouts).toBe(1);
-      expect(updatedProfile.stats.totalMinutes).toBe(60);
-      expect(updatedProfile.stats.totalVolume).toBe(500);
-      expect(updatedProfile.stats.lastWorkoutDate).toEqual(workoutDate);
+      // Assert
+      expect(updatedProfile.stats).toMatchObject({
+        totalWorkouts: 1,
+        totalMinutes: 60,
+        totalVolume: 500,
+        lastWorkoutDate: workoutDate,
+      });
     });
   });
 
   describe('Queries', () => {
     it('should check if streak is active', () => {
+      // Arrange
       const profile = createUserProfileFixture({
-        ...validParams,
         stats: createUserStatsFixture({ lastWorkoutDate: undefined })
       });
-      // Since lastWorkoutDate is undefined initially, streak is not active
+
+      // Act & Assert
       expect(isStreakActive(profile)).toBe(false);
     });
 
     it('should get days since last workout', () => {
+      // Arrange
       const profile = createUserProfileFixture({
-        ...validParams,
         stats: createUserStatsFixture({ lastWorkoutDate: undefined })
       });
+
+      // Act
       const days = getDaysSinceLastWorkout(profile);
-      expect(days).toBeNull(); // Because no last workout date yet
+
+      // Assert
+      expect(days).toBeNull();
     });
 
     it('should calculate average workout duration', () => {
+      // Arrange
       const profile = createUserProfileFixture({
-        ...validParams,
         stats: createUserStatsFixture({ totalWorkouts: 0 })
       });
+
+      // Act
       const duration = getAverageWorkoutDuration(profile);
-      expect(duration).toBe(0); // Because no workouts yet
+
+      // Assert
+      expect(duration).toBe(0);
     });
   });
 });

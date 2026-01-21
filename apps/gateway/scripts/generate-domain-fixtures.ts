@@ -6,12 +6,23 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = join(__dirname, '../../..');
 const OUTPUT_DIR = join(ROOT_DIR, 'packages/react-api-client/src/generated/fixtures');
 
-// Import fixture builders (these use domain fixtures + presentation mappers)
+// Import colocated builders from domain packages
 import {
+  buildConnectServiceResponse,
+  buildDisconnectServiceResponse,
+  buildGetConnectedServicesResponse,
+  buildSyncServiceDataResponse,
+} from '@bene/integrations-domain/fixtures';
+
+
+// Training domain builders
+import {
+  buildGetProfileResponse,
   buildGetCurrentPlanResponse,
   buildGeneratePlanFromGoalsResponse,
   buildActivatePlanResponse,
   buildPausePlanResponse,
+  buildGetUserStatsResponse,
   buildAdjustPlanBasedOnFeedbackResponse,
   buildGetTodaysWorkoutResponse,
   buildGetUpcomingWorkoutsResponse,
@@ -21,28 +32,17 @@ import {
   buildCompleteWorkoutResponse,
   buildJoinMultiplayerWorkoutResponse,
   buildAddWorkoutReactionResponse,
-} from './fixture-builders/index.js';
+} from '@bene/training-application/fixtures';
 
-// Import schemas for other use cases (still using zod-schema-faker for now)
+// Coach domain builders
 import {
-  GetCoachHistoryResponseSchema,
-  SendMessageToCoachResponseSchema,
-  GenerateWeeklySummaryResponseSchema,
-  RespondToCheckInResponseSchema,
-  DismissCheckInResponseSchema,
-  TriggerProactiveCheckInResponseSchema,
-} from '@bene/coach-domain';
-
-import {
-  GetProfileResponseSchema,
-  GetUserStatsResponseSchema,
-} from '@bene/training-application';
-
-
-import {
-  GetConnectedServicesResponseSchema,
-  SyncServiceDataResponseSchema,
-} from '@bene/integrations-domain';
+  buildGetCoachHistoryResponse,
+  buildSendMessageToCoachResponse,
+  buildGenerateWeeklySummaryResponse,
+  buildDismissCheckInResponse,
+  buildRespondToCheckInResponse,
+  buildTriggerProactiveCheckInResponse,
+} from '@bene/coach-domain/fixtures';
 
 import { fake } from '../__fixtures__/setup.js';
 
@@ -128,19 +128,19 @@ async function run() {
   // - Pre-built fixture objects (from domain fixture builders)
   const domainMap: Record<string, Record<string, any>> = {
     coach: {
-      getCoachHistoryResponse: GetCoachHistoryResponseSchema,
-      sendMessageResponse: SendMessageToCoachResponseSchema,
-      generateWeeklySummaryResponse: GenerateWeeklySummaryResponseSchema,
-      respondToCheckInResponse: RespondToCheckInResponseSchema,
-      dismissCheckInResponse: DismissCheckInResponseSchema,
-      triggerProactiveCheckInResponse: TriggerProactiveCheckInResponseSchema,
+      getCoachHistoryResponse: buildGetCoachHistoryResponse(),
+      sendMessageResponse: buildSendMessageToCoachResponse(),
+      generateWeeklySummaryResponse: buildGenerateWeeklySummaryResponse(),
+      respondToCheckInResponse: buildRespondToCheckInResponse(),
+      dismissCheckInResponse: buildDismissCheckInResponse(),
+      triggerProactiveCheckInResponse: buildTriggerProactiveCheckInResponse(),
     },
     'fitness-plans': {
       // ✅ Uses domain fixture pattern!
       getCurrentPlanResponse: buildGetCurrentPlanResponse(),
       generatePlanFromGoalsResponse: buildGeneratePlanFromGoalsResponse(),
-      activatePlanResponse: buildActivatePlanResponse(),
-      pausePlanResponse: buildPausePlanResponse(),
+      activatePlanResponse: buildActivatePlanResponse().value,
+      pausePlanResponse: buildPausePlanResponse().value,
       adjustPlanBasedOnFeedbackResponse: buildAdjustPlanBasedOnFeedbackResponse(),
     },
     workouts: {
@@ -154,12 +154,14 @@ async function run() {
       addWorkoutReactionResponse: buildAddWorkoutReactionResponse(),
     },
     profile: {
-      getProfileResponse: GetProfileResponseSchema,
-      getUserStatsResponse: GetUserStatsResponseSchema,
+      getProfileResponse: buildGetProfileResponse(),
+      getUserStatsResponse: buildGetUserStatsResponse(),
     },
     integrations: {
-      getConnectedServicesResponse: GetConnectedServicesResponseSchema,
-      syncServiceDataResponse: SyncServiceDataResponseSchema,
+      connectServiceResponse: buildConnectServiceResponse(),
+      disconnectServiceResponse: buildDisconnectServiceResponse(),
+      getConnectedServicesResponse: buildGetConnectedServicesResponse(),
+      syncServiceDataResponse: buildSyncServiceDataResponse(),
     }
   };
 

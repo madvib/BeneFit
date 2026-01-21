@@ -1,20 +1,37 @@
-// workout-plan.commands.ts
 import { Result } from '@bene/shared';
-import { FitnessPlan } from './fitness-plan.types.js';
 
-import { WeeklySchedule } from '../weekly-schedule/weekly-schedule.types.js';
-import { WorkoutTemplate } from '../workout-template/workout-template.types.js';
 import {
   PlanStateError,
-  PlanActivationError,
   PlanCompletionError,
-  WorkoutNotFoundError,
-} from '@/fitness-plan/errors/fitness-plan-errors.js';
+  WorkoutNotFoundError
+} from '@/fitness-plan/errors/index.js';
 import { PlanPositionCommands } from '@/fitness-plan/value-objects/index.js';
+import { WeeklySchedule } from '../weekly-schedule/index.js';
+import { WorkoutTemplate } from '../workout-template/index.js';
+import { FitnessPlan } from './fitness-plan.types.js';
 
 /** Helper function to update the updatedAt timestamp */
 function touch(plan: FitnessPlan): FitnessPlan {
   return { ...plan, updatedAt: new Date() };
+}
+
+/**
+ * COMMAND: Activates a plan, transitioning it to 'active' status.
+ */
+export function activatePlan(plan: FitnessPlan, startDate: Date = new Date()): Result<FitnessPlan> {
+  if (plan.status === 'active') {
+    return Result.fail(new PlanStateError('Plan is already active', { planId: plan.id }));
+  }
+
+  const updatedPlan: FitnessPlan = {
+    ...plan,
+    status: 'active' as const,
+    startDate,
+    // Reset end date if it was previously set (e.g. from a past completion)
+    endDate: undefined,
+  };
+
+  return Result.ok(touch(updatedPlan));
 }
 
 /**
@@ -51,34 +68,6 @@ export function addWeek(plan: FitnessPlan, week: WeeklySchedule): Result<Fitness
   return Result.ok(touch(updatedPlan));
 }
 
-/**
- * COMMAND: Transitions the plan status from 'draft' to 'active'.
- */
-export function activatePlan(plan: FitnessPlan): Result<FitnessPlan> {
-  if (plan.status !== 'draft') {
-    return Result.fail(
-      new PlanActivationError('Can only activate draft plans', {
-        currentStatus: plan.status,
-        planId: plan.id,
-      }),
-    );
-  }
-
-  if (plan.weeks.length === 0) {
-    return Result.fail(
-      new PlanActivationError('Cannot activate plan with no weeks', {
-        planId: plan.id,
-      }),
-    );
-  }
-
-  const updatedPlan: FitnessPlan = {
-    ...plan,
-    status: 'active',
-  };
-
-  return Result.ok(touch(updatedPlan));
-}
 
 /**
  * COMMAND: Handles the completion of a workout, incrementing the week's count.

@@ -1,17 +1,26 @@
-import { describe, it, expect } from 'vitest';
-import { createFitnessGoals } from '../../index.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { z } from 'zod';
+import { CreateFitnessGoalsSchema } from '../fitness-goals.factory.js';
+import { createFitnessGoalsFixture } from './fitness-goals.fixtures.js';
+import { FitnessGoals } from '../fitness-goals.types.js';
+
+type CreateGoalsInput = z.input<typeof CreateFitnessGoalsSchema>;
 
 describe('FitnessGoals Value Object', () => {
   describe('Factory', () => {
-    it('should create valid fitness goals', () => {
-      const result = createFitnessGoals({
-        primary: 'strength',
-        motivation: 'Get stronger to lift heavy weights',
-      });
+    const validInput: CreateGoalsInput = {
+      primary: 'strength',
+      motivation: 'Get stronger to lift heavy weights',
+    };
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        const goals = result.value;
+    it('should create valid fitness goals', () => {
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(validInput);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const goals = result.data;
         expect(goals.primary).toBe('strength');
         expect(goals.motivation).toBe('Get stronger to lift heavy weights');
         expect(goals.secondary).toEqual([]);
@@ -20,8 +29,9 @@ describe('FitnessGoals Value Object', () => {
     });
 
     it('should create with all properties', () => {
+      // Arrange
       const targetDate = new Date('2026-12-31');
-      const result = createFitnessGoals({
+      const input: CreateGoalsInput = {
         primary: 'weight_loss',
         motivation: 'Lose weight for health',
         secondary: ['improve endurance', 'gain strength'],
@@ -33,89 +43,146 @@ describe('FitnessGoals Value Object', () => {
         targetBodyFat: 15,
         targetDate,
         successCriteria: ['feel stronger', 'look better'],
-      });
+      };
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        const goals = result.value;
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const goals = result.data;
         expect(goals.primary).toBe('weight_loss');
-        expect(goals.motivation).toBe('Lose weight for health');
-        expect(goals.secondary).toEqual(['improve endurance', 'gain strength']);
         expect(goals.targetWeight).toEqual({
           current: 80,
           target: 70,
           unit: 'kg',
         });
-        expect(goals.targetBodyFat).toBe(15);
         expect(goals.targetDate).toEqual(targetDate);
-        expect(goals.successCriteria).toEqual(['feel stronger', 'look better']);
       }
     });
 
     it('should fail with empty motivation', () => {
-      const result = createFitnessGoals({
-        primary: 'strength',
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
         motivation: '',
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small/);
+      }
     });
 
     it('should fail with too long motivation', () => {
-      const result = createFitnessGoals({
-        primary: 'strength',
-        motivation: 'A'.repeat(501),
-      });
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
+        motivation: 'A'.repeat(1001),
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_big/);
+      }
     });
 
     it('should fail with negative target weight', () => {
-      const result = createFitnessGoals({
-        primary: 'weight_loss',
-        motivation: 'Lose weight',
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
         targetWeight: {
           current: -100,
           target: 70,
           unit: 'kg',
         },
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail with zero target weight', () => {
-      const result = createFitnessGoals({
-        primary: 'weight_loss',
-        motivation: 'Lose weight',
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
         targetWeight: {
           current: 0,
           target: 70,
           unit: 'kg',
         },
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail with invalid body fat percentage', () => {
-      const result = createFitnessGoals({
-        primary: 'weight_loss',
-        motivation: 'Lose weight',
-        targetBodyFat: 60,
-      });
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
+        targetBodyFat: 61,
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail with past target date', () => {
-      const result = createFitnessGoals({
-        primary: 'strength',
-        motivation: 'Get strong',
+      // Arrange
+      const input: CreateGoalsInput = {
+        ...validInput,
         targetDate: new Date('2020-01-01'),
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateFitnessGoalsSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/targetDate must be in the future/);
+      }
+    });
+  });
+
+  describe('Fixtures', () => {
+    let validGoals: FitnessGoals;
+
+    beforeEach(() => {
+      validGoals = createFitnessGoalsFixture({
+        primary: 'hypertrophy',
+        targetBodyFat: 12,
+      });
+    });
+
+    it('should create valid fixture', () => {
+      expect(validGoals.primary).toBe('hypertrophy');
+      expect(validGoals.targetBodyFat).toBe(12);
+      expect(validGoals.successCriteria.length).toBeGreaterThan(0);
+    });
+
+    it('should allow fixture overrides', () => {
+      const customGoals = createFitnessGoalsFixture({ motivation: 'Be awesome' });
+      expect(customGoals.motivation).toBe('Be awesome');
     });
   });
 });

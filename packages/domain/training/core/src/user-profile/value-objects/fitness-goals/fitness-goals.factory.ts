@@ -1,71 +1,109 @@
-import { Guard, Result } from '@bene/shared';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  PrimaryFitnessGoal,
-  TargetWeight,
   FitnessGoals,
+  FitnessGoalsSchema,
+  TargetWeightSchema
 } from './fitness-goals.types.js';
 
-export interface CreateFitnessGoalsProps {
-  primary: PrimaryFitnessGoal;
-  motivation: string;
-  secondary?: string[];
-  targetWeight?: TargetWeight;
-  targetBodyFat?: number;
-  targetDate?: Date;
-  successCriteria?: string[];
+/**
+ * ============================================================================
+ * FITNESS GOALS FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. fitnessGoalsFromPersistence() - For fixtures & DB hydration
+ * 2. CreateFitnessGoalsSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands FitnessGoals */
+function validateFitnessGoals(data: unknown): Result<FitnessGoals> {
+  const parseResult = FitnessGoalsSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  const validated = parseResult.data;
+
+  // Domain Rule: targetDate must be in the future (optional)
+  if (validated.targetDate && validated.targetDate <= new Date()) {
+    return Result.fail(new Error('targetDate must be in the future'));
+  }
+
+  return Result.ok(validated);
 }
 
-export function createFitnessGoals(props: {
-  primary: PrimaryFitnessGoal;
-  motivation: string;
-  secondary?: string[];
-  targetWeight?: TargetWeight;
-  targetBodyFat?: number;
-  targetDate?: Date;
-  successCriteria?: string[];
-}): Result<FitnessGoals> {
-  const guards = [
-    Guard.againstNullOrUndefinedBulk([
-      { argument: props.primary, argumentName: 'primary' },
-      { argument: props.motivation, argumentName: 'motivation' },
-    ]),
-    Guard.againstEmptyString(props.motivation, 'motivation'),
-    Guard.againstTooLong(props.motivation, 500, 'motivation'),
-  ];
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-  if (props.targetWeight) {
-    guards.push(
-      Guard.againstNegativeOrZero(props.targetWeight.current, 'targetWeight.current'),
-    );
-    guards.push(
-      Guard.againstNegativeOrZero(props.targetWeight.target, 'targetWeight.target'),
-    );
+/**
+ * Rehydrates FitnessGoals from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function fitnessGoalsFromPersistence(
+  data: Unbrand<FitnessGoals>,
+): Result<FitnessGoals> {
+  return Result.ok(data as FitnessGoals);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating FitnessGoals with domain validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateFitnessGoalsSchema>
+ */
+export const CreateFitnessGoalsSchema: z.ZodType<FitnessGoals> = FitnessGoalsSchema.pick({
+  primary: true,
+  motivation: true,
+}).extend({
+  secondary: z.array(z.string().min(1).max(100)).optional(),
+  targetWeight: TargetWeightSchema.optional(),
+  targetBodyFat: z.number().optional(),
+  targetDate: z.coerce.date<Date>().optional(),
+  successCriteria: z.array(z.string()).optional(),
+}).transform((input, ctx) => {
+  // Build the entity with defaults
+  const data = {
+    primary: input.primary,
+    motivation: input.motivation,
+    secondary: input.secondary || [],
+    targetWeight: input.targetWeight,
+    targetBodyFat: input.targetBodyFat,
+    targetDate: input.targetDate,
+    successCriteria: input.successCriteria || [],
+  };
+
+  // Validate and brand
+  const validationResult = validateFitnessGoals(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateFitnessGoalsSchema or call via transform.
+ */
+export function createFitnessGoals(
+  params: z.input<typeof CreateFitnessGoalsSchema>,
+): Result<FitnessGoals> {
+  const parseResult = CreateFitnessGoalsSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
-
-  if (props.targetBodyFat !== undefined) {
-    guards.push(Guard.inRange(props.targetBodyFat, 3, 50, 'targetBodyFat'));
-  }
-
-  if (props.targetDate) {
-    const guardResult = Guard.isTrue(
-      props.targetDate > new Date(),
-      'targetDate must be in the future',
-    );
-    if (guardResult.isFailure) {
-      return Result.fail(guardResult.error);
-    }
-  }
-
-  const guardResult = Guard.combine(guards);
-  if (guardResult && guardResult.isFailure) return Result.fail(guardResult.error);
-
-  return Result.ok({
-    primary: props.primary,
-    secondary: props.secondary || [],
-    targetWeight: props.targetWeight,
-    targetBodyFat: props.targetBodyFat,
-    targetDate: props.targetDate,
-    motivation: props.motivation,
-    successCriteria: props.successCriteria || [],
-  });
+  return Result.ok(parseResult.data as FitnessGoals);
 }

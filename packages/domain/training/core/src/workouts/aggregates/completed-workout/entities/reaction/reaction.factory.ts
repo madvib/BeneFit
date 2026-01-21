@@ -1,42 +1,91 @@
-import { Guard, Result } from '@bene/shared';
-import { Reaction, ReactionType, ReactionView } from './reaction.types.js';
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { Reaction, ReactionSchema } from './reaction.types.js';
 
-export function createReaction(props: {
-  userId: string;
-  userName: string;
-  type: ReactionType;
-}): Result<Reaction> {
-  const guards = [
-    Guard.againstNullOrUndefinedBulk([
-      { argument: props.userId, argumentName: 'userId' },
-      { argument: props.userName, argumentName: 'userName' },
-      { argument: props.type, argumentName: 'type' },
-    ]),
-    Guard.againstEmptyString(props.userId, 'userId'),
-    Guard.againstEmptyString(props.userName, 'userName'),
-  ];
-  const guardResult = Guard.combine(guards);
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+/**
+ * ============================================================================
+ * REACTION FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. reactionFromPersistence() - For fixtures & DB hydration
+ * 2. CreateReactionSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands Reaction */
+function validateReaction(data: unknown): Result<Reaction> {
+  const parseResult = ReactionSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
-  return Result.ok({
-    id: randomUUID(),
-    userId: props.userId,
-    userName: props.userName,
-    type: props.type,
-    createdAt: new Date(),
-  });
+
+  return Result.ok(parseResult.data);
 }
 
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-export function toReactionView(reaction: Reaction): ReactionView {
-  return {
-    ...reaction,
-    createdAt: reaction.createdAt.toISOString(),
+/**
+ * Rehydrates Reaction from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function reactionFromPersistence(
+  data: Unbrand<Reaction>,
+): Result<Reaction> {
+  return Result.ok(data as Reaction);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating Reaction with domain validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateReactionSchema>
+ */
+export const CreateReactionSchema = ReactionSchema.pick({
+  userId: true,
+  userName: true,
+  type: true,
+}).extend({
+  id: z.uuid().optional(),
+  createdAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    createdAt: input.createdAt || new Date(),
   };
-}
 
+  const validationResult = validateReaction(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<Reaction>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateReactionSchema or call via transform.
+ */
+export function createReaction(
+  params: z.input<typeof CreateReactionSchema>,
+): Result<Reaction> {
+  const parseResult = CreateReactionSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data as Reaction);
+}

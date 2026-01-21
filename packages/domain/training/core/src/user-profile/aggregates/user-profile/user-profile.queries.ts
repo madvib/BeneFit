@@ -1,51 +1,10 @@
 import { UserProfile } from "./user-profile.types.js";
+import { UserStatsQueries } from "../../value-objects/user-stats/index.js";
 
-export function isStreakActive(profile: UserProfile): boolean {
-  if (!profile.stats.lastWorkoutDate) {
-    return false;
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const lastWorkout = new Date(profile.stats.lastWorkoutDate);
-  lastWorkout.setHours(0, 0, 0, 0);
-
-  const daysSince = Math.floor(
-    (today.getTime() - lastWorkout.getTime()) / (1000 * 60 * 60 * 24)
-  );
-
-  return daysSince <= 1; // Worked out today or yesterday
-}
-
-export function getDaysSinceLastWorkout(profile: UserProfile): number | null {
-  if (!profile.stats.lastWorkoutDate) {
-    return null;
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const lastWorkout = new Date(profile.stats.lastWorkoutDate);
-  lastWorkout.setHours(0, 0, 0, 0);
-
-  return Math.floor(
-    (today.getTime() - lastWorkout.getTime()) / (1000 * 60 * 60 * 24)
-  );
-}
-
-export function getAverageWorkoutDuration(profile: UserProfile): number {
-  if (profile.stats.totalWorkouts === 0) {
-    return 0;
-  }
-
-  return Math.round(profile.stats.totalMinutes / profile.stats.totalWorkouts);
-}
-
-export function hasAchievement(profile: UserProfile, achievementId: string): boolean {
-  return profile.stats.achievements.some(a => a.id === achievementId);
-}
-
+/**
+ * Check if the user should receive a coaching check-in based on their preferences
+ * and workout history.
+ */
 export function shouldReceiveCheckIn(profile: UserProfile): boolean {
   const frequency = profile.preferences.coaching.checkInFrequency;
 
@@ -53,7 +12,7 @@ export function shouldReceiveCheckIn(profile: UserProfile): boolean {
     return false;
   }
 
-  const daysSince = getDaysSinceLastWorkout(profile);
+  const daysSince = UserStatsQueries.getDaysSinceLastWorkout(profile.stats);
 
   if (daysSince === null) {
     return true; // No workouts yet, should check in
@@ -69,4 +28,14 @@ export function shouldReceiveCheckIn(profile: UserProfile): boolean {
     default:
       return false;
   }
+}
+
+/**
+ * Get the number of days the user has been a member.
+ */
+export function getMemberSinceDays(profile: UserProfile): number {
+  const now = new Date();
+  return Math.floor(
+    (now.getTime() - profile.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+  );
 }

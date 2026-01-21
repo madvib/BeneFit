@@ -1,8 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { CoachAction, CoachActionType } from '../coach-action.types.js';
+import { coachActionFromPersistence } from '../coach-action.factory.js';
 
+/**
+ * Creates a CoachAction fixture for testing.
+ * Uses coachActionFromPersistence to ensure branding and type safety.
+ */
 export function createCoachActionFixture(overrides?: Partial<CoachAction>): CoachAction {
-  return {
+  const data = {
     type: faker.helpers.arrayElement([
       'adjusted_plan',
       'suggested_rest_day',
@@ -17,4 +22,12 @@ export function createCoachActionFixture(overrides?: Partial<CoachAction>): Coac
     planChangeId: faker.datatype.boolean() ? faker.string.uuid() : undefined,
     ...overrides,
   };
+
+  const result = coachActionFromPersistence(data as CoachAction);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create CoachAction fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

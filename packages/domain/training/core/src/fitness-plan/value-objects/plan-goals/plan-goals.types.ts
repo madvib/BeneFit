@@ -1,29 +1,42 @@
-import { SerializeDates } from '@bene/shared';
+import { DomainBrandTag } from '@bene/shared';
+import { z } from 'zod';
 
-export interface TargetLiftWeight {
-  readonly exercise: string;
-  readonly weight: number; // kg or lbs
-}
+/**
+ * 1. DEFINE SCHEMAS (Zod as Source of Truth)
+ */
+export const TargetLiftWeightSchema = z.object({
+  exercise: z.string().min(1).max(100),
+  weight: z.number().min(0).max(1000), // kg or lbs
+});
 
-export interface TargetDuration {
-  readonly activity: string;
-  readonly duration: number; // minutes
-}
+export const TargetDurationSchema = z.object({
+  activity: z.string().min(1).max(100),
+  duration: z.number().int().min(1).max(100000), // minutes
+});
 
-export interface TargetMetrics {
-  readonly targetWeights?: readonly TargetLiftWeight[];
-  readonly targetDuration?: TargetDuration;
-  readonly targetPace?: number; // seconds per km/mile
-  readonly targetDistance?: number; // meters for running/cycling goals
-  readonly totalWorkouts?: number; // for consistency goals
-  readonly minStreakDays?: number; // for habit building
-}
+export const TargetMetricsSchema = z
+  .object({
+    targetWeights: z.array(TargetLiftWeightSchema).optional(),
+    targetDuration: TargetDurationSchema.optional(),
+    targetPace: z.number().min(0).max(1000).optional(), // seconds per km/mile
+    targetDistance: z.number().min(0).max(1000000).optional(), // meters
+    totalWorkouts: z.number().int().min(0).max(1000).optional(), // for consistency goals
+    minStreakDays: z.number().int().min(0).max(365).optional(), // for habit building
+  })
+  .readonly();
 
-export interface PlanGoals {
-  readonly primary: string;
-  readonly secondary: readonly string[];
-  readonly targetMetrics: TargetMetrics;
-  readonly targetDate?: Date;
-}
+export const PlanGoalsSchema = z
+  .object({
+    primary: z.string().min(1).max(200),
+    secondary: z.array(z.string().min(1).max(200)),
+    targetMetrics: TargetMetricsSchema,
+    targetDate: z.coerce.date<Date>().optional(),
+  })
+  .readonly().brand<DomainBrandTag>();
 
-export type PlanGoalsView = SerializeDates<PlanGoals>;
+
+export type TargetLiftWeight = z.infer<typeof TargetLiftWeightSchema>;
+export type TargetDuration = z.infer<typeof TargetDurationSchema>;
+export type TargetMetrics = z.infer<typeof TargetMetricsSchema>;
+export type PlanGoals = z.infer<typeof PlanGoalsSchema>;
+

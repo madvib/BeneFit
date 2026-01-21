@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { UserProfile, TrainingConstraints, PlanGoalsSchema, FitnessPlanQueries, type PlanPreview } from '@bene/training-core';
+import { UserProfile, CreatePlanGoalsSchema, FitnessPlanQueries, type PlanPreview } from '@bene/training-core';
 import {
   FitnessPlanRepository,
   UserProfileRepository,
@@ -11,18 +11,14 @@ import {
 } from '../../services/ai-plan-generator.js';
 import { PlanGeneratedEvent } from '../../events/plan-generated.event.js';
 
-// Helper function to convert from schema format to domain format (pass-through for now)
-const toDomainPlanGoals = (goals: z.infer<typeof PlanGoalsSchema>) => goals;
-
-
 
 // Single request schema with ALL fields
 export const GeneratePlanFromGoalsRequestSchema = z.object({
   // Server context
-  userId: z.string(),
+  userId: z.uuid(),
 
   // Client data
-  goals: PlanGoalsSchema,
+  goals: CreatePlanGoalsSchema,
   customInstructions: z.string().optional(),
 });
 
@@ -76,14 +72,8 @@ export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
     // 3. Generate plan using AI
     const planInput: GeneratePlanInput = {
       userId: request.userId,
-      goals: toDomainPlanGoals(request.goals),
-      constraints: profile.trainingConstraints || {
-        availableDays: [],
-        availableEquipment: [],
-        location: 'home',
-        maxDuration: 60,
-        injuries: [],
-      } as TrainingConstraints,
+      goals: request.goals,
+      constraints: profile.trainingConstraints,
       experienceLevel: profile.experienceProfile?.level || 'beginner',
       customInstructions: request.customInstructions,
     };
@@ -106,7 +96,7 @@ export class GeneratePlanFromGoalsUseCase extends BaseUseCase<
       new PlanGeneratedEvent({
         userId: request.userId,
         planId: plan.id,
-        goals: toDomainPlanGoals(request.goals),
+        goals: request.goals,
       }),
     );
 

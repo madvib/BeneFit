@@ -1,7 +1,4 @@
-// This file just exports the types and functions for FitnessGoals
-// The implementation is separated into factory and commands files
-export type { FitnessGoals, PrimaryFitnessGoal, TargetWeight } from './fitness-goals.types.js';
-export * from './fitness-goals.presentation.js';
-export * from './test/fitness-goals.fixtures.js';
-export { createFitnessGoals } from './fitness-goals.factory.js';
+export * from './fitness-goals.types.js';
+export * from './fitness-goals.factory.js';
+export * from './fitness-goals.view.js';
 export * as FitnessGoalsCommands from './fitness-goals.commands.js';

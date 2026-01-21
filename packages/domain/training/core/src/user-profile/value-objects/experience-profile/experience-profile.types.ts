@@ -1,33 +1,41 @@
-export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced';
+import { z } from 'zod';
+import { ExperienceLevelSchema } from '@bene/shared';
 
-export interface TrainingHistory {
-  yearsTraining?: number;
-  previousPrograms: string[]; // "Starting Strength", "Couch to 5K", etc.
-  sports: string[]; // Sports background
-  certifications: string[]; // Any fitness certs
-}
+export const TrainingHistorySchema = z.object({
+  yearsTraining: z.number().min(0).max(100).optional(),
+  previousPrograms: z.array(z.string().min(1).max(200)),
+  sports: z.array(z.string().min(1).max(100)),
+  certifications: z.array(z.string().min(1).max(200)),
+});
+export type TrainingHistory = z.infer<typeof TrainingHistorySchema>;
 
-export interface CurrentCapabilities {
-  canDoFullPushup: boolean;
-  canDoFullPullup: boolean;
-  canRunMile: boolean;
-  canSquatBelowParallel: boolean;
-  estimatedMaxes?: {
-    squat?: number;
-    bench?: number;
-    deadlift?: number;
-    unit: 'kg' | 'lbs';
-  };
-}
+export const CurrentCapabilitiesSchema = z.object({
+  canDoFullPushup: z.boolean(),
+  canDoFullPullup: z.boolean(),
+  canRunMile: z.boolean(),
+  canSquatBelowParallel: z.boolean(),
+  estimatedMaxes: z
+    .object({
+      squat: z.number().min(0).max(1000).optional(),
+      bench: z.number().min(0).max(1000).optional(),
+      deadlift: z.number().min(0).max(1000).optional(),
+      unit: z.enum(['kg', 'lbs']),
+    })
+    .optional(),
+});
+export type CurrentCapabilities = z.infer<typeof CurrentCapabilitiesSchema>;
 
-export interface ExperienceProfile {
-  level: ExperienceLevel;
-  history: TrainingHistory;
-  capabilities: CurrentCapabilities;
-  lastAssessmentDate: Date;
-}
+/**
+ * CORE SCHEMA
+ */
+export const ExperienceProfileSchema = z.object({
+  level: ExperienceLevelSchema,
+  history: TrainingHistorySchema,
+  capabilities: CurrentCapabilitiesSchema,
+  lastAssessmentDate: z.coerce.date<Date>(),
+});
 
-export interface ExperienceProfileValidation {
-  isValid: boolean;
-  errors: string[];
-}
+/**
+ * INFERRED TYPES
+ */
+export type ExperienceProfile = Readonly<z.infer<typeof ExperienceProfileSchema>>;

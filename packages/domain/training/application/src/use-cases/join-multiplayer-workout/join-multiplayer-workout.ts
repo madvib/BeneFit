@@ -1,19 +1,19 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { WorkoutSessionCommands, toWorkoutSessionSchema } from '@bene/training-core';
-import type { WorkoutSessionPresentation as WorkoutSessionView } from '@bene/training-core';
+import { WorkoutSessionCommands, toWorkoutSessionView } from '@bene/training-core';
+import type { WorkoutSessionView } from '@bene/training-core';
 import { UserJoinedWorkoutEvent } from '../../events/index.js';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 
 // Single request schema with ALL fields
 export const JoinMultiplayerWorkoutRequestSchema = z.object({
   // Server context
-  userId: z.string(),
+  userId: z.uuid(),
 
   // Client data
-  userName: z.string(),
-  userAvatar: z.string().optional(),
-  sessionId: z.string(),
+  userName: z.string().min(1).max(100),
+  userAvatar: z.url().optional(),
+  sessionId: z.uuid(),
 });
 
 // Zod inferred type with original name
@@ -87,7 +87,7 @@ export class JoinMultiplayerWorkoutUseCase extends BaseUseCase<
 
     // 6. Return session details
     return Result.ok({
-      session: toWorkoutSessionSchema(joinedSession),
+      session: toWorkoutSessionView(joinedSession),
     });
   }
 }

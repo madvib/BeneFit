@@ -1,42 +1,37 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { createCoachConversation, CoachConversationCommands } from '../../../core/index.js';
+import { Result, type EventBus, BaseUseCase, mapZodError } from '@bene/shared';
+import {
+  CreateCoachConversationSchema,
+  CoachConversationCommands,
+  type CoachActionView,
+  toCoachActionView
+} from '@core/index.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 import { CoachContextBuilder, AICoachService } from '../../services/index.js';
 import { CoachMessageSentEvent } from '../../events/coach-message-sent.event.js';
 import { CoachAdjustedPlanEvent } from '../../events/coach-adjusted-plan.event.js';
 import { CoachScheduledFollowupEvent } from '../../events/coach-scheduled-followup.event.js';
 
-// Single request schema with ALL fields
+/**
+ * Request schema
+ */
 export const SendMessageToCoachRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
+  userId: z.uuid(),
   message: z.string(),
-  checkInId: z.string().optional(),
+  checkInId: z.uuid().optional(),
 });
 
-// Zod inferred type with original name
 export type SendMessageToCoachRequest = z.infer<typeof SendMessageToCoachRequestSchema>;
 
-// Zod schema for response validation
-const ActionSchema = z.object({
-  type: z.string().min(1).max(50),
-  details: z.string().min(1).max(1000),
-});
-
-export const SendMessageToCoachResponseSchema = z.object({
-  conversationId: z.string(),
-  coachResponse: z.string().min(1).max(5000),
-  actions: z.array(ActionSchema).optional(),
-  suggestedFollowUps: z.array(z.string().min(1).max(200)).optional(),
-});
-
-// Zod inferred type with original name
-export type SendMessageToCoachResponse = z.infer<
-  typeof SendMessageToCoachResponseSchema
->;
+/**
+ * Response type - custom for message exchange
+ */
+export interface SendMessageToCoachResponse {
+  conversationId: string;
+  coachResponse: string;
+  actions?: CoachActionView[];
+  suggestedFollowUps?: string[];
+}
 
 export class SendMessageToCoachUseCase extends BaseUseCase<
   SendMessageToCoachRequest,
@@ -68,19 +63,20 @@ export class SendMessageToCoachUseCase extends BaseUseCase<
         );
       }
 
-      const newConvResult = createCoachConversation({
+      const parseResult = CreateCoachConversationSchema.safeParse({
         userId: request.userId,
         context: contextResult.value,
         initialMessage:
           "Hi! I'm your AI coach. I'm here to help you reach your fitness goals. What brings you here today?",
       });
 
-      if (newConvResult.isFailure) {
-        return Result.fail(newConvResult.error);
+      if (!parseResult.success) {
+        return Result.fail(mapZodError(parseResult.error));
       }
 
-      await this.conversationRepository.save(newConvResult.value);
-      conversationResult = Result.ok(newConvResult.value);
+      const newConversation = parseResult.data;
+      await this.conversationRepository.save(newConversation);
+      conversationResult = Result.ok(newConversation);
     }
 
     const conversation = conversationResult.value;
@@ -146,10 +142,7 @@ export class SendMessageToCoachUseCase extends BaseUseCase<
     return Result.ok({
       conversationId: updatedConversation.id,
       coachResponse: aiResponse.message,
-      actions: aiResponse.actions?.map((a) => ({
-        type: a.type,
-        details: a.details,
-      })),
+      actions: aiResponse.actions?.map(toCoachActionView),
       suggestedFollowUps: aiResponse.suggestedFollowUps,
     });
   }

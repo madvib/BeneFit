@@ -1,44 +1,47 @@
-import { OAuthCredentials } from '../../value-objects/oauth-credentials/oauth-credentials.js';
-import { ServiceMetadata } from '../../value-objects/service-metadata/service-metadata.js';
-import { ServicePermissions } from '../../value-objects/service-permissions/service-permission.js';
-import { SyncStatus } from '../../value-objects/sync-status/sync-status.js';
+import { z } from 'zod';
+import type { DomainBrandTag } from '@bene/shared';
+import {
+  OAuthCredentialsSchema,
+  ServiceMetadataSchema,
+  ServicePermissionsSchema,
+  SyncStatusSchema
+} from '../../value-objects/index.js';
 
-export type ServiceType =
-  | 'strava'
-  | 'garmin'
-  | 'apple_health'
-  | 'fitbit'
-  | 'whoop'
-  | 'peloton'
-  | 'polar'
-  | 'coros'
-  | 'google_fit';
+/**
+ * 1. DEFINE SCHEMAS (Zod as Source of Truth)
+ */
+export const ServiceTypeSchema = z.enum([
+  'strava',
+  'garmin',
+  'apple_health',
+  'fitbit',
+  'whoop',
+  'peloton',
+  'polar',
+  'coros',
+  'google_fit',
+]);
 
-interface ConnectedServiceData {
-  id: string;
-  userId: string;
-  serviceType: ServiceType;
+export const ConnectedServiceSchema = z
+  .object({
+    id: z.uuid(),
+    userId: z.uuid(),
+    serviceType: ServiceTypeSchema,
+    credentials: OAuthCredentialsSchema,
+    permissions: ServicePermissionsSchema,
+    syncStatus: SyncStatusSchema,
+    metadata: ServiceMetadataSchema,
+    isActive: z.boolean(),
+    isPaused: z.boolean(),
+    connectedAt: z.coerce.date<Date>(),
+    lastSyncAt: z.coerce.date<Date>().optional(),
+    updatedAt: z.coerce.date<Date>(),
+  })
+  .brand<DomainBrandTag>();
 
-  // OAuth credentials (should be encrypted in storage)
-  credentials: OAuthCredentials;
+/**
+ * 2. INFER TYPES (Derived directly from Zod)
+ */
+export type ServiceType = z.infer<typeof ServiceTypeSchema>;
+export type ConnectedService = Readonly<z.infer<typeof ConnectedServiceSchema>>;
 
-  // Permissions granted
-  permissions: ServicePermissions;
-
-  // Sync status
-  syncStatus: SyncStatus;
-
-  // Service metadata
-  metadata: ServiceMetadata;
-
-  // State
-  isActive: boolean;
-  isPaused: boolean;
-
-  // Timestamps
-  connectedAt: Date;
-  lastSyncAt?: Date;
-  updatedAt: Date;
-}
-
-export type ConnectedService = Readonly<ConnectedServiceData>;

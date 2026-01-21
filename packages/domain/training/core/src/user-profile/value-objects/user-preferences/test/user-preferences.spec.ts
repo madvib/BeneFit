@@ -1,97 +1,95 @@
-import { describe, it, expect } from 'vitest';
-import { createDefaultPreferences, UserPreferences } from '../../index.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { CreateUserPreferencesSchema } from '../user-preferences.factory.js';
+import { createUserPreferencesFixture } from './user-preferences.fixtures.js';
+import { UserPreferences } from '../user-preferences.types.js';
 
 describe('UserPreferences Value Object', () => {
   describe('Factory', () => {
     it('should create default preferences correctly', () => {
-      const preferences = createDefaultPreferences();
+      // Act
+      const result = CreateUserPreferencesSchema.safeParse({});
 
-      expect(preferences.theme).toBe('auto');
-      expect(preferences.units).toBe('metric');
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const preferences = result.data;
+        expect(preferences.theme).toBe('auto');
+        expect(preferences.units).toBe('metric');
 
-      // Check notification preferences
-      expect(preferences.notifications.workoutReminders).toBe(true);
-      expect(preferences.notifications.reminderTime).toBe('09:00');
-      expect(preferences.notifications.coachCheckIns).toBe(true);
+        // Check notification preferences
+        expect(preferences.notifications.workoutReminders).toBe(true);
+        expect(preferences.notifications.reminderTime).toBe('09:00');
+        expect(preferences.notifications.coachCheckIns).toBe(true);
 
-      // Check privacy settings
-      expect(preferences.privacy.profileVisible).toBe(true);
-      expect(preferences.privacy.workoutsPublic).toBe(true);
+        // Check privacy settings
+        expect(preferences.privacy.profileVisible).toBe(true);
+        expect(preferences.privacy.workoutsPublic).toBe(true);
 
-      // Check coaching preferences
-      expect(preferences.coaching.checkInFrequency).toBe('weekly');
-      expect(preferences.coaching.tone).toBe('motivational');
+        // Check coaching preferences
+        expect(preferences.coaching.checkInFrequency).toBe('weekly');
+        expect(preferences.coaching.tone).toBe('motivational');
 
-      // Check display settings
-      expect(preferences.showRestTimers).toBe(true);
-      expect(preferences.autoProgressWeights).toBe(true);
-      expect(preferences.useVoiceAnnouncements).toBe(false);
+        // Check display settings
+        expect(preferences.showRestTimers).toBe(true);
+        expect(preferences.autoProgressWeights).toBe(true);
+        expect(preferences.useVoiceAnnouncements).toBe(false);
+      }
+    });
+
+    it('should allow partial creation (overrides)', () => {
+      // Act
+      const result = CreateUserPreferencesSchema.safeParse({
+        theme: 'dark',
+        units: 'imperial',
+      });
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const preferences = result.data;
+        expect(preferences.theme).toBe('dark');
+        expect(preferences.units).toBe('imperial');
+        // Defaults preserved
+        expect(preferences.showRestTimers).toBe(true);
+      }
+    });
+
+    it('should allow partial nested updates', () => {
+      // Act
+      const result = CreateUserPreferencesSchema.safeParse({
+        notifications: {
+          workoutReminders: false,
+        },
+      });
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const preferences = result.data;
+        expect(preferences.notifications.workoutReminders).toBe(false);
+        // Other notifications preserved
+        expect(preferences.notifications.coachCheckIns).toBe(true);
+      }
     });
   });
 
-  describe('Preferences update functions', () => {
-    let defaultPrefs: UserPreferences;
+  describe('Fixtures', () => {
+    let defaultFixture: UserPreferences;
 
     beforeEach(() => {
-      defaultPrefs = createDefaultPreferences();
+      defaultFixture = createUserPreferencesFixture();
     });
 
-    it('should update theme preference', () => {
-      const updatedPrefs = {
-        ...defaultPrefs,
-        theme: 'dark',
-      };
-
-      expect(updatedPrefs.theme).toBe('dark');
+    it('should create valid fixture', () => {
+      expect(defaultFixture.theme).toBeDefined();
+      expect(defaultFixture.notifications).toBeDefined();
     });
 
-    it('should update units preference', () => {
-      const updatedPrefs = {
-        ...defaultPrefs,
-        units: 'imperial',
-      };
-
-      expect(updatedPrefs.units).toBe('imperial');
-    });
-
-    it('should update notification preferences', () => {
-      const updatedPrefs = {
-        ...defaultPrefs,
-        notifications: {
-          ...defaultPrefs.notifications,
-          workoutReminders: false,
-          reminderTime: '18:00',
-        },
-      };
-
-      expect(updatedPrefs.notifications.workoutReminders).toBe(false);
-      expect(updatedPrefs.notifications.reminderTime).toBe('18:00');
-    });
-
-    it('should update privacy settings', () => {
-      const updatedPrefs = {
-        ...defaultPrefs,
-        privacy: {
-          ...defaultPrefs.privacy,
-          profileVisible: false,
-        },
-      };
-
-      expect(updatedPrefs.privacy.profileVisible).toBe(false);
-    });
-
-    it('should update coaching preferences', () => {
-      const updatedPrefs = {
-        ...defaultPrefs,
-        coaching: {
-          ...defaultPrefs.coaching,
-          checkInFrequency: 'daily',
-          tone: 'tough_love',
-        },
-      };
-
-      expect(updatedPrefs.coaching.checkInFrequency).toBe('daily');
-      expect(updatedPrefs.coaching.tone).toBe('tough_love');
+    it('should allow fixture overrides', () => {
+      const customFixture = createUserPreferencesFixture({
+        theme: 'dark'
+      });
+      expect(customFixture.theme).toBe('dark');
     });
   });
 });

@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { TemplateRules, LocationType } from '../template-rules.types.js';
 import { ExperienceLevel } from '@bene/shared';
+import { TemplateRules, LocationType } from '../template-rules.types.js';
+import { templateRulesFromPersistence } from '../template-rules.factory.js';
 
 export function createTemplateRulesFixture(overrides?: Partial<TemplateRules>): TemplateRules {
-  return {
+  const data = {
     minExperienceLevel: faker.helpers.arrayElement(['beginner', 'intermediate'] as ExperienceLevel[]),
     maxExperienceLevel: faker.helpers.arrayElement(['intermediate', 'advanced'] as ExperienceLevel[]),
     requiredDaysPerWeek: faker.number.int({ min: 1, max: 7 }),
@@ -16,4 +17,12 @@ export function createTemplateRulesFixture(overrides?: Partial<TemplateRules>): 
     customizableParameters: [],
     ...overrides,
   };
+
+  const result = templateRulesFromPersistence(data);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create TemplateRules fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

@@ -1,27 +1,27 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { ConnectedServiceCommands } from '@core/index.js';
+import {
+  ConnectedServiceCommands,
+  toConnectedServiceView,
+  type ConnectedServiceView,
+} from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
 import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
 
-// Single request schema with ALL fields
+/**
+ * Input schema
+ */
 export const DisconnectServiceRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  serviceId: z.string(),
+  userId: z.uuid(),
+  serviceId: z.uuid(),
 });
 
 export type DisconnectServiceRequest = z.infer<typeof DisconnectServiceRequestSchema>;
 
-export const DisconnectServiceResponseSchema = z.object({
-  serviceId: z.string(),
-  disconnected: z.boolean(),
-});
-
-// Zod inferred type with original name
-export type DisconnectServiceResponse = z.infer<typeof DisconnectServiceResponseSchema>;
+/**
+ * Response type - uses domain view
+ */
+export type DisconnectServiceResponse = ConnectedServiceView;
 
 export class DisconnectServiceUseCase extends BaseUseCase<
   DisconnectServiceRequest,
@@ -65,9 +65,7 @@ export class DisconnectServiceUseCase extends BaseUseCase<
       }),
     );
 
-    return Result.ok({
-      serviceId: request.serviceId,
-      disconnected: true,
-    });
+    // 6. Map to view and return
+    return Result.ok(toConnectedServiceView(disconnectedService));
   }
 }

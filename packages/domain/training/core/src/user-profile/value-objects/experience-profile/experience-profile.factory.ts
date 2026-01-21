@@ -1,44 +1,101 @@
-import { Guard, Result } from '@bene/shared';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  CurrentCapabilities,
-  ExperienceLevel,
   ExperienceProfile,
-  TrainingHistory,
+  ExperienceProfileSchema,
+  TrainingHistorySchema
 } from './experience-profile.types.js';
 
-export interface CreateExperienceProfileProps {
-  level: ExperienceLevel;
-  history?: Partial<TrainingHistory>;
-  capabilities: CurrentCapabilities;
+/**
+ * ============================================================================
+ * EXPERIENCE PROFILE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. experienceProfileFromPersistence() - For fixtures & DB hydration
+ * 2. CreateExperienceProfileSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands ExperienceProfile */
+function validateExperienceProfile(data: unknown): Result<ExperienceProfile> {
+  const parseResult = ExperienceProfileSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  return Result.ok(parseResult.data);
 }
 
-export function createExperienceProfile(props: {
-  level: ExperienceLevel;
-  history?: Partial<TrainingHistory>;
-  capabilities: CurrentCapabilities;
-}): Result<ExperienceProfile> {
-  const guards = [
-    Guard.againstNullOrUndefinedBulk([
-      { argument: props.level, argumentName: 'level' },
-      { argument: props.capabilities, argumentName: 'capabilities' },
-    ]),
-  ];
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-  if (props.history?.yearsTraining !== undefined) {
-    guards.push(Guard.againstNegative(props.history.yearsTraining, 'yearsTraining'));
-  }
-  const guardResult = Guard.combine(guards);
-  if (guardResult && guardResult.isFailure) return Result.fail(guardResult.error);
+/**
+ * Rehydrates ExperienceProfile from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function experienceProfileFromPersistence(
+  data: Unbrand<ExperienceProfile>,
+): Result<ExperienceProfile> {
+  return Result.ok(data as ExperienceProfile);
+}
 
-  return Result.ok({
-    level: props.level,
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating ExperienceProfile with domain validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateExperienceProfileSchema>
+ */
+export const CreateExperienceProfileSchema: z.ZodType<ExperienceProfile> = ExperienceProfileSchema.pick({
+  level: true,
+  capabilities: true,
+}).extend({
+  history: TrainingHistorySchema.optional(),
+  lastAssessmentDate: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  // Build the entity with defaults
+  const data = {
+    level: input.level,
     history: {
-      yearsTraining: props.history?.yearsTraining,
-      previousPrograms: props.history?.previousPrograms || [],
-      sports: props.history?.sports || [],
-      certifications: props.history?.certifications || [],
+      yearsTraining: input.history?.yearsTraining,
+      previousPrograms: input.history?.previousPrograms || [],
+      sports: input.history?.sports || [],
+      certifications: input.history?.certifications || [],
     },
-    capabilities: props.capabilities,
-    lastAssessmentDate: new Date(),
-  });
+    capabilities: input.capabilities,
+    lastAssessmentDate: input.lastAssessmentDate || new Date(),
+  };
+
+  // Validate and brand
+  const validationResult = validateExperienceProfile(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateExperienceProfileSchema or call via transform.
+ */
+export function createExperienceProfile(
+  params: z.input<typeof CreateExperienceProfileSchema>,
+): Result<ExperienceProfile> {
+  const parseResult = CreateExperienceProfileSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data as ExperienceProfile);
 }

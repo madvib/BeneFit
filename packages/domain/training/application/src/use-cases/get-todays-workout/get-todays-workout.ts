@@ -4,7 +4,7 @@ import { FitnessPlanQueries, toWorkoutTemplateView } from '@bene/training-core';
 import type { WorkoutTemplateView } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 export const GetTodaysWorkoutRequestSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
 });
 
 export type GetTodaysWorkoutRequest = z.infer<typeof GetTodaysWorkoutRequestSchema>;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createCompletedWorkout } from '../completed-workout.factory.js';
-import { createMinimalCompletedWorkoutFixture } from './completed-workout.fixtures.js';
+import { z } from 'zod';
+import { createMinimalPerformanceFixture } from '@/workouts/value-objects/index.js';
 import { createFireReactionFixture, createStrongReactionFixture } from '../../reaction/test/reaction.fixtures.js';
 import {
   addReaction,
@@ -9,35 +9,75 @@ import {
   makePrivate,
 } from '../completed-workout.commands.js';
 import * as Queries from '../completed-workout.queries.js';
+import { CreateCompletedWorkoutSchema } from '../completed-workout.factory.js';
+import { createCompletedWorkoutFixture, createCompletedWorkoutInputFixture } from './completed-workout.fixtures.js';
+
+type CreateWorkoutInput = z.input<typeof CreateCompletedWorkoutSchema>;
 
 describe('CompletedWorkout', () => {
-  describe('factory', () => {
+  describe('Factory', () => {
     it('should create a valid completed workout', () => {
-      // Fixture uses factory internally, so this implicitly tests factory
-      const workout = createMinimalCompletedWorkoutFixture();
+      // Arrange
+      const performance = createMinimalPerformanceFixture();
+      const input = {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        workoutType: 'strength' as const,
+        performance,
+        verification: { verifications: [{ method: 'manual', data: null }] },
+        isPublic: true,
+      };
 
-      expect(workout.id).toBeDefined();
-      expect(workout.createdAt).toBeDefined();
-      expect(workout.userId).toBeDefined();
-      expect(workout.workoutType).toBeDefined();
+      // Act
+      const result = CreateCompletedWorkoutSchema.safeParse(input);
+
+      // Assert
+      if (!result.success) {
+        throw new Error(`Validation Error: ${ JSON.stringify(result.error.format(), null, 2) }`);
+      }
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const workout = result.data;
+        expect(workout.id).toBeDefined();
+        expect(workout.createdAt).toBeInstanceOf(Date);
+        expect(workout.userId).toBe(input.userId);
+        expect(workout.workoutType).toBe(input.workoutType);
+      }
     });
 
     it('should fail if required properties are missing', () => {
-      // Manually calling factory to test failure case
-      const validWorkout = createMinimalCompletedWorkoutFixture();
+      // Arrange
+      const now = new Date();
+      const input = {
+        workoutType: 'strength',
+        completedAt: now,
+        // userId missing
+      };
 
-      const result = createCompletedWorkout({
-        ...validWorkout,
-        userId: '',
-      });
+      // Act
+      const result = CreateCompletedWorkoutSchema.safeParse(input);
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
   });
 
-  describe('commands', () => {
+  describe('Fixtures', () => {
+    it('should create valid fixture', () => {
+      const workout = createCompletedWorkoutFixture();
+      expect(workout.id).toBeDefined();
+      expect(workout.userId).toBeDefined();
+      expect(workout.reactions).toBeInstanceOf(Array);
+    });
+
+    it('should allow fixture overrides', () => {
+      const workout = createCompletedWorkoutFixture({ isPublic: false });
+      expect(workout.isPublic).toBe(false);
+    });
+  });
+
+  describe('Commands', () => {
     it('should add a reaction', () => {
-      const workout = createMinimalCompletedWorkoutFixture();
+      const workout = createCompletedWorkoutFixture();
       const reaction = createFireReactionFixture();
 
       const result = addReaction(workout, reaction);
@@ -50,7 +90,7 @@ describe('CompletedWorkout', () => {
     });
 
     it('should update existing reaction from same user', () => {
-      const workout = createMinimalCompletedWorkoutFixture();
+      const workout = createCompletedWorkoutFixture();
       const userId = 'user-test-update';
       const reaction1 = createFireReactionFixture({ userId });
       const reaction2 = createStrongReactionFixture({ userId }); // Same user
@@ -69,7 +109,7 @@ describe('CompletedWorkout', () => {
     });
 
     it('should remove a reaction', () => {
-      const workout = createMinimalCompletedWorkoutFixture();
+      const workout = createCompletedWorkoutFixture();
       const reaction = createFireReactionFixture();
       const addResult = addReaction(workout, reaction);
       if (addResult.isFailure) throw new Error('Failed to add reaction');
@@ -84,54 +124,46 @@ describe('CompletedWorkout', () => {
     });
 
     it('should make workout public', () => {
-      const workout = createMinimalCompletedWorkoutFixture({ isPublic: false });
+      const workout = createCompletedWorkoutFixture({ isPublic: false });
 
       const publicWorkout = makePublic(workout);
       expect(publicWorkout.isPublic).toBe(true);
     });
 
     it('should make workout private', () => {
-      const workout = createMinimalCompletedWorkoutFixture({ isPublic: true });
+      const workout = createCompletedWorkoutFixture({ isPublic: true });
 
       const privateWorkout = makePrivate(workout);
       expect(privateWorkout.isPublic).toBe(false);
     });
   });
 
-  describe('queries', () => {
+  describe('Queries', () => {
     it('should calculate total volume', () => {
-      // Need specific performance data for this test, so we might need to override validPerformance in fixture
-      // or rely on fixture defaults if they are constant. 
-      // Current fixture uses createMinimalPerformanceFixture which might be empty or randomized?
-      // Let's create a specific structure for volume test.
-      // But we should try to use fixtures mostly.
-      const workout = createMinimalCompletedWorkoutFixture({
-        // Override performance manually for clear test setup if fixture is random
-        performance: {
-          ...createMinimalCompletedWorkoutFixture().performance,
-          activities: [{
-            activityType: 'main',
-            completed: true,
-            durationMinutes: 30,
-            exercises: [{
-              name: 'Bench',
-              setsCompleted: 1,
-              setsPlanned: 1,
-              reps: [10],
-              weight: [100]
-            }]
+      // Arrange
+      const performance = createMinimalPerformanceFixture({
+        activities: [{
+          activityType: 'main',
+          completed: true,
+          durationMinutes: 30,
+          exercises: [{
+            name: 'Bench',
+            setsCompleted: 1,
+            setsPlanned: 1,
+            reps: [10],
+            weight: [100],
           }]
-        }
+        }]
       });
 
+      const workout = createCompletedWorkoutFixture({ performance });
+
+      // Act & Assert
       expect(Queries.getTotalVolume(workout)).toBe(1000); // 10 * 100
     });
 
-    // ... other query tests can be similarily adapted or keep using defaults if minimal fixture sufficient
-    // For simplicity, adapting one more:
-
     it('should count reactions', () => {
-      const workout = createMinimalCompletedWorkoutFixture();
+      const workout = createCompletedWorkoutFixture();
       const r1 = createFireReactionFixture({ userId: 'u1' });
       const r2 = createStrongReactionFixture({ userId: 'u2' });
 

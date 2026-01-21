@@ -15,9 +15,3 @@ export * as profile from './hooks/use-profile';
 export * as workouts from './hooks/use-workouts';
 export * as wss from './hooks/use-websocket';
 export { useSession } from './hooks/use-session';
-
-/**
- * Gateway fixtures for testing and storybook
- * Generated from @bene/gateway during build
- */
-export * as fixtures from './generated/fixtures';

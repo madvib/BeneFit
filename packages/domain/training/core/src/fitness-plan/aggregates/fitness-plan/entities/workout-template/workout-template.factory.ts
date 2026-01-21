@@ -1,78 +1,130 @@
-// workout-template.factory.ts
-import { Result, Guard } from '@bene/shared';
-import { WorkoutTemplate, WorkoutTemplateData, WorkoutTemplateView } from './workout-template.types.js';
-import { WorkoutTemplateValidationError } from '../../../../errors/fitness-plan-errors.js';
-
-type CreateTemplateParams = Omit<WorkoutTemplateData, 'status'> & { id: string };
+import { z } from 'zod';
+import { randomUUID } from 'crypto';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import {
+  WorkoutTemplate,
+  WorkoutTemplateSchema,
+  WorkoutStatusSchema,
+  WORKOUT_TEMPLATE_ERRORS,
+} from './workout-template.types.js';
+import { WorkoutTemplateValidationError } from '@/fitness-plan/errors/index.js';
 
 /**
- * FACTORY: Creates a new WorkoutTemplate instance with validation.
+ * ============================================================================
+ * WORKOUT TEMPLATE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. workoutTemplateFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWorkoutTemplateSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
  */
-export function createWorkoutTemplate(
-  props: CreateTemplateParams,
-): Result<WorkoutTemplate> {
-  const guardResult = Guard.combine([
-    // ... all Guard checks remain the same ...
-    Guard.againstEmptyString(props.title, 'title'),
-    Guard.againstNullOrUndefined(props.weekNumber, 'weekNumber'),
-  ]);
 
-  if (guardResult.isFailure) return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-  // Business rule validation (Day of Week, Week Number, Activities, Date) remains the same.
-  if (props.dayOfWeek < 0 || props.dayOfWeek > 6) {
-    return Result.fail(
-      new WorkoutTemplateValidationError('Day of week must be 0-6', {
-        dayOfWeek: props.dayOfWeek,
-      }),
-    );
+/** Validates and brands data with WorkoutTemplateSchema and business rules */
+function validateAndBrand(data: unknown): Result<WorkoutTemplate> {
+  const parseResult = WorkoutTemplateSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
-  if (props.type !== 'rest' && props.activities.length === 0) {
+
+  const validated = parseResult.data;
+
+  // Business rule validation (cross-field)
+  if (validated.type !== 'rest' && validated.activities.length === 0) {
     return Result.fail(
       new WorkoutTemplateValidationError(
-        'Non-rest workouts must have at least one activity',
-        { type: props.type },
+        WORKOUT_TEMPLATE_ERRORS.MISSING_ACTIVITIES,
+        { type: validated.type },
       ),
     );
   }
 
-  const data: WorkoutTemplateData = {
-    ...props,
-    status: 'scheduled',
-  };
-
-  return Result.ok(data);
+  return Result.ok(validated);
 }
 
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
 /**
- * FACTORY: Rehydrates WorkoutTemplate from persistence.
+ * Rehydrates WorkoutTemplate from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
  */
 export function workoutTemplateFromPersistence(
-  data: WorkoutTemplateData,
+  data: Unbrand<WorkoutTemplate>,
 ): Result<WorkoutTemplate> {
-  return Result.ok(data);
+  return Result.ok(data as WorkoutTemplate);
 }
 
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-import { getEstimatedDuration, isPastDue, isCompleted } from './workout-template.queries.js';
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
 /**
- * Map WorkoutTemplate entity to view model (API presentation)
- * Notes: 
- * - Dates are converted to ISO strings
- * - Value objects (Goals, Activities) are reused directly as they have no client-sensitive data
- * - Enriched with computed properties (estimatedDuration, isPastDue)
+ * Zod transform for creating a new WorkoutTemplate.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateWorkoutTemplateSchema>
  */
-export function toWorkoutTemplateView(template: WorkoutTemplate): WorkoutTemplateView {
-  return {
-    ...template,
-    scheduledDate: template.scheduledDate.toISOString(),
-    rescheduledTo: template.rescheduledTo?.toISOString(),
-    estimatedDuration: getEstimatedDuration(template),
-    isPastDue: isPastDue(template),
-    isCompleted: isCompleted(template),
+export const CreateWorkoutTemplateSchema = WorkoutTemplateSchema.pick({
+  planId: true,
+  weekNumber: true,
+  dayOfWeek: true,
+  scheduledDate: true,
+  title: true,
+  description: true,
+  type: true,
+  category: true,
+  goals: true,
+  activities: true,
+  importance: true,
+  alternatives: true,
+}).extend({
+  id: z.uuid().optional(),
+  status: WorkoutStatusSchema.optional(),
+  rescheduledTo: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  // Build the entity with defaults
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    status: input.status ?? 'scheduled',
+    rescheduledTo: input.rescheduledTo,
+    completedWorkoutId: undefined,
+    userNotes: undefined,
+    coachNotes: undefined,
   };
+
+  // Validate and brand
+  const validationResult = validateAndBrand(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<WorkoutTemplate>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWorkoutTemplateSchema or call via transform.
+ */
+export function createWorkoutTemplate(
+  params: z.infer<typeof CreateWorkoutTemplateSchema>,
+): Result<WorkoutTemplate> {
+  const data = {
+    ...params,
+    id: params.id || randomUUID(),
+    status: params.status ?? 'scheduled',
+    rescheduledTo: params.rescheduledTo,
+    completedWorkoutId: undefined,
+    userNotes: undefined,
+    coachNotes: undefined,
+  };
+
+  return validateAndBrand(data);
 }

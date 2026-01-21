@@ -1,83 +1,96 @@
-import { Guard, Result, VALID_DAYS } from '@bene/shared';
-import { ConstraintsValidationError } from '@/shared/errors/index.js';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError, VALID_DAYS } from '@bene/shared';
 import {
   TrainingConstraints,
-  Injury,
-  TrainingLocation,
-  PreferredTime,
+  TrainingConstraintsSchema,
 } from './training-constraints.types.js';
 
-export interface TrainingConstraintsProps {
-  readonly injuries?: readonly Injury[];
-  readonly availableDays: readonly string[]; // ['Monday', 'Wednesday', 'Friday']
-  readonly preferredTime?: PreferredTime;
-  readonly maxDuration?: number; // minutes per workout
-  readonly availableEquipment: readonly string[];
-  readonly location: TrainingLocation;
-}
+/**
+ * ============================================================================
+ * TRAINING CONSTRAINTS FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. trainingConstraintsFromPersistence() - For fixtures & DB hydration
+ * 2. CreateTrainingConstraintsSchema - Zod transform for API boundaries
+ * 3. Specialized factories (createHomeTrainingConstraints, etc.)
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-export function createTrainingConstraints(
-  props: TrainingConstraintsProps,
-): Result<TrainingConstraints> {
-  // Validate available days
-  if (props.availableDays.length === 0) {
-    return Result.fail(
-      new ConstraintsValidationError('Must have at least one available day'),
-    );
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands data with TrainingConstraintsSchema and business rules */
+function validateAndBrand(data: unknown): Result<TrainingConstraints> {
+  const parseResult = TrainingConstraintsSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  for (const day of props.availableDays) {
+  const validated = parseResult.data;
+
+  // Domain Rule: Must have at least one available day
+  if (validated.availableDays.length === 0) {
+    return Result.fail(new Error('Must have at least one available day'));
+  }
+
+  // Domain Rule: Days must be valid
+  for (const day of validated.availableDays) {
     if (!VALID_DAYS.includes(day)) {
-      return Result.fail(
-        new ConstraintsValidationError(
-          `Invalid day: ${ day }. Must be one of: ${ VALID_DAYS.join(', ') }`,
-          { day, validDays: VALID_DAYS },
-        ),
-      );
+      return Result.fail(new Error(`Invalid day: ${ day }. Must be one of: ${ VALID_DAYS.join(', ') }`));
     }
   }
 
-  // Check for duplicate days
-  const uniqueDays = new Set(props.availableDays);
-  if (uniqueDays.size !== props.availableDays.length) {
-    return Result.fail(
-      new ConstraintsValidationError('Duplicate days in available days', {
-        availableDays: props.availableDays,
-      }),
-    );
+  // Domain Rule: No duplicate days
+  const uniqueDays = new Set(validated.availableDays);
+  if (uniqueDays.size !== validated.availableDays.length) {
+    return Result.fail(new Error('Duplicate days in available days'));
   }
 
-  // Validate max duration
-  if (props.maxDuration !== undefined && props.maxDuration <= 0) {
-    return Result.fail(
-      new ConstraintsValidationError('Max duration must be positive', {
-        maxDuration: props.maxDuration,
-      }),
-    );
-  }
-
-  // Validate injuries
-  if (props.injuries) {
-    for (const injury of props.injuries) {
-      const injuryGuard = Guard.combine([
-        Guard.againstEmptyString(injury.bodyPart, 'injury body part'),
-        Guard.againstEmptyString(injury.severity, 'injury severity'),
-      ]);
-      if (injuryGuard.isFailure) {
-        return Result.fail(injuryGuard.error);
-      }
-    }
-  }
-
-  return Result.ok(props);
+  return Result.ok(validated);
 }
 
-// Factory methods for common constraint configurations
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates TrainingConstraints from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function trainingConstraintsFromPersistence(
+  data: Unbrand<TrainingConstraints>,
+): Result<TrainingConstraints> {
+  return Result.ok(data as TrainingConstraints);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating new TrainingConstraints.
+ * Use at API boundaries (controllers, resolvers).
+ */
+export const CreateTrainingConstraintsSchema: z.ZodType<TrainingConstraints> = TrainingConstraintsSchema.transform(
+  (input, ctx) => {
+    const result = validateAndBrand(input);
+    return unwrapOrIssue(result, ctx);
+  },
+);
+
+// ============================================================================
+// 3. SPECIALIZED FACTORIES
+// ============================================================================
+
 export function createHomeTrainingConstraints(
   availableDays: string[],
   equipment: string[] = [],
 ): Result<TrainingConstraints> {
-  return createTrainingConstraints({
+  return validateAndBrand({
     availableDays,
     availableEquipment: equipment,
     location: 'home',
@@ -88,7 +101,7 @@ export function createGymTrainingConstraints(
   availableDays: string[],
   maxDuration: number,
 ): Result<TrainingConstraints> {
-  return createTrainingConstraints({
+  return validateAndBrand({
     availableDays,
     maxDuration,
     availableEquipment: [],
@@ -96,14 +109,13 @@ export function createGymTrainingConstraints(
   });
 }
 
-export function createInjuryConstraints(
-  availableDays: string[],
-  injuries: Injury[],
-): Result<TrainingConstraints> {
-  return createTrainingConstraints({
-    availableDays,
-    injuries,
-    availableEquipment: [],
-    location: 'home',
-  });
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateTrainingConstraintsSchema or call via transform.
+ */
+export function createTrainingConstraints(props: unknown): Result<TrainingConstraints> {
+  return validateAndBrand(props);
 }

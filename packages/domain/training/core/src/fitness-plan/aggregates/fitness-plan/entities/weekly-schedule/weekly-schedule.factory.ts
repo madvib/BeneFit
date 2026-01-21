@@ -1,104 +1,123 @@
-// weekly-schedule.factory.ts
-import { Result, Guard } from '@bene/shared';
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { WeeklySchedule, WeeklyScheduleView } from './weekly-schedule.types.js';
-import { ScheduleValidationError } from '../../../../errors/fitness-plan-errors.js';
-import { toWorkoutTemplateView } from '../workout-template/workout-template.factory.js';
-
-type CreateScheduleParams = Omit<WeeklySchedule, 'id' | 'workoutsCompleted'>;
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { ScheduleValidationError } from '@/fitness-plan/errors/index.js';
+import { WeeklySchedule, WeeklyScheduleSchema } from './weekly-schedule.types.js';
 
 /**
- * FACTORY: Creates a new WeeklySchedule instance with validation.
- * Generates a unique ID internally.
- * Returns a new, immutable WeeklySchedule object upon success.
+ * ============================================================================
+ * WEEKLY SCHEDULE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. weeklyScheduleFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWeeklyScheduleSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
  */
-export function createWeeklySchedule(
-  params: CreateScheduleParams,
-): Result<WeeklySchedule> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(params.planId, 'planId'),
-    Guard.againstEmptyString(params.focus, 'focus'),
-    Guard.againstNullOrUndefined(params.weekNumber, 'weekNumber'),
-    // ... other guards
-  ]);
 
-  if (guardResult.isFailure) return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-  // Business rule validation
-  if (params.weekNumber < 1) {
-    return Result.fail(
-      new ScheduleValidationError('Week number must be >= 1', {
-        weekNumber: params.weekNumber,
-      }),
-    );
+/** Validates and brands data with WeeklyScheduleSchema and business rules */
+function validateAndBrand(data: unknown): Result<WeeklySchedule> {
+  const parseResult = WeeklyScheduleSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
-  if (params.targetWorkouts < 0) {
-    return Result.fail(
-      new ScheduleValidationError('Target workouts must be >= 0', {
-        targetWorkouts: params.targetWorkouts,
-      }),
-    );
-  }
-  // Date validation
-  if (params.startDate >= params.endDate) {
+
+  const validated = parseResult.data;
+
+  // Business rule validation (cross-field)
+  if (validated.startDate >= validated.endDate) {
     return Result.fail(
       new ScheduleValidationError('Start date must be before end date', {
-        startDate: params.startDate,
-        endDate: params.endDate,
+        startDate: validated.startDate,
+        endDate: validated.endDate,
       }),
     );
   }
 
-  // Workouts count validation
-  if (params.workouts.length > params.targetWorkouts) {
+  if (validated.workouts.length > validated.targetWorkouts) {
     return Result.fail(
-      new ScheduleValidationError(
-        'Cannot have more workouts than target',
-        { workoutsCount: params.workouts.length, targetWorkouts: params.targetWorkouts },
-      ),
+      new ScheduleValidationError('Cannot have more workouts than target', {
+        workoutsCount: validated.workouts.length,
+        targetWorkouts: validated.targetWorkouts,
+      }),
     );
   }
 
-  // All validations passed, create the schedule
-  return Result.ok({
-    id: randomUUID(), // Generate ID internally
-    weekNumber: params.weekNumber,
-    planId: params.planId,
-    startDate: params.startDate,
-    endDate: params.endDate,
-    focus: params.focus,
-    targetWorkouts: params.targetWorkouts,
-    workoutsCompleted: 0,
-    workouts: params.workouts,
-  });
+  return Result.ok(validated);
 }
 
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
 /**
- * FACTORY: Rehydrates WeeklySchedule from the database.
+ * Rehydrates WeeklySchedule from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
  */
 export function weeklyScheduleFromPersistence(
-  data: WeeklySchedule,
+  data: Unbrand<WeeklySchedule>,
 ): Result<WeeklySchedule> {
-  // Perform any necessary data transformation or re-validation here if needed
-  return Result.ok(data);
+  return Result.ok(data as WeeklySchedule);
 }
 
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-import { getWeekStatus } from './weekly-schedule.queries.js';
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
 /**
- * Map WeeklySchedule entity to view model (API presentation)
+ * Zod transform for creating a new WeeklySchedule.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateWeeklyScheduleSchema>
  */
-export function toWeeklyScheduleView(schedule: WeeklySchedule): WeeklyScheduleView {
-  return {
-    ...schedule,
-    startDate: schedule.startDate.toISOString(),
-    endDate: schedule.endDate.toISOString(),
-    // Workouts mapped to their view representation
-    workouts: schedule.workouts.map(toWorkoutTemplateView),
-    progress: getWeekStatus(schedule),
+export const CreateWeeklyScheduleSchema = WeeklyScheduleSchema.pick({
+  planId: true,
+  weekNumber: true,
+  startDate: true,
+  endDate: true,
+  focus: true,
+  targetWorkouts: true,
+  workouts: true,
+  notes: true,
+}).extend({
+  id: z.uuid().optional(),
+  workoutsCompleted: z.number().int().min(0).optional(),
+}).transform((input, ctx) => {
+  // Build the entity with defaults
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    workoutsCompleted: input.workoutsCompleted ?? 0,
   };
+
+  // Validate and brand
+  const validationResult = validateAndBrand(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<WeeklySchedule>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWeeklyScheduleSchema or call via transform.
+ */
+export function createWeeklySchedule(
+  params: z.input<typeof CreateWeeklyScheduleSchema>,
+): Result<WeeklySchedule> {
+  // We can't use .parse() here because it throws, and we need a Result
+  // We manually build the data object to match what the transform would do
+  const data = {
+    ...params,
+    id: params.id || randomUUID(),
+    workoutsCompleted: params.workoutsCompleted ?? 0,
+  };
+
+  return validateAndBrand(data);
 }

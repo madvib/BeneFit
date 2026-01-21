@@ -4,9 +4,9 @@ import { WeeklySchedule } from './weekly-schedule.types.js';
 import {
   ScheduleConflictError,
   WorkoutNotFoundError,
-  ScheduleModificationError,
-} from '../../../../errors/fitness-plan-errors.js';
-import { WorkoutTemplate } from '../workout-template/workout-template.types.js';
+  ScheduleModificationError
+} from '@/fitness-plan/errors/index.js';
+import { WorkoutTemplate } from '../workout-template/index.js';
 
 /**
  * COMMAND: Adds a workout to the schedule.

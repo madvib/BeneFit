@@ -1,44 +1,59 @@
-export type TemplateDuration =
-  | { type: 'fixed'; weeks: number }
-  | { type: 'variable'; min: number; max: number };
+import { z } from 'zod';
 
-export type TemplateFrequency =
-  | { type: 'fixed'; workoutsPerWeek: number }
-  | { type: 'flexible'; min: number; max: number };
+export const TemplateDurationSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('fixed'), weeks: z.number().int().min(1).max(52) }),
+  z.object({
+    type: z.literal('variable'),
+    min: z.number().int().min(1).max(52),
+    max: z.number().int().min(1).max(52),
+  }),
+]).readonly();
+export type TemplateDuration = z.infer<typeof TemplateDurationSchema>;
 
-export interface WorkoutActivityTemplate {
-  activityType: 'warmup' | 'main' | 'cooldown';
-  template: string; // Template string with {{variables}}
-  variables: Record<string, unknown>; // Default variable values
-}
+export const TemplateFrequencySchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('fixed'), workoutsPerWeek: z.number().int().min(1).max(7) }),
+  z.object({
+    type: z.literal('flexible'),
+    min: z.number().int().min(1).max(7),
+    max: z.number().int().min(1).max(7),
+  }),
+]).readonly();
+export type TemplateFrequency = z.infer<typeof TemplateFrequencySchema>;
 
-export interface WorkoutDayTemplate {
-  dayOfWeek?: number; // 0-6, undefined = flexible
-  type: 'strength' | 'cardio' | 'mobility' | 'sport' | 'rest';
-  durationMinutes: number | string; // number or formula: "{{baseMinutes}} + ({{weekNumber}} * 5)"
-  activities: WorkoutActivityTemplate[];
-}
+export const WorkoutActivityTemplateSchema = z.object({
+  activityType: z.enum(['warmup', 'main', 'cooldown']),
+  template: z.string().min(1).max(1000),
+  variables: z.record(z.string(), z.unknown()),
+}).readonly();
+export type WorkoutActivityTemplate = z.infer<typeof WorkoutActivityTemplateSchema>;
 
-export interface WeekTemplate {
-  weekNumber: number | '*'; // * = applies to all weeks not explicitly defined
-  workouts: WorkoutDayTemplate[];
-}
+export const WorkoutDayTemplateSchema = z.object({
+  dayOfWeek: z.number().int().min(0).max(6).optional(),
+  type: z.enum(['strength', 'cardio', 'mobility', 'sport', 'rest']),
+  durationMinutes: z.union([z.number().int().min(0), z.string()]),
+  activities: z.array(WorkoutActivityTemplateSchema),
+}).readonly();
+export type WorkoutDayTemplate = z.infer<typeof WorkoutDayTemplateSchema>;
 
-interface TemplateStructureData {
-  duration: TemplateDuration;
-  frequency: TemplateFrequency;
-  weeks: WeekTemplate[];
-  deloadWeeks?: number[]; // Which week numbers are deload weeks
-  progressionFormula?: string; // e.g., "{{volume}} * 1.1" per week
-}
+export const WeekTemplateSchema = z.object({
+  weekNumber: z.union([z.number().int().min(1).max(52), z.literal('*')]),
+  workouts: z.array(WorkoutDayTemplateSchema),
+}).readonly();
+export type WeekTemplate = z.infer<typeof WeekTemplateSchema>;
 
-export type TemplateStructure = Readonly<TemplateStructureData>;
+/**
+ * 1. DEFINE PROPS SCHEMA
+ */
+export const TemplateStructureSchema = z.object({
+  duration: TemplateDurationSchema,
+  frequency: TemplateFrequencySchema,
+  weeks: z.array(WeekTemplateSchema),
+  deloadWeeks: z.array(z.number().int().min(1).max(52)).optional(),
+  progressionFormula: z.string().min(1).max(500).optional(),
+});
 
-// View Interface
-export interface TemplateStructureView {
-  duration: TemplateDuration;
-  frequency: TemplateFrequency;
-  weeks: WeekTemplate[];
-  deloadWeeks?: number[];
-  progressionFormula?: string;
-}
+/**
+ * 2. INFER TYPES
+ */
+export type TemplateStructure = Readonly<z.infer<typeof TemplateStructureSchema>>;
+

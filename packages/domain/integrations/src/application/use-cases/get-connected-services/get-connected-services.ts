@@ -1,38 +1,25 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
+import { toConnectedServiceView, type ConnectedServiceView } from '@core/index.js';
 import { ConnectedServiceRepository } from '@app/index.js';
 
-// Deprecated original interface - preserve for potential rollback
-
-
-// Zod schema for request validation
+/**
+ * Input schema
+ */
 export const GetConnectedServicesRequestSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
 });
 
-// Zod inferred type with original name
 export type GetConnectedServicesRequest = z.infer<
   typeof GetConnectedServicesRequestSchema
 >;
 
-// Response-only DTO schemas (not shared - specific to this use case)
-const ServiceSchema = z.object({
-  id: z.string(),
-  serviceType: z.string().min(1).max(50),
-  isActive: z.boolean(),
-  isPaused: z.boolean(),
-  lastSyncAt: z.date().optional(),
-  syncStatus: z.string().min(1).max(50),
-});
-
-export const GetConnectedServicesResponseSchema = z.object({
-  services: z.array(ServiceSchema),
-});
-
-// Zod inferred type with original name
-export type GetConnectedServicesResponse = z.infer<
-  typeof GetConnectedServicesResponseSchema
->;
+/**
+ * Response type - array of domain views
+ */
+export type GetConnectedServicesResponse = {
+  services: ConnectedServiceView[];
+};
 
 export class GetConnectedServicesUseCase extends BaseUseCase<
   GetConnectedServicesRequest,
@@ -52,15 +39,9 @@ export class GetConnectedServicesUseCase extends BaseUseCase<
 
     const services = servicesResult.value;
 
+    // Map all services to views
     return Result.ok({
-      services: services.map((s) => ({
-        id: s.id,
-        serviceType: s.serviceType,
-        isActive: s.isActive,
-        isPaused: s.isPaused,
-        lastSyncAt: s.lastSyncAt,
-        syncStatus: s.syncStatus?.state || 'idle',
-      })),
+      services: services.map(toConnectedServiceView),
     });
   }
 }

@@ -1,59 +1,118 @@
-import { Guard, Result } from '@bene/shared';
-import { ExperienceProfile } from '../../value-objects/experience-profile/index.js';
-import { FitnessGoals } from '../../value-objects/fitness-goals/index.js';
-import { createDefaultPreferences } from '../../value-objects/user-preferences/index.js';
-import { createUserStats } from '../../value-objects/user-stats/index.js';
-import { UserProfile } from './user-profile.types.js';
-import { TrainingConstraints } from '@/shared/value-objects/index.js';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import {
+  UserPreferencesSchema,
+  CreateUserPreferencesSchema,
+  UserStatsSchema,
+  CreateUserStatsSchema,
+} from '@/user-profile/value-objects/index.js';
 
-export interface CreateUserProfileParams {
-  userId: string;
-  displayName: string;
-  timezone: string;
-  experienceProfile: ExperienceProfile;
-  fitnessGoals: FitnessGoals;
-  trainingConstraints: TrainingConstraints;
-  avatar?: string;
-  bio?: string;
-  location?: string;
+import { UserProfile, UserProfileSchema } from './user-profile.types.js';
+
+/**
+ * ============================================================================
+ * USER PROFILE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. userProfileFromPersistence() - For fixtures & DB hydration
+ * 2. CreateUserProfileSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (DRY)
+// ============================================================================
+
+/** Validates and brands data with UserProfileSchema */
+function validateAndBrand(data: unknown): Result<UserProfile> {
+  const parseResult = UserProfileSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  return Result.ok(parseResult.data);
 }
 
-export function createUserProfile(
-  params: CreateUserProfileParams,
+// ============================================================================
+// 1. REHYDRATION FACTORY (FROM PERSISTENCE)
+// ============================================================================
+
+/**
+ * Rehydrates UserProfile from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function userProfileFromPersistence(
+  data: Unbrand<UserProfile>,
 ): Result<UserProfile> {
-  const guardResult = Guard.combine([
-    Guard.againstNullOrUndefinedBulk([
-      { argument: params.userId, argumentName: 'userId' },
-      { argument: params.displayName, argumentName: 'displayName' },
-      { argument: params.timezone, argumentName: 'timezone' },
-      { argument: params.experienceProfile, argumentName: 'experienceProfile' },
-      { argument: params.fitnessGoals, argumentName: 'fitnessGoals' },
-      { argument: params.trainingConstraints, argumentName: 'trainingConstraints' },
-    ]),
+  return Result.ok(data as UserProfile);
+}
 
-    Guard.againstEmptyString(params.userId, 'userId'),
-    Guard.againstEmptyString(params.displayName, 'displayName'),
-    Guard.againstTooLong(params.displayName, 100, 'displayName'),
-    params.bio ? Guard.againstTooLong(params.bio, 500, 'bio') : Result.ok(),
-  ]);
-  if (guardResult.isFailure) return Result.fail(guardResult.error);
+// ============================================================================
+// 2. CREATION FACTORY (FOR API BOUNDARIES)
+// ============================================================================
 
-  const now = new Date();
+/**
+ * Zod transform for creating UserProfile with validation.
+ * Use at API boundaries (controllers, resolvers).
+ */
+export const CreateUserProfileSchema: z.ZodType<UserProfile> = UserProfileSchema
+  .pick({
+    userId: true,
+    displayName: true,
+    avatar: true,
+    bio: true,
+    location: true,
+    timezone: true,
+    experienceProfile: true,
+    fitnessGoals: true,
+    trainingConstraints: true,
+  })
+  .extend({
+    preferences: UserPreferencesSchema.optional(),
+    stats: UserStatsSchema.optional(),
+    createdAt: z.coerce.date<Date>().optional(),
+    updatedAt: z.coerce.date<Date>().optional(),
+    lastActiveAt: z.coerce.date<Date>().optional(),
+  })
+  .transform((input, ctx) => {
+    const now = new Date();
 
-  return Result.ok({
-    userId: params.userId,
-    displayName: params.displayName,
-    avatar: params.avatar,
-    bio: params.bio,
-    location: params.location,
-    timezone: params.timezone,
-    experienceProfile: params.experienceProfile,
-    fitnessGoals: params.fitnessGoals,
-    trainingConstraints: params.trainingConstraints,
-    preferences: createDefaultPreferences(),
-    stats: createUserStats(now),
-    createdAt: now,
-    updatedAt: now,
-    lastActiveAt: now,
+    const data = {
+      ...input,
+      preferences: input.preferences || CreateUserPreferencesSchema.parse({}),
+      stats: input.stats || CreateUserStatsSchema.parse({ joinedAt: now }),
+      createdAt: input.createdAt || now,
+      updatedAt: input.updatedAt || now,
+      lastActiveAt: input.lastActiveAt || now,
+    };
+
+    const result = validateAndBrand(data);
+    return unwrapOrIssue(result, ctx);
   });
+
+// ============================================================================
+// LEGACY EXPORTS (FOR BACKWARD COMPATIBILITY)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateUserProfileSchema or call via transform.
+ */
+export function createUserProfile(params: unknown): Result<UserProfile> {
+  const now = new Date();
+  const input = params as any; // Legacy mapping requires property access
+
+  const data = {
+    ...input,
+    preferences: input?.preferences || CreateUserPreferencesSchema.parse({}),
+    stats: input?.stats || CreateUserStatsSchema.parse({ joinedAt: now }),
+    createdAt: input?.createdAt || now,
+    updatedAt: input?.updatedAt || now,
+    lastActiveAt: input?.lastActiveAt || now,
+  };
+
+  return validateAndBrand(data);
 }

@@ -1,34 +1,55 @@
-export interface DistanceGoal {
-  value: number;
-  unit: 'meters' | 'km' | 'miles';
-  pace?: {
-    min: number;
-    max: number;
-    target?: number;
-  };
-}
+import { z } from 'zod';
 
-export interface DurationGoal {
-  value: number;
-  intensity?: 'easy' | 'moderate' | 'hard' | 'max';
-  heartRateZone?: 1 | 2 | 3 | 4 | 5;
-}
+export const DistanceGoalSchema = z.object({
+  value: z.number().min(0).max(100000), // meters, up to 100km
+  unit: z.enum(['meters', 'km', 'miles']),
+  pace: z
+    .object({
+      min: z.number().min(0).max(600), // seconds per unit
+      max: z.number().min(0).max(600),
+      target: z.number().min(0).max(600).optional(),
+    })
+    .optional(),
+});
+export type DistanceGoal = z.infer<typeof DistanceGoalSchema>;
 
-export interface VolumeGoal {
-  totalSets: number;
-  totalReps: number;
-  targetWeight?: 'light' | 'moderate' | 'heavy' | number;
-}
+export const DurationGoalSchema = z.object({
+  value: z.number().int().min(0).max(7200), // seconds, up to 2 hours
+  intensity: z.enum(['easy', 'moderate', 'hard', 'max']).optional(),
+  heartRateZone: z
+    .union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)])
+    .optional(),
+});
+export type DurationGoal = z.infer<typeof DurationGoalSchema>;
 
-export interface CompletionCriteria {
-  mustComplete: boolean;
-  minimumEffort?: number;
-  autoVerifiable: boolean;
-}
+export const VolumeGoalSchema = z.object({
+  totalSets: z.number().int().min(1).max(50),
+  totalReps: z.number().int().min(1).max(500),
+  targetWeight: z
+    .union([
+      z.literal('light'),
+      z.literal('moderate'),
+      z.literal('heavy'),
+      z.number().min(0).max(1000), // kg
+    ])
+    .optional(),
+});
+export type VolumeGoal = z.infer<typeof VolumeGoalSchema>;
 
-export interface WorkoutGoals {
-  distance?: DistanceGoal;
-  duration?: DurationGoal;
-  volume?: VolumeGoal;
-  completionCriteria: CompletionCriteria;
-}
+export const CompletionCriteriaSchema = z.object({
+  mustComplete: z.boolean(),
+  minimumEffort: z.number().int().min(0).max(100).optional(), // percentage
+  autoVerifiable: z.boolean(),
+});
+export type CompletionCriteria = z.infer<typeof CompletionCriteriaSchema>;
+
+export const WorkoutGoalsSchema = z
+  .object({
+    distance: DistanceGoalSchema.optional(),
+    duration: DurationGoalSchema.optional(),
+    volume: VolumeGoalSchema.optional(),
+    completionCriteria: CompletionCriteriaSchema,
+  })
+  .readonly();
+
+export type WorkoutGoals = z.infer<typeof WorkoutGoalsSchema>;

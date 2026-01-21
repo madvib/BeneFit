@@ -1,32 +1,25 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
-import { UserProfileCommands } from '@bene/training-core';
+import {
+  UserProfileCommands,
+  UserPreferencesSchema,
+  UserPreferencesView,
+  toUserPreferencesView,
+} from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
-
-
-// Single request schema with ALL fields
 export const UpdatePreferencesRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  preferences: z.record(z.string(), z.unknown()).optional(),
+  userId: z.uuid(),
+  // Partial update support
+  preferences: UserPreferencesSchema.partial(), // Workaround for deepPartial lint issue for now
 });
 
-// Zod inferred type with original name
 export type UpdatePreferencesRequest = z.infer<typeof UpdatePreferencesRequestSchema>;
 
-
-
-// Zod schema for response validation
-export const UpdatePreferencesResponseSchema = z.object({
-  userId: z.string(),
-  preferences: z.record(z.string(), z.unknown()), // Using record for full preferences with string keys
-});
-
-// Zod inferred type with original name
-export type UpdatePreferencesResponse = z.infer<typeof UpdatePreferencesResponseSchema>;
+export type UpdatePreferencesResponse = {
+  userId: string;
+  preferences: UserPreferencesView;
+};
 
 export class UpdatePreferencesUseCase extends BaseUseCase<
   UpdatePreferencesRequest,
@@ -45,18 +38,21 @@ export class UpdatePreferencesUseCase extends BaseUseCase<
       return Result.fail(new Error('Profile not found'));
     }
 
-    // 2. Update preferences using command - handle undefined preferences
+    // 2. Update preferences using command
     const updatedProfile = UserProfileCommands.updatePreferences(
       profileResult.value,
-      request.preferences ?? {}, // Provide empty object if undefined
+      request.preferences ?? {},
     );
 
     // 3. Save
-    await this.profileRepository.save(updatedProfile);
+    const saveResult = await this.profileRepository.save(updatedProfile);
+    if (saveResult.isFailure) {
+      return Result.fail(saveResult.error);
+    }
 
     return Result.ok({
       userId: request.userId,
-      preferences: updatedProfile.preferences,
+      preferences: toUserPreferencesView(updatedProfile.preferences),
     });
   }
 }

@@ -1,392 +1,556 @@
-import { describe, it, expect } from 'vitest';
-import { createActivityStructure, createEmptyActivityStructure, createIntervalStructure, createExerciseStructure } from '../activity-structure.factory.js';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { CreateActivityStructureSchema, activityStructureFromPersistence } from '../activity-structure.factory.js';
+import { createActivityStructureFixture } from './activity-structure.fixtures.js';
 import { isIntervalBased, isExerciseBased, isEmpty, getTotalDuration, getTotalSets, getAverageIntensity, requiresEquipment, getDescription } from '../activity-structure.queries.js';
 import { adjustDuration, adjustIntensity, addRounds, reduceRounds, increaseRest } from '../activity-structure.commands.js';
+import { Interval } from '../activity-structure.types.js';
 
 describe('ActivityStructure', () => {
-  describe('factory methods', () => {
+  // Shared test data for validation tests
+  let validIntervals: Interval[];
+
+  beforeAll(() => {
+    validIntervals = [
+      { duration: 300, intensity: 'moderate' as const, rest: 60 },
+      { duration: 180, intensity: 'hard' as const, rest: 90 },
+    ];
+    validExercises = [
+      { name: 'Squats', sets: 3, reps: 10, rest: 90 },
+      { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+    ];
+  });
+
+  describe('creation', () => {
     it('should create empty structure', () => {
-      const structure = createEmptyActivityStructure();
+      // Arrange
+      const emptyData = {};
 
-      expect(isEmpty(structure)).toBe(true);
-      expect(structure.intervals).toBeUndefined();
-      expect(structure.exercises).toBeUndefined();
-    });
+      // Act
+      const result = activityStructureFromPersistence(emptyData);
 
-    it('should create interval-based structure', () => {
-      const intervals = [
-        { duration: 300, intensity: 'moderate' as const, rest: 60 },
-        { duration: 180, intensity: 'hard' as const, rest: 90 },
-      ];
-      const result = createIntervalStructure(intervals, 3);
-
+      // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
-        expect(isIntervalBased(result.value)).toBe(true);
-        expect(result.value.intervals?.length).toBe(2);
-        expect(result.value.rounds).toBe(3);
+        expect(isEmpty(result.value)).toBe(true);
+        expect(result.value.intervals).toBeUndefined();
+        expect(result.value.exercises).toBeUndefined();
       }
     });
 
-    it('should create exercise-based structure', () => {
-      const exercises = [
-        { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-        { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
-      ];
-      const result = createExerciseStructure(exercises);
+    it('should create interval-based structure with fixture', () => {
+      // Arrange & Act
+      const structure = createActivityStructureFixture({
+        intervals: [
+          { duration: 300, intensity: 'moderate' as const, rest: 60 },
+          { duration: 180, intensity: 'hard' as const, rest: 90 },
+        ],
+        rounds: 3,
+        exercises: undefined,
+      });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(isExerciseBased(result.value)).toBe(true);
-        expect(result.value.exercises?.length).toBe(2);
-      }
+      // Assert
+      expect(isIntervalBased(structure)).toBe(true);
+      expect(structure.intervals?.length).toBe(2);
+      expect(structure.rounds).toBe(3);
+    });
+
+    it('should create exercise-based structure with fixture', () => {
+      // Arrange & Act
+      const structure = createActivityStructureFixture({
+        exercises: [
+          { name: 'Squats', sets: 3, reps: 10, rest: 90 },
+          { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+        ],
+        intervals: undefined,
+      });
+
+      // Assert
+      expect(isExerciseBased(structure)).toBe(true);
+      expect(structure.exercises?.length).toBe(2);
     });
   });
 
   describe('validation', () => {
     it('should fail when both intervals and exercises are provided', () => {
-      const result = createActivityStructure({
-        intervals: [{ duration: 300, intensity: 'moderate', rest: 60 }],
+      // Arrange
+      const invalidInput = {
+        intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
         exercises: [{ name: 'Squats', sets: 3, reps: 10, rest: 90 }],
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const parseResult = CreateActivityStructureSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
     });
 
-    it('should validate interval durations are positive', () => {
-      const result = createActivityStructure({
-        intervals: [{ duration: -300, intensity: 'moderate', rest: 60 }],
-      });
+    it('should fail when interval durations are negative', () => {
+      // Arrange
+      const invalidInput = {
+        intervals: [{ duration: -300, intensity: 'moderate' as const, rest: 60 }],
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const parseResult = CreateActivityStructureSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
     });
 
-    it('should validate exercise sets are positive', () => {
-      const result = createActivityStructure({
+    it('should fail when exercise sets are not positive', () => {
+      // Arrange
+      const invalidInput = {
         exercises: [{ name: 'Squats', sets: 0, reps: 10, rest: 90 }],
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const parseResult = CreateActivityStructureSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
     });
 
-    it('should validate rounds are positive when provided', () => {
-      const result = createActivityStructure({
-        intervals: [{ duration: 300, intensity: 'moderate', rest: 60 }],
+    it('should fail when rounds are negative', () => {
+      // Arrange
+      const invalidInput = {
+        intervals: validIntervals,
         rounds: -1,
+      };
+
+      // Act
+      const parseResult = CreateActivityStructureSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
+    });
+  });
+
+  describe('queries', () => {
+    describe('getTotalDuration', () => {
+      it('should calculate duration for interval-based structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [
+            { duration: 300, intensity: 'moderate' as const, rest: 60 },
+            { duration: 180, intensity: 'hard' as const, rest: 90 },
+          ],
+          rounds: 2,
+          exercises: undefined,
+        });
+
+        // Act
+        const totalDuration = getTotalDuration(structure);
+
+        // Assert
+        // (300 + 60 + 180 + 90) * 2 rounds = 1260
+        expect(totalDuration).toBe(1260);
       });
 
-      expect(result.isFailure).toBe(true);
-    });
-  });
+      it('should calculate duration for exercise-based structure with duration', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [{ name: 'Plank', sets: 3, duration: 60, rest: 30 }],
+          rounds: 1,
+          intervals: undefined,
+        });
 
-  describe('getTotalDuration', () => {
-    it('should calculate duration for interval-based structure', () => {
-      const result = createIntervalStructure(
-        [
-          { duration: 300, intensity: 'moderate', rest: 60 },
-          { duration: 180, intensity: 'hard', rest: 90 },
-        ],
-        2
-      );
+        // Act
+        const totalDuration = getTotalDuration(structure);
 
-      if (result.isSuccess) {
-        // (300 + 60 + 180 + 90) * 2 rounds = 1260
-        expect(getTotalDuration(result.value)).toBe(1260);
-      }
-    });
-
-    it('should calculate duration for exercise-based structure with duration', () => {
-      const result = createExerciseStructure([
-        { name: 'Plank', sets: 3, duration: 60, rest: 30 },
-      ]);
-
-      if (result.isSuccess) {
+        // Assert
         // (60 * 3) + (30 * 2) = 180 + 60 = 240
-        expect(getTotalDuration(result.value)).toBe(240);
-      }
+        expect(totalDuration).toBe(240);
+      });
+
+      it('should return 0 for empty structure', () => {
+        // Arrange
+        const result = activityStructureFromPersistence({});
+        const structure = result.value;
+
+        // Act
+        const totalDuration = getTotalDuration(structure);
+
+        // Assert
+        expect(totalDuration).toBe(0);
+      });
     });
 
-    it('should return 0 for empty structure', () => {
-      const structure = createEmptyActivityStructure();
+    describe('getTotalSets', () => {
+      it('should calculate total sets for exercise-based structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [
+            { name: 'Squats', sets: 3, reps: 10, rest: 90 },
+            { name: 'Push-ups', sets: 4, reps: 15, rest: 60 },
+          ],
+          intervals: undefined,
+        });
 
-      expect(getTotalDuration(structure)).toBe(0);
+        // Act
+        const totalSets = getTotalSets(structure);
+
+        // Assert
+        expect(totalSets).toBe(7); // 3 + 4
+      });
+
+      it('should return 0 for interval structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [
+            { duration: 300, intensity: 'moderate' as const, rest: 60 },
+            { duration: 180, intensity: 'hard' as const, rest: 90 },
+          ],
+          rounds: 3,
+          exercises: undefined,
+        });
+
+        // Act
+        const totalSets = getTotalSets(structure);
+
+        // Assert
+        expect(totalSets).toBe(0);
+      });
+
+      it('should return 0 for empty structure', () => {
+        // Arrange
+        const result = activityStructureFromPersistence({});
+        const structure = result.value;
+
+        // Act
+        const totalSets = getTotalSets(structure);
+
+        // Assert
+        expect(totalSets).toBe(0);
+      });
     });
   });
 
-  describe('getTotalSets', () => {
-    it('should calculate total sets for exercise-based structure', () => {
-      const result = createExerciseStructure([
-        { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-        { name: 'Push-ups', sets: 4, reps: 15, rest: 60 },
-      ]);
+  describe('commands', () => {
+    describe('adjustDuration', () => {
+      it('should adjust interval durations', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        expect(getTotalSets(result.value)).toBe(7); // 3 + 4
-      }
-    });
+        // Act
+        const adjusted = adjustDuration(structure, 0.8);
 
-    it('should return 0 for interval structure', () => {
-      const result = createIntervalStructure(
-        [
-          { duration: 300, intensity: 'moderate', rest: 60 },
-          { duration: 180, intensity: 'hard', rest: 90 },
-        ],
-        3
-      );
-
-      if (result.isSuccess) {
-        expect(getTotalSets(result.value)).toBe(0);
-      }
-    });
-
-    it('should return 0 for empty structure', () => {
-      const structure = createEmptyActivityStructure();
-
-      expect(getTotalSets(structure)).toBe(0);
-    });
-  });
-
-  describe('adjustDuration', () => {
-    it('should adjust interval durations', () => {
-      const result = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ]);
-
-      if (result.isSuccess) {
-        const adjusted = adjustDuration(result.value, 0.8);
+        // Assert
         expect(adjusted.intervals![0]!.duration).toBe(240); // 300 * 0.8
-      }
-    });
+      });
 
-    it('should adjust exercise durations', () => {
-      const result = createExerciseStructure([
-        { name: 'Plank', sets: 3, duration: 60, rest: 30 },
-      ]);
+      it('should adjust exercise durations', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [{ name: 'Plank', sets: 3, duration: 60, rest: 30 }],
+          intervals: undefined,
+        });
 
-      if (result.isSuccess) {
-        const adjusted = adjustDuration(result.value, 1.5);
+        // Act
+        const adjusted = adjustDuration(structure, 1.5);
+
+        // Assert
         expect(adjusted.exercises![0]!.duration).toBe(90); // 60 * 1.5
-      }
+      });
+
+      it('should return same structure if empty', () => {
+        // Arrange
+        const result = activityStructureFromPersistence({});
+        const empty = result.value;
+
+        // Act
+        const adjusted = adjustDuration(empty, 0.5);
+
+        // Assert
+        expect(isEmpty(adjusted)).toBe(true);
+      });
     });
 
-    it('should return same structure if empty', () => {
-      const empty = createEmptyActivityStructure();
-      const adjusted = adjustDuration(empty, 0.5);
+    describe('adjustIntensity', () => {
+      it('should adjust interval intensity levels', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [
+            { duration: 300, intensity: 'moderate' as const, rest: 60 },
+            { duration: 180, intensity: 'hard' as const, rest: 90 },
+          ],
+          exercises: undefined,
+        });
 
-      expect(isEmpty(adjusted)).toBe(true);
-    });
-  });
+        // Act
+        const easier = adjustIntensity(structure, 0.8);
 
-  describe('adjustIntensity', () => {
-    it('should adjust interval intensity levels', () => {
-      const result = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-        { duration: 180, intensity: 'hard', rest: 90 },
-      ]);
-
-      if (result.isSuccess) {
-        const easier = adjustIntensity(result.value, 0.8);
-
-        // Should reduce intensity
+        // Assert
         expect(easier.intervals).toBeDefined();
-      }
-    });
+      });
 
-    it('should adjust exercise weights', () => {
-      const result = createExerciseStructure([
-        { name: 'Squats', sets: 3, reps: 10, weight: 100, rest: 90 },
-      ]);
+      it('should adjust exercise weights', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [{ name: 'Squats', sets: 3, reps: 10, weight: 100, rest: 90 }],
+          intervals: undefined,
+        });
 
-      if (result.isSuccess) {
-        const lighter = adjustIntensity(result.value, 0.7);
+        // Act
+        const lighter = adjustIntensity(structure, 0.7);
+
+        // Assert
         expect(lighter.exercises![0]!.weight).toBe(70); // 100 * 0.7
-      }
+      });
     });
-  });
 
-  describe('addRounds', () => {
-    it('should add rounds to existing structure', () => {
-      const result = createIntervalStructure(
-        [{ duration: 300, intensity: 'moderate', rest: 60 }],
-        2
-      );
+    describe('addRounds', () => {
+      it('should add rounds to existing structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          rounds: 2,
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const withMore = addRounds(result.value, 1);
+        // Act
+        const withMore = addRounds(structure, 1);
+
+        // Assert
         expect(withMore.rounds).toBe(3);
-      }
-    });
+      });
 
-    it('should initialize rounds if not present', () => {
-      const result = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ]);
+      it('should initialize rounds if not present', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const withRounds = addRounds(result.value, 2);
+        // Act
+        const withRounds = addRounds(structure, 2);
+
+        // Assert
         expect(withRounds.rounds).toBeDefined();
-      }
+      });
     });
-  });
 
-  describe('reduceRounds', () => {
-    it('should reduce rounds', () => {
-      const result = createIntervalStructure(
-        [{ duration: 300, intensity: 'moderate', rest: 60 }],
-        5
-      );
+    describe('reduceRounds', () => {
+      it('should reduce rounds', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          rounds: 5,
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const withFewer = reduceRounds(result.value, 3);
+        // Act
+        const withFewer = reduceRounds(structure, 3);
+
+        // Assert
         expect(withFewer.rounds).toBe(3);
-      }
-    });
+      });
 
-    it('should set to target rounds when lower than current', () => {
-      const result = createIntervalStructure(
-        [{ duration: 300, intensity: 'moderate', rest: 60 }],
-        5
-      );
+      it('should set to target rounds when lower than current', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          rounds: 5,
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const withFewer = reduceRounds(result.value, 2);
+        // Act
+        const withFewer = reduceRounds(structure, 2);
+
+        // Assert
         expect(withFewer.rounds).toBe(2); // Math.min(2, 5) = 2
-      }
+      });
     });
-  });
 
-  describe('increaseRest', () => {
-    it('should increase rest periods for intervals', () => {
-      const result = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ]);
+    describe('increaseRest', () => {
+      it('should increase rest periods for intervals', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const moreRest = increaseRest(result.value, 1.5);
+        // Act
+        const moreRest = increaseRest(structure, 1.5);
+
+        // Assert
         expect(moreRest.intervals![0]!.rest).toBe(90); // 60 * 1.5
-      }
-    });
+      });
 
-    it('should increase rest periods for exercises', () => {
-      const result = createExerciseStructure([
-        { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-      ]);
+      it('should increase rest periods for exercises', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [{ name: 'Squats', sets: 3, reps: 10, rest: 90 }],
+          intervals: undefined,
+        });
 
-      if (result.isSuccess) {
-        const moreRest = increaseRest(result.value, 2);
+        // Act
+        const moreRest = increaseRest(structure, 2);
+
+        // Assert
         expect(moreRest.exercises![0]!.rest).toBe(180); // 90 * 2
-      }
+      });
     });
-  });
 
-  describe('getAverageIntensity', () => {
-    it('should calculate average intensity for intervals', () => {
-      const result = createIntervalStructure([
-        { duration: 300, intensity: 'easy', rest: 60 },
-        { duration: 180, intensity: 'hard', rest: 90 },
-        { duration: 240, intensity: 'moderate', rest: 60 },
-      ]);
+    describe('getAverageIntensity', () => {
+      it('should calculate average intensity for intervals', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [
+            { duration: 300, intensity: 'easy' as const, rest: 60 },
+            { duration: 180, intensity: 'hard' as const, rest: 90 },
+            { duration: 240, intensity: 'moderate' as const, rest: 60 },
+          ],
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        const avgIntensity = getAverageIntensity(result.value);
+        // Act
+        const avgIntensity = getAverageIntensity(structure);
+
+        // Assert
         expect(avgIntensity).toBeGreaterThan(0);
         expect(avgIntensity).toBeLessThanOrEqual(4);
-      }
+      });
+
+      it('should return default moderate (2) for non-interval structure', () => {
+        // Arrange
+        const result = activityStructureFromPersistence({});
+        const structure = result.value;
+
+        // Act
+        const avgIntensity = getAverageIntensity(structure);
+
+        // Assert
+        expect(avgIntensity).toBe(2);
+      });
     });
 
-    it('should return default moderate (2) for non-interval structure', () => {
-      const structure = createEmptyActivityStructure();
+    describe('requiresEquipment', () => {
+      it('should return true when exercises have weight specified', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [{ name: 'Barbell Squats', sets: 3, reps: 10, weight: 100, rest: 90 }],
+          intervals: undefined,
+        });
 
-      expect(getAverageIntensity(structure)).toBe(2);
+        // Act
+        const needsEquipment = requiresEquipment(structure);
+
+        // Assert
+        expect(needsEquipment).toBe(true);
+      });
+
+      it('should return false for bodyweight exercises', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [
+            { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+            { name: 'Air Squats', sets: 3, reps: 20, rest: 60 },
+          ],
+          intervals: undefined,
+        });
+
+        // Act
+        const needsEquipment = requiresEquipment(structure);
+
+        // Assert
+        expect(needsEquipment).toBe(false);
+      });
     });
-  });
 
-  describe('requiresEquipment', () => {
-    it('should return true when exercises have weight specified', () => {
-      const result = createExerciseStructure([
-        { name: 'Barbell Squats', sets: 3, reps: 10, weight: 100, rest: 90 },
-      ]);
+    describe('getDescription', () => {
+      it('should describe interval-based structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          rounds: 3,
+          exercises: undefined,
+        });
 
-      if (result.isSuccess) {
-        expect(requiresEquipment(result.value)).toBe(true);
-      }
-    });
+        // Act
+        const description = getDescription(structure);
 
-    it('should return false for bodyweight exercises', () => {
-      const result = createExerciseStructure([
-        { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
-        { name: 'Air Squats', sets: 3, reps: 20, rest: 60 },
-      ]);
-
-      if (result.isSuccess) {
-        expect(requiresEquipment(result.value)).toBe(false);
-      }
-    });
-  });
-
-  describe('getDescription', () => {
-    it('should describe interval-based structure', () => {
-      const result = createIntervalStructure(
-        [{ duration: 300, intensity: 'moderate', rest: 60 }],
-        3
-      );
-
-      if (result.isSuccess) {
-        const description = getDescription(result.value);
+        // Assert
         expect(description).toContain('interval');
         expect(description.length).toBeGreaterThan(0);
-      }
-    });
+      });
 
-    it('should describe exercise-based structure', () => {
-      const result = createExerciseStructure([
-        { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-        { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
-      ]);
+      it('should describe exercise-based structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [
+            { name: 'Squats', sets: 3, reps: 10, rest: 90 },
+            { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+          ],
+          intervals: undefined,
+        });
 
-      if (result.isSuccess) {
-        const description = getDescription(result.value);
+        // Act
+        const description = getDescription(structure);
+
+        // Assert
         expect(description).toContain('exercise');
         expect(description.length).toBeGreaterThan(0);
-      }
+      });
+
+      it('should return no structure description for empty structure', () => {
+        // Arrange
+        const result = activityStructureFromPersistence({});
+        const structure = result.value;
+
+        // Act
+        const description = getDescription(structure);
+
+        // Assert
+        expect(description).toContain('No structure defined');
+      });
     });
 
-    it('should return no structure description for empty structure', () => {
-      const structure = createEmptyActivityStructure();
-      const description = getDescription(structure);
+    describe('complex scenarios', () => {
+      it('should handle HIIT workout structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          intervals: [
+            { duration: 30, intensity: 'sprint' as const, rest: 30 },
+            { duration: 30, intensity: 'sprint' as const, rest: 30 },
+            { duration: 30, intensity: 'sprint' as const, rest: 30 },
+          ],
+          rounds: 4,
+          exercises: undefined,
+        });
 
-      expect(description).toContain('No structure defined');
-    });
-  });
+        // Act
+        const totalDuration = getTotalDuration(structure);
+        const avgIntensity = getAverageIntensity(structure);
 
-  describe('complex scenarios', () => {
-    it('should handle HIIT workout structure', () => {
-      const result = createIntervalStructure(
-        [
-          { duration: 30, intensity: 'sprint', rest: 30 },
-          { duration: 30, intensity: 'sprint', rest: 30 },
-          { duration: 30, intensity: 'sprint', rest: 30 },
-        ],
-        4
-      );
+        // Assert
+        expect(totalDuration).toBe(720); // (30+30)*3*4
+        expect(avgIntensity).toBeGreaterThan(0.8);
+      });
 
-      if (result.isSuccess) {
-        expect(getTotalDuration(result.value)).toBe(720); // (30+30)*3*4
-        expect(getAverageIntensity(result.value)).toBeGreaterThan(0.8);
-      }
-    });
+      it('should handle strength training structure', () => {
+        // Arrange
+        const structure = createActivityStructureFixture({
+          exercises: [
+            { name: 'Barbell Squat', sets: 4, reps: 5, weight: 150, rest: 180 },
+            { name: 'Bench Press', sets: 4, reps: 5, weight: 100, rest: 180 },
+            { name: 'Deadlift', sets: 3, reps: 5, weight: 180, rest: 240 },
+          ],
+          rounds: 1,
+          intervals: undefined,
+        });
 
-    it('should handle strength training structure', () => {
-      const result = createExerciseStructure([
-        { name: 'Barbell Squat', sets: 4, reps: 5, weight: 150, rest: 180 },
-        { name: 'Bench Press', sets: 4, reps: 5, weight: 100, rest: 180 },
-        { name: 'Deadlift', sets: 3, reps: 5, weight: 180, rest: 240 },
-      ]);
+        // Act
+        const totalSets = getTotalSets(structure);
+        const needsEquipment = requiresEquipment(structure);
 
-      if (result.isSuccess) {
-        expect(getTotalSets(result.value)).toBe(11); // 4 + 4 + 3
-        expect(requiresEquipment(result.value)).toBe(true);
-      }
+        // Assert
+        expect(totalSets).toBe(11); // 4 + 4 + 3
+        expect(needsEquipment).toBe(true);
+      });
     });
   });
 });

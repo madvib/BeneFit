@@ -1,7 +1,14 @@
 import { faker } from '@faker-js/faker';
+import {
+  createFitnessGoalsFixture,
+  createTrainingConstraintsFixture
+} from '@bene/training-core/fixtures';
 import { CoachContext, CurrentPlanContext, RecentWorkoutSummary, PerformanceTrends } from '../coach-context.types.js';
-import type { FitnessGoals, TrainingConstraints, UserExperienceLevel, Injury } from '@bene/training-core';
+import { coachContextFromPersistence } from '../coach-context.factory.js';
 
+/**
+ * Creates a CurrentPlanContext fixture for testing.
+ */
 export function createCurrentPlanContextFixture(
   overrides?: Partial<CurrentPlanContext>
 ): CurrentPlanContext {
@@ -17,6 +24,9 @@ export function createCurrentPlanContextFixture(
   };
 }
 
+/**
+ * Creates a RecentWorkoutSummary fixture for testing.
+ */
 export function createRecentWorkoutSummaryFixture(
   overrides?: Partial<RecentWorkoutSummary>
 ): RecentWorkoutSummary {
@@ -34,6 +44,9 @@ export function createRecentWorkoutSummaryFixture(
   };
 }
 
+/**
+ * Creates a PerformanceTrends fixture for testing.
+ */
 export function createPerformanceTrendsFixture(
   overrides?: Partial<PerformanceTrends>
 ): PerformanceTrends {
@@ -47,44 +60,15 @@ export function createPerformanceTrendsFixture(
   };
 }
 
+/**
+ * Creates a CoachContext fixture for testing.
+ * Uses coachContextFromPersistence to ensure branding and type safety.
+ */
 export function createCoachContextFixture(overrides?: Partial<CoachContext>): CoachContext {
-  const userGoals: FitnessGoals = {
-    primary: faker.helpers.arrayElement(['strength', 'hypertrophy', 'endurance', 'weight_loss'] as const),
-    secondary: faker.helpers.arrayElements(['mobility', 'endurance'], { min: 0, max: 2 }),
-    targetWeight: {
-      current: faker.number.int({ min: 60, max: 100 }),
-      target: faker.number.int({ min: 70, max: 90 }),
-      unit: 'kg',
-    },
-    targetBodyFat: faker.number.int({ min: 10, max: 25 }),
-    targetDate: faker.date.future(),
-    motivation: faker.lorem.sentence(),
-    successCriteria: [faker.lorem.sentence()],
-  };
+  const userGoals = createFitnessGoalsFixture();
+  const userConstraints = createTrainingConstraintsFixture();
 
-  const userConstraints: TrainingConstraints = {
-    availableDays: faker.helpers.arrayElements(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], { min: 3, max: 6 }),
-    availableEquipment: faker.helpers.arrayElements(['dumbbells', 'barbell', 'resistance_bands'], {
-      min: 1,
-      max: 3,
-    }),
-    location: faker.helpers.arrayElement(['home', 'gym', 'outdoor', 'mixed'] as const),
-    injuries: faker.datatype.boolean({ probability: 0.3 })
-      ? [
-        {
-          bodyPart: faker.helpers.arrayElement(['knee', 'shoulder', 'back', 'ankle']),
-          severity: faker.helpers.arrayElement(['minor', 'moderate', 'serious'] as const),
-          reportedDate: faker.date.recent({ days: 30 }).toISOString(),
-          avoidExercises: faker.helpers.arrayElements(['squats', 'deadlifts', 'overhead_press'], {
-            min: 1,
-            max: 2,
-          }),
-        } as Injury,
-      ]
-      : undefined,
-  };
-
-  return {
+  const data = {
     currentPlan: faker.datatype.boolean() ? createCurrentPlanContextFixture() : undefined,
     recentWorkouts: faker.helpers.multiple(() => createRecentWorkoutSummaryFixture(), {
       count: { min: 3, max: 10 },
@@ -96,7 +80,7 @@ export function createCoachContextFixture(overrides?: Partial<CoachContext>): Co
       'intermediate',
       'advanced',
       'elite',
-    ] as UserExperienceLevel[]),
+    ] as const),
     trends: createPerformanceTrendsFixture(),
     daysIntoCurrentWeek: faker.number.int({ min: 0, max: 7 }),
     workoutsThisWeek: faker.number.int({ min: 0, max: 6 }),
@@ -107,4 +91,12 @@ export function createCoachContextFixture(overrides?: Partial<CoachContext>): Co
     sleepQuality: faker.helpers.arrayElement(['poor', 'fair', 'good'] as const),
     ...overrides,
   };
+
+  const result = coachContextFromPersistence(data as CoachContext);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create CoachContext fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

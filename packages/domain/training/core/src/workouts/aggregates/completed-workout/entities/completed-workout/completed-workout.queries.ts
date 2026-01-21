@@ -118,7 +118,7 @@ export function getReactionsByType(
   };
 
   for (const reaction of workout.reactions) {
-    counts[reaction.type]++;
+    counts[reaction.type as ReactionType] = (counts[reaction.type as ReactionType] || 0) + 1;
   }
 
   return counts;

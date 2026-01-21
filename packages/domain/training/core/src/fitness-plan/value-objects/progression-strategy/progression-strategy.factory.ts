@@ -1,67 +1,82 @@
-import { Result } from '@bene/shared';
-import { ProgressionStrategy } from './progression-strategy.types.js';
+import { z } from 'zod';
+import { Result, unwrapOrIssue, mapZodError } from '@bene/shared';
+import {
+  ProgressionStrategy,
+  ProgressionStrategySchema,
+} from './progression-strategy.types.js';
 
-export interface ProgressionStrategyProps {
-  readonly type: ProgressionType;
-  readonly weeklyIncrease?: number; // Percentage (0.1 = 10%)
-  readonly deloadWeeks?: readonly number[]; // Week numbers to reduce load
-  readonly maxIncrease?: number; // Cap on absolute increase per week
-  readonly minIncrease?: number; // Minimum increase to be considered progression
-  readonly testWeeks?: readonly number[]; // Weeks to assess progress
+/**
+ * ============================================================================
+ * PROGRESSION STRATEGY FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. progressionStrategyFromPersistence() - For fixtures & DB hydration
+ * 2. CreateProgressionStrategySchema - Zod transform for API boundaries
+ * 3. Specialized factories (createLinearProgression, etc.)
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates data with ProgressionStrategySchema */
+function validate(data: unknown): Result<ProgressionStrategy> {
+  const parseResult = ProgressionStrategySchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data);
 }
 
-export type ProgressionType = 'linear' | 'undulating' | 'adaptive';
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-export function createProgressionStrategy(
-  props: ProgressionStrategyProps,
+/**
+ * Rehydrates ProgressionStrategy from persistence/fixtures (trusts the data).
+ */
+export function progressionStrategyFromPersistence(
+  data: ProgressionStrategy,
 ): Result<ProgressionStrategy> {
-  // Validate weekly increase
-  if (props.weeklyIncrease !== undefined) {
-    if (props.weeklyIncrease < 0 || props.weeklyIncrease > 1) {
-      return Result.fail(new Error('Weekly increase must be between 0 and 1 (0-100%)'));
-    }
-  }
-
-  // Validate max increase
-  if (props.maxIncrease !== undefined && props.maxIncrease < 0) {
-    return Result.fail(new Error('Max increase cannot be negative'));
-  }
-
-  // Validate min increase
-  if (props.minIncrease !== undefined && props.minIncrease < 0) {
-    return Result.fail(new Error('Min increase cannot be negative'));
-  }
-
-  // Validate deload weeks
-  if (props.deloadWeeks) {
-    for (const week of props.deloadWeeks) {
-      if (week < 1) {
-        return Result.fail(new Error('Deload week numbers must be >= 1'));
-      }
-    }
-  }
-
-  // Validate test weeks
-  if (props.testWeeks) {
-    for (const week of props.testWeeks) {
-      if (week < 1) {
-        return Result.fail(new Error('Test week numbers must be >= 1'));
-      }
-    }
-  }
-
-  return Result.ok(props);
+  return Result.ok(data);
 }
 
-// Factory methods for common progression strategies
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating new ProgressionStrategy.
+ * Use at API boundaries (controllers, resolvers).
+ */
+export const CreateProgressionStrategySchema: z.ZodType<ProgressionStrategy> = ProgressionStrategySchema.transform(
+  (input, ctx) => {
+    const result = validate(input);
+    return unwrapOrIssue(result, ctx);
+  },
+);
+
+// ============================================================================
+// 3. SPECIALIZED FACTORIES
+// ============================================================================
+
+/**
+ * Creates a linear progression strategy.
+ */
 export function createLinearProgression(
   weeklyIncrease: number,
   deloadFrequency: number = 4,
 ): Result<ProgressionStrategy> {
-  // Generate deload weeks at the specified frequency
-  const deloadWeeks = Array.from({ length: 20 }, (_, i) => (i + 1) * deloadFrequency); // Plan for 20 weeks
+  // Generate deload weeks at the specified frequency, capped at week 52
+  const deloadWeeks = Array.from({ length: 52 }, (_, i) => (i + 1) * deloadFrequency).filter(
+    (w) => w <= 52,
+  );
 
-  return createProgressionStrategy({
+  return validate({
     type: 'linear',
     weeklyIncrease,
     deloadWeeks,
@@ -69,35 +84,51 @@ export function createLinearProgression(
   });
 }
 
+/**
+ * Creates an undulating progression strategy.
+ */
 export function createUndulatingProgression(
   weeklyIncrease: number,
 ): Result<ProgressionStrategy> {
-  // Undulating = varies weekly to prevent adaptation
-  return createProgressionStrategy({
+  return validate({
     type: 'undulating',
     weeklyIncrease,
-    testWeeks: [2, 4, 6, 8, 10, 12], // Test every 2 weeks initially
+    testWeeks: [2, 4, 6, 8, 10, 12],
   });
 }
 
+/**
+ * Creates an adaptive progression strategy.
+ */
 export function createAdaptiveProgression(
   weeklyIncrease: number,
   minIncrease: number = 0.02,
   maxIncrease: number = 0.08,
 ): Result<ProgressionStrategy> {
-  return createProgressionStrategy({
+  return validate({
     type: 'adaptive',
     weeklyIncrease,
     minIncrease,
     maxIncrease,
-    testWeeks: [3, 6, 9, 12, 15, 18], // Test every 3 weeks
+    testWeeks: [3, 6, 9, 12, 15, 18],
   });
 }
 
 export function createConservativeProgression(): Result<ProgressionStrategy> {
-  return createLinearProgression(0.025, 6); // 2.5% weekly, deload every 6 weeks
+  return createLinearProgression(0.025, 6);
 }
 
 export function createAggressiveProgression(): Result<ProgressionStrategy> {
-  return createLinearProgression(0.075, 3); // 7.5% weekly, deload every 3 weeks
+  return createLinearProgression(0.075, 3);
+}
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateProgressionStrategySchema or call via transform.
+ */
+export function createProgressionStrategy(props: unknown): Result<ProgressionStrategy> {
+  return validate(props);
 }

@@ -1,37 +1,28 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { UserProfileCommands, TrainingConstraintsSchema, toTrainingConstraintsSchema } from '@bene/training-core';
+import {
+  UserProfileCommands,
+  TrainingConstraints,
+  TrainingConstraintsSchema,
+  TrainingConstraintsView,
+  toTrainingConstraintsView,
+} from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/index.js';
-import type { TrainingConstraints } from '@bene/training-core';
 import { TrainingConstraintsUpdatedEvent } from '../../events/index.js';
 
-
-
-// Single request schema with ALL fields
+// Single request schema
 export const UpdateTrainingConstraintsRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
+  userId: z.uuid(),
   constraints: TrainingConstraintsSchema,
 });
 
-export type UpdateTrainingConstraintsRequest = {
+export type UpdateTrainingConstraintsRequest = z.infer<typeof UpdateTrainingConstraintsRequestSchema>;
+
+export type UpdateTrainingConstraintsResponse = {
   userId: string;
-  constraints: TrainingConstraints;
+  constraints: TrainingConstraintsView;
+  shouldAdjustPlan: boolean;
 };
-
-// Zod schema for response validation
-export const UpdateTrainingConstraintsResponseSchema = z.object({
-  userId: z.string(),
-  constraints: TrainingConstraintsSchema,
-  shouldAdjustPlan: z.boolean(),
-});
-
-// Zod inferred type with original name
-export type UpdateTrainingConstraintsResponse = z.infer<
-  typeof UpdateTrainingConstraintsResponseSchema
->;
 
 export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
   UpdateTrainingConstraintsRequest,
@@ -63,17 +54,18 @@ export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
       JSON.stringify(profile.trainingConstraints.injuries) !==
       JSON.stringify(request.constraints.injuries);
 
-    // 3. Update constraints using command - request.constraints is already in domain format
+    // 3. Update constraints using command
     const updatedProfileResult = UserProfileCommands.updateTrainingConstraints(
       profile,
       request.constraints as TrainingConstraints,
     );
     if (updatedProfileResult.isFailure) {
-      return Result.fail(new Error(updatedProfileResult.error as unknown as string));
+      return Result.fail(updatedProfileResult.error);
     }
+    const updatedProfile = updatedProfileResult.value;
 
     // 4. Save
-    await this.profileRepository.save(updatedProfileResult.value);
+    await this.profileRepository.save(updatedProfile);
 
     // 5. Emit event
     await this.eventBus.publish(
@@ -87,7 +79,7 @@ export class UpdateTrainingConstraintsUseCase extends BaseUseCase<
 
     return Result.ok({
       userId: request.userId,
-      constraints: toTrainingConstraintsSchema(updatedProfileResult.value.trainingConstraints),
+      constraints: toTrainingConstraintsView(updatedProfile.trainingConstraints),
       shouldAdjustPlan: availableDaysChanged || injuriesChanged,
     });
   }

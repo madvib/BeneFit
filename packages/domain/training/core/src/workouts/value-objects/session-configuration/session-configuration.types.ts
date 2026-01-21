@@ -1,12 +1,15 @@
-interface SessionConfigurationData {
-  isMultiplayer: boolean;
-  isPublic: boolean; // Can anyone join?
-  maxParticipants: number;
-  allowSpectators: boolean;
-  enableChat: boolean;
-  enableVoiceAnnouncements: boolean;
-  showOtherParticipantsProgress: boolean;
-  autoAdvanceActivities: boolean;
-}
+import { z } from 'zod';
 
-export type SessionConfiguration = Readonly<SessionConfigurationData>;
+export const SessionConfigurationSchema = z.object({
+  isMultiplayer: z.boolean(),
+  isPublic: z.boolean(),
+  maxParticipants: z.number().int().min(1).max(100),
+  allowSpectators: z.boolean(),
+  enableChat: z.boolean(),
+  enableVoiceAnnouncements: z.boolean(),
+  showOtherParticipantsProgress: z.boolean(),
+  autoAdvanceActivities: z.boolean(),
+});
+
+export type SessionConfiguration = Readonly<z.infer<typeof SessionConfigurationSchema>>;
+

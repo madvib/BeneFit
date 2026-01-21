@@ -1,78 +1,57 @@
-import { CreateView } from '@bene/shared';
+import { z } from 'zod';
+import { DomainBrandTag } from '@bene/shared';
+import { TrainingConstraintsSchema } from '@/shared/index.js';
 import {
-  PlanGoals,
-  PlanGoalsView,
-  ProgressionStrategy,
-  PlanPosition,
-  WorkoutPreview,
+  PlanGoalsSchema,
+  ProgressionStrategySchema,
+  PlanPositionSchema,
+  WorkoutPreviewSchema,
 } from '@/fitness-plan/value-objects/index.js';
-import { TrainingConstraints } from '@/shared/index.js';
-import { WeeklySchedule, WeeklyScheduleView } from '../weekly-schedule/index.js';
-import { WorkoutTemplateView } from '../workout-template/index.js';
+import { WeeklyScheduleSchema } from '../weekly-schedule/index.js';
 
-export type PlanType =
-  | 'event_training'
-  | 'habit_building'
-  | 'strength_program'
-  | 'general_fitness';
+export const PlanPreviewSchema = z.object({
+  weekNumber: z.number(),
+  workouts: z.array(WorkoutPreviewSchema),
+});
+export type PlanPreview = z.infer<typeof PlanPreviewSchema>;
 
-export type PlanStatus = 'draft' | 'active' | 'paused' | 'completed' | 'abandoned';
+// TODO move to shared
+export const PlanTypeSchema = z.enum([
+  'event_training',
+  'habit_building',
+  'strength_program',
+  'general_fitness',
+]);
+export type PlanType = z.infer<typeof PlanTypeSchema>;
 
-interface FitnessPlanData {
-  id: string; // Aggregate Root ID
-  userId: string;
-  title: string;
-  description: string;
-  planType: PlanType;
-  templateId?: string; // Reference to plan template if created from one
-  goals: PlanGoals;
-  progression: ProgressionStrategy;
-  constraints: TrainingConstraints;
-  weeks: WeeklySchedule[];
-  status: PlanStatus;
-  currentPosition: PlanPosition;
-  startDate: Date;
-  endDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export const PlanStatusSchema = z.enum(['draft', 'active', 'paused', 'completed', 'abandoned']);
+export type PlanStatus = z.infer<typeof PlanStatusSchema>;
 
-// The core data structure is an immutable interface
-export type FitnessPlan = Readonly<FitnessPlanData>;
+export const FitnessPlanSchema = z
+  .object({
+    id: z.uuid(),
+    userId: z.uuid(),
+    title: z.string().min(1).max(100),
+    description: z.string().min(1).max(1000),
+    planType: PlanTypeSchema,
+    templateId: z.uuid().optional(),
 
-// ============================================
-// View Interface (API Presentation)
-// ============================================
+    // Use composed schemas
+    goals: PlanGoalsSchema,
+    progression: ProgressionStrategySchema,
+    constraints: TrainingConstraintsSchema,
 
-/**
- * FitnessPlan view for API consumption
- * 
- * Differences from entity:
- * - Dates serialized as ISO strings (handled by CreateView)
- * - Enriched with computed fields (currentWorkout, currentWeek, summary)
- * - Omits templateId (internal detail)
- */
-export type FitnessPlanView = CreateView<
-  FitnessPlan,
-  'templateId' | 'weeks', // Omitted fields
-  {
-    weeks: WeeklyScheduleView[];
-    // Computed/enriched fields
-    // Note: 'goals' is auto-converted by CreateView > SerializeDates if not omitted
-    // But we can explicitly override if we want to enforce the named type
-    goals: PlanGoalsView;
+    weeks: z.array(WeeklyScheduleSchema),
 
-    currentWorkout?: WorkoutTemplateView;
-    currentWeek?: WeeklyScheduleView;
-    summary: {
-      total: number;
-      completed: number;
-    };
-  }
->;
+    status: PlanStatusSchema,
+    currentPosition: PlanPositionSchema,
 
-export interface PlanPreview {
-  weekNumber: number;
-  workouts: WorkoutPreview[];
-}
+    // Dates used z.coerce to gracefully handle ISO strings from boundary
+    startDate: z.coerce.date<Date>(),
+    endDate: z.coerce.date<Date>().optional(),
+    createdAt: z.coerce.date<Date>(),
+    updatedAt: z.coerce.date<Date>(),
+  })
+  .brand<DomainBrandTag>();
 
+export type FitnessPlan = Readonly<z.infer<typeof FitnessPlanSchema>>;

@@ -1,0 +1,382 @@
+import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { Result } from '@bene/shared';
+import { CoachConversation, CheckIn } from '../../../../core/index.js';
+import { RespondToCheckInUseCase } from '../respond-to-check-in.js';
+import { CoachConversationRepository } from '../../../ports/coach-conversation-repository.js';
+import { AICoachService } from '../../../services/ai-coach-service.js';
+import { EventBus } from '@bene/shared';
+
+// Mock repositories and services
+const mockConversationRepository = {
+  findById: vi.fn(),
+  findByUserId: vi.fn(),
+  save: vi.fn(),
+} as unknown as CoachConversationRepository;
+
+const mockAICoachService = {
+  getResponse: vi.fn(),
+  generateCheckInQuestion: vi.fn(),
+  analyzeCheckInResponse: vi.fn(),
+  generateWeeklySummary: vi.fn(),
+} as unknown as AICoachService;
+
+const mockEventBus = {
+  publish: vi.fn(),
+} as unknown as EventBus;
+
+describe('RespondToCheckInUseCase', () => {
+  let useCase: RespondToCheckInUseCase;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useCase = new RespondToCheckInUseCase(
+      mockConversationRepository,
+      mockAICoachService,
+      mockEventBus,
+    );
+  });
+
+  it('should successfully respond to a check-in', async () => {
+    // Arrange
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const response = 'I feel great!';
+
+    const mockCheckIn: CheckIn = {
+      id: checkInId,
+      type: 'proactive',
+      question: 'How are you feeling today?',
+      status: 'pending',
+      createdAt: new Date(),
+      triggeredBy: 'enjoyment_declining',
+    } as CheckIn;
+
+    const mockConversation: CoachConversation = {
+      id: '550e8400-e29b-41d4-a716-446655440007',
+      userId,
+      context: {
+        recentWorkouts: [],
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
+        experienceLevel: 'beginner',
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
+        daysIntoCurrentWeek: 0,
+        workoutsThisWeek: 0,
+        plannedWorkoutsThisWeek: 0,
+        energyLevel: 'medium',
+      },
+      messages: [],
+      checkIns: [mockCheckIn],
+      totalMessages: 0,
+      totalUserMessages: 0,
+      totalCoachMessages: 0,
+      totalCheckIns: 1,
+      pendingCheckIns: 1,
+      startedAt: new Date(),
+      lastMessageAt: new Date(),
+      lastContextUpdateAt: new Date(),
+    };
+
+    const mockAnalysis = {
+      analysis: 'User reports feeling great, positive sentiment detected',
+      actions: [
+        { type: 'maintain_current_plan', details: 'Continue with current routine', appliedAt: new Date() },
+      ],
+    };
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    vi.mocked(mockAICoachService.analyzeCheckInResponse).mockResolvedValue(
+      Result.ok(mockAnalysis),
+    );
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+      checkInId,
+      response,
+    });
+
+    // Assert
+    expect(result.isSuccess).toBe(true);
+    if (result.isSuccess) {
+      expect(result.value.conversationId).toBe('550e8400-e29b-41d4-a716-446655440007');
+      expect(result.value.coachAnalysis).toBe(mockAnalysis.analysis);
+      expect(result.value.actions).toHaveLength(1);
+    }
+    expect(mockAICoachService.analyzeCheckInResponse).toHaveBeenCalledWith({
+      checkIn: mockCheckIn,
+      userResponse: response,
+      context: mockConversation.context,
+    });
+    expect(mockEventBus.publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventName: 'CheckInResponded',
+        userId,
+        checkInId,
+        actionsApplied: 1,
+      }),
+    );
+  });
+
+  it('should fail if conversation is not found', async () => {
+    // Arrange
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const response = 'I feel great!';
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.fail(new Error('Conversation not found')),
+    );
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+      checkInId,
+      response,
+    });
+
+    // Assert
+    expect(result.isFailure).toBe(true);
+    if (result.isFailure) {
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Conversation not found');
+    }
+  });
+
+  it('should fail if check-in is not found', async () => {
+    // Arrange
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const response = 'I feel great!';
+
+    const mockConversation: CoachConversation = {
+      id: '550e8400-e29b-41d4-a716-446655440007',
+      userId,
+      context: {
+        recentWorkouts: [],
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
+        experienceLevel: 'beginner',
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
+        daysIntoCurrentWeek: 0,
+        workoutsThisWeek: 0,
+        plannedWorkoutsThisWeek: 0,
+        energyLevel: 'medium',
+      },
+      messages: [],
+      checkIns: [], // No check-ins
+      totalMessages: 0,
+      totalUserMessages: 0,
+      totalCoachMessages: 0,
+      totalCheckIns: 0,
+      pendingCheckIns: 0,
+      startedAt: new Date(),
+      lastMessageAt: new Date(),
+      lastContextUpdateAt: new Date(),
+    };
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+      checkInId,
+      response,
+    });
+
+    // Assert
+    expect(result.isFailure).toBe(true);
+    if (result.isFailure) {
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Check-in not found');
+    }
+  });
+
+  it('should fail if check-in is already responded to', async () => {
+    // Arrange
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const response = 'I feel great!';
+
+    const mockCheckIn: CheckIn = {
+      id: checkInId,
+      type: 'proactive',
+      question: 'How are you feeling today?',
+      status: 'responded', // Already responded
+      createdAt: new Date(),
+      triggeredBy: 'enjoyment_declining',
+    } as CheckIn;
+
+    const mockConversation: CoachConversation = {
+      id: '550e8400-e29b-41d4-a716-446655440007',
+      userId,
+      context: {
+        recentWorkouts: [],
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
+        experienceLevel: 'beginner',
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
+        daysIntoCurrentWeek: 0,
+        workoutsThisWeek: 0,
+        plannedWorkoutsThisWeek: 0,
+        energyLevel: 'medium',
+      },
+      messages: [],
+      checkIns: [mockCheckIn],
+      totalMessages: 0,
+      totalUserMessages: 0,
+      totalCoachMessages: 0,
+      totalCheckIns: 1,
+      pendingCheckIns: 0,
+      startedAt: new Date(),
+      lastMessageAt: new Date(),
+      lastContextUpdateAt: new Date(),
+    };
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+      checkInId,
+      response,
+    });
+
+    // Assert
+    expect(result.isFailure).toBe(true);
+    if (result.isFailure) {
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toBe('Check-in already responded to');
+    }
+  });
+
+  it('should fail if AI analysis fails', async () => {
+    // Arrange
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const response = 'I feel great!';
+
+    const mockCheckIn: CheckIn = {
+      id: checkInId,
+      type: 'proactive',
+      question: 'How are you feeling today?',
+      status: 'pending',
+      createdAt: new Date(),
+      triggeredBy: 'enjoyment_declining',
+    } as CheckIn;
+
+    const mockConversation: CoachConversation = {
+      id: '550e8400-e29b-41d4-a716-446655440007',
+      userId,
+      context: {
+        recentWorkouts: [],
+        userGoals: {
+          primary: 'strength',
+          secondary: [],
+          motivation: 'test',
+          successCriteria: [],
+        },
+        userConstraints: {
+          availableDays: [],
+          availableEquipment: [],
+          location: 'home',
+        },
+        experienceLevel: 'beginner',
+        trends: {
+          volumeTrend: 'stable',
+          adherenceTrend: 'stable',
+          energyTrend: 'medium',
+          exertionTrend: 'stable',
+          enjoymentTrend: 'stable',
+        },
+        daysIntoCurrentWeek: 0,
+        workoutsThisWeek: 0,
+        plannedWorkoutsThisWeek: 0,
+        energyLevel: 'medium',
+      },
+      messages: [],
+      checkIns: [mockCheckIn],
+      totalMessages: 0,
+      totalUserMessages: 0,
+      totalCoachMessages: 0,
+      totalCheckIns: 1,
+      pendingCheckIns: 1,
+      startedAt: new Date(),
+      lastMessageAt: new Date(),
+      lastContextUpdateAt: new Date(),
+    };
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.ok(mockConversation),
+    );
+    vi.mocked(mockAICoachService.analyzeCheckInResponse).mockResolvedValue(
+      Result.fail(new Error('AI analysis failed')),
+    );
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+      checkInId,
+      response,
+    });
+
+    // Assert
+    expect(result.isFailure).toBe(true);
+    if (result.isFailure) {
+      expect(result.error).toBeInstanceOf(Error);
+      expect((result.error as Error).message).toContain('AI analysis failed');
+    }
+  });
+});

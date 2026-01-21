@@ -1,54 +1,53 @@
-import { fake } from 'zod-schema-faker/v4';
 import { faker } from '@faker-js/faker';
-import { SEED_USERS } from '@bene/shared';
-import { createUnverifiedWorkoutFixture, createMinimalPerformanceFixture } from '@/workouts/value-objects/index.js';
-import { createFireReactionFixture, createStrongReactionFixture } from '../../reaction/index.js';
+import { createFireReactionFixture, createMinimalPerformanceFixture, createStrongReactionFixture, createUnverifiedWorkoutFixture } from '@/fixtures.js';
 import { CompletedWorkout } from '../completed-workout.types.js';
-import { CompletedWorkoutSchema } from '../completed-workout.presentation.js';
-import { createCompletedWorkout } from '../completed-workout.factory.js';
+import { completedWorkoutFromPersistence } from '../completed-workout.factory.js';
 
 /**
  * Canonical Fixtures for CompletedWorkout
- * 
- * Located in core domain because:
- * - Used by repository tests (DB mapper validation)
- * - Used for seed data (tests persistence round-trips)
- * - Never needed by frontend (they use gateway fixtures)
- * - Single source of truth for entity structure
  */
 
 /**
- * Create a minimal valid CompletedWorkout for testing
+ * Main fixture for CompletedWorkout.
+ * Follows the canonical pattern using fromPersistence and faker.
  */
-export function createMinimalCompletedWorkoutFixture(overrides?: Partial<CompletedWorkout>): CompletedWorkout {
-  // Use value object fixtures!
+export function createCompletedWorkoutFixture(
+  overrides?: Partial<CompletedWorkout>,
+): CompletedWorkout {
   const performance = createMinimalPerformanceFixture();
-  const verification = createUnverifiedWorkoutFixture();
+  const now = new Date();
 
-  // Pick random user from seeds or generate
-  const user = faker.helpers.arrayElement(SEED_USERS);
-
-  const result = createCompletedWorkout({
-    userId: user.id,
-    workoutType: faker.helpers.arrayElement(['strength', 'cardio', 'flexibility']),
-    title: faker.word.words(3),
+  const data = {
+    id: faker.string.uuid(),
+    userId: faker.string.uuid(),
+    title: faker.word.words({ count: { min: 2, max: 4 } }),
+    description: faker.lorem.sentence(),
+    workoutType: faker.helpers.arrayElement(['strength', 'cardio', 'flexibility'] as const),
     performance,
-    verification,
+    verification: createUnverifiedWorkoutFixture(),
     isPublic: faker.datatype.boolean(),
-  });
+    reactions: [],
+    createdAt: now,
+    recordedAt: performance.completedAt || now,
+    ...overrides,
+  };
+
+  const result = completedWorkoutFromPersistence(data);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create fixture: ${ result.error }`);
+    throw new Error(`Failed to create CompletedWorkout fixture: ${ result.error }`);
   }
 
-  return { ...result.value, ...overrides };
+  return result.value;
 }
 
 /**
  * Create a CompletedWorkout with plan reference
  */
-export function createPlanWorkoutFixture(overrides?: Partial<CompletedWorkout>): CompletedWorkout {
-  return createMinimalCompletedWorkoutFixture({
+export function createPlanWorkoutFixture(
+  overrides?: Partial<CompletedWorkout>,
+): CompletedWorkout {
+  return createCompletedWorkoutFixture({
     planId: faker.string.uuid(),
     workoutTemplateId: faker.string.uuid(),
     weekNumber: faker.number.int({ min: 1, max: 12 }),
@@ -60,8 +59,10 @@ export function createPlanWorkoutFixture(overrides?: Partial<CompletedWorkout>):
 /**
  * Create a CompletedWorkout with multiplayer session
  */
-export function createMultiplayerWorkoutFixture(overrides?: Partial<CompletedWorkout>): CompletedWorkout {
-  return createMinimalCompletedWorkoutFixture({
+export function createMultiplayerWorkoutFixture(
+  overrides?: Partial<CompletedWorkout>,
+): CompletedWorkout {
+  return createCompletedWorkoutFixture({
     multiplayerSessionId: faker.string.uuid(),
     isPublic: true,
     ...overrides,
@@ -71,10 +72,9 @@ export function createMultiplayerWorkoutFixture(overrides?: Partial<CompletedWor
 /**
  * Create a CompletedWorkout with reactions
  */
-export function createWorkoutWithReactionsFixture(overrides?: Partial<CompletedWorkout>): CompletedWorkout {
-  const workout = createMinimalCompletedWorkoutFixture(overrides);
-
-  // Use reaction fixtures!
+export function createWorkoutWithReactionsFixture(
+  overrides?: Partial<CompletedWorkout>,
+): CompletedWorkout {
   const reaction1 = createFireReactionFixture({
     createdAt: new Date(),
   });
@@ -83,22 +83,10 @@ export function createWorkoutWithReactionsFixture(overrides?: Partial<CompletedW
     createdAt: new Date(),
   });
 
-  return {
-    ...workout,
+  return createCompletedWorkoutFixture({
     reactions: [reaction1, reaction2],
-  };
-}
-
-/**
- * Generate a random CompletedWorkout response using zod-schema-faker
- * 
- * Useful for:
- * - Fuzz testing
- * - Generating large datasets
- * - Testing edge cases
- */
-export function generateRandomWorkoutResponse() {
-  return fake(CompletedWorkoutSchema);
+    ...overrides,
+  });
 }
 
 /**
@@ -106,8 +94,9 @@ export function generateRandomWorkoutResponse() {
  */
 export function createWorkoutListFixture(count: number): CompletedWorkout[] {
   return Array.from({ length: count }, (_, i) =>
-    createMinimalCompletedWorkoutFixture({
+    createCompletedWorkoutFixture({
       title: `Workout ${ i + 1 }`,
-    })
+    }),
   );
 }
+

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fixtures } from '@bene/react-api-client';
+import { fixtures } from '@bene/react-api-client/fixtures';
 import { CoachPageContent } from '../page';
 import { ChatHeader } from '@/lib/components';
 
 // Generate consistent coach history with seed
-const mockCoachHistory = fixtures.createGetCoachHistoryResponse(undefined, { seed: 300 });
+const mockCoachHistory = fixtures.coach.buildGetCoachHistoryResponse(undefined, { seed: 300 });
 
 const meta: Meta<typeof CoachPageContent> = {
   title: 'Features/Coach',

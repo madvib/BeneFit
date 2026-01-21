@@ -1,53 +1,76 @@
-export type Theme = 'light' | 'dark' | 'auto';
-export type Units = 'metric' | 'imperial';
-export type CheckInFrequency = 'daily' | 'weekly' | 'biweekly' | 'never';
-export type CoachTone = 'motivational' | 'casual' | 'professional' | 'tough_love';
+import { z } from 'zod';
+import { CreateView } from '@bene/shared';
 
-export interface NotificationPreferences {
-  workoutReminders: boolean;
-  reminderTime?: string; // "09:00" in user's timezone
-  coachCheckIns: boolean;
-  teamActivity: boolean;
-  weeklyReports: boolean;
-  achievementAlerts: boolean;
-  pushEnabled: boolean;
-  emailEnabled: boolean;
-}
+export const ThemeSchema = z.enum(['light', 'dark', 'auto']);
+export type Theme = z.infer<typeof ThemeSchema>;
 
-export interface PrivacySettings {
-  profileVisible: boolean;
-  workoutsPublic: boolean; // Public to team
-  allowTeamInvites: boolean;
-  showRealName: boolean;
-  shareProgress: boolean;
-}
+export const UnitsSchema = z.enum(['metric', 'imperial']);
+export type Units = z.infer<typeof UnitsSchema>;
 
-export interface CoachPreferences {
-  checkInFrequency: CheckInFrequency;
-  tone: CoachTone;
-  proactiveAdvice: boolean;
-  celebrateWins: boolean;
-  receiveFormTips: boolean;
-}
+export const CheckInFrequencySchema = z.enum(['daily', 'weekly', 'biweekly', 'never']);
+export type CheckInFrequency = z.infer<typeof CheckInFrequencySchema>;
 
-export interface UserPreferencesData {
+export const CoachToneSchema = z.enum(['motivational', 'casual', 'professional', 'tough_love']);
+export type CoachTone = z.infer<typeof CoachToneSchema>;
+
+export const NotificationPreferencesSchema = z.object({
+  workoutReminders: z.boolean(),
+  reminderTime: z
+    .string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+    .optional(),
+  coachCheckIns: z.boolean(),
+  teamActivity: z.boolean(),
+  weeklyReports: z.boolean(),
+  achievementAlerts: z.boolean(),
+  pushEnabled: z.boolean(),
+  emailEnabled: z.boolean(),
+});
+export type NotificationPreferences = z.infer<typeof NotificationPreferencesSchema>;
+
+export const PrivacySettingsSchema = z.object({
+  profileVisible: z.boolean(),
+  workoutsPublic: z.boolean(),
+  allowTeamInvites: z.boolean(),
+  showRealName: z.boolean(),
+  shareProgress: z.boolean(),
+});
+export type PrivacySettings = z.infer<typeof PrivacySettingsSchema>;
+
+export const CoachPreferencesSchema = z.object({
+  checkInFrequency: CheckInFrequencySchema,
+  tone: CoachToneSchema,
+  proactiveAdvice: z.boolean(),
+  celebrateWins: z.boolean(),
+  receiveFormTips: z.boolean(),
+});
+export type CoachPreferences = z.infer<typeof CoachPreferencesSchema>;
+
+/**
+ * CORE SCHEMA
+ */
+export const UserPreferencesSchema = z.object({
   // UI
-  theme: Theme;
-  units: Units;
+  theme: ThemeSchema,
+  units: UnitsSchema,
 
   // Notifications
-  notifications: NotificationPreferences;
+  notifications: NotificationPreferencesSchema,
 
   // Privacy
-  privacy: PrivacySettings;
+  privacy: PrivacySettingsSchema,
 
   // AI Coach
-  coaching: CoachPreferences;
+  coaching: CoachPreferencesSchema,
 
   // Display
-  showRestTimers: boolean;
-  autoProgressWeights: boolean;
-  useVoiceAnnouncements: boolean;
-}
+  showRestTimers: z.boolean(),
+  autoProgressWeights: z.boolean(),
+  useVoiceAnnouncements: z.boolean(),
+});
 
-export type UserPreferences = Readonly<UserPreferencesData>;
+/**
+ * INFERRED TYPES
+ */
+export type UserPreferences = Readonly<z.infer<typeof UserPreferencesSchema>>;
+export type UserPreferencesView = CreateView<UserPreferences>;

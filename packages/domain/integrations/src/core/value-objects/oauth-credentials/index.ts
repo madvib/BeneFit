@@ -1,5 +1,4 @@
-export type { OAuthCredentials } from './oauth-credentials.js';
-export { createOAuthCredentials } from './oauth-credentials.js';
-export { isCredentialExpired, willExpireSoon } from './oauth-credentials.js';
-export * from './oauth-credentials.presentation.js';
-export { createOAuthCredentialsFixture } from './test/oauth-credentials.fixtures.js';
+// Export all parts of the OAuthCredentials value object
+export * from './oauth-credentials.types.js';
+export * from './oauth-credentials.factory.js';
+export * from './oauth-credentials.view.js';

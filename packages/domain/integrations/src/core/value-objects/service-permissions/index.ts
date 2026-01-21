@@ -1,4 +1,3 @@
-export { createServicePermissions } from './service-permission.js';
-export type { ServicePermissions, ServicePermissionsData } from './service-permission.js';
-export * from './service-permissions.presentation.js';
-export { createServicePermissionsFixture } from './test/service-permissions.fixtures.js';
+// Export all parts of the ServicePermissions value object
+export * from './service-permissions.types.js';
+export * from './service-permissions.factory.js';

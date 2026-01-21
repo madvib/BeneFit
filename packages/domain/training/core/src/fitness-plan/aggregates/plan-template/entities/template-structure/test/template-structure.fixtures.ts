@@ -7,6 +7,7 @@ import {
   WorkoutDayTemplate,
   WorkoutActivityTemplate
 } from '../template-structure.types.js';
+import { templateStructureFromPersistence } from '../template-structure.factory.js';
 
 export function createTemplateStructureFixture(overrides?: Partial<TemplateStructure>): TemplateStructure {
   const duration: TemplateDuration = {
@@ -36,11 +37,19 @@ export function createTemplateStructureFixture(overrides?: Partial<TemplateStruc
     workouts: [workoutTemplate, workoutTemplate, workoutTemplate]
   };
 
-  return {
+  const data = {
     duration,
     frequency,
     weeks: [weekTemplate],
     progressionFormula: '{{intensity}} * 1.05',
     ...overrides,
   };
+
+  const result = templateStructureFromPersistence(data);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create TemplateStructure fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

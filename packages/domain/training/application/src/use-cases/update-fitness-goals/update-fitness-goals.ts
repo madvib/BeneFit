@@ -1,35 +1,28 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import type { FitnessGoals } from '@bene/training-core';
-import { FitnessGoalsSchema, toFitnessGoalsSchema } from '@bene/training-core';
-import { UserProfileCommands } from '@bene/training-core';
+import {
+  FitnessGoals,
+  FitnessGoalsSchema,
+  FitnessGoalsView,
+  toFitnessGoalsView,
+  UserProfileCommands,
+} from '@bene/training-core';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { FitnessGoalsUpdatedEvent } from '../../events/fitness-goals-updated.event.js';
 
-// Single request schema with ALL fields
+// Single request schema
 export const UpdateFitnessGoalsRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  goals: z.unknown(),
-});
-
-export type UpdateFitnessGoalsRequest = {
-  userId: string;
-  goals: FitnessGoals;
-};
-
-
-export const UpdateFitnessGoalsResponseSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
   goals: FitnessGoalsSchema,
-  suggestNewPlan: z.boolean(), // Should we suggest regenerating their plan?
 });
 
-export type UpdateFitnessGoalsResponse = z.infer<
-  typeof UpdateFitnessGoalsResponseSchema
->;
+export type UpdateFitnessGoalsRequest = z.infer<typeof UpdateFitnessGoalsRequestSchema>;
+
+export type UpdateFitnessGoalsResponse = {
+  userId: string;
+  goals: FitnessGoalsView;
+  suggestNewPlan: boolean;
+};
 
 export class UpdateFitnessGoalsUseCase extends BaseUseCase<
   UpdateFitnessGoalsRequest,
@@ -45,20 +38,23 @@ export class UpdateFitnessGoalsUseCase extends BaseUseCase<
   protected async performExecution(
     request: UpdateFitnessGoalsRequest,
   ): Promise<Result<UpdateFitnessGoalsResponse>> {
+    // Validate request
+    const validatedRequest = UpdateFitnessGoalsRequestSchema.parse(request);
+
     // 1. Load profile
-    const profileResult = await this.profileRepository.findById(request.userId);
+    const profileResult = await this.profileRepository.findById(validatedRequest.userId);
     if (profileResult.isFailure) {
       return Result.fail(new Error('Profile not found'));
     }
     const profile = profileResult.value;
 
     // 2. Check if goals changed significantly
-    const primaryGoalChanged = profile.fitnessGoals.primary !== request.goals.primary;
+    const primaryGoalChanged = profile.fitnessGoals.primary !== validatedRequest.goals.primary;
 
-    // 3. Update goals using command - request.goals is already in domain format
+    // 3. Update goals using command
     const updatedProfileResult = UserProfileCommands.updateFitnessGoals(
       profile,
-      request.goals as FitnessGoals,
+      validatedRequest.goals as FitnessGoals,
     );
     if (updatedProfileResult.isFailure) {
       return Result.fail(updatedProfileResult.error);
@@ -71,7 +67,7 @@ export class UpdateFitnessGoalsUseCase extends BaseUseCase<
     // 5. Emit event
     await this.eventBus.publish(
       new FitnessGoalsUpdatedEvent({
-        userId: request.userId,
+        userId: validatedRequest.userId,
         oldGoals: profile.fitnessGoals,
         newGoals: updatedProfile.fitnessGoals,
         significantChange: primaryGoalChanged,
@@ -79,8 +75,8 @@ export class UpdateFitnessGoalsUseCase extends BaseUseCase<
     );
 
     return Result.ok({
-      userId: request.userId,
-      goals: toFitnessGoalsSchema(updatedProfile.fitnessGoals),
+      userId: validatedRequest.userId,
+      goals: toFitnessGoalsView(updatedProfile.fitnessGoals),
       suggestNewPlan: primaryGoalChanged,
     });
   }

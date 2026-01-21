@@ -1,4 +1,3 @@
-export { createServiceMetadata } from './service-metadata.js';
-export type { ServiceMetadata, ServiceMetadataData } from './service-metadata.js';
-export * from './service-metadata.presentation.js';
-export { createServiceMetadataFixture } from './test/service-metadata.fixtures.js';
+// Export all parts of the ServiceMetadata value object
+export * from './service-metadata.types.js';
+export * from './service-metadata.factory.js';

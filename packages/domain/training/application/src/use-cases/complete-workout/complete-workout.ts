@@ -1,19 +1,25 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase, EntityNotFoundError, UseCaseError } from '@bene/shared';
+import { randomUUID } from 'crypto';
 import {
-  createCompletedWorkout,
+  CreateCompletedWorkoutSchema,
   type WorkoutPerformance,
-  type CompletedWorkout,
+  WorkoutPerformanceSchema,
+  WorkoutVerificationSchema,
   UserProfileCommands,
   WorkoutType,
   FitnessPlanCommands,
-  fromWorkoutPerformanceSchema,
-  fromWorkoutVerificationSchema,
   toCompletedWorkoutView,
-  WorkoutPerformanceSchema,
-  WorkoutVerificationSchema,
+  CompletedWorkoutQueries,
+  toAchievementView,
+  toUserStatsView,
+
+  AchievementView,
+  UserStatsView,
+  CompletedWorkoutView,
+  type CompletedWorkout,
+  type Achievement,
 } from '@bene/training-core';
-import type { Achievement, UserStats, CompletedWorkoutView } from '@bene/training-core';
+import { Result, type EventBus, BaseUseCase, EntityNotFoundError, UseCaseError, mapZodError } from '@bene/shared';
 import type {
   UserProfileRepository,
   CompletedWorkoutRepository,
@@ -23,28 +29,26 @@ import type {
 
 import { WorkoutCompletedEvent } from '../../events/index.js';
 
-// Single request schema with ALL fields
+/**
+ * Request schema
+ */
 export const CompleteWorkoutRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  sessionId: z.string(),
+  userId: z.uuid(),
+  sessionId: z.uuid(),
   performance: WorkoutPerformanceSchema,
   verification: WorkoutVerificationSchema,
   shareToFeed: z.boolean().optional(),
-  title: z.string(),
+  title: z.string().min(1).max(200),
 });
 
 export type CompleteWorkoutRequest = z.infer<typeof CompleteWorkoutRequestSchema>;
-
 
 // Response Interface
 export interface CompleteWorkoutResponse {
   workout: CompletedWorkoutView;
   newStreak?: number;
-  achievementsEarned: Achievement[];
-  stats: Pick<UserStats, 'totalWorkouts' | 'totalVolume' | 'totalMinutes'>;
+  achievementsEarned: AchievementView[];
+  stats: Pick<UserStatsView, 'totalWorkouts' | 'totalVolume' | 'totalMinutes'>;
 }
 
 export class CompleteWorkoutUseCase extends BaseUseCase<
@@ -64,47 +68,49 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
   protected async performExecution(
     request: CompleteWorkoutRequest,
   ): Promise<Result<CompleteWorkoutResponse>> {
+    // Validate request and coerce types (e.g. string dates -> Date objects)
+    const validatedRequest = CompleteWorkoutRequestSchema.parse(request);
+
     // 1. Load session
-    const sessionResult = await this.sessionRepository.findById(request.sessionId);
+    const sessionResult = await this.sessionRepository.findById(validatedRequest.sessionId);
     if (sessionResult.isFailure) {
-      return Result.fail(new EntityNotFoundError('WorkoutSession', request.sessionId));
+      return Result.fail(new EntityNotFoundError('WorkoutSession', validatedRequest.sessionId));
     }
     const session = sessionResult.value;
 
     // Verify ownership
-    if (session.ownerId !== request.userId) {
-      return Result.fail(new UseCaseError('Not authorized to complete this workout', 'UNAUTHORIZED', { sessionId: request.sessionId, userId: request.userId }));
+    if (session.ownerId !== validatedRequest.userId) {
+      return Result.fail(new UseCaseError('Not authorized to complete this workout', 'UNAUTHORIZED', { sessionId: validatedRequest.sessionId, userId: validatedRequest.userId }));
     }
 
     if (session.state !== 'in_progress' && session.state !== 'paused') {
       return Result.fail(
-        new UseCaseError(`Cannot complete workout in ${ session.state } state`, 'INVALID_STATE', { sessionId: request.sessionId, currentState: session.state }),
+        new UseCaseError(`Cannot complete workout in ${ session.state } state`, 'INVALID_STATE', { sessionId: validatedRequest.sessionId, currentState: session.state }),
       );
     }
-    // 2. Create CompletedWorkout - convert from schema format to domain format
-    const completedWorkoutResult = createCompletedWorkout({
-      userId: request.userId,
+
+    // 2. Create CompletedWorkout
+    const completedWorkoutParseResult = CreateCompletedWorkoutSchema.safeParse({
+      userId: validatedRequest.userId,
       workoutType: session.workoutType as WorkoutType,
-      title: request.title,
-      performance: fromWorkoutPerformanceSchema(request.performance),
-      verification: fromWorkoutVerificationSchema(request.verification),
+      title: validatedRequest.title,
+      performance: validatedRequest.performance as WorkoutPerformance,
+      verification: validatedRequest.verification,
       planId: session.planId,
       workoutTemplateId: session.workoutTemplateId,
       multiplayerSessionId: session.id,
-      isPublic: request.shareToFeed ?? false,
+      isPublic: validatedRequest.shareToFeed ?? false,
     });
 
-    if (completedWorkoutResult.isFailure) {
-      return Result.fail(completedWorkoutResult.error);
+    if (!completedWorkoutParseResult.success) {
+      return Result.fail(mapZodError(completedWorkoutParseResult.error));
     }
-    const completedWorkout = completedWorkoutResult.value;
+    const completedWorkout = completedWorkoutParseResult.data;
 
-    // 3. Save to D1
+    // 3. Save to repository
     await this.completedWorkoutRepository.save(completedWorkout);
 
-    //Circular dependency...perhaps use queues or something
     // 4. Update plan if from a plan
-    // let planUpdated = false;
     if (session.planId && session.workoutTemplateId) {
       const planResult = await this.fitnessPlanRepository.findById(session.planId);
       if (planResult.isSuccess) {
@@ -117,21 +123,20 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
 
         if (updatedPlanResult.isSuccess) {
           await this.fitnessPlanRepository.save(updatedPlanResult.value);
-          // planUpdated = true;
         }
       }
     }
 
     // 5. Update user profile stats
-    const profileResult = await this.profileRepository.findById(request.userId);
+    const profileResult = await this.profileRepository.findById(validatedRequest.userId);
     if (profileResult.isSuccess) {
       const profile = profileResult.value;
-      const volume = this.calculateVolume(fromWorkoutPerformanceSchema(request.performance));
+      const volume = CompletedWorkoutQueries.getTotalVolume(completedWorkout);
 
       const updatedProfile = UserProfileCommands.recordWorkoutCompleted(
         profile,
-        new Date(request.performance.completedAt), // Convert string to Date
-        request.performance.durationMinutes,
+        validatedRequest.performance.completedAt as Date,
+        validatedRequest.performance.durationMinutes,
         volume,
       );
 
@@ -139,73 +144,54 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     }
 
     // 6. Check for achievements
-    const achievements = await this.checkAchievements(request.userId, completedWorkout);
+    const achievements = await this.checkAchievements(validatedRequest.userId, completedWorkout);
 
-    // 7. Clean up session (mark as completed, keep for replay?)
+    // 7. Clean up session
     await this.sessionRepository.delete(session.id);
 
     // 8. Emit events
     await this.eventBus.publish(
       new WorkoutCompletedEvent({
-        userId: request.userId,
+        userId: validatedRequest.userId,
         workoutId: completedWorkout.id,
         planId: session.planId,
       }),
     );
 
-    // 9. Get updated stats
-    const updatedProfile = await this.profileRepository.findById(request.userId);
-    const stats = updatedProfile.isSuccess ? updatedProfile.value.stats : null;
+    // 9. Get updated stats and return view
+    const updatedProfileResult = await this.profileRepository.findById(validatedRequest.userId);
+    const stats = updatedProfileResult.isSuccess ? updatedProfileResult.value.stats : null;
+    const statsView = stats ? toUserStatsView(stats) : null;
 
     return Result.ok({
       workout: toCompletedWorkoutView(completedWorkout),
       newStreak: stats?.currentStreak,
       achievementsEarned: achievements,
-      stats: stats
+      stats: statsView
         ? {
-          totalWorkouts: stats.totalWorkouts,
-          totalVolume: stats.totalVolume,
-          totalMinutes: stats.totalMinutes,
+          totalWorkouts: statsView.totalWorkouts,
+          totalVolume: statsView.totalVolume,
+          totalMinutes: statsView.totalMinutes,
         }
         : { totalWorkouts: 0, totalVolume: 0, totalMinutes: 0 },
     });
   }
 
-  private calculateVolume(performance: WorkoutPerformance): number {
-    let volume = 0;
-    for (const activity of performance.activities) {
-      if (activity.exercises) {
-        for (const exercise of activity.exercises) {
-          if (exercise.weight && exercise.reps) {
-            for (let i = 0; i < exercise.setsCompleted; i++) {
-              volume += (exercise.weight[i] || 0) * (exercise.reps[i] || 0);
-            }
-          }
-        }
-      }
-    }
-    return volume;
-  }
 
-  private async checkAchievements(userId: string, workout: CompletedWorkout): Promise<Achievement[]> {
-    // Would check various achievement conditions
-    const achievements: Achievement[] = [];
-
-    // Example: First workout
+  private async checkAchievements(userId: string, _workout: CompletedWorkout): Promise<AchievementView[]> {
+    const achievements: AchievementView[] = [];
     const profileResult = await this.profileRepository.findById(userId);
+
+    // Simple logic for first workout achievement
     if (profileResult.isSuccess && profileResult.value.stats.totalWorkouts === 1) {
-      achievements.push({
-        id: 'first_workout',
+      const achievement: Achievement = {
+        id: randomUUID(),
         type: 'first_workout',
         name: 'First Steps',
         description: 'Completed your first workout!',
         earnedAt: new Date(),
-      });
-    }
-
-    // Use the workout parameter (example: check workout type for achievements)
-    if (workout.workoutType === 'cardio') {
-      // Placeholder for cardio specific achievements
+      };
+      achievements.push(toAchievementView(achievement));
     }
 
     return achievements;

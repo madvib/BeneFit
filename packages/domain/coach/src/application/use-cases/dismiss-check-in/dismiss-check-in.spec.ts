@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { EventBus, Result } from '@bene/shared';
-import { CoachConversation, CheckIn } from '@core/index.js';
+import { CoachConversation, CheckIn } from '../../../core/index.js';
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 
@@ -25,8 +25,8 @@ describe('DismissCheckInUseCase', () => {
 
   it('should successfully dismiss a check-in', async () => {
     // Arrange
-    const userId = 'user-123';
-    const checkInId = 'checkin-456';
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
 
     const mockCheckIn: CheckIn = {
       id: checkInId,
@@ -38,7 +38,7 @@ describe('DismissCheckInUseCase', () => {
     } as CheckIn;
 
     const mockConversation: CoachConversation = {
-      id: 'conv-789',
+      id: '550e8400-e29b-41d4-a716-446655440007',
       userId,
       context: {
         recentWorkouts: [],
@@ -93,7 +93,7 @@ describe('DismissCheckInUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.conversationId).toBe('conv-789');
+      expect(result.value.conversationId).toBe('550e8400-e29b-41d4-a716-446655440007');
       expect(result.value.dismissed).toBe(true);
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
@@ -107,8 +107,8 @@ describe('DismissCheckInUseCase', () => {
 
   it('should fail if conversation is not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const checkInId = 'checkin-456';
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
 
     (mockConversationRepository.findByUserId as Mock).mockResolvedValue(
       Result.fail(new Error('Not found')),
@@ -130,11 +130,11 @@ describe('DismissCheckInUseCase', () => {
 
   it('should fail if check-in is not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const checkInId = 'checkin-456';
+    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
 
     const mockConversation: CoachConversation = {
-      id: 'conv-789',
+      id: '550e8400-e29b-41d4-a716-446655440007',
       userId,
       context: {
         recentWorkouts: [],

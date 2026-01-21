@@ -1,8 +1,5 @@
 import { Guard, Result } from '@bene/shared';
-import { OAuthCredentials } from '../../value-objects/oauth-credentials/oauth-credentials.js';
-import { ServiceMetadata } from '../../value-objects/service-metadata/service-metadata.js';
-import { ServicePermissions } from '../../value-objects/service-permissions/service-permission.js';
-import { SyncError } from '../../value-objects/sync-status/sync-status.js';
+import { SyncError, ServicePermissions, ServiceMetadata, OAuthCredentials } from '../../value-objects/index.js';
 import { ConnectedService } from './index.js';
 
 export function refreshCredentials(

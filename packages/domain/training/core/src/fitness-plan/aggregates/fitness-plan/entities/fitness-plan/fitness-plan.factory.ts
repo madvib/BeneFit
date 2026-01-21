@@ -1,118 +1,182 @@
-// workout-plan.factory.ts
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Result, Guard } from '@bene/shared';
-import { PlanType, FitnessPlan, FitnessPlanView } from './fitness-plan.types.js';
-import { TrainingConstraints } from '@/shared/index.js';
-import {
-  createPlanPosition,
-  PlanGoals,
-  ProgressionStrategy,
-  toPlanGoalsView,
-} from '@/fitness-plan/value-objects/index.js';
-
-import { WeeklySchedule } from '../weekly-schedule/index.js';
-import { toWeeklyScheduleView } from '../weekly-schedule/weekly-schedule.factory.js';
-import { toWorkoutTemplateView } from '../workout-template/workout-template.factory.js';
-import * as Queries from './fitness-plan.queries.js';
-
-interface CreateDraftParams {
-  userId: string;
-  title: string;
-  description: string;
-  planType: PlanType;
-  goals: PlanGoals;
-  progression: ProgressionStrategy;
-  constraints: TrainingConstraints;
-  startDate: Date;
-  weeks?: WeeklySchedule[];
-}
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { FitnessPlan, FitnessPlanSchema } from './fitness-plan.types.js';
 
 /**
- * FACTORY: Creates a new WorkoutPlan in 'draft' status.
+ * ============================================================================
+ * FITNESS PLAN FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (3 exports):
+ * 1. fitnessPlanFromPersistence() - For fixtures & DB hydration
+ * 2. CreateDraftFitnessPlanSchema - Zod transform for creating drafts
+ * 3. ActivateFitnessPlanSchema - Zod transform for activating plans
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
  */
-export function createDraftFitnessPlan(params: CreateDraftParams): Result<FitnessPlan> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(params.title, 'title'),
-    Guard.againstEmptyString(params.userId, 'userId'),
-  ]);
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates FitnessPlan with domain-specific business rules */
+function validateFitnessPlan(data: unknown): Result<FitnessPlan> {
+  const parseResult = FitnessPlanSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  const initialPositionResult = createPlanPosition({ week: 1, day: 0 });
-  if (initialPositionResult.isFailure) {
-    return Result.fail(initialPositionResult.error);
-  }
+  return Result.ok(parseResult.data);
+}
 
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates FitnessPlan from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function fitnessPlanFromPersistence(
+  data: Unbrand<FitnessPlan>,
+): Result<FitnessPlan> {
+  return Result.ok(data as FitnessPlan);
+}
+
+// ============================================================================
+// 2. DRAFT CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating a new FitnessPlan in 'draft' status.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateDraftFitnessPlanSchema>
+ */
+export const CreateDraftFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSchema.pick({
+  userId: true,
+  title: true,
+  description: true,
+  planType: true,
+  goals: true,
+  progression: true,
+  constraints: true,
+  startDate: true,
+  templateId: true,
+  weeks: true,
+}).transform((input, ctx) => {
+  // Build draft entity with defaults
   const now = new Date();
-
-  const data: FitnessPlan = {
+  const data = {
+    ...input,
     id: randomUUID(),
-    userId: params.userId,
-    title: params.title,
-    description: params.description,
-    planType: params.planType,
-    goals: params.goals,
-    progression: params.progression,
-    constraints: params.constraints,
-    weeks: params.weeks || [],
-    status: 'draft',
-    currentPosition: initialPositionResult.value,
-    startDate: params.startDate,
+    status: 'draft' as const,
+    currentPosition: { week: 1, day: 0 },
     createdAt: now,
     updatedAt: now,
+    endDate: undefined,
   };
 
-  return Result.ok(data);
-}
+  // Validate and brand
+  const validationResult = validateFitnessPlan(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// 3. ACTIVATION (for state transitions)
+// ============================================================================
 
 /**
- * FACTORY: Rehydrates the WorkoutPlan from persistence.
- */
-export function workoutPlanFromPersistence(data: FitnessPlan): Result<FitnessPlan> {
-  return Result.ok(data);
-}
-
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-/**
- * Map FitnessPlan entity to view model (API presentation)
+ * Zod transform for activating a FitnessPlan (draft -> active).
+ * Use at API boundaries for plan activation.
  * 
- * - Serializes Date → ISO string
- * - Enriches with computed fields (currentWorkout, currentWeek, summary)
- * - Omits internal fields (templateId)
+ * Infer input type with: z.input<typeof ActivateFitnessPlanSchema>
  */
-export function toFitnessPlanView(plan: FitnessPlan): FitnessPlanView {
-  const currentWorkout = Queries.getCurrentWorkout(plan);
-  const currentWeek = Queries.getCurrentWeek(plan);
-  const summary = Queries.getWorkoutSummary(plan);
+export const ActivateFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSchema.pick({
+  userId: true,
+  id: true,
+  title: true,
+  description: true,
+  planType: true,
+  goals: true,
+  progression: true,
+  constraints: true,
+  startDate: true,
+  weeks: true,
+  templateId: true,
+  currentPosition: true,
+  createdAt: true,
+  updatedAt: true,
+  endDate: true,
+}).extend({
+  status: z.literal('draft'), // Must be draft to activate
+}).transform((input, ctx) => {
+  // Domain validation: Must have at least one week
+  if (input.weeks.length === 0) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Cannot activate plan with no weeks',
+    });
+    return z.NEVER;
+  }
 
-  return {
-    // Entity fields (auto-typed via Omit)
-    id: plan.id,
-    userId: plan.userId,
-    title: plan.title,
-    description: plan.description,
-    planType: plan.planType,
-    goals: toPlanGoalsView(plan.goals),
-    progression: plan.progression,
-    constraints: plan.constraints,
-    weeks: plan.weeks.map(toWeeklyScheduleView),
-    status: plan.status,
-    currentPosition: plan.currentPosition,
+  // Domain validation: Start date must be today or future
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startDate = new Date(input.startDate);
+  startDate.setHours(0, 0, 0, 0);
 
-    // Date serialization
-    startDate: plan.startDate.toISOString(),
-    endDate: plan.endDate?.toISOString(),
-    createdAt: plan.createdAt.toISOString(),
-    updatedAt: plan.updatedAt?.toISOString(),
+  if (startDate < today) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Start date cannot be in the past',
+    });
+    return z.NEVER;
+  }
 
-    // Enriched fields
-    currentWorkout: currentWorkout ? toWorkoutTemplateView(currentWorkout) : undefined,
-    currentWeek: currentWeek ? toWeeklyScheduleView(currentWeek) : undefined,
-    summary,
+  // Build active entity
+  const data = {
+    ...input,
+    status: 'active' as const,
+    updatedAt: new Date(),
   };
+
+  // Validate and brand
+  const validationResult = validateFitnessPlan(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateDraftFitnessPlanSchema or call via transform.
+ * Kept for test compatibility.
+ */
+export function createDraftFitnessPlan(
+  params: z.input<typeof CreateDraftFitnessPlanSchema>,
+): Result<FitnessPlan> {
+  const parseResult = CreateDraftFitnessPlanSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data as FitnessPlan);
+}
+
+/**
+ * @deprecated Use ActivateFitnessPlanSchema or call via transform.
+ * Kept for test compatibility.
+ */
+export function createActivePlan(
+  draftPlan: z.input<typeof ActivateFitnessPlanSchema>,
+): Result<FitnessPlan> {
+  const parseResult = ActivateFitnessPlanSchema.safeParse(draftPlan);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data as FitnessPlan);
 }

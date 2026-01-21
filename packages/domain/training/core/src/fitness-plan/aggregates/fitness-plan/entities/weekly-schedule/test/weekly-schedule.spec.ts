@@ -1,135 +1,124 @@
 import { describe, it, expect } from 'vitest';
-import { createWorkoutActivity } from '@/workouts/index.js';
-import {
-  createDurationWorkout,
-  createWorkoutGoals,
-  createVolumeWorkout,
-} from '@/fitness-plan/value-objects/index.js';
-import { createWorkoutTemplate } from '../../workout-template/index.js';
-import { createWeeklySchedule, toWeeklyScheduleView } from '../index.js';
+import { z } from 'zod';
+
+import { createWorkoutTemplateFixture } from '../../workout-template/test/workout-template.fixtures.js';
+import { CreateWeeklyScheduleSchema } from '../weekly-schedule.factory.js';
+import { toWeeklyScheduleView } from '../weekly-schedule.view.js';
 import { createWeeklyScheduleFixture } from './weekly-schedule.fixtures.js';
 
-describe('WeeklySchedule', () => {
-  // ============================================
-  // FACTORY
-  // ============================================
-  describe('create', () => {
-    it('should create a weekly schedule with valid properties', () => {
-      // First, create valid WorkoutGoals
-      const goalsResult = createDurationWorkout(
-        30,
-        {
-          mustComplete: true,
-          autoVerifiable: false,
-        },
-        'moderate',
-      );
+type CreateScheduleInput = z.input<typeof CreateWeeklyScheduleSchema>;
 
-      // Always check if the Result succeeded
-      expect(goalsResult.isSuccess).toBe(true);
+describe('WeeklySchedule Aggregate', () => {
+  describe('Creation', () => {
+    it('should create valid weekly schedule with default values', () => {
+      // Arrange & Act
+      const schedule = createWeeklyScheduleFixture();
 
-      // Now we can safely access .value
-      const goals = goalsResult.value;
-
-      // Create a workout template
-      const sampleActivity = createWorkoutActivity({
-        name: 'Jog',
-        type: 'main',
-        order: 1,
-      }).value;
-
-      const workoutResult = createWorkoutTemplate({
-        id: 'workout-1',
-        planId: 'plan-1',
-        weekNumber: 1,
-        dayOfWeek: 1,
-        scheduledDate: '2025-11-26',
-        title: 'Morning Run',
-        type: 'running',
-        category: 'cardio',
-        goals: goals, // This is now guaranteed to be WorkoutGoals, not undefined
-        activities: [sampleActivity],
-        importance: 'key',
-      });
-
-      expect(workoutResult.isSuccess).toBe(true);
-
-      // Now create weekly schedule
-      const scheduleResult = createWeeklySchedule({
-        weekNumber: 1,
-        planId: 'plan-1',
-        startDate: '2025-11-25',
-        endDate: '2025-12-01',
-        focus: 'Base Building',
-        targetWorkouts: 3,
-        workouts: workoutResult.isSuccess ? [workoutResult.value] : [],
-      });
-
-      expect(scheduleResult.isSuccess).toBe(true);
+      // Assert
+      expect(schedule.id).toBeDefined();
+      expect(schedule.weekNumber).toBeGreaterThanOrEqual(1);
+      expect(schedule.workoutsCompleted).toBe(0);
     });
 
-    it('should fail when WorkoutGoals.create fails', () => {
-      // This will fail because no goal type is specified
-      const goalsResult = createWorkoutGoals({
-        completionCriteria: {
-          mustComplete: true,
-          autoVerifiable: false,
-        },
+    it('should allow customization through overrides', () => {
+      // Arrange & Act
+      const schedule = createWeeklyScheduleFixture({
+        focus: 'Custom Focus',
+        targetWorkouts: 5,
       });
 
-      // The Result will be a failure
-      expect(goalsResult.isFailure).toBe(true);
-
-      // DO NOT access .value on a failed Result
-      // This would cause: Type 'undefined' is not assignable to type 'WorkoutGoals'
-      // const goals = goalsResult.value; // ❌ WRONG!
-
-      // Instead, handle the error:
-      if (goalsResult.isFailure) {
-        expect(goalsResult.error).toBeDefined();
-      }
-    });
-
-    it('should demonstrate the correct pattern for using Result types', () => {
-      const goalsResult = createVolumeWorkout(3, 10, {
-        mustComplete: false,
-        autoVerifiable: true,
-      });
-
-      // Pattern 1: Check isSuccess before accessing value
-      if (goalsResult.isSuccess) {
-        const goals = goalsResult.value; // ✅ Type-safe!
-        expect(goals).toBeDefined();
-        expect(goals.volume).toBeDefined();
-      }
-
-      // Pattern 2: Use early return for error cases
-      if (goalsResult.isFailure) {
-        throw new Error('Should not fail');
-      }
-
-      const goals = goalsResult.value; // ✅ Type-safe after guard!
-      expect(goals).toBeDefined();
+      // Assert
+      expect(schedule.focus).toBe('Custom Focus');
+      expect(schedule.targetWorkouts).toBe(5);
     });
   });
 
-  // ============================================
-  // VIEW MAPPER
-  // ============================================
+  describe('Validation', () => {
+    const validInput: CreateScheduleInput = {
+      planId: '550e8400-e29b-41d4-a716-446655440000',
+      weekNumber: 1,
+      startDate: new Date(),
+      endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      focus: 'Strength',
+      targetWorkouts: 3,
+      workouts: [],
+      workoutsCompleted: 0,
+    };
+
+    it('should fail when weekNumber is invalid', () => {
+      // Arrange
+      const input = { ...validInput, weekNumber: 0 };
+
+      // Act
+      const result = CreateWeeklyScheduleSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small/i);
+      }
+    });
+
+    it('should fail when startDate is after endDate', () => {
+      // Arrange
+      const input = {
+        ...validInput,
+        startDate: new Date('2024-01-02'),
+        endDate: new Date('2024-01-01'),
+      };
+
+      // Act
+      const result = CreateWeeklyScheduleSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/start date must be before/i);
+      }
+    });
+
+    it('should fail when workouts exceed targetWorkouts', () => {
+      // Arrange
+      const workout = createWorkoutTemplateFixture();
+      const input = {
+        ...validInput,
+        targetWorkouts: 0,
+        workouts: [workout],
+      };
+
+      // Act
+      const result = CreateWeeklyScheduleSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/cannot have more workouts/i);
+      }
+    });
+  });
+
   describe('View Mapper', () => {
     it('should map a valid weekly schedule entity to view model', () => {
+      // Arrange
       const schedule = createWeeklyScheduleFixture();
+
+      // Act
       const view = toWeeklyScheduleView(schedule);
 
+      // Assert
       expect(view.id).toBe(schedule.id);
       expect(view.weekNumber).toBe(schedule.weekNumber);
       expect(view.focus).toBe(schedule.focus);
     });
 
-    it('should map workouts', () => {
+    it('should map workouts and include progress', () => {
+      // Arrange
       const schedule = createWeeklyScheduleFixture();
+
+      // Act
       const view = toWeeklyScheduleView(schedule);
 
+      // Assert
       expect(Array.isArray(view.workouts)).toBe(true);
       expect(view.workouts.length).toBe(schedule.workouts.length);
       expect(view.progress).toBeDefined();

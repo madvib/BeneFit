@@ -1,6 +1,5 @@
 import { Result, Guard } from '@bene/shared';
-import { CoachConversationData } from './coach-conversation.types.js';
-
+import { CoachConversation } from './coach-conversation.types.js';
 import { CheckInError } from '../../errors/index.js';
 import {
   CheckIn,
@@ -12,11 +11,11 @@ import {
 } from '../../value-objects/index.js';
 
 export function addUserMessage(
-  conversation: CoachConversationData,
-  message: string,
+  conversation: CoachConversation,
+  content: string,
   checkInId?: string,
-): Result<CoachConversationData> {
-  const messageResult = createUserMessage(message, checkInId);
+): Result<CoachConversation> {
+  const messageResult = createUserMessage({ content, checkInId });
   if (messageResult.isFailure) {
     return Result.fail(messageResult.error);
   }
@@ -32,13 +31,13 @@ export function addUserMessage(
 }
 
 export function addCoachMessage(
-  conversation: CoachConversationData,
-  message: string,
+  conversation: CoachConversation,
+  content: string,
   actions?: CoachAction[],
   checkInId?: string,
   tokens?: number,
-): Result<CoachConversationData> {
-  const messageResult = createCoachMessage(message, actions, checkInId, tokens);
+): Result<CoachConversation> {
+  const messageResult = createCoachMessage({ content, actions, checkInId, tokens });
   if (messageResult.isFailure) {
     return Result.fail(messageResult.error);
   }
@@ -54,10 +53,10 @@ export function addCoachMessage(
 }
 
 export function addSystemMessage(
-  conversation: CoachConversationData,
-  message: string,
-): Result<CoachConversationData> {
-  const messageResult = createSystemMessage(message);
+  conversation: CoachConversation,
+  content: string,
+): Result<CoachConversation> {
+  const messageResult = createSystemMessage({ content });
   if (messageResult.isFailure) {
     return Result.fail(messageResult.error);
   }
@@ -71,9 +70,9 @@ export function addSystemMessage(
 }
 
 export function scheduleCheckIn(
-  conversation: CoachConversationData,
+  conversation: CoachConversation,
   checkIn: CheckIn,
-): Result<CoachConversationData> {
+): Result<CoachConversation> {
   const guardResult = Guard.againstNullOrUndefined(checkIn, 'checkIn');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
@@ -88,12 +87,12 @@ export function scheduleCheckIn(
 }
 
 export function respondToCheckIn(
-  conversation: CoachConversationData,
+  conversation: CoachConversation,
   checkInId: string,
   userResponse: string,
   coachAnalysis: string,
   actions: CoachAction[],
-): Result<CoachConversationData> {
+): Result<CoachConversation> {
   const guardResult = Guard.combine([
     Guard.againstNullOrUndefinedBulk([
       { argument: checkInId, argumentName: 'checkInId' },
@@ -141,9 +140,9 @@ export function respondToCheckIn(
 }
 
 export function dismissCheckIn(
-  conversation: CoachConversationData,
+  conversation: CoachConversation,
   checkInId: string,
-): Result<CoachConversationData> {
+): Result<CoachConversation> {
   const guardResult = Guard.againstEmptyString(checkInId, 'checkInId');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
@@ -180,9 +179,9 @@ export function dismissCheckIn(
 }
 
 export function updateContext(
-  conversation: CoachConversationData,
+  conversation: CoachConversation,
   context: CoachContext,
-): Result<CoachConversationData> {
+): Result<CoachConversation> {
   const guardResult = Guard.againstNullOrUndefined(context, 'context');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
@@ -196,9 +195,9 @@ export function updateContext(
 }
 
 export function clearOldMessages(
-  conversation: CoachConversationData,
+  conversation: CoachConversation,
   keepLastN: number = 50,
-): Result<CoachConversationData> {
+): Result<CoachConversation> {
   const guardResult = Guard.againstNegativeOrZero(keepLastN, 'keepLastN');
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);

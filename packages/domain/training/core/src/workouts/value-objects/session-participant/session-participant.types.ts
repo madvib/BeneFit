@@ -1,16 +1,28 @@
-export type ParticipantRole = 'owner' | 'participant' | 'spectator';
-export type ParticipantStatus = 'active' | 'paused' | 'completed' | 'left';
+import { z } from 'zod';
 
-interface SessionParticipantData {
-  userId: string;
-  userName: string;
-  avatar?: string;
-  role: ParticipantRole;
-  status: ParticipantStatus;
-  joinedAt: Date;
-  leftAt?: Date;
-  currentActivity?: string; // What activity they're on
-  completedActivities: number;
-}
+export const ParticipantRoleSchema = z.enum(['owner', 'participant', 'spectator']).readonly();
+export type ParticipantRole = z.infer<typeof ParticipantRoleSchema>;
 
-export type SessionParticipant = Readonly<SessionParticipantData>;
+export const ParticipantStatusSchema = z.enum(['active', 'paused', 'completed', 'left']).readonly();
+export type ParticipantStatus = z.infer<typeof ParticipantStatusSchema>;
+
+/**
+ * 1. DEFINE PROPS SCHEMA
+ */
+export const SessionParticipantSchema = z.object({
+  userId: z.uuid(),
+  userName: z.string().min(1).max(100),
+  avatar: z.url().optional(),
+  role: ParticipantRoleSchema,
+  status: ParticipantStatusSchema,
+  joinedAt: z.coerce.date<Date>(),
+  leftAt: z.coerce.date<Date>().optional(),
+  currentActivity: z.string().min(1).max(100).optional(),
+  completedActivities: z.number().int().min(0).max(100),
+});
+
+/**
+ * 2. INFER TYPES
+ */
+export type SessionParticipant = Readonly<z.infer<typeof SessionParticipantSchema>>;
+

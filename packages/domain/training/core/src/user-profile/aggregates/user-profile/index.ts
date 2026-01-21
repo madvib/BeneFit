@@ -1,9 +1,5 @@
-// Export all parts of the UserProfile aggregate
-export type { UserProfile } from './user-profile.types.js';
-
-export { createUserProfile } from './user-profile.factory.js';
-
+export * from './user-profile.types.js';
+export * from './user-profile.factory.js';
+export * from './user-profile.view.js';
+export * from './user-profile.queries.js';
 export * as UserProfileCommands from './user-profile.commands.js';
-export * as UserProfileQueries from './user-profile.queries.js';
-export * from './user-profile.presentation.js';
-export * from './test/user-profile.fixtures.js';

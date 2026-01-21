@@ -1,44 +1,10 @@
-// Connect Service
-export { ConnectServiceUseCase } from './use-cases/connect-service/connect-service.js';
-export type {
-  ConnectServiceRequest,
-  ConnectServiceResponse,
-} from './use-cases/connect-service/connect-service.js';
-export {
-  ConnectServiceRequestSchema,
-  ConnectServiceResponseSchema,
-} from './use-cases/connect-service/connect-service.js';
+export * from './use-cases/connect-service/index.js';
 
-// Disconnect Service
-export { DisconnectServiceUseCase } from './use-cases/disconnect-service/disconnect-service.js';
-export type {
-  DisconnectServiceRequest,
-  DisconnectServiceResponse,
-} from './use-cases/disconnect-service/disconnect-service.js';
-export {
-  DisconnectServiceRequestSchema,
-  DisconnectServiceResponseSchema,
-} from './use-cases/disconnect-service/disconnect-service.js';
+export * from './use-cases/disconnect-service/index.js';
 
-export { SyncServiceDataUseCase } from './use-cases/sync-service-data/sync-service-data.js';
-export type {
-  SyncServiceDataRequest,
-  SyncServiceDataResponse,
-} from './use-cases/sync-service-data/sync-service-data.js';
-export {
-  SyncServiceDataRequestSchema,
-  SyncServiceDataResponseSchema,
-} from './use-cases/sync-service-data/sync-service-data.js';
+export * from './use-cases/sync-service-data/index.js';
 
-export { GetConnectedServicesUseCase } from './use-cases/get-connected-services/get-connected-services.js';
-export type {
-  GetConnectedServicesRequest,
-  GetConnectedServicesResponse,
-} from './use-cases/get-connected-services/get-connected-services.js';
-export {
-  GetConnectedServicesRequestSchema,
-  GetConnectedServicesResponseSchema,
-} from './use-cases/get-connected-services/get-connected-services.js';
+export * from './use-cases/get-connected-services/index.js';
 
 // Ports
 export type { ConnectedServiceRepository } from './ports/connected-service-repository.js';

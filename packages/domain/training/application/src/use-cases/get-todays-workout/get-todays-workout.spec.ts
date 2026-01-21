@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { Result } from '@bene/shared';
-import { FitnessPlanQueries, createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core';
+import { FitnessPlanQueries, createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
 import { GetTodaysWorkoutUseCase } from './get-todays-workout.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 

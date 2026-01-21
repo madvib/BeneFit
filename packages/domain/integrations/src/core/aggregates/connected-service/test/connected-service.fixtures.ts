@@ -1,20 +1,23 @@
 import { faker } from '@faker-js/faker';
+import {
+  createServicePermissionsFixture,
+  createOAuthCredentialsFixture,
+  createServiceMetadataFixture,
+  createSyncStatusFixture
+} from '../../../../fixtures.js';
 import { ConnectedService, ServiceType } from '../connected-service.types.js';
-import { createOAuthCredentialsFixture } from '../../../value-objects/oauth-credentials/test/oauth-credentials.fixtures.js';
-import { createServicePermissionsFixture } from '../../../value-objects/service-permissions/test/service-permissions.fixtures.js';
-import { createServiceMetadataFixture } from '../../../value-objects/service-metadata/test/service-metadata.fixtures.js';
-import { createSyncStatusFixture } from '../../../value-objects/sync-status/test/sync-status.fixtures.js';
+import { connectedServiceFromPersistence } from '../connected-service.factory.js';
 
+/**
+ * Creates a ConnectedService fixture for testing.
+ * Uses connectedServiceFromPersistence to ensure branding and type safety.
+ */
 export function createConnectedServiceFixture(
   overrides?: Partial<ConnectedService>
 ): ConnectedService {
-  const connectedAt = faker.date.past({ years: 1 });
-  const isActive = overrides?.isActive ?? faker.datatype.boolean({ probability: 0.8 });
-
-  return {
-    id: faker.string.uuid(),
-    userId: faker.string.uuid(),
-    serviceType: faker.helpers.arrayElement([
+  const serviceType =
+    overrides?.serviceType ??
+    faker.helpers.arrayElement([
       'strava',
       'garmin',
       'apple_health',
@@ -24,16 +27,28 @@ export function createConnectedServiceFixture(
       'polar',
       'coros',
       'google_fit',
-    ] as ServiceType[]),
+    ] as ServiceType[]);
+
+  const data = {
+    id: faker.string.uuid(),
+    userId: faker.string.uuid(),
+    serviceType,
     credentials: createOAuthCredentialsFixture(),
     permissions: createServicePermissionsFixture(),
     syncStatus: createSyncStatusFixture(),
     metadata: createServiceMetadataFixture(),
-    isActive,
-    isPaused: isActive ? faker.datatype.boolean({ probability: 0.2 }) : false,
-    connectedAt,
-    lastSyncAt: isActive ? faker.date.recent({ days: 7 }) : undefined,
-    updatedAt: faker.date.recent({ days: 3 }),
+    isActive: true,
+    isPaused: false,
+    connectedAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
     ...overrides,
   };
+
+  const result = connectedServiceFromPersistence(data as ConnectedService);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create ConnectedService fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

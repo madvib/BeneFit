@@ -23,9 +23,6 @@
     "build:shared": "nx run-many -t build --projects=tag:scope:shared",
     "wrangler:types:env": "nx run-many -t types:env --projects=tag:runtime:worker,tag:runtime:durable-object ",
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
-    "test:mappers": "nx run-many -t test --all -- mappers --passWithNoTests",
-    "test:mappers:repo": "nx run-many -t test -p @bene/user-hub -- mappers --passWithNoTests",
-    "test:mappers:app": "nx run-many -t test --projects=tag:type:domain -- mappers --passWithNoTests",
     "test:fixtures": "nx test @bene/web src/lib/testing/fixtures/__tests__",
     "test:schema": "pnpm test:mappers && pnpm test:fixtures",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
@@ -102,8 +99,7 @@
     "vite-plugin-dts": "~4.5.4",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "^4.0.16",
-    "wrangler": "^4.59.1",
-    "zod-schema-faker": "^2.1.0"
+    "wrangler": "^4.59.1"
   },
   "pnpm": {
     "overrides": {

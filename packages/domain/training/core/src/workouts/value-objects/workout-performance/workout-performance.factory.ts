@@ -1,155 +1,131 @@
-import { Guard, Result } from '@bene/shared';
-import {
-  ActivityPerformance,
-  EnergyLevel,
-  DifficultyRating,
-  HeartRateData,
-  WorkoutPerformance,
-  WorkoutPerformanceView,
-} from './workout-performance.types.js';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { WorkoutPerformance, WorkoutPerformanceSchema } from './workout-performance.types.js';
 
-export function createWorkoutPerformance(props: {
-  startedAt: Date;
-  completedAt: Date;
-  activities: ActivityPerformance[];
-  perceivedExertion: number;
-  energyLevel: EnergyLevel;
-  enjoyment: number;
-  difficultyRating: DifficultyRating;
-  heartRate?: HeartRateData;
-  caloriesBurned?: number;
-  notes?: string;
-  injuries?: string[];
-  modifications?: string[];
-}): Result<WorkoutPerformance> {
-  const durationMs = props.completedAt.getTime() - props.startedAt.getTime();
-  const durationMinutes = Math.round(durationMs / 60000);
+/**
+ * ============================================================================
+ * WORKOUT PERFORMANCE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. workoutPerformanceFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWorkoutPerformanceSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
 
-  const guards = [
-    // Validate dates
-    Guard.againstNullOrUndefinedBulk([
-      { argument: props.startedAt, argumentName: 'startedAt' },
-      { argument: props.completedAt, argumentName: 'completedAt' },
-      { argument: props.activities, argumentName: 'activities' },
-    ]),
-    Guard.isTrue(
-      props.completedAt >= props.startedAt,
-      'completedAt must be after startedAt',
-    ),
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-    // Validate duration and activities array length
-    Guard.againstNegativeOrZero(durationMinutes, 'duration'),
-    Guard.isTrue(props.activities?.length > 0, 'must have at least one activity'),
+/** Validates WorkoutPerformance with domain-specific business rules */
+function validateWorkoutPerformance(data: unknown): Result<WorkoutPerformance> {
+  // Parse with Zod schema
+  const parseResult = WorkoutPerformanceSchema.safeParse(data);
 
-    // Validate subjective metrics
-    Guard.inRange(props.perceivedExertion, 1, 10, 'perceivedExertion'),
-    Guard.inRange(props.enjoyment, 1, 5, 'enjoyment'),
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
 
-    // Validate optional metrics (using conditional checks)
-    props.caloriesBurned !== undefined
-      ? Guard.againstNegative(props.caloriesBurned, 'caloriesBurned')
-      : Result.ok(),
-    props.notes ? Guard.againstTooLong(props.notes, 2000, 'notes') : Result.ok(),
-  ];
+  const validated = parseResult.data;
 
-  if (props.activities) {
-    for (const activity of props.activities) {
-      guards.push(
-        Guard.againstNegative(activity.durationMinutes, 'activity.durationMinutes'),
-      );
+  // Domain Invariants
+  if (validated.completedAt < validated.startedAt) {
+    return Result.fail(new Error('completedAt must be after startedAt'));
+  }
 
-      if (
-        activity.intervalsCompleted !== undefined &&
-        activity.intervalsPlanned !== undefined
-      ) {
-        guards.push(
-          Guard.againstNegative(activity.intervalsCompleted, 'intervalsCompleted'),
-        );
-        guards.push(
-          Guard.againstNegativeOrZero(activity.intervalsPlanned, 'intervalsPlanned'),
-        );
-      }
+  if (validated.activities.length === 0) {
+    return Result.fail(new Error('must have at least one activity'));
+  }
 
-      if (activity.exercises) {
-        for (const exercise of activity.exercises) {
-          guards.push(Guard.againstEmptyString(exercise.name, 'exercise.name'));
-          guards.push(Guard.againstNegative(exercise.setsCompleted, 'setsCompleted'));
-          guards.push(Guard.againstNegativeOrZero(exercise.setsPlanned, 'setsPlanned'));
-
-          if (exercise.reps) {
-            guards.push(
-              Guard.isTrue(
-                exercise.reps.length === exercise.setsCompleted,
-                'reps array length must match setsCompleted',
-              ),
-            );
-          }
-          if (exercise.weight) {
-            guards.push(
-              Guard.isTrue(
-                exercise.weight.length === exercise.setsCompleted,
-                'weight array length must match setsCompleted',
-              ),
-            );
-          }
+  // Deep validation of exercises
+  for (const activity of validated.activities) {
+    if (activity.exercises) {
+      for (const exercise of activity.exercises) {
+        if (exercise.reps && exercise.reps.length !== exercise.setsCompleted) {
+          return Result.fail(new Error(`reps array length must match setsCompleted for exercise: ${ exercise.name }`));
+        }
+        if (exercise.weight && exercise.weight.length !== exercise.setsCompleted) {
+          return Result.fail(new Error(`weight array length must match setsCompleted for exercise: ${ exercise.name }`));
         }
       }
     }
   }
 
-  // --- 3. Add checks for heart rate (must be done after activity loops) ---
-  if (props.heartRate) {
-    if (props.heartRate.average !== undefined) {
-      guards.push(
-        Guard.againstNegativeOrZero(props.heartRate.average, 'heartRate.average'),
-      );
-    }
-    if (props.heartRate.max !== undefined) {
-      guards.push(Guard.againstNegativeOrZero(props.heartRate.max, 'heartRate.max'));
-    }
-    if (props.heartRate.average && props.heartRate.max) {
-      guards.push(
-        Guard.isTrue(
-          props.heartRate.average <= props.heartRate.max,
-          'average heart rate must be <= max heart rate',
-        ),
-      );
+  if (validated.heartRate) {
+    if (validated.heartRate.average !== undefined && validated.heartRate.max !== undefined) {
+      if (validated.heartRate.average > validated.heartRate.max) {
+        return Result.fail(new Error('Average heart rate cannot be greater than max heart rate'));
+      }
     }
   }
 
-  const finalGuardResult = Guard.combine(guards); // Filter out false/undefined/null from conditional checks
-
-  if (finalGuardResult.isFailure) {
-    return Result.fail(finalGuardResult.error);
-  }
-
-  return Result.ok({
-    startedAt: props.startedAt,
-    completedAt: props.completedAt,
-    durationMinutes, // This is the derived property
-    activities: props.activities,
-    perceivedExertion: props.perceivedExertion,
-    energyLevel: props.energyLevel,
-    enjoyment: props.enjoyment,
-    difficultyRating: props.difficultyRating,
-    heartRate: props.heartRate,
-    caloriesBurned: props.caloriesBurned,
-    notes: props.notes,
-    injuries: props.injuries,
-    modifications: props.modifications,
-  });
+  return Result.ok(validated);
 }
 
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
 
-export function toWorkoutPerformanceView(
-  performance: WorkoutPerformance,
-): WorkoutPerformanceView {
-  return {
-    ...performance,
-    startedAt: performance.startedAt.toISOString(),
-    completedAt: performance.completedAt.toISOString(),
+/**
+ * Rehydrates WorkoutPerformance from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function workoutPerformanceFromPersistence(
+  data: Unbrand<WorkoutPerformance>,
+): Result<WorkoutPerformance> {
+  return Result.ok(data as WorkoutPerformance);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating WorkoutPerformance with validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateWorkoutPerformanceSchema>
+ */
+export const CreateWorkoutPerformanceSchema = WorkoutPerformanceSchema.omit({
+  durationMinutes: true,
+}).extend({
+  durationMinutes: z.number().optional(),
+}).transform((input, ctx) => {
+  // Calculate duration from timestamps
+  const durationMs = input.completedAt.getTime() - input.startedAt.getTime();
+  const calculatedDurationMinutes = Math.round(durationMs / 60000);
+
+  // Build entity with defaults
+  const data = {
+    ...input,
+    durationMinutes: input.durationMinutes ?? calculatedDurationMinutes,
   };
+
+  // Validate and brand
+  const validationResult = validateWorkoutPerformance(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWorkoutPerformanceSchema or workoutPerformanceFromPersistence.
+ * Kept for test compatibility.
+ */
+export function createWorkoutPerformance(
+  params: z.input<typeof CreateWorkoutPerformanceSchema>,
+): Result<WorkoutPerformance> {
+  const durationMs = params.completedAt.getTime() - params.startedAt.getTime();
+  const calculatedDurationMinutes = Math.round(durationMs / 60000);
+
+  const data = {
+    ...params,
+    durationMinutes: params.durationMinutes ?? calculatedDurationMinutes,
+  };
+
+  return validateWorkoutPerformance(data);
 }

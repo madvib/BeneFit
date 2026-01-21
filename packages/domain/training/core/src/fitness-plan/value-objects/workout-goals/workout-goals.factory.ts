@@ -1,132 +1,90 @@
-import { Result, Guard } from '@bene/shared';
-import { GoalsValidationError } from '../../errors/fitness-plan-errors.js';
+import { z } from 'zod';
+import { Result, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  CompletionCriteria,
-  DistanceGoal,
-  DurationGoal,
-  VolumeGoal,
   WorkoutGoals,
+  WorkoutGoalsSchema,
+  CompletionCriteria,
 } from './workout-goals.types.js';
 
-export interface WorkoutGoalsProps {
-  distance?: DistanceGoal;
-  duration?: DurationGoal;
-  volume?: VolumeGoal;
-  completionCriteria: CompletionCriteria;
-}
+/**
+ * ============================================================================
+ * WORKOUT GOALS FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. workoutGoalsFromPersistence() - For fixtures & DB hydration
+ * 2. CreateWorkoutGoalsSchema - Zod transform for API boundaries
+ * 3. Specialized factories (createDistanceWorkout, etc.)
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-export function createWorkoutGoals(props: WorkoutGoalsProps): Result<WorkoutGoals> {
-  const guardResult = Guard.againstNullOrUndefined(
-    props.completionCriteria,
-    'completionCriteria',
-  );
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+/** Validates data with WorkoutGoalsSchema and business rules */
+function validate(data: unknown): Result<WorkoutGoals> {
+  const parseResult = WorkoutGoalsSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  // Validate only one goal type is specified
+  const validated = parseResult.data;
+
+  // Business Rule: Exactly one goal type must be specified
   const goalTypes = [
-    props.distance ? 1 : 0,
-    props.duration ? 1 : 0,
-    props.volume ? 1 : 0,
+    validated.distance ? 1 : 0,
+    validated.duration ? 1 : 0,
+    validated.volume ? 1 : 0,
   ].filter(Boolean).length;
 
-  if (goalTypes > 1) {
-    return Result.fail(
-      new GoalsValidationError(
-        'Only one goal type (distance, duration, or volume) can be specified',
-      ),
-    );
-  }
-
   if (goalTypes === 0) {
-    return Result.fail(
-      new GoalsValidationError('At least one goal type must be specified'),
-    );
+    return Result.fail(new Error('At least one goal type (distance, duration, or volume) must be specified'));
   }
 
-  // Validate distance goal
-  if (props.distance) {
-    if (props.distance.value <= 0) {
-      return Result.fail(
-        new GoalsValidationError('Distance must be positive', {
-          distance: props.distance.value,
-        }),
-      );
-    }
-
-    if (props.distance.pace) {
-      if (props.distance.pace.min <= 0 || props.distance.pace.max <= 0) {
-        return Result.fail(
-          new GoalsValidationError('Pace values must be positive', {
-            pace: props.distance.pace,
-          }),
-        );
-      }
-      if (props.distance.pace.min > props.distance.pace.max) {
-        return Result.fail(
-          new GoalsValidationError('Min pace must be less than max pace', {
-            pace: props.distance.pace,
-          }),
-        );
-      }
-    }
+  if (goalTypes > 1) {
+    return Result.fail(new Error('Only one goal type (distance, duration, or volume) can be specified'));
   }
 
-  // Validate duration goal
-  if (props.duration) {
-    if (props.duration.value <= 0) {
-      return Result.fail(
-        new GoalsValidationError('Duration must be positive', {
-          duration: props.duration.value,
-        }),
-      );
-    }
-  }
-
-  // Validate volume goal
-  if (props.volume) {
-    if (props.volume.totalSets <= 0) {
-      return Result.fail(
-        new GoalsValidationError('Total sets must be positive', {
-          totalSets: props.volume.totalSets,
-        }),
-      );
-    }
-    if (props.volume.totalReps <= 0) {
-      return Result.fail(
-        new GoalsValidationError('Total reps must be positive', {
-          totalReps: props.volume.totalReps,
-        }),
-      );
-    }
-  }
-
-  // Validate completion criteria
-  if (props.completionCriteria.minimumEffort !== undefined) {
-    if (
-      props.completionCriteria.minimumEffort < 0 ||
-      props.completionCriteria.minimumEffort > 1
-    ) {
-      return Result.fail(
-        new GoalsValidationError('Minimum effort must be between 0 and 1', {
-          minimumEffort: props.completionCriteria.minimumEffort,
-        }),
-      );
-    }
-  }
-
-  return Result.ok(props);
+  return Result.ok(validated);
 }
 
-// Factory methods for common goal types
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates WorkoutGoals from persistence/fixtures (trusts the data).
+ */
+export function workoutGoalsFromPersistence(data: WorkoutGoals): Result<WorkoutGoals> {
+  return Result.ok(data);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating new WorkoutGoals.
+ * Use at API boundaries (controllers, resolvers).
+ */
+export const CreateWorkoutGoalsSchema: z.ZodType<WorkoutGoals> = WorkoutGoalsSchema.transform((input, ctx) => {
+  const result = validate(input);
+  return unwrapOrIssue(result, ctx);
+});
+
+// ============================================================================
+// 3. SPECIALIZED FACTORIES
+// ============================================================================
+
 export function createDistanceWorkout(
   distance: number,
   unit: 'meters' | 'km' | 'miles',
   criteria: CompletionCriteria,
 ): Result<WorkoutGoals> {
-  return createWorkoutGoals({
+  return validate({
     distance: { value: distance, unit },
     completionCriteria: criteria,
   });
@@ -137,7 +95,7 @@ export function createDurationWorkout(
   criteria: CompletionCriteria,
   intensity?: 'easy' | 'moderate' | 'hard' | 'max',
 ): Result<WorkoutGoals> {
-  return createWorkoutGoals({
+  return validate({
     duration: { value: duration, intensity },
     completionCriteria: criteria,
   });
@@ -148,8 +106,19 @@ export function createVolumeWorkout(
   totalReps: number,
   criteria: CompletionCriteria,
 ): Result<WorkoutGoals> {
-  return createWorkoutGoals({
+  return validate({
     volume: { totalSets, totalReps },
     completionCriteria: criteria,
   });
+}
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateWorkoutGoalsSchema or call via transform.
+ */
+export function createWorkoutGoals(props: unknown): Result<WorkoutGoals> {
+  return validate(props);
 }

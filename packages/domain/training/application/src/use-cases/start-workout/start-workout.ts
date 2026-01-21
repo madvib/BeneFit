@@ -1,46 +1,28 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
-  createWorkoutSession,
-  WorkoutActivity,
+  CreateWorkoutSessionSchema,
   WorkoutSessionCommands,
-  createWorkoutActivity,
-  toWorkoutSessionSchema,
+  CreateWorkoutActivitySchema,
+  toWorkoutSessionView,
 } from '@bene/training-core';
-import type { WorkoutSessionPresentation as WorkoutSessionView } from '@bene/training-core';
+import type { WorkoutSessionView } from '@bene/training-core';
 import type { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
 import { WorkoutStartedEvent } from '../../events/workout-started.event.js';
-
-// Simplified schema for WorkoutActivity - we'll use unknown for now and convert at runtime
-export const WorkoutActivitySchema = z
-  .object({
-    name: z.string().min(1),
-    type: z.enum(['warmup', 'main', 'cooldown', 'interval', 'circuit']),
-    order: z.number().int().nonnegative(),
-    structure: z.unknown().optional(),
-    instructions: z.array(z.string()).optional(),
-    distance: z.number().nonnegative().optional(),
-    duration: z.number().nonnegative().optional(),
-    pace: z.string().optional(),
-    videoUrl: z.string().url().optional(),
-    equipment: z.array(z.string()).optional(),
-    alternativeExercises: z.array(z.string()).optional(),
-  })
-  .readonly();
-
 
 
 // Single request schema with ALL fields
 export const StartWorkoutRequestSchema = z.object({
   // Server context
-  userId: z.string().min(1), // Should ideally be UUID but min(1) is safer for legacy mocks
+  userId: z.uuid(),
 
   // Client data
   userName: z.string().min(1),
   userAvatar: z.string().optional(),
   fromPlan: z.boolean().optional(),
+  // type should be domain derived
   workoutType: z.string().optional(),
-  activities: z.array(WorkoutActivitySchema).optional(),
+  activities: z.array(CreateWorkoutActivitySchema).optional(),
   isMultiplayer: z.boolean().optional(),
   isPublic: z.boolean().optional(),
 });
@@ -68,56 +50,31 @@ export class StartWorkoutUseCase extends BaseUseCase<
   }
 
   protected async performExecution(request: StartWorkoutRequest): Promise<Result<StartWorkoutResponse>> {
-    // 1. Validate custom workout request
-    if (!request.workoutType || !request.activities) {
+    // 2. Validate custom workout request
+    if (!request.workoutType || !request.activities || request.activities.length === 0) {
       return Result.fail(
         new Error('Must provide workoutType and activities for custom workout'),
       );
     }
 
-    // 2. Convert schema activities to domain activities
-    const domainActivities = request.activities.map((activity) => {
-      const activityResult = createWorkoutActivity({
-        name: activity.name,
-        type: activity.type,
-        order: activity.order,
-        structure: undefined, // We'll handle structure conversion separately if needed
-        instructions: activity.instructions,
-        distance: activity.distance,
-        duration: activity.duration,
-        pace: activity.pace,
-        videoUrl: activity.videoUrl,
-        equipment: activity.equipment,
-        alternativeExercises: activity.alternativeExercises,
-      });
-
-      if (activityResult.isFailure) {
-        throw new Error(`Failed to create workout activity: ${ activityResult.error }`);
-      }
-
-      return activityResult.value;
-    });
-
-    // 2. Create session
-    const sessionResult = createWorkoutSession({
+    // 3. Create session using canonical API
+    const sessionParseResult = CreateWorkoutSessionSchema.safeParse({
       ownerId: request.userId,
       workoutType: request.workoutType,
-      activities: domainActivities,
+      activities: request.activities,
       planId: undefined,
       workoutTemplateId: undefined,
       isMultiplayer: request.isMultiplayer,
-      configuration: {
-        isPublic: request.isPublic,
-      },
+      configuration: request.isPublic !== undefined ? { isPublic: request.isPublic } : undefined,
     });
 
-    if (sessionResult.isFailure) {
-      return Result.fail(sessionResult.error);
+    if (!sessionParseResult.success) {
+      return Result.fail(new Error(`Failed to create session: ${ sessionParseResult.error.message }`));
     }
 
-    // 3. Start session
+    // 4. Start session
     const startedSessionResult = WorkoutSessionCommands.startSession(
-      sessionResult.value,
+      sessionParseResult.data,
       request.userName,
       request.userAvatar,
     );
@@ -142,7 +99,7 @@ export class StartWorkoutUseCase extends BaseUseCase<
 
     // 6. Return session details
     return Result.ok({
-      session: toWorkoutSessionSchema(session),
+      session: toWorkoutSessionView(session),
     });
   }
 }

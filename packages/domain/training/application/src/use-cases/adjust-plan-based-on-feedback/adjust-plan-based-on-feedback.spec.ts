@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result, EventBus } from '@bene/shared';
-import { createFitnessPlanFixture } from '@bene/training-core';
+import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
 import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback.js';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { AIPlanGenerator } from '../../services/ai-plan-generator.js';

@@ -1,68 +1,138 @@
-import { Result, Guard } from '@bene/shared';
-import { CoachMsg } from './coach-msg.types.js';
-import { CoachAction } from '../index.js';
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { CoachMsg, CoachMsgSchema } from './coach-msg.types.js';
 
-export function createUserMessage(
-  content: string,
-  checkInId?: string,
-): Result<CoachMsg> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(content, 'content'),
-    content ? Guard.againstTooLong(content, 2000, 'content') : Result.ok(),
-  ]);
+/**
+ * ============================================================================
+ * COACH MESSAGE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. coachMsgFromPersistence() - For fixtures & DB hydration
+ * 2. CreateUserMessageSchema - Zod transform for user messages
+ * 3. CreateCoachMessageSchema - Zod transform for coach messages
+ * 4. CreateSystemMessageSchema - Zod transform for system messages
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands CoachMsg */
+function validateCoachMsg(data: unknown): Result<CoachMsg> {
+  const parseResult = CoachMsgSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  return Result.ok({
-    id: randomUUID(),
-    role: 'user',
-    content,
-    checkInId,
-    timestamp: new Date(),
-  });
+  return Result.ok(parseResult.data);
 }
 
-export function createCoachMessage(
-  content: string,
-  actions?: CoachAction[],
-  checkInId?: string,
-  tokens?: number,
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates CoachMsg from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function coachMsgFromPersistence(
+  data: Unbrand<CoachMsg>,
 ): Result<CoachMsg> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(content, 'content'),
-    content ? Guard.againstTooLong(content, 2000, 'content') : Result.ok(),
-    tokens !== undefined ? Guard.againstNegative(tokens, 'tokens') : Result.ok(),
-  ]);
-
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
-  }
-
-  return Result.ok({
-    id: randomUUID(),
-    role: 'coach',
-    content,
-    actions,
-    checkInId,
-    timestamp: new Date(),
-    tokens,
-  });
+  return Result.ok(data as CoachMsg);
 }
 
-export function createSystemMessage(content: string): Result<CoachMsg> {
-  const guardResult = Guard.againstEmptyString(content, 'content');
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
-  }
+/**
+ * User Message Creation Schema
+ */
+export const CreateUserMessageSchema = CoachMsgSchema.pick({
+  content: true,
+  checkInId: true,
+}).extend({
+  id: z.uuid().optional(),
+  timestamp: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    role: 'user' as const,
+    timestamp: input.timestamp || new Date(),
+  };
 
-  return Result.ok({
-    id: randomUUID(),
-    role: 'system',
-    content,
-    timestamp: new Date(),
-  });
+  const validationResult = validateCoachMsg(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<CoachMsg>;
+
+/**
+ * Coach Message Creation Schema
+ */
+export const CreateCoachMessageSchema = CoachMsgSchema.pick({
+  content: true,
+  actions: true,
+  checkInId: true,
+  tokens: true,
+}).extend({
+  id: z.uuid().optional(),
+  timestamp: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    role: 'coach' as const,
+    timestamp: input.timestamp || new Date(),
+  };
+
+  const validationResult = validateCoachMsg(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<CoachMsg>;
+
+/**
+ * System Message Creation Schema
+ */
+export const CreateSystemMessageSchema = CoachMsgSchema.pick({
+  content: true,
+}).extend({
+  id: z.uuid().optional(),
+  timestamp: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    role: 'system' as const,
+    timestamp: input.timestamp || new Date(),
+  };
+
+  const validationResult = validateCoachMsg(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<CoachMsg>;
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/** @deprecated Use CreateUserMessageSchema */
+export function createUserMessage(params: unknown): Result<CoachMsg> {
+  const result = CreateUserMessageSchema.safeParse(params);
+  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
+}
+
+/** @deprecated Use CreateCoachMessageSchema */
+export function createCoachMessage(params: unknown): Result<CoachMsg> {
+  const result = CreateCoachMessageSchema.safeParse(params);
+  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
+}
+
+/** @deprecated Use CreateSystemMessageSchema */
+export function createSystemMessage(params: unknown): Result<CoachMsg> {
+  const result = CreateSystemMessageSchema.safeParse(params);
+  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
 }

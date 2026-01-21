@@ -1,9 +1,31 @@
 import { faker } from '@faker-js/faker';
+import { z } from 'zod';
 import { WorkoutSession, SessionState } from '../workout-session.types.js';
-import { createWorkoutActivityFixture, createSessionParticipantFixture, createSessionConfigurationFixture, createSessionFeedItemFixture } from '../../../value-objects/index.js';
+import { createWorkoutActivityFixture, createSessionParticipantFixture, createSessionConfigurationFixture, createSessionFeedItemFixture } from '@/fixtures.js';
+import { workoutSessionFromPersistence, CreateWorkoutSessionSchema } from '../workout-session.factory.js';
+
+type CreateWorkoutSessionInput = z.input<typeof CreateWorkoutSessionSchema>;
+
+export function createWorkoutSessionInputFixture(
+  overrides?: Partial<CreateWorkoutSessionInput>,
+): CreateWorkoutSessionInput {
+  return {
+    ownerId: faker.string.uuid(),
+    planId: faker.string.uuid(),
+    workoutTemplateId: faker.string.uuid(),
+    workoutType: faker.helpers.arrayElement(['Strength', 'Cardio', 'HIIT']),
+    activities: [
+      createWorkoutActivityFixture({ name: 'Warmup', type: 'warmup', order: 0 }),
+      createWorkoutActivityFixture({ name: 'Main Set', type: 'main', order: 1 }),
+      createWorkoutActivityFixture({ name: 'Cooldown', type: 'cooldown', order: 2 })
+    ],
+    ...overrides,
+  };
+}
 
 export function createWorkoutSessionFixture(overrides: Partial<WorkoutSession> = {}): WorkoutSession {
-  return {
+  // We construct the full object for fixture rehydration to have realistic defaults
+  const data = {
     id: faker.string.uuid(),
     ownerId: faker.string.uuid(),
     planId: faker.string.uuid(),
@@ -31,4 +53,12 @@ export function createWorkoutSessionFixture(overrides: Partial<WorkoutSession> =
     updatedAt: faker.date.recent(),
     ...overrides
   };
+
+  const result = workoutSessionFromPersistence(data as WorkoutSession);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create WorkoutSession fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

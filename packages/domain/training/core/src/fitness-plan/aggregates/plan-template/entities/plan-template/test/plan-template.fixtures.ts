@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { createTemplateRulesFixture } from '../../template-rules/index.js';
-import { createTemplateStructureFixture } from '../../template-structure/index.js';
+import { createTemplateStructureFixture, createTemplateRulesFixture } from '@/fixtures.js';
 import { PlanTemplate } from '../plan-template.types.js';
+import { planTemplateFromPersistence } from '../plan-template.factory.js';
 
 export function createPlanTemplateFixture(overrides: Partial<PlanTemplate> = {}): PlanTemplate {
-  const structure = createTemplateStructureFixture();
-  const rules = createTemplateRulesFixture();
+  const structure = overrides.structure ?? createTemplateStructureFixture();
+  const rules = overrides.rules ?? createTemplateRulesFixture();
 
-  return {
+  const data = {
     id: faker.string.uuid(),
     name: faker.commerce.productName(),
     description: faker.lorem.paragraph(),
@@ -33,4 +33,12 @@ export function createPlanTemplateFixture(overrides: Partial<PlanTemplate> = {})
     version: 1,
     ...overrides
   };
+
+  const result = planTemplateFromPersistence(data);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create PlanTemplate fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

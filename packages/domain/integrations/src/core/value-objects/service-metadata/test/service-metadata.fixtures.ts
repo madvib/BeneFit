@@ -1,12 +1,17 @@
 import { faker } from '@faker-js/faker';
-import { ServiceMetadata } from '../service-metadata.js';
+import { ServiceMetadata } from '../service-metadata.types.js';
+import { serviceMetadataFromPersistence } from '../service-metadata.factory.js';
 
+/**
+ * Creates a ServiceMetadata fixture for testing.
+ * Uses serviceMetadataFromPersistence to ensure branding and type safety.
+ */
 export function createServiceMetadataFixture(
   overrides?: Partial<ServiceMetadata>
 ): ServiceMetadata {
   const supportsWebhooks = faker.datatype.boolean({ probability: 0.7 });
 
-  return {
+  const data = {
     externalUserId: faker.string.uuid(),
     externalUsername: faker.internet.username(),
     profileUrl: faker.internet.url(),
@@ -17,4 +22,12 @@ export function createServiceMetadataFixture(
     webhookUrl: supportsWebhooks && faker.datatype.boolean() ? faker.internet.url() : undefined,
     ...overrides,
   };
+
+  const result = serviceMetadataFromPersistence(data as ServiceMetadata);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create ServiceMetadata fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

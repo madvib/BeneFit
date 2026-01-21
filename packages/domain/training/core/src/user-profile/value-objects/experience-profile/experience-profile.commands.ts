@@ -1,6 +1,5 @@
-import { Guard } from '@bene/shared';
+import { ExperienceLevel, Guard } from '@bene/shared';
 import {
-  ExperienceLevel,
   ExperienceProfile,
   TrainingHistory,
   CurrentCapabilities,
@@ -151,14 +150,14 @@ export function equals(profile: ExperienceProfile, other: ExperienceProfile): bo
     profile.level === other.level &&
     profile.history.yearsTraining === other.history.yearsTraining &&
     JSON.stringify(profile.history.previousPrograms) ===
-      JSON.stringify(other.history.previousPrograms) &&
+    JSON.stringify(other.history.previousPrograms) &&
     JSON.stringify(profile.history.sports) === JSON.stringify(other.history.sports) &&
     JSON.stringify(profile.history.certifications) ===
-      JSON.stringify(other.history.certifications) &&
+    JSON.stringify(other.history.certifications) &&
     profile.capabilities.canDoFullPushup === other.capabilities.canDoFullPushup &&
     profile.capabilities.canDoFullPullup === other.capabilities.canDoFullPullup &&
     profile.capabilities.canRunMile === other.capabilities.canRunMile &&
     profile.capabilities.canSquatBelowParallel ===
-      other.capabilities.canSquatBelowParallel
+    other.capabilities.canSquatBelowParallel
   );
 }

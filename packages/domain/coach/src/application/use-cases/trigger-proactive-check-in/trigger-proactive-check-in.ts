@@ -1,34 +1,35 @@
 import { z } from 'zod';
-import { Result, type EventBus, BaseUseCase } from '@bene/shared';
+import { Result, type EventBus, BaseUseCase, mapZodError } from '@bene/shared';
 import { Injury } from '@bene/training-core';
 import {
   CoachConversationCommands,
-  createCoachConversation,
-  createCheckIn,
+  CreateCoachConversationSchema,
+  CreateCheckInSchema,
   CheckInTrigger,
 } from '../../../core/index.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 import { CoachContextBuilder, AICoachService } from '../../services/index.js';
 import { ProactiveCheckInTriggeredEvent } from '../../events/proactive-check-in-triggered.event.js';
 
-
+/**
+ * Request schema
+ */
 export const TriggerProactiveCheckInRequestSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
 });
 
 export type TriggerProactiveCheckInRequest = z.infer<
   typeof TriggerProactiveCheckInRequestSchema
 >;
 
-export const TriggerProactiveCheckInResponseSchema = z.object({
-  checkInId: z.string(),
-  question: z.string().min(1).max(500),
-  triggeredBy: z.string().min(1).max(200),
-});
-
-export type TriggerProactiveCheckInResponse = z.infer<
-  typeof TriggerProactiveCheckInResponseSchema
->;
+/**
+ * Response type - outcome of proactive trigger
+ */
+export interface TriggerProactiveCheckInResponse {
+  checkInId: string;
+  question: string;
+  triggeredBy: string;
+}
 
 export class TriggerProactiveCheckInUseCase extends BaseUseCase<
   TriggerProactiveCheckInRequest,
@@ -59,17 +60,18 @@ export class TriggerProactiveCheckInUseCase extends BaseUseCase<
     );
 
     if (conversationResult.isFailure) {
-      const newConvResult = createCoachConversation({
+      const parseResult = CreateCoachConversationSchema.safeParse({
         userId: request.userId,
         context,
       });
 
-      if (newConvResult.isFailure) {
-        return Result.fail(newConvResult.error);
+      if (!parseResult.success) {
+        return Result.fail(mapZodError(parseResult.error));
       }
 
-      await this.conversationRepository.save(newConvResult.value);
-      conversationResult = Result.ok(newConvResult.value);
+      const newConversation = parseResult.data;
+      await this.conversationRepository.save(newConversation);
+      conversationResult = Result.ok(newConversation);
     }
 
     let conversation = conversationResult.value;
@@ -91,17 +93,17 @@ export class TriggerProactiveCheckInUseCase extends BaseUseCase<
     }
 
     // 5. Create check-in - This is a factory function
-    const checkInResult = createCheckIn({
+    const checkInParseResult = CreateCheckInSchema.safeParse({
       type: 'proactive',
       question: questionResult.value,
       triggeredBy: trigger,
     });
 
-    if (checkInResult.isFailure) {
-      return Result.fail(checkInResult.error);
+    if (!checkInParseResult.success) {
+      return Result.fail(mapZodError(checkInParseResult.error));
     }
 
-    const checkIn = checkInResult.value;
+    const checkIn = checkInParseResult.data;
 
     // 6. Add to conversation
     const updatedConvResult = CoachConversationCommands.scheduleCheckIn(

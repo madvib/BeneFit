@@ -1,20 +1,26 @@
+import { faker } from '@faker-js/faker';
 import { WorkoutPerformance } from '../workout-performance.types.js';
-import { createWorkoutPerformance } from '../workout-performance.factory.js';
+import { workoutPerformanceFromPersistence } from '../workout-performance.factory.js';
 
 /**
  * Canonical Fixtures for WorkoutPerformance
  */
 
 export function createMinimalPerformanceFixture(overrides?: Partial<WorkoutPerformance>): WorkoutPerformance {
-  const result = createWorkoutPerformance({
-    startedAt: new Date('2024-01-15T10:00:00Z'),
-    completedAt: new Date('2024-01-15T11:00:00Z'),
+  const startedAt = faker.date.recent();
+  const completedAt = new Date(startedAt.getTime() + 45 * 60000);
+
+  const data = {
+    startedAt,
+    completedAt,
+    durationMinutes: 45,
     activities: [{
-      activityType: 'main',
+      id: faker.string.uuid(),
+      activityType: 'main' as const,
       completed: true,
       durationMinutes: 45,
       exercises: [{
-        name: 'Bench Press',
+        name: faker.helpers.arrayElement(['Bench Press', 'Squats', 'Deadlift']),
         setsCompleted: 3,
         setsPlanned: 3,
         reps: [10, 10, 8],
@@ -22,31 +28,40 @@ export function createMinimalPerformanceFixture(overrides?: Partial<WorkoutPerfo
       }],
     }],
     perceivedExertion: 7,
-    energyLevel: 'medium',
+    energyLevel: 'medium' as const,
     enjoyment: 4,
-    difficultyRating: 'just_right',
-  });
+    difficultyRating: 'just_right' as const,
+    ...overrides,
+  };
+
+  const result = workoutPerformanceFromPersistence(data);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create fixture: ${ result.error }`);
+    throw new Error(`Failed to create workout performance fixture: ${ result.error }`);
   }
 
-  return { ...result.value, ...overrides };
+  return result.value;
 }
 
 export function createFullPerformanceFixture(overrides?: Partial<WorkoutPerformance>): WorkoutPerformance {
-  const result = createWorkoutPerformance({
-    startedAt: new Date('2024-01-15T10:00:00Z'),
-    completedAt: new Date('2024-01-15T11:30:00Z'),
+  const startedAt = faker.date.recent();
+  const completedAt = new Date(startedAt.getTime() + 80 * 60000);
+
+  const data = {
+    startedAt,
+    completedAt,
+    durationMinutes: 80,
     activities: [
       {
-        activityType: 'warmup',
+        id: faker.string.uuid(),
+        activityType: 'warmup' as const,
         completed: true,
         durationMinutes: 10,
-        notes: 'Light cardio and stretching',
+        notes: faker.lorem.sentence(),
       },
       {
-        activityType: 'main',
+        id: faker.string.uuid(),
+        activityType: 'main' as const,
         completed: true,
         durationMinutes: 60,
         exercises: [
@@ -67,16 +82,17 @@ export function createFullPerformanceFixture(overrides?: Partial<WorkoutPerforma
         ],
       },
       {
-        activityType: 'cooldown',
+        id: faker.string.uuid(),
+        activityType: 'cooldown' as const,
         completed: true,
         durationMinutes: 10,
-        notes: 'Stretching and foam rolling',
+        notes: faker.lorem.sentence(),
       },
     ],
     perceivedExertion: 8,
-    energyLevel: 'high',
+    energyLevel: 'high' as const,
     enjoyment: 5,
-    difficultyRating: 'just_right',
+    difficultyRating: 'just_right' as const,
     heartRate: {
       average: 145,
       max: 175,
@@ -88,22 +104,30 @@ export function createFullPerformanceFixture(overrides?: Partial<WorkoutPerforma
       },
     },
     caloriesBurned: 450,
-    notes: 'Great workout! Felt strong today.',
-  });
+    notes: faker.lorem.paragraph(),
+    ...overrides,
+  };
+
+  const result = workoutPerformanceFromPersistence(data);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create fixture: ${ result.error }`);
+    throw new Error(`Failed to create full performance fixture: ${ result.error }`);
   }
 
-  return { ...result.value, ...overrides };
+  return result.value;
 }
 
 export function createCardioPerformanceFixture(overrides?: Partial<WorkoutPerformance>): WorkoutPerformance {
-  const result = createWorkoutPerformance({
-    startedAt: new Date('2024-01-15T06:00:00Z'),
-    completedAt: new Date('2024-01-15T07:00:00Z'),
+  const startedAt = faker.date.recent();
+  const completedAt = new Date(startedAt.getTime() + 60 * 60000);
+
+  const data = {
+    startedAt,
+    completedAt,
+    durationMinutes: 60,
     activities: [{
-      activityType: 'main',
+      id: faker.string.uuid(),
+      activityType: 'main' as const,
       completed: true,
       durationMinutes: 60,
       exercises: [{
@@ -115,19 +139,23 @@ export function createCardioPerformanceFixture(overrides?: Partial<WorkoutPerfor
       }],
     }],
     perceivedExertion: 7,
-    energyLevel: 'medium',
+    energyLevel: 'medium' as const,
     enjoyment: 4,
-    difficultyRating: 'just_right',
+    difficultyRating: 'just_right' as const,
     heartRate: {
       average: 155,
       max: 180,
     },
     caloriesBurned: 600,
-  });
+    ...overrides,
+  };
+
+  const result = workoutPerformanceFromPersistence(data);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create fixture: ${ result.error }`);
+    throw new Error(`Failed to create cardio performance fixture: ${ result.error }`);
   }
 
-  return { ...result.value, ...overrides };
+  return result.value;
 }
+

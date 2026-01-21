@@ -1,118 +1,112 @@
+import { z } from 'zod';
 import { randomUUID } from 'crypto';
-import { Guard, Result } from '@bene/shared';
-import {
-  WorkoutPerformance,
-  WorkoutType,
-  WorkoutVerification, toWorkoutPerformanceView, toWorkoutVerificationView
-} from '@/workouts/value-objects/index.js';
-import { toReactionView } from '../reaction/reaction.factory.js';
-import { CompletedWorkout, CompletedWorkoutView } from './completed-workout.types.js';
-import * as Queries from './completed-workout.queries.js';
-export interface CreateCompletedWorkoutParams {
-  userId: string;
-  workoutType: WorkoutType;
-  title?: string;
-  description?: string;
-  performance: WorkoutPerformance;
-  verification: WorkoutVerification;
-  isPublic?: boolean;
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { CompletedWorkout, CompletedWorkoutSchema } from './completed-workout.types.js';
 
-  // Optional plan reference
-  planId?: string;
-  workoutTemplateId?: string;
-  weekNumber?: number;
-  dayNumber?: number;
+/**
+ * ============================================================================
+ * COMPLETED WORKOUT FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. completedWorkoutFromPersistence() - For fixtures & DB hydration
+ * 2. CreateCompletedWorkoutSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
 
-  // Optional multiplayer reference
-  multiplayerSessionId?: string;
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands CompletedWorkout */
+function validateCompletedWorkout(data: unknown): Result<CompletedWorkout> {
+  const parseResult = CompletedWorkoutSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  return Result.ok(parseResult.data);
 }
 
-export function createCompletedWorkout(
-  params: CreateCompletedWorkoutParams,
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates CompletedWorkout from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function completedWorkoutFromPersistence(
+  data: Unbrand<CompletedWorkout>,
 ): Result<CompletedWorkout> {
-  const guards = [
-    Guard.againstNullOrUndefinedBulk([
-      { argument: params.userId, argumentName: 'userId' },
-      { argument: params.workoutType, argumentName: 'workoutType' },
-      { argument: params.performance, argumentName: 'performance' },
-      { argument: params.verification, argumentName: 'verification' },
-    ]),
-    Guard.againstEmptyString(params.userId, 'userId'),
-    Guard.againstEmptyString(params.workoutType, 'workoutType'),
-  ];
+  return Result.ok(data as CompletedWorkout);
+}
 
-  if (params.title) {
-    guards.push(Guard.againstEmptyString(params.title, 'title'));
-  }
-  if (params.description) {
-    guards.push(Guard.againstTooLong(params.description, 500, 'description'));
-  }
-  // If plan reference provided, validate it
-  if (params.planId) {
-    guards.push(Guard.againstEmptyString(params.planId, 'planId'));
-  }
-  if (params.workoutTemplateId) {
-    guards.push(
-      Guard.againstEmptyString(params.workoutTemplateId, 'workoutTemplateId'),
-    );
-  }
-  if (params.weekNumber !== undefined) {
-    guards.push(Guard.againstNegativeOrZero(params.weekNumber, 'weekNumber'));
-  }
-  if (params.dayNumber !== undefined) {
-    guards.push(Guard.againstNegative(params.dayNumber, 'dayNumber'));
-  }
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
 
-  const guardResult = Guard.combine(guards);
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
-  }
+/**
+ * Zod transform for creating CompletedWorkout with domain validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateCompletedWorkoutSchema>
+ */
+export const CreateCompletedWorkoutSchema: z.ZodType<CompletedWorkout> = CompletedWorkoutSchema.pick({
+  userId: true,
+  workoutType: true,
+  performance: true,
+  verification: true,
+  planId: true,
+  workoutTemplateId: true,
+  weekNumber: true,
+  dayNumber: true,
+  multiplayerSessionId: true,
+  isPublic: true,
+}).extend({
+  id: z.uuid().optional(),
+  title: z.string().min(1).max(100).optional(),
+  description: z.string().min(1).max(1000).optional(),
+  createdAt: z.coerce.date<Date>().optional(),
+  recordedAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
   const now = new Date();
 
-  return Result.ok({
-    id: randomUUID(),
-    userId: params.userId,
-    planId: params.planId,
-    workoutTemplateId: params.workoutTemplateId,
-    weekNumber: params.weekNumber,
-    dayNumber: params.dayNumber,
-    workoutType: params.workoutType,
-    title: params.title ?? params.workoutType,
-    description: params.description,
-    performance: params.performance,
-    verification: params.verification,
+  // Default Title Logic: Capitalize workout type
+  const defaultTitle = String(input.workoutType).charAt(0).toUpperCase() + String(input.workoutType).slice(1);
+
+  const data = {
+    ...input,
+    id: input.id || randomUUID(),
+    title: input.title || defaultTitle,
+    description: input.description,
     reactions: [],
-    isPublic: params.isPublic ?? false,
-    multiplayerSessionId: params.multiplayerSessionId,
-    createdAt: now,
-    recordedAt: params.performance.completedAt,
-  });
-}
-
-// ============================================
-// CONVERSION (Entity → API View)
-// ============================================
-
-export function toCompletedWorkoutView(
-  entity: CompletedWorkout,
-): CompletedWorkoutView {
-  const performanceView = toWorkoutPerformanceView(entity.performance);
-  const verificationView = toWorkoutVerificationView(entity.verification);
-
-  return {
-    ...entity,
-    createdAt: entity.createdAt.toISOString(),
-    recordedAt: entity.recordedAt.toISOString(),
-    performance: {
-      ...performanceView,
-      totalVolume: Queries.getTotalVolume(entity),
-      totalSets: Queries.getTotalSets(entity),
-      totalExercises: Queries.getTotalExercises(entity),
-      completionRate: Queries.getCompletionRate(entity),
-    },
-    verification: verificationView,
-    reactions: entity.reactions.map(toReactionView),
-    isVerified: entity.verification.verified,
-    reactionCount: Queries.getReactionCount(entity),
+    isPublic: input.isPublic ?? false,
+    createdAt: input.createdAt || now,
+    recordedAt: input.recordedAt || input.performance.completedAt || now,
   };
+
+  // Validate and brand
+  const validationResult = validateCompletedWorkout(data);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateCompletedWorkoutSchema or call via transform.
+ */
+export function createCompletedWorkout(
+  params: z.input<typeof CreateCompletedWorkoutSchema>,
+): Result<CompletedWorkout> {
+  const parseResult = CreateCompletedWorkoutSchema.safeParse(params);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+  return Result.ok(parseResult.data);
 }

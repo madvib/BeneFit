@@ -1,159 +1,197 @@
 import { describe, it, expect } from 'vitest';
 import {
-  createTrainingConstraints,
-} from '../../index.js';
+  CreateTrainingConstraintsSchema,
+  createHomeTrainingConstraints,
+  createGymTrainingConstraints,
+} from '../training-constraints.factory.js';
 import {
   hasInjuries,
   canExercise,
   hasEquipment,
   isAvailableDay,
-  getAvailableDaysCount
+  getAvailableDaysCount,
 } from '../training-constraints.commands.js';
+import { createTrainingConstraintsFixture, createInjuryFixture } from './training-constraints.fixtures.js';
 
 describe('TrainingConstraints', () => {
-  describe('create', () => {
-    it('should create with valid available days', () => {
-      const result = createTrainingConstraints({
+  describe('creation & rehydration', () => {
+    it('should create valid training constraints with correct defaults', () => {
+      // Arrange & Act
+      const constraints = createTrainingConstraintsFixture({
         availableDays: ['Monday', 'Wednesday', 'Friday'],
-        availableEquipment: ['dumbbells'],
-        location: 'home',
+        location: 'gym',
       });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.availableDays.length).toBe(3);
-      }
-    });
-
-    it('should fail with invalid day name', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday', 'InvalidDay'],
-        availableEquipment: [],
-        location: 'home',
+      // Assert
+      expect(constraints).toMatchObject({
+        availableDays: ['Monday', 'Wednesday', 'Friday'],
+        location: 'gym',
       });
-
-      expect(result.isFailure).toBe(true);
-      if (result.isFailure) {
-        expect(result.errorMessage).toContain('Invalid day');
-      }
     });
+  });
 
-    it('should fail with no available days', () => {
-      const result = createTrainingConstraints({
+  describe('validation', () => {
+    it('should fail when availableDays is empty', () => {
+      // Arrange
+      const invalidInput = {
         availableDays: [],
         availableEquipment: [],
         location: 'home',
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
-      if (result.isFailure) {
-        expect(result.errorMessage).toContain('at least one available day');
+      // Act
+      const result = CreateTrainingConstraintsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/must have at least one available day/i);
+      }
+    });
+
+    it('should fail with invalid day names', () => {
+      // Arrange
+      const invalidInput = {
+        availableDays: ['Monday', 'NotADay'],
+        availableEquipment: [],
+        location: 'home',
+      };
+
+      // Act
+      const result = CreateTrainingConstraintsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/invalid day: NotADay/i);
       }
     });
 
     it('should fail with duplicate days', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday', 'Monday', 'Wednesday'],
+      // Arrange
+      const invalidInput = {
+        availableDays: ['Monday', 'Monday'],
         availableEquipment: [],
         location: 'home',
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
-      if (result.isFailure) {
-        expect(result.errorMessage).toContain('Duplicate days');
+      // Act
+      const result = CreateTrainingConstraintsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/duplicate days/i);
       }
     });
 
-    it('should validate max duration is positive', () => {
-      const result = createTrainingConstraints({
+    it('should fail when maxDuration is <= 0', () => {
+      // Arrange
+      const invalidInput = {
         availableDays: ['Monday'],
-        maxDuration: -10,
+        maxDuration: 0,
+        availableEquipment: [],
+        location: 'gym',
+      };
+
+      // Act
+      const result = CreateTrainingConstraintsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small[\s\S]*minimum[\s\S]*1/i);
+      }
+    });
+
+    it('should fail when injury bodyPart is empty', () => {
+      // Arrange
+      const invalidInput = {
+        availableDays: ['Monday'],
         availableEquipment: [],
         location: 'home',
-      });
+        injuries: [
+          {
+            bodyPart: '',
+            severity: 'minor',
+            avoidExercises: [],
+            reportedDate: new Date(),
+          },
+        ],
+      };
 
-      expect(result.isFailure).toBe(true);
-      if (result.isFailure) {
-        expect(result.errorMessage).toContain('positive');
+      // Act
+      const result = CreateTrainingConstraintsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small[\s\S]*minimum[\s\S]*1/i);
       }
     });
   });
 
-  describe('query methods', () => {
-    it('should check if has injuries', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday'],
-        availableEquipment: [],
-        location: 'home',
-        injuries: [{
-          bodyPart: 'knee',
-          severity: 'moderate',
-          avoidExercises: ['squats'],
-          reportedDate: new Date().toISOString()
-        }]
-      });
+  describe('specialized factories', () => {
+    it('should create home training constraints', () => {
+      // Act
+      const result = createHomeTrainingConstraints(['Monday', 'Thursday'], ['Mat', 'Bands']);
 
-      if (result.isSuccess) {
-        expect(hasInjuries(result.value)).toBe(true);
-      }
+      // Assert
+      expect(result.isSuccess).toBe(true);
+      expect(result.value).toMatchObject({
+        location: 'home',
+        availableEquipment: ['Mat', 'Bands'],
+        availableDays: ['Monday', 'Thursday'],
+      });
     });
 
-    it('should check if can exercise', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday'],
-        availableEquipment: [],
-        location: 'home',
-        injuries: [{
-          bodyPart: 'knee',
-          severity: 'moderate',
-          avoidExercises: ['squats'],
-          reportedDate: new Date().toISOString()
-        }]
-      });
+    it('should create gym training constraints', () => {
+      // Act
+      const result = createGymTrainingConstraints(['Monday', 'Wednesday', 'Friday'], 60);
 
-      if (result.isSuccess) {
-        // Should not be able to do squats if knee injury says to avoid
-        expect(canExercise(result.value, 'squats')).toBe(false);
-        expect(canExercise(result.value, 'pushups')).toBe(true);
-      }
-    });
-
-    it('should check if has equipment', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday'],
-        availableEquipment: ['dumbbells', 'kettlebell'],
-        location: 'home',
-      });
-
-      if (result.isSuccess) {
-        expect(hasEquipment(result.value, 'dumbbells')).toBe(true);
-        expect(hasEquipment(result.value, 'barbell')).toBe(false);
-      }
-    });
-
-    it('should check if day is available', () => {
-      const result = createTrainingConstraints({
-        availableDays: ['Monday', 'Wednesday'],
-        availableEquipment: [],
-        location: 'home',
-      });
-
-      if (result.isSuccess) {
-        expect(isAvailableDay(result.value, 'Monday')).toBe(true);
-        expect(isAvailableDay(result.value, 'Tuesday')).toBe(false);
-      }
-    });
-
-    it('should get available days count', () => {
-      const result = createTrainingConstraints({
+      // Assert
+      expect(result.isSuccess).toBe(true);
+      expect(result.value).toMatchObject({
+        location: 'gym',
+        maxDuration: 60,
         availableDays: ['Monday', 'Wednesday', 'Friday'],
-        availableEquipment: [],
-        location: 'home',
+      });
+    });
+  });
+
+  describe('commands & queries', () => {
+    it('should correctly report injury status', () => {
+      // Arrange
+      const injury = createInjuryFixture({ bodyPart: 'Knee', avoidExercises: ['Squats'] });
+      const constraints = createTrainingConstraintsFixture({ injuries: [injury] });
+
+      // Act & Assert
+      expect(hasInjuries(constraints)).toBe(true);
+      expect(canExercise(constraints, 'Squats')).toBe(false);
+      expect(canExercise(constraints, 'Pushups')).toBe(true);
+    });
+
+    it('should correctly check for equipment', () => {
+      // Arrange
+      const constraints = createTrainingConstraintsFixture({
+        availableEquipment: ['Dumbbells', 'Bench'],
       });
 
-      if (result.isSuccess) {
-        expect(getAvailableDaysCount(result.value)).toBe(3);
-      }
+      // Act & Assert
+      expect(hasEquipment(constraints, 'Dumbbells')).toBe(true);
+      expect(hasEquipment(constraints, 'Barbell')).toBe(false);
+    });
+
+    it('should correctly check available days', () => {
+      // Arrange
+      const constraints = createTrainingConstraintsFixture({
+        availableDays: ['Monday', 'Friday'],
+      });
+
+      // Act & Assert
+      expect(isAvailableDay(constraints, 'Monday')).toBe(true);
+      expect(isAvailableDay(constraints, 'Tuesday')).toBe(false);
+      expect(getAvailableDaysCount(constraints)).toBe(2);
     });
   });
 });

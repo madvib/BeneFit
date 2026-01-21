@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { LiveActivityProgress, IntervalProgress, ExerciseProgress } from '../live-activity-progress.types.js';
-import { createLiveActivityProgress } from '../live-activity-progress.factory.js';
+import { liveActivityProgressFromPersistence } from '../live-activity-progress.factory.js';
 
 /**
  * Creates a mock IntervalProgress
@@ -33,29 +33,34 @@ export function createExerciseProgressFixture(overrides?: Partial<ExerciseProgre
 }
 
 /**
- * Creates a mock LiveActivityProgress using the official factory
+ * Creates a mock LiveActivityProgress using liveActivityProgressFromPersistence.
  */
 export function createLiveActivityProgressFixture(overrides?: Partial<LiveActivityProgress>): LiveActivityProgress {
   const activityType = faker.helpers.arrayElement(['warmup', 'main', 'cooldown', 'interval', 'circuit'] as const);
   const totalActivities = 6;
 
-  const result = createLiveActivityProgress({
+  // Build unbranded data with faker
+  const data = {
     activityType,
     activityIndex: faker.number.int({ min: 0, max: totalActivities - 1 }),
     totalActivities,
     intervalProgress: activityType === 'interval' ? createIntervalProgressFixture() : undefined,
     exerciseProgress: activityType === 'main' ? [createExerciseProgressFixture()] : undefined,
-  });
-
-  if (result.isFailure) {
-    throw new Error(`Failed to create LiveActivityProgress fixture: ${ result.error }`);
-  }
-
-  return {
-    ...result.value,
     activityStartedAt: faker.date.recent(),
     elapsedSeconds: faker.number.int({ min: 0, max: 1800 }),
     estimatedRemainingSeconds: faker.number.int({ min: 0, max: 1800 }),
     ...overrides,
   };
+
+  // Rehydrate through fromPersistence
+  const result = liveActivityProgressFromPersistence(data);
+
+  if (result.isFailure) {
+    const errorMsg = Array.isArray(result.error)
+      ? result.error.map(e => e.message).join(', ')
+      : result.error?.message || String(result.error);
+    throw new Error(`Failed to create LiveActivityProgress fixture: ${ errorMsg }`);
+  }
+
+  return result.value;
 }

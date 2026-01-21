@@ -1,125 +1,112 @@
-import { Guard, Result } from '@bene/shared';
+import { z } from 'zod';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  TemplateDuration,
-  TemplateFrequency,
-  WeekTemplate,
   TemplateStructure,
-  TemplateStructureView,
+  TemplateStructureSchema,
 } from './template-structure.types.js';
 
-export function createTemplateStructure(props: {
-  duration: TemplateDuration;
-  frequency: TemplateFrequency;
-  weeks: WeekTemplate[];
-  deloadWeeks?: number[];
-  progressionFormula?: string;
-}): Result<TemplateStructure> {
-  // Validate duration
-  if (props.duration.type === 'fixed') {
-    const durationResult = Guard.againstNegativeOrZero(
-      props.duration.weeks,
-      'duration.weeks',
-    );
-    if (durationResult.isFailure) return Result.fail(durationResult.error);
-  } else {
-    const minResult = Guard.againstNegativeOrZero(props.duration.min, 'duration.min');
-    if (minResult.isFailure) return Result.fail(minResult.error);
-    const maxResult = Guard.againstNegativeOrZero(props.duration.max, 'duration.max');
-    if (maxResult.isFailure) return Result.fail(maxResult.error);
-    const rangeResult = Guard.isTrue(
-      props.duration.min <= props.duration.max,
-      'duration.min must be <= duration.max',
-    );
-    if (rangeResult.isFailure) return Result.fail(rangeResult.error);
+/**
+ * ============================================================================
+ * TEMPLATE STRUCTURE FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. templateStructureFromPersistence() - For fixtures & DB hydration
+ * 2. CreateTemplateStructureSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal. No Input types, no extra functions.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates TemplateStructure with domain-specific business rules */
+function validateTemplateStructure(data: unknown): Result<TemplateStructure> {
+  const parseResult = TemplateStructureSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
 
-  // Validate frequency
-  if (props.frequency.type === 'fixed') {
-    const freqResult = Guard.inRange(
-      props.frequency.workoutsPerWeek,
-      1,
-      7,
-      'frequency.workoutsPerWeek',
-    );
-    if (freqResult.isFailure) return Result.fail(freqResult.error);
-  } else {
-    const minResult = Guard.inRange(props.frequency.min, 1, 7, 'frequency.min');
-    if (minResult.isFailure) return Result.fail(minResult.error);
-    const maxResult = Guard.inRange(props.frequency.max, 1, 7, 'frequency.max');
-    if (maxResult.isFailure) return Result.fail(maxResult.error);
-    const rangeResult = Guard.isTrue(
-      props.frequency.min <= props.frequency.max,
-      'frequency.min must be <= frequency.max',
-    );
-    if (rangeResult.isFailure) return Result.fail(rangeResult.error);
-  }
+  const validated = parseResult.data;
 
-  // Validate weeks
-  const weeksGuard = Guard.againstNullOrUndefined(props.weeks, 'weeks');
-  if (weeksGuard.isFailure) return Result.fail(weeksGuard.error);
-  const weeksLenGuard = Guard.isTrue(
-    props.weeks.length > 0,
-    'weeks array cannot be empty',
-  );
-  if (weeksLenGuard.isFailure) return Result.fail(weeksLenGuard.error);
+  // Cross-field Domain Validation Logic
 
-  // Validate each week template
-  for (const week of props.weeks) {
-    if (typeof week.weekNumber === 'number') {
-      const weekNumResult = Guard.againstNegativeOrZero(week.weekNumber, 'weekNumber');
-      if (weekNumResult.isFailure) return Result.fail(weekNumResult.error);
+  // 1. Validate Duration Range
+  if (validated.duration.type === 'variable') {
+    if (validated.duration.min > validated.duration.max) {
+      return Result.fail(new Error('duration.min must be <= duration.max'));
     }
-    const workoutLenResult = Guard.isTrue(
-      week.workouts.length > 0,
-      `week ${ week.weekNumber } must have at least one workout`,
-    );
-    if (workoutLenResult.isFailure) return Result.fail(workoutLenResult.error);
+  }
 
-    // Validate each workout in the week
+  // 2. Validate Frequency Range
+  if (validated.frequency.type === 'flexible') {
+    if (validated.frequency.min > validated.frequency.max) {
+      return Result.fail(new Error('frequency.min must be <= frequency.max'));
+    }
+  }
+
+  // 3. Validate Weeks consistency
+  if (validated.weeks.length === 0) {
+    return Result.fail(new Error('weeks array cannot be empty'));
+  }
+
+  for (const week of validated.weeks) {
+    if (week.workouts.length === 0) {
+      return Result.fail(new Error(`week ${ week.weekNumber } must have at least one workout`));
+    }
+
     for (const workout of week.workouts) {
-      if (workout.dayOfWeek !== undefined) {
-        const dayResult = Guard.inRange(workout.dayOfWeek, 0, 6, 'workout.dayOfWeek');
-        if (dayResult.isFailure) return Result.fail(dayResult.error);
+      if (workout.activities.length === 0) {
+        return Result.fail(new Error('workout must have at least one activity'));
       }
-      if (typeof workout.durationMinutes === 'number') {
-        const durResult = Guard.againstNegativeOrZero(
-          workout.durationMinutes,
-          'workout.durationMinutes',
-        );
-        if (durResult.isFailure) return Result.fail(durResult.error);
-      }
-      const actLenResult = Guard.isTrue(
-        workout.activities.length > 0,
-        'workout must have at least one activity',
-      );
-      if (actLenResult.isFailure) return Result.fail(actLenResult.error);
     }
   }
 
-  return Result.ok({
-    duration: props.duration,
-    frequency: props.frequency,
-    weeks: props.weeks,
-    deloadWeeks: props.deloadWeeks,
-    progressionFormula: props.progressionFormula,
-  });
+  return Result.ok(validated);
 }
 
-export function toTemplateStructureView(structure: TemplateStructure): TemplateStructureView {
-  return {
-    duration: structure.duration,
-    frequency: structure.frequency,
-    weeks: structure.weeks.map(week => ({
-      ...week,
-      workouts: week.workouts.map(workout => ({
-        ...workout,
-        activities: workout.activities.map(activity => ({
-          ...activity,
-          variables: { ...activity.variables }
-        }))
-      }))
-    })),
-    deloadWeeks: structure.deloadWeeks ? [...structure.deloadWeeks] : undefined,
-    progressionFormula: structure.progressionFormula,
-  };
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates TemplateStructure from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function templateStructureFromPersistence(
+  data: Unbrand<TemplateStructure>,
+): Result<TemplateStructure> {
+  return Result.ok(data as TemplateStructure);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating TemplateStructure with validation.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreateTemplateStructureSchema>
+ */
+export const CreateTemplateStructureSchema: z.ZodType<TemplateStructure> = TemplateStructureSchema.transform((input, ctx) => {
+  const validationResult = validateTemplateStructure(input);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility in tests)
+// ============================================================================
+
+/**
+ * @deprecated Use CreateTemplateStructureSchema or call via transform.
+ * Kept for test compatibility.
+ */
+export function createTemplateStructure(
+  params: z.infer<typeof TemplateStructureSchema>,
+): Result<TemplateStructure> {
+  return validateTemplateStructure(params);
 }

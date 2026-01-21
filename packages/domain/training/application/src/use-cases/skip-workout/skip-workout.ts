@@ -4,26 +4,21 @@ import { WorkoutTemplateCommands } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
 import { WorkoutSkippedEvent } from '../../events/workout-skipped.event.js';
 
-
-
-// Single request schema with ALL fields
+/**
+ * Request schema
+ */
 export const SkipWorkoutRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  planId: z.string(),
-  workoutId: z.string(),
+  userId: z.uuid(),
+  planId: z.uuid(),
+  workoutId: z.uuid(),
   reason: z.string(),
 });
 
-// Zod inferred type with original name
 export type SkipWorkoutRequest = z.infer<typeof SkipWorkoutRequestSchema>;
 
-
-
-// Zod schema for response validation
-// Response Interface
+/**
+ * Response Interface
+ */
 export interface SkipWorkoutResponse {
   planId: string;
   skippedWorkoutId: string;
@@ -41,7 +36,9 @@ export class SkipWorkoutUseCase extends BaseUseCase<
     super();
   }
 
-  protected async performExecution(request: SkipWorkoutRequest): Promise<Result<SkipWorkoutResponse>> {
+  protected async performExecution(
+    request: SkipWorkoutRequest,
+  ): Promise<Result<SkipWorkoutResponse>> {
     // 1. Load plan
     const planResult = await this.planRepository.findById(request.planId);
     if (planResult.isFailure) {
@@ -114,7 +111,7 @@ export class SkipWorkoutUseCase extends BaseUseCase<
     // 3. Save
     await this.planRepository.save(updatedPlan);
 
-    // 4. Emit event (for AI coach to potentially respond)
+    // 4. Emit event
     await this.eventBus.publish(
       new WorkoutSkippedEvent({
         userId: request.userId,

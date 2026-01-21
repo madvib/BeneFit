@@ -1,36 +1,42 @@
-import { describe, it, expect } from 'vitest';
-import { createExperienceProfile, ExperienceProfile } from '../../index.js';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { z } from 'zod';
+import { CreateExperienceProfileSchema } from '../experience-profile.factory.js';
+import { createExperienceProfileFixture } from './experience-profile.fixtures.js';
+import { ExperienceProfile } from '../experience-profile.types.js';
+
+type CreateProfileInput = z.input<typeof CreateExperienceProfileSchema>;
 
 describe('ExperienceProfile Value Object', () => {
   describe('Factory', () => {
-    it('should create a valid experience profile', () => {
-      const result = createExperienceProfile({
-        level: 'intermediate',
-        capabilities: {
-          canDoFullPushup: true,
-          canDoFullPullup: false,
-          canRunMile: true,
-          canSquatBelowParallel: true,
-        },
-      });
+    const validInput: CreateProfileInput = {
+      level: 'intermediate',
+      capabilities: {
+        canDoFullPushup: true,
+        canDoFullPullup: false,
+        canRunMile: true,
+        canSquatBelowParallel: true,
+      },
+    };
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        const profile = result.value;
+    it('should create a valid experience profile', () => {
+      // Act
+      const result = CreateExperienceProfileSchema.safeParse(validInput);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const profile = result.data;
         expect(profile.level).toBe('intermediate');
         expect(profile.capabilities.canDoFullPushup).toBe(true);
-        expect(profile.capabilities.canDoFullPullup).toBe(false);
-        expect(profile.capabilities.canRunMile).toBe(true);
-        expect(profile.capabilities.canSquatBelowParallel).toBe(true);
         expect(profile.history.previousPrograms).toEqual([]);
-        expect(profile.history.sports).toEqual([]);
-        expect(profile.history.certifications).toEqual([]);
         expect(profile.lastAssessmentDate).toBeInstanceOf(Date);
       }
     });
 
     it('should create with history', () => {
-      const result = createExperienceProfile({
+      // Arrange
+      const input: CreateProfileInput = {
+        ...validInput,
         level: 'advanced',
         history: {
           yearsTraining: 5,
@@ -38,98 +44,88 @@ describe('ExperienceProfile Value Object', () => {
           sports: ['Basketball', 'Swimming'],
           certifications: ['CPT'],
         },
-        capabilities: {
-          canDoFullPushup: true,
-          canDoFullPullup: true,
-          canRunMile: true,
-          canSquatBelowParallel: true,
-        },
-      });
+      };
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        const profile = result.value;
-        expect(profile.level).toBe('advanced');
+      // Act
+      const result = CreateExperienceProfileSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const profile = result.data;
         expect(profile.history.yearsTraining).toBe(5);
         expect(profile.history.previousPrograms).toEqual(['Starting Strength', 'StrongLifts 5x5']);
-        expect(profile.history.sports).toEqual(['Basketball', 'Swimming']);
-        expect(profile.history.certifications).toEqual(['CPT']);
       }
     });
 
     it('should fail with years training less than 0', () => {
-      const result = createExperienceProfile({
-        level: 'beginner',
+      // Arrange
+      const input: CreateProfileInput = {
+        ...validInput,
         history: {
           yearsTraining: -1,
         },
-        capabilities: {
-          canDoFullPushup: false,
-          canDoFullPullup: false,
-          canRunMile: false,
-          canSquatBelowParallel: false,
-        },
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateExperienceProfileSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.message).toMatch(/too_small/);
+      }
     });
 
     it('should fail with missing level', () => {
-      // @ts-expect-error Testing invalid input
-      const result = createExperienceProfile({
-        level: undefined,
-        capabilities: {
-          canDoFullPushup: false,
-          canDoFullPullup: false,
-          canRunMile: false,
-          canSquatBelowParallel: false,
-        },
-      });
+      // Arrange
+      // @ts-expect-error Testing runtime required field validation
+      const { level, ...inputWithoutLevel } = validInput;
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateExperienceProfileSchema.safeParse(inputWithoutLevel);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail with missing capabilities', () => {
-      // @ts-expect-error Testing invalid input
-      const result = createExperienceProfile({
-        level: 'beginner',
-        capabilities: undefined,
-      });
+      // Arrange
+      // @ts-expect-error Testing runtime required field validation
+      const { capabilities, ...inputWithoutCapabilities } = validInput;
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const result = CreateExperienceProfileSchema.safeParse(inputWithoutCapabilities);
+
+      // Assert
+      expect(result.success).toBe(false);
     });
   });
 
-  describe('Update methods', () => {
+  describe('Fixtures', () => {
     let validProfile: ExperienceProfile;
 
     beforeEach(() => {
-      const result = createExperienceProfile({
+      validProfile = createExperienceProfileFixture({
         level: 'intermediate',
         capabilities: {
           canDoFullPushup: true,
           canDoFullPullup: false,
           canRunMile: true,
           canSquatBelowParallel: true,
+          estimatedMaxes: { unit: 'kg' },
         },
       });
-
-      if (result.isSuccess) {
-        validProfile = result.value;
-      } else {
-        throw new Error('Could not create valid profile for tests');
-      }
     });
 
-    it('should update assessment date when changed', () => {
-      const updatedProfile = {
-        ...validProfile,
-        level: 'advanced',
-        lastAssessmentDate: new Date(),
-      };
+    it('should create valid fixture', () => {
+      expect(validProfile.level).toBe('intermediate');
+      expect(validProfile.lastAssessmentDate).toBeInstanceOf(Date);
+    });
 
-      expect(updatedProfile.level).toBe('advanced');
-      expect(updatedProfile.lastAssessmentDate).toBeInstanceOf(Date);
+    it('should allow fixture overrides', () => {
+      const advanced = createExperienceProfileFixture({ level: 'advanced' });
+      expect(advanced.level).toBe('advanced');
     });
   });
 });

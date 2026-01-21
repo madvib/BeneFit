@@ -1,36 +1,50 @@
-import { CoachAction } from '../coach-action/index.js';
+import { z } from 'zod';
+import type { CreateView, DomainBrandTag } from '@bene/shared';
+import { CoachActionSchema } from '../coach-action/coach-action.types.js';
 
-export type CheckInType = 'proactive' | 'scheduled' | 'user_initiated';
-export type CheckInTrigger =
-  | 'low_adherence'
-  | 'high_exertion'
-  | 'injury_reported'
-  | 'weekly_review'
-  | 'milestone_achieved'
-  | 'streak_broken'
-  | 'difficulty_pattern'
-  | 'enjoyment_declining';
+/**
+ * 1. DEFINE SCHEMAS (Zod as Source of Truth)
+ */
+export const CheckInTypeSchema = z.enum(['proactive', 'scheduled', 'user_initiated']);
 
-export interface CheckInData {
-  id: string;
-  type: CheckInType;
-  triggeredBy?: CheckInTrigger;
+export const CheckInTriggerSchema = z.enum([
+  'low_adherence',
+  'high_exertion',
+  'injury_reported',
+  'weekly_review',
+  'milestone_achieved',
+  'streak_broken',
+  'difficulty_pattern',
+  'enjoyment_declining',
+]);
 
-  // The check-in question/prompt
-  question: string;
-  userResponse?: string;
+export const CheckInStatusSchema = z.enum(['pending', 'responded', 'dismissed']);
 
-  // Coach's analysis and actions
-  coachAnalysis?: string;
-  actions: CoachAction[];
+export const CheckInSchema = z
+  .object({
+    id: z.uuid(),
+    type: CheckInTypeSchema,
+    triggeredBy: CheckInTriggerSchema.optional(),
+    question: z.string().min(1).max(500),
+    userResponse: z.string().optional(),
+    coachAnalysis: z.string().optional(),
+    actions: z.array(CoachActionSchema),
+    status: CheckInStatusSchema,
+    createdAt: z.coerce.date<Date>(),
+    respondedAt: z.coerce.date<Date>().optional(),
+    dismissedAt: z.coerce.date<Date>().optional(),
+  })
+  .brand<DomainBrandTag>();
 
-  // Status
-  status: 'pending' | 'responded' | 'dismissed';
+/**
+ * 2. INFER TYPES (Derived directly from Zod)
+ */
+export type CheckInType = z.infer<typeof CheckInTypeSchema>;
+export type CheckInTrigger = z.infer<typeof CheckInTriggerSchema>;
+export type CheckInStatus = z.infer<typeof CheckInStatusSchema>;
+export type CheckIn = Readonly<z.infer<typeof CheckInSchema>>;
 
-  // Timestamps
-  createdAt: Date;
-  respondedAt?: Date;
-  dismissedAt?: Date;
-}
-
-export type CheckIn = Readonly<CheckInData>;
+/**
+ * 3. VIEW TYPES (Serialized)
+ */
+export type CheckInView = CreateView<CheckIn>;

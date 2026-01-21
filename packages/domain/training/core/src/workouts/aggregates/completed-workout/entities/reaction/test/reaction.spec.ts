@@ -1,60 +1,51 @@
 import { describe, it, expect } from 'vitest';
-import { createReaction } from '../reaction.factory.js';
+import { CreateReactionSchema } from '../reaction.factory.js';
+import { createReactionInputFixture, createReactionFixture } from './reaction.fixtures.js';
 
 describe('Reaction', () => {
-  describe('createReaction', () => {
+  describe('Factory', () => {
     it('should create a valid reaction', () => {
-      const result = createReaction({
-        userId: 'user-123',
-        userName: 'John Doe',
-        type: 'fire',
-      });
+      const input = createReactionInputFixture();
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.userId).toBe('user-123');
-        expect(result.value.userName).toBe('John Doe');
-        expect(result.value.type).toBe('fire');
-        expect(result.value.id).toBeDefined();
-        expect(result.value.createdAt).toBeDefined();
+      const result = CreateReactionSchema.safeParse(input);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userId).toBe(input.userId);
+        expect(result.data.userName).toBe(input.userName);
+        expect(result.data.type).toBe(input.type);
+        expect(result.data.id).toBeDefined();
+        expect(result.data.createdAt).toBeDefined();
       }
     });
 
-    it('should fail if userId is empty', () => {
-      const result = createReaction({
-        userId: '',
-        userName: 'John Doe',
-        type: 'fire',
-      });
+    it('should fail if userId is invalid', () => {
+      const input = createReactionInputFixture({ userId: 'invalid-uuid' });
 
-      expect(result.isFailure).toBe(true);
+      const result = CreateReactionSchema.safeParse(input);
+
+      expect(result.success).toBe(false);
     });
 
     it('should fail if userName is empty', () => {
-      const result = createReaction({
-        userId: 'user-123',
-        userName: '',
-        type: 'fire',
-      });
+      const input = createReactionInputFixture({ userName: '' });
 
-      expect(result.isFailure).toBe(true);
+      const result = CreateReactionSchema.safeParse(input);
+
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('Fixtures', () => {
+    it('should create valid fixture', () => {
+      const reaction = createReactionFixture();
+      expect(reaction.id).toBeDefined();
+      expect(reaction.type).toBeDefined();
     });
 
-    it('should create reactions with different types', () => {
-      const types = ['fire', 'strong', 'clap', 'heart', 'smile'] as const;
-
-      types.forEach((type) => {
-        const result = createReaction({
-          userId: 'user-123',
-          userName: 'John Doe',
-          type,
-        });
-
-        expect(result.isSuccess).toBe(true);
-        if (result.isSuccess) {
-          expect(result.value.type).toBe(type);
-        }
-      });
+    it('should allow fixture overrides', () => {
+      const reaction = createReactionFixture({ type: 'clap' });
+      expect(reaction.type).toBe('clap');
     });
   });
 });

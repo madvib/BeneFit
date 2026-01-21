@@ -1,6 +1,6 @@
 import { Result } from '@bene/shared';
-import type { CoachContext, PerformanceTrends } from '@core/index.js';
-import { CoachErrors, TREND_MAPS } from '@core/index.js';
+import type { CoachContext, PerformanceTrends } from '../../core/index.js';
+import { CoachErrors } from '../../core/index.js';
 import type { FitnessPlan, CompletedWorkout } from '@bene/training-core';
 import { FitnessPlanQueries, WeeklyScheduleQueries } from '@bene/training-core';
 import type {
@@ -8,6 +8,24 @@ import type {
   CompletedWorkoutRepository,
   FitnessPlanRepository,
 } from '@bene/training-application';
+
+const TREND_MAPS = {
+  quantity: {
+    1: 'increasing',
+    0: 'stable',
+    [-1]: 'decreasing',
+  } as const,
+  relative: {
+    1: 'high',
+    0: 'medium',
+    [-1]: 'low',
+  } as const,
+  subjective: {
+    1: 'improving',
+    0: 'stable',
+    [-1]: 'declining',
+  } as const,
+} as const;
 
 /**
  * Implementation of CoachContextBuilder that aggregates user data
@@ -35,18 +53,11 @@ export class CoachContextBuilder {
 
       // Fetch the current active plan
       const activePlanResult = await this.workoutPlanRepo.findActiveByUserId(userId);
-      const currentPlan = activePlanResult.isSuccess
-        ? activePlanResult.value
-        : undefined;
+      const currentPlan = activePlanResult.isSuccess ? activePlanResult.value : undefined;
 
       // Fetch recent workouts (last 30 days)
-      const recentWorkoutsResult = await this.completedWorkoutRepo.findByUserId(
-        userId,
-        30,
-      );
-      const recentWorkouts = recentWorkoutsResult.isSuccess
-        ? recentWorkoutsResult.value
-        : [];
+      const recentWorkoutsResult = await this.completedWorkoutRepo.findByUserId(userId, 30);
+      const recentWorkouts = recentWorkoutsResult.isSuccess ? recentWorkoutsResult.value : [];
 
       // Build the context
       const context: CoachContext = {
@@ -120,8 +131,7 @@ export class CoachContextBuilder {
     );
 
     const weeksSinceStart = daysSinceStart / 7;
-    const workoutsPerWeek =
-      FitnessPlanQueries.getWorkoutSummary(plan).total / plan.weeks.length;
+    const workoutsPerWeek = FitnessPlanQueries.getWorkoutSummary(plan).total / plan.weeks.length;
 
     return Math.floor(weeksSinceStart * workoutsPerWeek);
   }
@@ -159,27 +169,20 @@ export class CoachContextBuilder {
 
     return {
       volumeTrend:
-        TREND_MAPS.quantity[
-          this.determineTrend(recentWorkouts.length, olderWorkouts.length)
-        ],
+        TREND_MAPS.quantity[this.determineTrend(recentWorkouts.length, olderWorkouts.length)],
       adherenceTrend: 'stable', // Would calculate based on planned vs actual
       energyTrend: this.inferEnergyLevel(recentWorkouts),
       exertionTrend:
         TREND_MAPS.quantity[this.determineTrend(recentAvgExertion, olderAvgExertion)],
       enjoymentTrend:
-        TREND_MAPS.subjective[
-          this.determineTrend(recentAvgEnjoyment, olderAvgEnjoyment)
-        ],
+        TREND_MAPS.subjective[this.determineTrend(recentAvgEnjoyment, olderAvgEnjoyment)],
     };
   }
 
   private averageExertion(workouts: CompletedWorkout[]): number {
     if (workouts.length === 0) return 0;
 
-    const sum = workouts.reduce(
-      (acc, w) => acc + (w.performance?.perceivedExertion || 0),
-      0,
-    );
+    const sum = workouts.reduce((acc, w) => acc + (w.performance?.perceivedExertion || 0), 0);
 
     return sum / workouts.length;
   }
@@ -219,8 +222,7 @@ export class CoachContextBuilder {
 
     const recent = workouts.slice(0, 5);
     const avgExertion =
-      recent.reduce((sum, w) => sum + (w.performance?.perceivedExertion || 0), 0) /
-      recent.length;
+      recent.reduce((sum, w) => sum + (w.performance?.perceivedExertion || 0), 0) / recent.length;
 
     // Higher exertion might indicate lower energy (struggling more)
     if (avgExertion > 8) return 'low';

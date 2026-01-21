@@ -1,5 +1,5 @@
 import { Result } from '@bene/shared';
-import { CoachConversation } from '@core/index.js';
+import { CoachConversation } from '../../core/index.js';
 
 export interface CoachConversationRepository {
   findById(id: string): Promise<Result<CoachConversation>>;

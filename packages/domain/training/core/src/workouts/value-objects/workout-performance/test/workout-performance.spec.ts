@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createWorkoutPerformance } from '../workout-performance.factory.js';
+import { CreateWorkoutPerformanceSchema } from '../workout-performance.factory.js';
 
 describe('WorkoutPerformance', () => {
   const validActivity = {
@@ -8,7 +8,7 @@ describe('WorkoutPerformance', () => {
     durationMinutes: 30,
   };
 
-  const validProps = {
+  const validInput = {
     startedAt: new Date('2023-01-01T10:00:00Z'),
     completedAt: new Date('2023-01-01T11:00:00Z'),
     activities: [validActivity],
@@ -18,68 +18,83 @@ describe('WorkoutPerformance', () => {
     difficultyRating: 'just_right' as const,
   };
 
-  describe('createWorkoutPerformance', () => {
+  describe('creation', () => {
     it('should create a valid workout performance', () => {
-      const result = createWorkoutPerformance(validProps);
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse(validInput);
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.durationMinutes).toBe(60);
-        expect(result.value.activities.length).toBe(1);
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.durationMinutes).toBe(60);
+        expect(result.data.activities.length).toBe(1);
       }
     });
+  });
 
+  describe('validation', () => {
     it('should fail if completedAt is before startedAt', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         completedAt: new Date('2023-01-01T09:00:00Z'),
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail if activities array is empty', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         activities: [],
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail if perceivedExertion is out of range', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         perceivedExertion: 11,
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should fail if enjoyment is out of range', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         enjoyment: 0,
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should validate heart rate data', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         heartRate: {
           average: 150,
           max: 140, // Invalid: max < average
         },
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should validate exercise data', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         activities: [
           {
             ...validActivity,
@@ -95,12 +110,14 @@ describe('WorkoutPerformance', () => {
         ],
       });
 
-      expect(result.isFailure).toBe(true);
+      // Assert
+      expect(result.success).toBe(false);
     });
 
     it('should create with full exercise data', () => {
-      const result = createWorkoutPerformance({
-        ...validProps,
+      // Act
+      const result = CreateWorkoutPerformanceSchema.safeParse({
+        ...validInput,
         activities: [
           {
             ...validActivity,
@@ -117,7 +134,9 @@ describe('WorkoutPerformance', () => {
         ],
       });
 
-      expect(result.isSuccess).toBe(true);
+      // Assert
+      expect(result.success).toBe(true);
     });
   });
 });
+

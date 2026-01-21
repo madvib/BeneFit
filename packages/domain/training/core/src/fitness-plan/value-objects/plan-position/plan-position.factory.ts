@@ -1,26 +1,64 @@
-import { Result, Guard } from '@bene/shared';
-import { PlanPosition } from './plan-position.types.js';
+import { z } from 'zod';
+import { Result, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { PlanPosition, PlanPositionSchema } from './plan-position.types.js';
 
-export interface PlanPositionProps {
-  readonly week: number;
-  readonly day: number; // 0-6 (Sunday-Saturday)
-}
+/**
+ * ============================================================================
+ * PLAN POSITION FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. planPositionFromPersistence() - For fixtures & DB hydration
+ * 2. CreatePlanPositionSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-export function createPlanPosition(props: PlanPositionProps): Result<PlanPosition> {
-  const guardResult = Guard.combine([
-    Guard.againstNullOrUndefined(props.week, 'week'),
-    Guard.againstNullOrUndefined(props.day, 'day'),
-    Guard.inRange(props.week, 1, 1000, 'week'),
-    Guard.inRange(props.day, 0, 6, 'day'),
-  ]);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+/** Validates data with PlanPositionSchema */
+function validate(data: unknown): Result<PlanPosition> {
+  const parseResult = PlanPositionSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
   }
-
-  return Result.ok(props);
+  return Result.ok(parseResult.data);
 }
 
-export function createPlanPositionAtStart(): PlanPosition {
-  return { week: 1, day: 0 };
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates PlanPosition from persistence/fixtures (trusts the data).
+ */
+export function planPositionFromPersistence(data: PlanPosition): Result<PlanPosition> {
+  return Result.ok(data);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating new PlanPosition.
+ * Use at API boundaries (controllers, resolvers).
+ */
+export const CreatePlanPositionSchema: z.ZodType<PlanPosition> = PlanPositionSchema.transform((input, ctx) => {
+  const result = validate(input);
+  return unwrapOrIssue(result, ctx);
+});
+
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreatePlanPositionSchema or call via transform.
+ */
+export function createPlanPosition(props: unknown): Result<PlanPosition> {
+  return validate(props);
 }

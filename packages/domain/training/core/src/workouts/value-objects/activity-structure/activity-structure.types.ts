@@ -1,27 +1,42 @@
-// activity-structure.types.ts
-export type IntensityLevel = 'easy' | 'moderate' | 'hard' | 'sprint';
+import { z } from 'zod';
 
-export interface Interval {
-  readonly duration: number; // seconds
-  readonly intensity: IntensityLevel;
-  readonly rest: number; // seconds
-}
+export const IntensityLevelSchema = z.enum(['easy', 'moderate', 'hard', 'sprint']);
+export type IntensityLevel = z.infer<typeof IntensityLevelSchema>;
 
-export interface Exercise {
-  readonly name: string;
-  readonly sets: number;
-  readonly reps?: number | string; // number or "to failure"
-  readonly weight?: number; // kg or lbs
-  readonly duration?: number; // seconds for holds/timed exercises
-  readonly rest: number; // seconds between sets
-  readonly notes?: string;
-}
+export const IntervalSchema = z.object({
+  duration: z.number().int().min(1).max(3600),
+  intensity: IntensityLevelSchema,
+  rest: z.number().int().min(0).max(3600),
+});
+export type Interval = z.infer<typeof IntervalSchema>;
 
-interface ActivityStructureData {
-  intervals?: readonly Interval[];
-  rounds?: number;
-  exercises?: readonly Exercise[];
-}
+export const ExerciseSchema = z.object({
+  name: z.string().min(1).max(100),
+  sets: z.number().int().min(1).max(50),
+  reps: z.union([z.number().int().min(1), z.string()]).optional(),
+  weight: z.number().min(0).max(1000).optional(),
+  duration: z.number().int().min(1).max(3600).optional(),
+  rest: z.number().int().min(0).max(3600),
+  notes: z.string().max(500).optional(),
+});
+export type Exercise = z.infer<typeof ExerciseSchema>;
 
-// The core data structure is an immutable interface
-export type ActivityStructure = Readonly<ActivityStructureData>;
+/**
+ * 1. DEFINE PROPS SCHEMA
+ */
+export const ActivityStructureSchema = z.object({
+  intervals: z.array(IntervalSchema).optional(),
+  rounds: z.number().int().min(1).max(100).optional(),
+  exercises: z.array(ExerciseSchema).optional(),
+});
+
+/**
+ * 2. INFER TYPES
+ */
+export type ActivityStructureProps = z.infer<typeof ActivityStructureSchema>;
+export type ActivityStructure = Readonly<ActivityStructureProps>;
+
+/**
+ * 3. VIEW TYPES
+ */
+export type ActivityStructureView = ActivityStructure;

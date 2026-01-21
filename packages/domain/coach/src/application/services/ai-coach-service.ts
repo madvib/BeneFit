@@ -7,7 +7,7 @@ import {
   CoachContext,
   CoachConversation,
   CoachErrors,
-} from '@core/index.js';
+} from '../../core/index.js';
 
 export interface AICoachResponse {
   message: string;

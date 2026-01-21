@@ -1,60 +1,66 @@
-import { CreateView } from '@bene/shared';
-import { WorkoutGoals } from '@/fitness-plan/value-objects/index.js';
-import { WorkoutActivity, WorkoutType } from '@/workouts/index.js';
+import { z } from 'zod';
+import { WorkoutGoalsSchema } from '@/fitness-plan/value-objects/index.js';
+import { WorkoutActivitySchema, WorkoutTypeSchema } from '@/workouts/index.js';
 
-// --- Type Definitions (Unchanged) ---
-export type WorkoutCategory = 'cardio' | 'strength' | 'recovery'; // Abridged
-export type WorkoutStatus =
-  | 'scheduled'
-  | 'in_progress'
-  | 'completed'
-  | 'skipped'
-  | 'rescheduled';
-export type WorkoutImportance = 'optional' | 'recommended' | 'key' | 'critical';
+/**
+ * 1. DEFINE Enums & Value Object Schemas
+ */
+export const WorkoutCategorySchema = z.enum(['cardio', 'strength', 'recovery']);
+export type WorkoutCategory = z.infer<typeof WorkoutCategorySchema>;
 
-export interface WorkoutAlternative {
-  reason: string;
-  activities: WorkoutActivity[];
-}
+export const WorkoutStatusSchema = z.enum([
+  'scheduled',
+  'in_progress',
+  'completed',
+  'skipped',
+  'rescheduled',
+]);
+export type WorkoutStatus = z.infer<typeof WorkoutStatusSchema>;
 
-export interface WorkoutTemplateData {
-  id: string; // Entity ID
-  planId: string;
-  weekNumber: number;
-  dayOfWeek: number;
-  scheduledDate: Date;
-  title: string;
-  description?: string;
-  type: WorkoutType;
-  category: WorkoutCategory;
-  goals: WorkoutGoals;
-  activities: WorkoutActivity[];
-  status: WorkoutStatus;
-  completedWorkoutId?: string;
-  userNotes?: string;
-  rescheduledTo?: Date;
-  coachNotes?: string;
-  importance: WorkoutImportance;
-  alternatives?: WorkoutAlternative[];
-}
+export const WorkoutImportanceSchema = z.enum(['optional', 'recommended', 'key', 'critical']);
+export type WorkoutImportance = z.infer<typeof WorkoutImportanceSchema>;
 
-// The core data structure is an immutable interface
-export type WorkoutTemplate = Readonly<WorkoutTemplateData>;
+export const WorkoutAlternativeSchema = z.object({
+  reason: z.string(),
+  activities: z.array(WorkoutActivitySchema),
+});
+export type WorkoutAlternative = z.infer<typeof WorkoutAlternativeSchema>;
 
-// ============================================
-// View Interface (API Presentation)
-// ============================================
+/**
+ * 2. CORE SCHEMA
+ */
+export const WorkoutTemplateSchema = z.object({
+  id: z.uuid(),
+  planId: z.uuid(),
+  weekNumber: z.number().int().min(1).max(52),
+  dayOfWeek: z.number().int().min(0).max(6),
 
-export type WorkoutTemplateView = CreateView<
-  WorkoutTemplate,
-  never,
-  {
-    scheduledDate: string;
-    rescheduledTo?: string;
-    // Computed fields from queries
-    estimatedDuration: number;
-    isPastDue: boolean;
-    isCompleted: boolean;
-  }
->;
+  // Dates
+  scheduledDate: z.coerce.date<Date>(),
+  rescheduledTo: z.coerce.date<Date>().optional(),
 
+  title: z.string().min(1).max(100),
+  description: z.string().optional(),
+
+  type: WorkoutTypeSchema,
+  category: WorkoutCategorySchema,
+
+  goals: WorkoutGoalsSchema,
+  activities: z.array(WorkoutActivitySchema),
+
+  status: WorkoutStatusSchema,
+  completedWorkoutId: z.string().optional(), // assuming string ID for external reference
+
+  userNotes: z.string().optional(),
+  coachNotes: z.string().optional(),
+
+  importance: WorkoutImportanceSchema,
+  alternatives: z.array(WorkoutAlternativeSchema).optional(),
+});
+
+
+export const WORKOUT_TEMPLATE_ERRORS = {
+  MISSING_ACTIVITIES: 'Non-rest workouts must have at least one activity',
+} as const;
+
+export type WorkoutTemplate = Readonly<z.infer<typeof WorkoutTemplateSchema>>;

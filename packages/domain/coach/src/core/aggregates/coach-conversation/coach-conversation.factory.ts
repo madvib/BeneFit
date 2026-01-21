@@ -1,62 +1,148 @@
-import { Result, Guard } from '@bene/shared';
+import { z } from 'zod';
+import { randomUUID } from 'crypto';
+import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import {
+  CoachConversation,
+  CoachConversationSchema
+} from './coach-conversation.types.js';
 import {
   CoachContext,
-  CoachConversation,
+  CoachContextSchema,
   CoachMsg,
-  createCoachContext,
-  createCoachMessage,
-} from '../../index.js';
-import type { FitnessGoals, TrainingConstraints } from '@bene/training-core';
-import { randomUUID } from 'crypto';
-export interface CreateCoachConversationParams {
-  userId: string;
-  context?: CoachContext;
-  initialMessage?: string;
+  CreateCoachContextSchema,
+  CreateCoachMessageSchema
+} from '../../value-objects/index.js';
+
+/**
+ * ============================================================================
+ * COACH CONVERSATION FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API (2 exports):
+ * 1. coachConversationFromPersistence() - For fixtures & DB hydration
+ * 2. CreateCoachConversationSchema - Zod transform for API boundaries
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
+
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
+
+/** Validates and brands CoachConversation */
+function validateCoachConversation(data: unknown): Result<CoachConversation> {
+  const parseResult = CoachConversationSchema.safeParse(data);
+
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
+
+  return Result.ok(parseResult.data);
 }
 
-export function createCoachConversation(
-  params: CreateCoachConversationParams,
+function createDefaultCoachContext(): Result<CoachContext> {
+  // Use CreateCoachContextSchema with defaults
+  const result = CreateCoachContextSchema.safeParse({
+    recentWorkouts: [],
+    userGoals: {
+      primary: 'strength',
+      secondary: [],
+      motivation: 'General fitness improvement',
+      successCriteria: [],
+    },
+    userConstraints: {
+      availableDays: ['Monday', 'Wednesday', 'Friday'],
+      availableEquipment: ['bodyweight'],
+      location: 'home',
+    },
+    experienceLevel: 'beginner',
+    trends: {
+      volumeTrend: 'stable',
+      adherenceTrend: 'stable',
+      energyTrend: 'medium',
+      exertionTrend: 'stable',
+      enjoymentTrend: 'stable',
+    },
+    daysIntoCurrentWeek: 0,
+    workoutsThisWeek: 0,
+    plannedWorkoutsThisWeek: 0,
+    energyLevel: 'medium',
+  });
+
+  return result.success ? Result.ok(result.data as CoachContext) : Result.fail(mapZodError(result.error));
+}
+
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates CoachConversation from persistence/fixtures (trusts the data).
+ * This is the ONLY place where Unbrand is used.
+ */
+export function coachConversationFromPersistence(
+  data: Unbrand<CoachConversation>,
 ): Result<CoachConversation> {
-  const guardResult = Guard.combine([
-    Guard.againstEmptyString(params.userId, 'userId'),
-    Guard.againstNullOrUndefined(params.userId, 'userId'),
-  ]);
+  return Result.ok(data as CoachConversation);
+}
 
-  if (guardResult.isFailure) {
-    return Result.fail(guardResult.error);
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating CoachConversation with validation.
+ */
+export const CreateCoachConversationSchema = CoachConversationSchema.pick({
+  userId: true,
+}).extend({
+  id: z.uuid().optional(),
+  context: CoachContextSchema.partial().optional(),
+  initialMessage: z.string().optional(),
+  startedAt: z.coerce.date<Date>().optional(),
+}).transform((input, ctx) => {
+  const now = input.startedAt || new Date();
+
+  // Context handling
+  let initialContext: CoachContext;
+  if (input.context) {
+    const contextResult = CreateCoachContextSchema.safeParse(input.context);
+    if (!contextResult.success) {
+      return unwrapOrIssue(Result.fail(mapZodError(contextResult.error)), ctx);
+    }
+    initialContext = contextResult.data;
+  } else {
+    const defaultContextResult = createDefaultCoachContext();
+    if (defaultContextResult.isFailure) {
+      ctx.addIssue({ code: 'custom', message: `Failed to create default context: ${ defaultContextResult.error }` });
+      return z.NEVER;
+    }
+    initialContext = defaultContextResult.value;
   }
 
-  // Check if context is explicitly null (should fail), but allow undefined (use default)
-  if (params.context === null) {
-    return Result.fail(new Error('Context cannot be null'));
-  }
-
-  const now = new Date();
-  const initialContext = params.context || createDefaultCoachContext().value;
-
-  // Create initial message if provided
+  // Initial message handling
   let initialMessages: CoachMsg[] = [];
   let initialTotalCoachMessages = 0;
-  if (params.initialMessage) {
-    const messageResult = createCoachMessage(
-      params.initialMessage,
-      [],
-      undefined,
-      undefined,
-    );
-    if (messageResult.isSuccess) {
-      initialMessages = [messageResult.value];
-      initialTotalCoachMessages = 1;
+
+  if (input.initialMessage) {
+    const messageResult = CreateCoachMessageSchema.safeParse({
+      content: input.initialMessage
+    });
+    if (!messageResult.success) {
+      return unwrapOrIssue(Result.fail(mapZodError(messageResult.error)), ctx);
     }
+    initialMessages = [messageResult.data];
+    initialTotalCoachMessages = 1;
   }
 
-  const conversation: CoachConversation = {
-    id: randomUUID(),
-    userId: params.userId,
+  const data = {
+    id: input.id || randomUUID(),
+    userId: input.userId,
     context: initialContext,
     messages: initialMessages,
     checkIns: [],
-    totalMessages: params.initialMessage ? 1 : 0,
+    totalMessages: input.initialMessage ? 1 : 0,
     totalUserMessages: 0,
     totalCoachMessages: initialTotalCoachMessages,
     totalCheckIns: 0,
@@ -66,46 +152,23 @@ export function createCoachConversation(
     lastContextUpdateAt: now,
   };
 
-  return Result.ok(conversation);
-}
+  const validationResult = validateCoachConversation(data);
+  return unwrapOrIssue(validationResult, ctx);
+}) satisfies z.ZodType<CoachConversation>;
 
-function createDefaultCoachContext() {
-  // Create default fitness goals
-  const defaultGoals: FitnessGoals = {
-    primary: 'strength',
-    secondary: [],
-    motivation: 'General fitness improvement',
-    successCriteria: [],
-  };
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
 
-  // Create default training constraints
-  const defaultConstraints: TrainingConstraints = {
-    availableDays: ['Monday', 'Wednesday', 'Friday'],
-    availableEquipment: ['bodyweight'],
-    location: 'home' as const,
-  };
-
-  // Create default performance trends
-  const defaultTrends = {
-    volumeTrend: 'stable' as const,
-    adherenceTrend: 'stable' as const,
-    energyTrend: 'medium' as const,
-    exertionTrend: 'stable' as const,
-    enjoymentTrend: 'stable' as const,
-  };
-
-  // Create default recent workouts
-  const defaultRecentWorkouts: [] = [];
-
-  return createCoachContext({
-    recentWorkouts: defaultRecentWorkouts,
-    userGoals: defaultGoals,
-    userConstraints: defaultConstraints,
-    experienceLevel: 'beginner' as const,
-    trends: defaultTrends,
-    daysIntoCurrentWeek: 0,
-    workoutsThisWeek: 0,
-    plannedWorkoutsThisWeek: 0,
-    energyLevel: 'medium' as const,
-  });
+/**
+ * @deprecated Use CreateCoachConversationSchema or coachConversationFromPersistence.
+ */
+export function createCoachConversation(
+  params: unknown,
+): Result<CoachConversation> {
+  const result = CreateCoachConversationSchema.safeParse(params);
+  if (!result.success) {
+    return Result.fail(mapZodError(result.error));
+  }
+  return Result.ok(result.data);
 }

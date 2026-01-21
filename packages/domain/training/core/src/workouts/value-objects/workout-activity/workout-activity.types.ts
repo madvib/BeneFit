@@ -1,43 +1,31 @@
-// workout-activity.types.ts
-import { CreateView } from '@bene/shared';
-import { ActivityStructure } from '../activity-structure/activity-structure.types.js';
+import { z } from 'zod';
+import { ActivityStructureSchema } from '../activity-structure/index.js';
+import { DomainBrandTag } from '@bene/shared';
 
-export type ActivityType = 'warmup' | 'main' | 'cooldown' | 'interval' | 'circuit';
+export const ActivityTypeSchema = z.enum(['warmup', 'main', 'cooldown', 'interval', 'circuit']);
+export type ActivityType = z.infer<typeof ActivityTypeSchema>;
 
-interface WorkoutActivityData {
-  name: string;
-  type: ActivityType;
-  order: number;
-  structure?: ActivityStructure;
-  instructions?: readonly string[];
-  distance?: number; // meters
-  duration?: number; // minutes
-  pace?: string; // e.g., "easy", "moderate", "5:30/km"
-  videoUrl?: string;
-  equipment?: readonly string[];
-  alternativeExercises?: readonly string[];
-}
+/**
+ * 1. DEFINE PROPS SCHEMA
+ */
+export const WorkoutActivitySchema = z
+  .object({
+    name: z.string().min(1).max(100),
+    type: ActivityTypeSchema,
+    order: z.number().int().min(0).max(100),
+    structure: ActivityStructureSchema.optional(),
+    instructions: z.array(z.string()).optional(),
+    distance: z.number().min(0).optional(),
+    duration: z.number().min(0).optional(),
+    pace: z.string().optional(),
+    videoUrl: z.url().optional(),
+    equipment: z.array(z.string()).optional(),
+    alternativeExercises: z.array(z.string()).optional(),
+  })
+  .brand<DomainBrandTag>();
 
-// The core data structure is an immutable interface
-export type WorkoutActivity = Readonly<WorkoutActivityData>;
+/**
+ * 2. INFER TYPES
+ */
+export type WorkoutActivity = Readonly<z.infer<typeof WorkoutActivitySchema>>;
 
-
-export type WorkoutActivityView = CreateView<
-  WorkoutActivity,
-  never,
-  {
-    estimatedDuration: number;
-    estimatedCalories: number;
-    shortDescription: string;
-    detailedDescription: string;
-    instructionsList: string[];
-    requiresEquipment: boolean;
-    equipmentList: string[];
-    // Type helpers
-    isWarmup: boolean;
-    isCooldown: boolean;
-    isMainActivity: boolean;
-    isIntervalBased: boolean;
-    isCircuit: boolean;
-  }
->;

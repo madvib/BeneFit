@@ -6,11 +6,8 @@ import { PlanPausedEvent } from '../../events/plan-paused.event.js';
 
 // Single request schema with ALL fields
 export const PausePlanRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  planId: z.string(),
+  userId: z.uuid(),
+  planId: z.uuid(),
   reason: z.string().optional(),
 });
 

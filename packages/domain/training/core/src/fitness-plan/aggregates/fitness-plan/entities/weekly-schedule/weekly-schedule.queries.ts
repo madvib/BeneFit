@@ -1,6 +1,5 @@
-// weekly-schedule.queries.ts
-import { WorkoutTemplate } from '../workout-template/workout-template.types.js';
 import { WeeklySchedule } from './weekly-schedule.types.js';
+import { WorkoutTemplate } from '../workout-template/index.js';
 
 /**
  * QUERY: Finds a workout by its ID.

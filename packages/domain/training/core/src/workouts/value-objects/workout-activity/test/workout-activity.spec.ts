@@ -3,7 +3,7 @@ import { createIntervalStructure, createExerciseStructure } from '../../activity
 import { getTotalDuration } from '../../activity-structure/activity-structure.queries.js';
 import { createWorkoutActivity, createWarmup, createCooldown, createDistanceRun, createIntervalSession, createCircuit } from '../workout-activity.factory.js';
 import { isWarmup, isCooldown, isMainActivity, isActivityIntervalBased, isCircuit, activityRequiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from '../workout-activity.queries.js';
-import { toWorkoutActivityView } from '../workout-activity.factory.js';
+import { toWorkoutActivityView } from '../workout-activity.view.js';
 import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from '../workout-activity.commands.js';
 
 describe('WorkoutActivity', () => {

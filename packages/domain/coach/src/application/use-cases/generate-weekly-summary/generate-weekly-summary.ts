@@ -3,30 +3,26 @@ import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import { AICoachService, CoachContextBuilder } from '../../services/index.js';
 import { WeeklySummaryGeneratedEvent } from '../../events/weekly-summary-generated.event.js';
 
-
-
-// Zod schema for request validation
+/**
+ * Request schema
+ */
 export const GenerateWeeklySummaryRequestSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
 });
 
-// Zod inferred type with original name
 export type GenerateWeeklySummaryRequest = z.infer<
   typeof GenerateWeeklySummaryRequestSchema
 >;
 
-
-// Zod schema for response validation
-export const GenerateWeeklySummaryResponseSchema = z.object({
-  summary: z.string().min(1).max(5000),
-  highlights: z.array(z.string().min(1).max(200)),
-  suggestions: z.array(z.string().min(1).max(500)),
-});
-
-// Zod inferred type with original name
-export type GenerateWeeklySummaryResponse = z.infer<
-  typeof GenerateWeeklySummaryResponseSchema
->;
+/**
+ * Response type - custom for summary report
+ */
+// TODO this should be a value object eventually
+export interface GenerateWeeklySummaryResponse {
+  summary: string;
+  highlights: string[];
+  suggestions: string[];
+}
 
 export class GenerateWeeklySummaryUseCase extends BaseUseCase<
   GenerateWeeklySummaryRequest,

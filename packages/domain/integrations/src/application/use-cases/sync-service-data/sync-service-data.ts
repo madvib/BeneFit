@@ -7,24 +7,27 @@ import { ServiceSyncedEvent } from '@app/events/service-synced.event.js';
 import { ActivitiesSyncedEvent } from '@app/events/activities-synced.event.js';
 
 // Type for activity normalizer functions (Strava, Garmin, etc.)
-type ActivityNormalizer = (activities: any[]) => import('@core/normalized-activity.js').NormalizedActivity[];
+type ActivityNormalizer = (activities: unknown[]) => import('@core/normalized-activity.js').NormalizedActivity[];
 
-// Zod schema for request validation
+/**
+ * Input schema
+ */
 export const SyncServiceDataRequestSchema = z.object({
-  serviceId: z.string(),
+  serviceId: z.uuid(),
 });
 
 export type SyncServiceDataRequest = z.infer<typeof SyncServiceDataRequestSchema>;
 
-// Zod schema for response validation
-export const SyncServiceDataResponseSchema = z.object({
-  serviceId: z.string(),
-  success: z.boolean(),
-  activitiesSynced: z.number().int().min(0).max(100),
-  error: z.string().min(1).max(1000).optional(),
-});
-
-export type SyncServiceDataResponse = z.infer<typeof SyncServiceDataResponseSchema>;
+/**
+ * Response type - custom for sync operation
+ * Note: Returns sync-specific metrics, not the full service view
+ */
+export type SyncServiceDataResponse = {
+  serviceId: string;
+  success: boolean;
+  activitiesSynced: number;
+  error?: string;
+};
 
 /**
  * Use case for syncing data from external services.

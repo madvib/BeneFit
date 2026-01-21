@@ -22,11 +22,11 @@ async function run() {
         continue; // Preserve fixtures directory and legacy files
       }
       const fullPath = join(OUTPUT_DIR, file.name);
-      if (file.isDirectory()) {
-        rmSync(fullPath, { recursive: true, force: true });
-      } else {
-        unlinkSync(fullPath);
-      }
+      // if (file.isDirectory()) {
+      //   rmSync(fullPath, { recursive: true, force: true });
+      // } else {
+      //   unlinkSync(fullPath);
+      // }
     }
   } catch {
     // Directory might not exist yet

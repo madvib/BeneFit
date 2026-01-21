@@ -2,6 +2,4 @@
 // The implementation is separated into factory and commands files
 export * from './workout-goals.types.js';
 export * from './workout-goals.factory.js';
-export * from './workout-goals.schema.js';
-export * from './test/workout-goals.fixtures.js';
 export * as WorkoutGoalsCommands from './workout-goals.commands.js';

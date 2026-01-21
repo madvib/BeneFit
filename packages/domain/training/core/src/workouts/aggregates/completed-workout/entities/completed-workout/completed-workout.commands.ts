@@ -69,6 +69,7 @@ export function addVerification(
   const updatedVerifications = [...workout.verification.verifications, newVerification];
   const verificationResult = createWorkoutVerification({
     verifications: updatedVerifications,
+    verifiedAt: new Date(),
   });
 
   if (verificationResult.isFailure) return Result.fail(verificationResult.error);

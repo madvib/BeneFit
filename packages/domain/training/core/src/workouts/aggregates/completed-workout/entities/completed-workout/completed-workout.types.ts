@@ -1,68 +1,54 @@
-import { CreateView, SerializeDates } from '@bene/shared';
+import { z } from 'zod';
+import type { DomainBrandTag } from '@bene/shared';
 import {
-  WorkoutPerformance,
-  WorkoutVerification,
-  WorkoutType,
-  WorkoutVerificationView,
+  WorkoutPerformanceSchema,
+  WorkoutVerificationSchema,
+  WorkoutTypeSchema,
+
 } from '@/workouts/value-objects/index.js';
-import { Reaction, ReactionView } from '../reaction/reaction.types.js';
+import { ReactionSchema } from '../reaction/reaction.types.js';
 
-interface CompletedWorkoutData {
-  id: string;
-  userId: string;
+/**
+ * 1. DEFINE PROPS SCHEMA (Zod as Source of Truth)
+ */
+export const CompletedWorkoutSchema = z
+  .object({
+    id: z.uuid(),
+    userId: z.uuid(),
 
-  // Reference to source plan/workout (if from a plan)
-  planId?: string;
-  workoutTemplateId?: string;
-  weekNumber?: number;
-  dayNumber?: number;
+    // Reference to source plan/workout (if from a plan)
+    planId: z.uuid().optional(),
+    workoutTemplateId: z.uuid().optional(),
+    weekNumber: z.number().int().min(1).max(52).optional(),
+    dayNumber: z.number().int().min(0).max(6).optional(),
 
-  // Workout details
-  workoutType: WorkoutType; // "Upper Body Strength", "5K Run", etc.
-  title: string;
-  description?: string;
+    // Workout details
+    workoutType: WorkoutTypeSchema,
+    title: z.string().min(1).max(100),
+    description: z.string().min(1).max(1000).optional(),
 
-  // Performance data
-  performance: WorkoutPerformance;
+    // Performance data
+    performance: WorkoutPerformanceSchema,
 
-  // Verification for corporate sponsors
-  verification: WorkoutVerification;
+    // Verification for corporate sponsors
+    verification: WorkoutVerificationSchema,
 
-  // Social engagement
-  reactions: Reaction[];
-  isPublic: boolean; // Shared to team feed?
+    // Social engagement
+    reactions: z.array(ReactionSchema),
+    isPublic: z.boolean(),
 
-  // Multiplayer session reference (if applicable)
-  multiplayerSessionId?: string;
+    // Multiplayer session reference (if applicable)
+    multiplayerSessionId: z.uuid().optional(),
 
-  // Metadata
-  createdAt: Date; // When recorded in system
-  recordedAt: Date; // When workout actually completed (usually = performance.completedAt)
-}
+    // Metadata
+    createdAt: z.coerce.date<Date>(),
+    recordedAt: z.coerce.date<Date>(),
+  })
+  .brand<DomainBrandTag>();
 
-export type CompletedWorkout = Readonly<CompletedWorkoutData>;
-
-// ============================================
-// View Interface (API Presentation)
-// ============================================
-
-export interface EnrichedWorkoutPerformance extends WorkoutPerformance {
-  totalVolume: number;
-  totalSets: number;
-  totalExercises: number;
-  completionRate: number;
-}
+/**
+ * 2. INFER TYPES
+ */
+export type CompletedWorkout = Readonly<z.infer<typeof CompletedWorkoutSchema>>;
 
 
-
-export type CompletedWorkoutView = CreateView<
-  CompletedWorkout,
-  'performance' | 'reactions',
-  {
-    performance: SerializeDates<EnrichedWorkoutPerformance>;
-    reactions: ReactionView[];
-    isVerified: boolean;
-    reactionCount: number;
-    verification: WorkoutVerificationView;
-  }
->;

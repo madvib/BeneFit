@@ -1,88 +1,96 @@
 import { describe, it, expect } from 'vitest';
-import { createCoachConversation } from '../coach-conversation.factory.js';
-import { CoachContext } from '../../../value-objects/coach-context/coach-context.types.js';
-import { createTrainingConstraints } from '@bene/training-core';
+import { CreateCoachConversationSchema } from '../coach-conversation.factory.js';
+import { createCoachConversationFixture } from './coach-conversation.fixtures.js';
+import { createCoachContextFixture } from '../../../value-objects/index.js';
 
-describe('CoachConversation Aggregate', () => {
-  const mockContext: CoachContext = {
-    recentWorkouts: [],
-    userGoals: { primaryGoal: 'strength', targetWeight: 75 } as unknown,
-    userConstraints: createTrainingConstraints({
-      availableEquipment: [],
-      availableDays: ['Monday', 'Wednesday', 'Friday'],
-      maxDuration: 60,
-      location: 'home',
-    }).value,
-    experienceLevel: 'intermediate',
-    trends: {
-      volumeTrend: 'stable',
-      adherenceTrend: 'stable',
-      energyTrend: 'medium',
-      exertionTrend: 'stable',
-      enjoymentTrend: 'stable',
-    },
-    daysIntoCurrentWeek: 1,
-    workoutsThisWeek: 0,
-    plannedWorkoutsThisWeek: 3,
-    reportedInjuries: [],
-    energyLevel: 'medium',
-  };
+describe('CoachConversation', () => {
+  describe('Factory', () => {
+    const mockContext = createCoachContextFixture();
 
-  it('should create a valid coaching conversation', () => {
-    const result = createCoachConversation({
-      userId: 'user-123',
-      context: mockContext,
-      initialMessage: 'Welcome!',
+    it('should create a valid coaching conversation', () => {
+      // Arrange
+      const input = {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        context: mockContext,
+        initialMessage: 'Welcome!',
+      };
+
+      // Act
+      const result = CreateCoachConversationSchema.safeParse(input);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const conversation = result.data;
+        expect(conversation.id).toBeDefined();
+        expect(conversation.userId).toBe('550e8400-e29b-41d4-a716-446655440000');
+        expect(conversation.context).toEqual(mockContext);
+        expect(conversation.messages).toHaveLength(1);
+        expect(conversation.messages[0]?.content).toBe('Welcome!');
+        expect(conversation.totalMessages).toBe(1);
+        expect(conversation.totalCoachMessages).toBe(1);
+        expect(conversation.startedAt).toBeInstanceOf(Date);
+      }
     });
 
-    expect(result.isSuccess).toBe(true);
-    const conversation = result.value;
-    expect(conversation.id).toBeDefined();
-    expect(conversation.userId).toBe('user-123');
-    expect(conversation.context).toEqual(mockContext);
-    expect(conversation.messages).toHaveLength(1);
-    expect(conversation.messages[0]?.content).toBe('Welcome!');
-    expect(conversation.totalMessages).toBe(1);
-    expect(conversation.totalCoachMessages).toBe(1);
-    expect(conversation.startedAt).toBeInstanceOf(Date);
+    it('should create a conversation without initial message', () => {
+      // Act
+      const result = CreateCoachConversationSchema.safeParse({
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        context: mockContext,
+      });
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.messages).toHaveLength(0);
+        expect(result.data.totalMessages).toBe(0);
+      }
+    });
+
+    it('should create a conversation without context (uses default context)', () => {
+      // Act
+      const result = CreateCoachConversationSchema.safeParse({
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+      });
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const conversation = result.data;
+        expect(conversation.context).toBeDefined();
+        expect(conversation.context.experienceLevel).toBe('beginner');
+        expect(conversation.context.userGoals.primary).toBe('strength');
+        expect(conversation.context.userConstraints.location).toBe('home');
+      }
+    });
+
+    it('should fail if userId is invalid', () => {
+      // Act
+      const result = CreateCoachConversationSchema.safeParse({
+        userId: 'invalid-uuid',
+        context: mockContext,
+      });
+
+      // Assert
+      expect(result.success).toBe(false);
+    });
   });
 
-  it('should create a conversation without initial message', () => {
-    const result = createCoachConversation({
-      userId: 'user-123',
-      context: mockContext,
+  describe('Fixtures', () => {
+    it('should create valid fixture', () => {
+      const fixture = createCoachConversationFixture();
+
+      expect(fixture.id).toBeDefined();
+      expect(fixture.userId).toBeDefined();
+      expect(fixture.context).toBeDefined();
+      expect(fixture.messages.length).toBeGreaterThan(0);
     });
 
-    expect(result.isSuccess).toBe(true);
-    const conversation = result.value;
-    expect(conversation.messages).toHaveLength(0);
-    expect(conversation.totalMessages).toBe(0);
-  });
+    it('should allow overrides in fixture', () => {
+      const fixture = createCoachConversationFixture({ totalMessages: 100 });
 
-  it('should fail if userId is missing', () => {
-    const result = createCoachConversation({
-      userId: null as never,
-      context: mockContext,
+      expect(fixture.totalMessages).toBe(100);
     });
-
-    expect(result.isFailure).toBe(true);
-  });
-
-  it('should fail if userId is empty', () => {
-    const result = createCoachConversation({
-      userId: '',
-      context: mockContext,
-    });
-
-    expect(result.isFailure).toBe(true);
-  });
-
-  it('should fail if context is missing', () => {
-    const result = createCoachConversation({
-      userId: 'user-123',
-      context: null as never,
-    });
-
-    expect(result.isFailure).toBe(true);
   });
 });

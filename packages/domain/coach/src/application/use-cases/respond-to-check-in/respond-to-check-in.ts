@@ -1,38 +1,35 @@
 
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { CoachConversationCommands } from '../../../core/index.js';
+import {
+  toCoachActionView,
+  type CoachActionView,
+  CoachConversationCommands
+} from '@core/index.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 import { AICoachService } from '../../services/index.js';
 import { CheckInRespondedEvent } from '../../events/check-in-responded.event.js';
 import { CoachActionPerformedEvent } from '../../events/coach-action-performed.event.js';
 
-
-// Single request schema with ALL fields
+/**
+ * Request schema
+ */
 export const RespondToCheckInRequestSchema = z.object({
-  // Server context
-  userId: z.string(),
-
-  // Client data
-  checkInId: z.string(),
+  userId: z.uuid(),
+  checkInId: z.uuid(),
   response: z.string(),
 });
 
 export type RespondToCheckInRequest = z.infer<typeof RespondToCheckInRequestSchema>;
 
-const ActionSchema = z.object({
-  type: z.string().min(1).max(50),
-  details: z.string().min(1).max(1000),
-});
-
-export const RespondToCheckInResponseSchema = z.object({
-  conversationId: z.string(),
-  coachAnalysis: z.string().min(1).max(2000),
-  actions: z.array(ActionSchema),
-});
-
-// Zod inferred type with original name
-export type RespondToCheckInResponse = z.infer<typeof RespondToCheckInResponseSchema>;
+/**
+ * Response type - custom for check-in response
+ */
+export interface RespondToCheckInResponse {
+  conversationId: string;
+  coachAnalysis: string;
+  actions: CoachActionView[];
+}
 
 export class RespondToCheckInUseCase extends BaseUseCase<
   RespondToCheckInRequest,
@@ -116,10 +113,7 @@ export class RespondToCheckInUseCase extends BaseUseCase<
     return Result.ok({
       conversationId: conversation.id,
       coachAnalysis: analysis,
-      actions: actions.map((a) => ({
-        type: a.type,
-        details: a.details,
-      })),
+      actions: actions.map(toCoachActionView),
     });
   }
 

@@ -1,20 +1,36 @@
-export type InjurySeverity = 'minor' | 'moderate' | 'serious';
-export type PreferredTime = 'morning' | 'afternoon' | 'evening';
-export type TrainingLocation = 'home' | 'gym' | 'outdoor' | 'mixed';
+import { z } from 'zod';
+import type { CreateView, DomainBrandTag } from '@bene/shared';
 
-export interface Injury {
-  readonly bodyPart: string;
-  readonly severity: InjurySeverity;
-  readonly avoidExercises: readonly string[];
-  readonly notes?: string;
-  readonly reportedDate: string; // ISO date
-}
+export const InjurySeveritySchema = z.enum(['minor', 'moderate', 'serious']);
+export type InjurySeverity = z.infer<typeof InjurySeveritySchema>;
 
-export interface TrainingConstraints {
-  readonly injuries?: readonly Injury[];
-  readonly availableDays: readonly string[]; // ['Monday', 'Wednesday', 'Friday']
-  readonly preferredTime?: PreferredTime;
-  readonly maxDuration?: number; // minutes per workout
-  readonly availableEquipment: readonly string[];
-  readonly location: TrainingLocation;
-}
+export const PreferredTimeSchema = z.enum(['morning', 'afternoon', 'evening']);
+export type PreferredTime = z.infer<typeof PreferredTimeSchema>;
+
+export const TrainingLocationSchema = z.enum(['home', 'gym', 'outdoor', 'mixed']);
+export type TrainingLocation = z.infer<typeof TrainingLocationSchema>;
+
+export const InjuryPropsSchema = z
+  .object({
+    bodyPart: z.string().min(1).max(100),
+    severity: InjurySeveritySchema,
+    avoidExercises: z.array(z.string().min(1).max(200)),
+    notes: z.string().max(500).optional(),
+    reportedDate: z.coerce.date<Date>(),
+  })
+  .readonly();
+export type Injury = z.infer<typeof InjuryPropsSchema>;
+
+export const TrainingConstraintsSchema = z
+  .object({
+    injuries: z.array(InjuryPropsSchema).optional(),
+    availableDays: z.array(z.string().min(1).max(20)), // e.g. ["Monday"]
+    preferredTime: PreferredTimeSchema.optional(),
+    maxDuration: z.number().int().min(1).max(300).optional(), // minutes
+    availableEquipment: z.array(z.string().min(1).max(100)),
+    location: TrainingLocationSchema,
+  })
+  .brand<DomainBrandTag>();
+
+export type TrainingConstraints = Readonly<z.infer<typeof TrainingConstraintsSchema>>;
+export type TrainingConstraintsView = CreateView<TrainingConstraints>;

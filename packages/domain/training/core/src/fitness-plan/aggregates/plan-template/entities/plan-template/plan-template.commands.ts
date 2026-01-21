@@ -1,6 +1,5 @@
 import { Guard, Result } from '@bene/shared';
 import { PlanTemplate } from './plan-template.types.js';
-import { CreateTemplateParams } from './plan-template.factory.js';
 
 export function publishTemplate(template: PlanTemplate): Result<PlanTemplate> {
   const guardResult = Guard.isTrue(
@@ -85,23 +84,5 @@ export function updateTemplateRating(
       rating: newRating,
       updatedAt: new Date(),
     },
-  });
-}
-
-export function createTemplateRevision(
-  template: PlanTemplate,
-  updates: Partial<Omit<CreateTemplateParams, 'structure' | 'rules'>>,
-): Result<PlanTemplate> {
-  return Result.ok({
-    ...template,
-    ...updates,
-    metadata: {
-      ...template.metadata,
-      isPublic: false,
-      publishedAt: undefined,
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    },
-    version: template.version + 1,
   });
 }

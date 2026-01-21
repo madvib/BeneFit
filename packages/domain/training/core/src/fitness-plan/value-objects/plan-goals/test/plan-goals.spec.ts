@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
-  createPlanGoals,
+  CreatePlanGoalsSchema,
   createEventTraining,
-  createStrengthBuilding, createHabitBuilding,
-  toPlanGoalsView,
-} from '../../index.js';
+  createStrengthBuilding,
+  createHabitBuilding,
+} from '../plan-goals.factory.js';
+import { toPlanGoalsView } from '../plan-goals.view.js';
+import { createPlanGoalsFixture } from './plan-goals.fixtures.js';
 import {
   hasTargetWeights,
   hasTargetPace,
@@ -19,58 +21,80 @@ import {
 } from '../plan-goals.commands.js';
 
 describe('PlanGoals', () => {
-  describe('create', () => {
-    it('should create plan goals with primary and secondary goals', () => {
-      const result = createPlanGoals({
+  describe('creation', () => {
+    it('should create valid plan goals with primary and secondary goals', () => {
+      // Arrange & Act
+      const goals = createPlanGoalsFixture({
         primary: 'Build strength',
         secondary: ['Improve flexibility', 'Increase endurance'],
-        targetMetrics: {},
       });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.primary).toBe('Build strength');
-        expect(result.value.secondary.length).toBe(2);
-      }
+      // Assert
+      expect(goals.primary).toBe('Build strength');
+      expect(goals.secondary).toHaveLength(2);
     });
 
     it('should create plan goals with target date', () => {
-      const targetDate = new Date('2027-12-31');
-      const result = createPlanGoals({
-        primary: 'Marathon training',
-        secondary: [],
-        targetMetrics: {
-          targetDistance: 42195,
-        },
+      // Arrange
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 30);
+
+      // Act
+      const goals = createPlanGoalsFixture({
         targetDate,
       });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.targetDate).toEqual(targetDate);
-      }
+      // Assert
+      expect(goals.targetDate).toEqual(targetDate);
     });
+  });
 
+  describe('validation', () => {
     it('should fail with empty primary goal', () => {
-      const result = createPlanGoals({
+      // Arrange
+      const invalidInput = {
+        ...createPlanGoalsFixture(),
         primary: '',
-        secondary: [],
-        targetMetrics: {},
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const parseResult = CreatePlanGoalsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
     });
 
-    it('should validate target metrics', () => {
-      const result = createPlanGoals({
-        primary: 'Build strength',
-        secondary: [],
+    it('should fail with past target date', () => {
+      // Arrange
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+
+      const invalidInput = {
+        ...createPlanGoalsFixture(),
+        targetDate: pastDate,
+      };
+
+      // Act
+      const parseResult = CreatePlanGoalsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
+    });
+
+    it('should fail with invalid target weights', () => {
+      // Arrange
+      const invalidInput = {
+        ...createPlanGoalsFixture(),
         targetMetrics: {
           targetWeights: [{ exercise: 'Squat', weight: -100 }],
         },
-      });
+      };
 
-      expect(result.isFailure).toBe(true);
+      // Act
+      const parseResult = CreatePlanGoalsSchema.safeParse(invalidInput);
+
+      // Assert
+      expect(parseResult.success).toBe(false);
     });
   });
 
@@ -115,173 +139,144 @@ describe('PlanGoals', () => {
 
   describe('withNewTargetDate', () => {
     it('should update target date', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Training',
-        secondary: [],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture();
+      const newDate = new Date();
+      newDate.setDate(newDate.getDate() + 45);
 
-      if (goalsResult.isSuccess) {
-        const newDate = new Date('2027-01-01');
-        const updatedResult = withNewTargetDate(goalsResult.value, newDate);
+      // Act
+      const updatedResult = withNewTargetDate(goals, newDate);
 
-        expect(updatedResult.isSuccess).toBe(true);
-        if (updatedResult.isSuccess) {
-          expect(updatedResult.value.targetDate).toEqual(newDate);
-        }
+      // Assert
+      expect(updatedResult.isSuccess).toBe(true);
+      if (updatedResult.isSuccess) {
+        expect(updatedResult.value.targetDate).toEqual(newDate);
       }
     });
 
     it('should fail with past date', () => {
-      const oldDate = new Date('2020-01-01');
-      const goalsResult = createPlanGoals({
-        primary: 'Training',
-        secondary: [],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture();
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
 
-      if (goalsResult.isSuccess) {
-        const result = withNewTargetDate(goalsResult.value, oldDate);
+      // Act
+      const result = withNewTargetDate(goals, pastDate);
 
-        expect(result.isFailure).toBe(true);
-      }
+      // Assert
+      expect(result.isFailure).toBe(true);
     });
   });
 
   describe('withUpdatedPrimaryGoal', () => {
     it('should update primary goal', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Original Goal',
-        secondary: [],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ primary: 'Original Goal' });
 
-      if (goalsResult.isSuccess) {
-        const updatedResult = withUpdatedPrimaryGoal(goalsResult.value, 'New Goal');
+      // Act
+      const updatedResult = withUpdatedPrimaryGoal(goals, 'New Goal');
 
-        expect(updatedResult.isSuccess).toBe(true);
-        if (updatedResult.isSuccess) {
-          expect(updatedResult.value.primary).toBe('New Goal');
-        }
+      // Assert
+      expect(updatedResult.isSuccess).toBe(true);
+      if (updatedResult.isSuccess) {
+        expect(updatedResult.value.primary).toBe('New Goal');
       }
     });
 
     it('should fail with empty string', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Original Goal',
-        secondary: [],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture();
 
-      if (goalsResult.isSuccess) {
-        const result = withUpdatedPrimaryGoal(goalsResult.value, '');
+      // Act
+      const result = withUpdatedPrimaryGoal(goals, '');
 
-        expect(result.isFailure).toBe(true);
-      }
+      // Assert
+      expect(result.isFailure).toBe(true);
     });
   });
 
   describe('withAdditionalSecondaryGoal', () => {
     it('should add secondary goal', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Main Goal',
-        secondary: ['Existing Goal'],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ secondary: ['Existing Goal'] });
 
-      if (goalsResult.isSuccess) {
-        const updatedResult = withAdditionalSecondaryGoal(goalsResult.value, 'New Goal');
+      // Act
+      const updatedResult = withAdditionalSecondaryGoal(goals, 'New Goal');
 
-        expect(updatedResult.isSuccess).toBe(true);
-        if (updatedResult.isSuccess) {
-          expect(updatedResult.value.secondary).toContain('New Goal');
-          expect(updatedResult.value.secondary.length).toBe(2);
-        }
+      // Assert
+      expect(updatedResult.isSuccess).toBe(true);
+      if (updatedResult.isSuccess) {
+        expect(updatedResult.value.secondary).toContain('New Goal');
+        expect(updatedResult.value.secondary).toHaveLength(2);
       }
     });
 
     it('should not add duplicate secondary goal', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Main Goal',
-        secondary: ['Existing Goal'],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ secondary: ['Existing Goal'] });
 
-      if (goalsResult.isSuccess) {
-        const updatedResult = withAdditionalSecondaryGoal(goalsResult.value, 'Existing Goal');
+      // Act
+      const updatedResult = withAdditionalSecondaryGoal(goals, 'Existing Goal');
 
-        expect(updatedResult.isSuccess).toBe(true);
-        if (updatedResult.isSuccess) {
-          expect(updatedResult.value.secondary.length).toBe(1);
-        }
+      // Assert
+      expect(updatedResult.isSuccess).toBe(true);
+      if (updatedResult.isSuccess) {
+        expect(updatedResult.value.secondary).toHaveLength(1);
       }
     });
   });
 
   describe('withUpdatedTargetPace', () => {
     it('should update target pace', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Running Goal',
-        secondary: [],
-        targetMetrics: { targetPace: 300 },
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ targetMetrics: { targetPace: 300 } });
 
-      if (goalsResult.isSuccess) {
-        const updatedResult = withUpdatedTargetPace(goalsResult.value, 270);
+      // Act
+      const updatedResult = withUpdatedTargetPace(goals, 270);
 
-        expect(updatedResult.isSuccess).toBe(true);
-        if (updatedResult.isSuccess) {
-          expect(updatedResult.value.targetMetrics.targetPace).toBe(270);
-        }
+      // Assert
+      expect(updatedResult.isSuccess).toBe(true);
+      if (updatedResult.isSuccess) {
+        expect(updatedResult.value.targetMetrics.targetPace).toBe(270);
       }
     });
 
     it('should fail with invalid pace', () => {
-      const goalsResult = createPlanGoals({
-        primary: 'Running Goal',
-        secondary: [],
-        targetMetrics: { targetPace: 300 },
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ targetMetrics: { targetPace: 300 } });
 
-      if (goalsResult.isSuccess) {
-        const result = withUpdatedTargetPace(goalsResult.value, 0);
+      // Act
+      const result = withUpdatedTargetPace(goals, 0);
 
-        expect(result.isFailure).toBe(true);
-      }
+      // Assert
+      expect(result.isFailure).toBe(true);
     });
   });
 
   // More tests for withUpdatedTargetWeight, withAdjustedTargetMetrics, etc...
   describe('toPlanGoalsView', () => {
     it('should serialize targetDate to string', () => {
+      // Arrange
       const targetDate = new Date('2026-01-01T12:00:00Z');
-      const result = createPlanGoals({
-        primary: 'Test',
-        secondary: [],
-        targetMetrics: {},
-        targetDate,
-      });
+      const goals = createPlanGoalsFixture({ targetDate });
 
-      if (result.isSuccess) {
-        const view = toPlanGoalsView(result.value);
+      // Act
+      const view = toPlanGoalsView(goals);
 
-        expect(view.targetDate).toBe('2026-01-01T12:00:00.000Z');
-        expect(typeof view.targetDate).toBe('string');
-      }
+      // Assert
+      expect(view.targetDate).toBe('2026-01-01T12:00:00.000Z');
+      expect(typeof view.targetDate).toBe('string');
     });
 
     it('should handle missing targetDate', () => {
-      const result = createPlanGoals({
-        primary: 'Test',
-        secondary: [],
-        targetMetrics: {},
-      });
+      // Arrange
+      const goals = createPlanGoalsFixture({ targetDate: undefined });
 
-      if (result.isSuccess) {
-        const view = toPlanGoalsView(result.value);
+      // Act
+      const view = toPlanGoalsView(goals);
 
-        expect(view.targetDate).toBeUndefined();
-      }
+      // Assert
+      expect(view.targetDate).toBeUndefined();
     });
   });
 });

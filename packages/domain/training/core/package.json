@@ -12,12 +12,16 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./fixtures": {
+      "development": "./dist/fixtures.js",
+      "types": "./dist/fixtures.d.ts"
     }
   },
   "dependencies": {
     "@bene/shared": "workspace:*",
     "@swc/helpers": "~0.5.11",
-    "zod":"catalog:"
+    "zod": "catalog:"
   },
   "nx": {
     "sourceRoot": "packages/domain/training/core/src",

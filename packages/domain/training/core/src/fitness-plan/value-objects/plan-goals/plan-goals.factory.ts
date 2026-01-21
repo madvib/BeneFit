@@ -1,65 +1,87 @@
-import { Result } from '@bene/shared';
-import { GoalsValidationError } from '../../errors/fitness-plan-errors.js';
-import { PlanGoals, TargetMetrics, TargetLiftWeight, PlanGoalsView } from './plan-goals.types.js';
-import { PlanGoalsSchema } from './plan-goals.schema.js';
+import { z } from 'zod';
+import { Result, unwrapOrIssue, mapZodError, Unbrand } from '@bene/shared';
+import {
+  PlanGoals,
+  TargetLiftWeight,
+  PlanGoalsSchema,
+} from './plan-goals.types.js';
 
-export interface PlanGoalsProps {
-  readonly primary: string;
-  readonly secondary: readonly string[];
-  readonly targetMetrics: TargetMetrics;
-  readonly targetDate?: Date;
-}
+/**
+ * ============================================================================
+ * PLAN GOALS FACTORY (Canonical Pattern)
+ * ============================================================================
+ * 
+ * PUBLIC API:
+ * 1. planGoalsFromPersistence() - For fixtures & DB hydration
+ * 2. CreatePlanGoalsSchema - Zod transform for API boundaries
+ * 3. Specialized factories (createEventTraining, etc.)
+ * 
+ * Everything else is internal.
+ * ============================================================================
+ */
 
-export function createPlanGoals(props: PlanGoalsProps): Result<PlanGoals> {
-  // Use Zod schema for validation
-  const validationResult = PlanGoalsSchema.safeParse(props);
+// ============================================================================
+// INTERNAL HELPERS (not exported)
+// ============================================================================
 
-  if (!validationResult.success) {
-    // Map Zod error to our domain error
-    const zodError = validationResult.error;
-    // console.log('PlanGoals validation error:', JSON.stringify(zodError, null, 2));
+/** Validates and brands data with PlanGoalsSchema and business rules */
+function validateAndBrand(data: unknown): Result<PlanGoals> {
+  const parseResult = PlanGoalsSchema.safeParse(data);
+  if (!parseResult.success) {
+    return Result.fail(mapZodError(parseResult.error));
+  }
 
-    // ZodError has .issues, .errors is sometimes an alias or missing depending on version/context
-    const issues = zodError.issues || (zodError as any).errors;
+  const validated = parseResult.data;
 
-    if (!issues || issues.length === 0) {
-      return Result.fail(new GoalsValidationError('Unknown validation error', { original: zodError }));
-    }
-
-    const firstError = issues[0];
-    if (!firstError) {
-      return Result.fail(new GoalsValidationError('Unknown validation error (empty issues)', { original: zodError }));
-    }
-
+  // Domain Rule: targetDate must be in the future
+  if (validated.targetDate && validated.targetDate <= new Date()) {
     return Result.fail(
-      new GoalsValidationError(firstError.message, {
-        path: firstError.path.join('.'),
-        code: firstError.code,
-      }),
+      new Error(
+        `Target date must be in the future (got ${ validated.targetDate.toISOString() })`,
+      ),
     );
   }
 
-  // Double check target date logic if it wasn't caught by schema (Zod handles types/structure)
-  // Schema handles "future date" validation if we add refinements, but let's keep domain rule explicit for now
-  if (props.targetDate && props.targetDate <= new Date()) {
-    return Result.fail(
-      new GoalsValidationError('Target date must be in the future', {
-        targetDate: props.targetDate,
-      }),
-    );
-  }
-
-  return Result.ok(props);
+  return Result.ok(validated);
 }
 
-// Factory methods for common goal types
+// ============================================================================
+// 1. REHYDRATION (for fixtures & DB)
+// ============================================================================
+
+/**
+ * Rehydrates PlanGoals from persistence/fixtures (trusts the data).
+ */
+export function planGoalsFromPersistence(data: Unbrand<PlanGoals>): Result<PlanGoals> {
+  return Result.ok(data as PlanGoals);
+}
+
+// ============================================================================
+// 2. CREATION (for API boundaries)
+// ============================================================================
+
+/**
+ * Zod transform for creating new PlanGoals.
+ * Use at API boundaries (controllers, resolvers).
+ * 
+ * Infer input type with: z.input<typeof CreatePlanGoalsSchema>
+ */
+export const CreatePlanGoalsSchema: z.ZodType<PlanGoals> = PlanGoalsSchema.unwrap().transform((input, ctx) => {
+  const validationResult = validateAndBrand(input);
+  return unwrapOrIssue(validationResult, ctx);
+});
+
+// ============================================================================
+// 3. SPECIALIZED FACTORIES
+// ============================================================================
+
 export function createEventTraining(
   eventName: string,
   distance: number, // meters
   targetDate: Date,
   targetPace: number, // seconds per km or mile
 ): Result<PlanGoals> {
-  return createPlanGoals({
+  return validateAndBrand({
     primary: `${ eventName } Training`,
     secondary: [
       `Run ${ distance / 1000 }km`,
@@ -78,7 +100,7 @@ export function createStrengthBuilding(
   targetWeights: TargetLiftWeight[],
   targetDate?: Date,
 ): Result<PlanGoals> {
-  return createPlanGoals({
+  return validateAndBrand({
     primary,
     secondary: targetWeights.map((w) => `Lift ${ w.weight }kg in ${ w.exercise }`),
     targetMetrics: {
@@ -93,7 +115,7 @@ export function createHabitBuilding(
   minStreakDays: number,
   targetDate?: Date,
 ): Result<PlanGoals> {
-  return createPlanGoals({
+  return validateAndBrand({
     primary: `${ habit } Habit Building`,
     secondary: [`Maintain ${ habit } for at least ${ minStreakDays } days in a row`],
     targetMetrics: {
@@ -103,10 +125,13 @@ export function createHabitBuilding(
   });
 }
 
-// Mapper: Entity -> View (handles Date serialization)
-export function toPlanGoalsView(goals: PlanGoals): PlanGoalsView {
-  return {
-    ...goals,
-    targetDate: goals.targetDate?.toISOString(),
-  };
+// ============================================================================
+// LEGACY EXPORTS (for backward compatibility)
+// ============================================================================
+
+/**
+ * @deprecated Use CreatePlanGoalsSchema or call via transform.
+ */
+export function createPlanGoals(input: z.input<typeof CreatePlanGoalsSchema>): Result<PlanGoals> {
+  return validateAndBrand(input);
 }

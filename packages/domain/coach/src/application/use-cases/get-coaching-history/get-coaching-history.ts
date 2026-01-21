@@ -1,56 +1,42 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
-import { CoachConversation } from '@core/index.js';
+import {
+  toCoachMsgView,
+  toCheckInView,
+  type CoachMsgView,
+  type CheckInView,
+  CoachConversationQueries
+} from '@core/index.js';
 import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
 
-
-
-// Zod schema for request validation
+/**
+ * Request schema
+ */
 export const GetCoachHistoryRequestSchema = z.object({
-  userId: z.string(),
+  userId: z.uuid(),
   limit: z.number().int().min(1).max(100).optional(),
 });
 
-// Zod inferred type with original name
 export type GetCoachHistoryRequest = z.infer<typeof GetCoachHistoryRequestSchema>;
 
+/**
+ * Response type - composed of domain views
+ */
+export interface GetCoachHistoryResponse {
+  messages: CoachMsgView[];
+  pendingCheckIns: CheckInView[];
+  stats: {
+    totalMessages: number;
+    totalCheckIns: number;
+    actionsApplied: number;
+  };
+}
 
-
-// Response-only DTO schemas (not shared - specific to this use case)
-const ActionSchema = z.object({
-  type: z.string().min(1).max(50),
-  details: z.string().min(1).max(1000),
-});
-
-const MessageSchema = z.object({
-  id: z.string(),
-  role: z.enum(['user', 'coach', 'system']),
-  content: z.string().min(1).max(5000),
-  timestamp: z.date(),
-  actions: z.array(ActionSchema).optional(),
-});
-
-const PendingCheckInSchema = z.object({
-  id: z.string(),
-  question: z.string().min(1).max(500),
-  triggeredBy: z.string().min(1).max(200).optional(),
-});
-
-const StatsSchema = z.object({
-  totalMessages: z.number().int().min(0).max(100000),
-  totalCheckIns: z.number().int().min(0).max(10000),
-  actionsApplied: z.number().int().min(0).max(10000),
-});
-
-export const GetCoachHistoryResponseSchema = z.object({
-  messages: z.array(MessageSchema),
-  pendingCheckIns: z.array(PendingCheckInSchema),
-  stats: StatsSchema,
-});
-
-// Zod inferred type with original name
-export type GetCoachHistoryResponse = z.infer<typeof GetCoachHistoryResponseSchema>;
-
+/**
+ * Use case for retrieving coaching history.
+ * 
+ * Pattern: Loads aggregate → Filters/Slices → Maps to domain views
+ */
 export class GetCoachHistoryUseCase extends BaseUseCase<
   GetCoachHistoryRequest,
   GetCoachHistoryResponse
@@ -72,46 +58,20 @@ export class GetCoachHistoryUseCase extends BaseUseCase<
 
     const conversation = conversationResult.value;
     const limit = request.limit || 50;
+
+    // Slice only the messages we need before mapping to view
     const recentMessages = conversation.messages.slice(-limit);
 
     return Result.ok({
-      messages: recentMessages.map((m) => ({
-        id: m.id,
-        role: m.role,
-        content: m.content,
-        timestamp: m.timestamp,
-        actions: m.actions?.map((a) => ({
-          type: a.type,
-          details: a.details,
-        })),
-      })),
+      messages: recentMessages.map(toCoachMsgView),
       pendingCheckIns: conversation.checkIns
         .filter((c) => c.status === 'pending')
-        .map((c) => ({
-          id: c.id,
-          question: c.question,
-          triggeredBy: c.triggeredBy,
-        })),
+        .map(toCheckInView),
       stats: {
         totalMessages: conversation.totalMessages,
         totalCheckIns: conversation.totalCheckIns,
-        actionsApplied: this.countActionsApplied(conversation),
+        actionsApplied: CoachConversationQueries.getTotalActionsApplied(conversation),
       },
     });
-  }
-
-  private countActionsApplied(conversation: CoachConversation): number {
-    let count = 0;
-    for (const message of conversation.messages) {
-      if (message.actions) {
-        count += message.actions.length;
-      }
-    }
-    for (const checkIn of conversation.checkIns) {
-      if (checkIn.actions) {
-        count += checkIn.actions.length;
-      }
-    }
-    return count;
   }
 }

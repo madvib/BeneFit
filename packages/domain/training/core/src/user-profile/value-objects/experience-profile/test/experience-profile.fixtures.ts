@@ -1,8 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { ExperienceProfile, ExperienceLevel } from '../experience-profile.types.js';
+import { ExperienceLevel } from '@bene/shared';
+import { ExperienceProfile } from '../experience-profile.types.js';
+import { experienceProfileFromPersistence } from '../experience-profile.factory.js';
 
 export function createExperienceProfileFixture(overrides?: Partial<ExperienceProfile>): ExperienceProfile {
-  return {
+  const data = {
     level: faker.helpers.arrayElement(['beginner', 'intermediate', 'advanced'] as ExperienceLevel[]),
     history: {
       yearsTraining: faker.number.int({ min: 0, max: 20 }),
@@ -19,10 +21,18 @@ export function createExperienceProfileFixture(overrides?: Partial<ExperiencePro
         squat: faker.number.int({ min: 40, max: 150 }),
         bench: faker.number.int({ min: 30, max: 100 }),
         deadlift: faker.number.int({ min: 60, max: 200 }),
-        unit: 'kg',
+        unit: 'kg' as const,
       },
     },
     lastAssessmentDate: faker.date.past(),
     ...overrides,
   };
+
+  const result = experienceProfileFromPersistence(data);
+
+  if (result.isFailure) {
+    throw new Error(`Failed to create ExperienceProfile fixture: ${ result.error }`);
+  }
+
+  return result.value;
 }

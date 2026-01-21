@@ -1,14 +1,15 @@
 import { faker } from '@faker-js/faker';
 import { SessionConfiguration } from '../session-configuration.types.js';
-import { createSessionConfiguration } from '../session-configuration.factory.js';
+import { sessionConfigurationFromPersistence } from '../session-configuration.factory.js';
 
 /**
- * Creates a mock SessionConfiguration using the official factory
+ * Creates a mock SessionConfiguration using sessionConfigurationFromPersistence.
  */
 export function createSessionConfigurationFixture(overrides?: Partial<SessionConfiguration>): SessionConfiguration {
   const isMultiplayer = overrides?.isMultiplayer ?? faker.datatype.boolean();
 
-  const result = createSessionConfiguration({
+  // Build unbranded data with faker
+  const data = {
     isMultiplayer,
     isPublic: faker.datatype.boolean(),
     maxParticipants: isMultiplayer ? faker.number.int({ min: 2, max: 10 }) : 1,
@@ -18,10 +19,16 @@ export function createSessionConfigurationFixture(overrides?: Partial<SessionCon
     showOtherParticipantsProgress: faker.datatype.boolean(),
     autoAdvanceActivities: faker.datatype.boolean(),
     ...overrides,
-  });
+  };
+
+  // Rehydrate through fromPersistence
+  const result = sessionConfigurationFromPersistence(data);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create SessionConfiguration fixture: ${ result.error }`);
+    const errorMsg = Array.isArray(result.error)
+      ? result.error.map(e => e.message).join(', ')
+      : result.error?.message || String(result.error);
+    throw new Error(`Failed to create SessionConfiguration fixture: ${ errorMsg }`);
   }
 
   return result.value;
