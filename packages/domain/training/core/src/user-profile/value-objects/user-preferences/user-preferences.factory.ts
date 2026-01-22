@@ -121,23 +121,3 @@ export const CreateUserPreferencesSchema: z.ZodType<UserPreferences> = CreateUse
 // ============================================================================
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
-
-/**
- * @deprecated Use CreateUserPreferencesSchema or call via transform.
- */
-export function createUserPreferences(
-  params: z.input<typeof CreateUserPreferencesSchema>,
-): Result<UserPreferences> {
-  const parseResult = CreateUserPreferencesSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as UserPreferences);
-}
-
-/**
- * @deprecated Use CreateUserPreferencesSchema (defaults are handled internally).
- */
-export function createDefaultPreferences(): UserPreferences {
-  return DEFAULT_PREFERENCES;
-}

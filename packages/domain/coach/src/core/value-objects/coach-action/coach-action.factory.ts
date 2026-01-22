@@ -71,15 +71,4 @@ export const CreateCoachActionSchema = CoachActionSchema.pick({
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateCoachActionSchema or coachActionFromPersistence.
- */
-export function createCoachAction(
-  params: z.input<typeof CreateCoachActionSchema>,
-): Result<CoachAction> {
-  const result = CreateCoachActionSchema.safeParse(params);
-  if (!result.success) {
-    return Result.fail(mapZodError(result.error));
-  }
-  return Result.ok(result.data);
-}
+

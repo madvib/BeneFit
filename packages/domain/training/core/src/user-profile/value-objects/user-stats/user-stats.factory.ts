@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
-import { UserStats, UserStatsSchema, Achievement, AchievementSchema, AchievementType } from './user-stats.types.js';
+import { UserStats, UserStatsSchema } from './user-stats.types.js';
 
 /**
  * ============================================================================
@@ -78,37 +78,3 @@ export const CreateUserStatsSchema: z.ZodType<UserStats> = z.object({
 // ============================================================================
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
-
-/**
- * @deprecated Use CreateUserStatsSchema or call via transform.
- */
-export function createUserStats(joinedAt: Date): UserStats {
-  const parseResult = CreateUserStatsSchema.safeParse({ joinedAt });
-  if (!parseResult.success) {
-    throw new Error(`Failed to create initial user stats: ${ mapZodError(parseResult.error) }`);
-  }
-  return parseResult.data as UserStats;
-}
-
-/**
- * @deprecated Validates and brands Achievement. Use schemas directly.
- */
-export function createAchievement(params: {
-  id: string;
-  type: AchievementType;
-  name: string;
-  description: string;
-  iconUrl?: string;
-}): Result<Achievement> {
-  const data = {
-    ...params,
-    earnedAt: new Date(),
-  };
-
-  const parseResult = AchievementSchema.safeParse(data);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-
-  return Result.ok(parseResult.data);
-}

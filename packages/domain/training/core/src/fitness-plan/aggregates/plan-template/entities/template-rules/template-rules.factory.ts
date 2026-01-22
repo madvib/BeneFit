@@ -81,12 +81,4 @@ export const CreateTemplateRulesSchema: z.ZodType<TemplateRules> = TemplateRules
 // LEGACY EXPORTS (for backward compatibility in tests)
 // ============================================================================
 
-/**
- * @deprecated Use CreateTemplateRulesSchema or call via transform.
- * Kept for test compatibility.
- */
-export function createTemplateRules(
-  params: z.infer<typeof TemplateRulesSchema>,
-): Result<TemplateRules> {
-  return validateTemplateRules(params);
-}
+

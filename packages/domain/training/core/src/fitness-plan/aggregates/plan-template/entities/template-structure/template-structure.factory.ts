@@ -105,8 +105,4 @@ export const CreateTemplateStructureSchema: z.ZodType<TemplateStructure> = Templ
  * @deprecated Use CreateTemplateStructureSchema or call via transform.
  * Kept for test compatibility.
  */
-export function createTemplateStructure(
-  params: z.infer<typeof TemplateStructureSchema>,
-): Result<TemplateStructure> {
-  return validateTemplateStructure(params);
-}
+

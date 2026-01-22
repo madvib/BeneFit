@@ -100,15 +100,4 @@ export const CreateConnectedServiceSchema: z.ZodType<ConnectedService> = Connect
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateConnectedServiceSchema or connectedServiceFromPersistence.
- */
-export function createConnectedService(
-  params: z.input<typeof CreateConnectedServiceSchema>,
-): Result<ConnectedService> {
-  const parseResult = CreateConnectedServiceSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data);
-}
+

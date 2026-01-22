@@ -200,18 +200,5 @@ function buildVerificationData(input: any): Unbrand<WorkoutVerification> {
   } as Unbrand<WorkoutVerification>;
 }
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateWorkoutVerificationSchema or workoutVerificationFromPersistence.
- * Kept for test compatibility.
- */
-export function createWorkoutVerification(
-  params: z.input<typeof CreateWorkoutVerificationSchema>,
-): Result<WorkoutVerification> {
-  const data = buildVerificationData(params);
-  return validateWorkoutVerification(data);
-}
 

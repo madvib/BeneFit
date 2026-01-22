@@ -98,15 +98,4 @@ export const CreateCompletedWorkoutSchema: z.ZodType<CompletedWorkout> = Complet
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateCompletedWorkoutSchema or call via transform.
- */
-export function createCompletedWorkout(
-  params: z.input<typeof CreateCompletedWorkoutSchema>,
-): Result<CompletedWorkout> {
-  const parseResult = CreateCompletedWorkoutSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data);
-}
+

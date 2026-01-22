@@ -115,9 +115,4 @@ export function createSyncError(props: {
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateSyncStatusSchema or syncStatusFromPersistence.
- */
-export function createSyncStatus(props: unknown): Result<SyncStatus> {
-  return validateSyncStatus(props);
-}
+

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { randomUUID } from 'crypto';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  createDefaultSessionConfig,
+  CreateSessionConfigurationSchema,
   SessionConfigurationSchema
 } from '../../value-objects/index.js';
 import { WorkoutSession, WorkoutSessionSchema } from './workout-session.types.js';
@@ -73,10 +73,20 @@ export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSess
   updatedAt: z.coerce.date<Date>().optional(),
 }).transform((input, ctx) => {
   const isMultiplayer = input.isMultiplayer ?? false;
-  const config = {
-    ...createDefaultSessionConfig(isMultiplayer),
+  const configInput = {
+    isMultiplayer,
     ...input.configuration,
   };
+  const configResult = CreateSessionConfigurationSchema.safeParse(configInput);
+  if (!configResult.success) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Invalid configuration',
+      path: ['configuration']
+    });
+    return z.NEVER;
+  }
+  const config = configResult.data;
   const now = new Date();
 
   // Initial state logic
@@ -103,15 +113,4 @@ export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSess
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateWorkoutSessionSchema or call via transform.
- */
-export function createWorkoutSession(
-  params: z.input<typeof CreateWorkoutSessionSchema>,
-): Result<WorkoutSession> {
-  const parseResult = CreateWorkoutSessionSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as WorkoutSession);
-}
+

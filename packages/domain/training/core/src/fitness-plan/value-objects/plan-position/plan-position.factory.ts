@@ -56,9 +56,4 @@ export const CreatePlanPositionSchema: z.ZodType<PlanPosition> = PlanPositionSch
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreatePlanPositionSchema or call via transform.
- */
-export function createPlanPosition(props: unknown): Result<PlanPosition> {
-  return validate(props);
-}
+

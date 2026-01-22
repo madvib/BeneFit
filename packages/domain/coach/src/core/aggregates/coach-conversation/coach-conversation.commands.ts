@@ -5,9 +5,10 @@ import {
   CheckIn,
   CoachAction,
   CoachContext,
-  createCoachMessage,
-  createSystemMessage,
-  createUserMessage,
+
+  CreateCoachMessageSchema,
+  CreateSystemMessageSchema,
+  CreateUserMessageSchema,
 } from '../../value-objects/index.js';
 
 export function addUserMessage(
@@ -15,15 +16,15 @@ export function addUserMessage(
   content: string,
   checkInId?: string,
 ): Result<CoachConversation> {
-  const messageResult = createUserMessage({ content, checkInId });
-  if (messageResult.isFailure) {
-    return Result.fail(messageResult.error);
+  const messageResult = CreateUserMessageSchema.safeParse({ content, checkInId });
+  if (!messageResult.success) {
+    return Result.fail(new Error(messageResult.error.message));
   }
 
   const now = new Date();
   return Result.ok({
     ...conversation,
-    messages: [...conversation.messages, messageResult.value],
+    messages: [...conversation.messages, messageResult.data],
     totalMessages: conversation.totalMessages + 1,
     totalUserMessages: conversation.totalUserMessages + 1,
     lastMessageAt: now,
@@ -37,15 +38,15 @@ export function addCoachMessage(
   checkInId?: string,
   tokens?: number,
 ): Result<CoachConversation> {
-  const messageResult = createCoachMessage({ content, actions, checkInId, tokens });
-  if (messageResult.isFailure) {
-    return Result.fail(messageResult.error);
+  const messageResult = CreateCoachMessageSchema.safeParse({ content, actions, checkInId, tokens });
+  if (!messageResult.success) {
+    return Result.fail(new Error(messageResult.error.message));
   }
 
   const now = new Date();
   return Result.ok({
     ...conversation,
-    messages: [...conversation.messages, messageResult.value],
+    messages: [...conversation.messages, messageResult.data],
     totalMessages: conversation.totalMessages + 1,
     totalCoachMessages: conversation.totalCoachMessages + 1,
     lastMessageAt: now,
@@ -56,14 +57,14 @@ export function addSystemMessage(
   conversation: CoachConversation,
   content: string,
 ): Result<CoachConversation> {
-  const messageResult = createSystemMessage({ content });
-  if (messageResult.isFailure) {
-    return Result.fail(messageResult.error);
+  const messageResult = CreateSystemMessageSchema.safeParse({ content });
+  if (!messageResult.success) {
+    return Result.fail(new Error(messageResult.error.message));
   }
 
   return Result.ok({
     ...conversation,
-    messages: [...conversation.messages, messageResult.value],
+    messages: [...conversation.messages, messageResult.data],
     totalMessages: conversation.totalMessages + 1,
     lastMessageAt: new Date(),
   });
@@ -107,12 +108,12 @@ export function respondToCheckIn(
 
   const checkInIndex = conversation.checkIns.findIndex((c) => c.id === checkInId);
   if (checkInIndex < 0) {
-    return Result.fail(new CheckInError(`Check-in ${checkInId} not found`));
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
   if (!checkIn) {
-    return Result.fail(new CheckInError(`Check-in ${checkInId} not found`));
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   if (checkIn.status !== 'pending') {
@@ -150,12 +151,12 @@ export function dismissCheckIn(
 
   const checkInIndex = conversation.checkIns.findIndex((c) => c.id === checkInId);
   if (checkInIndex < 0) {
-    return Result.fail(new CheckInError(`Check-in ${checkInId} not found`));
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   const checkIn = conversation.checkIns[checkInIndex];
   if (!checkIn) {
-    return Result.fail(new CheckInError(`Check-in ${checkInId} not found`));
+    return Result.fail(new CheckInError(`Check-in ${ checkInId } not found`));
   }
 
   if (checkIn.status !== 'pending') {

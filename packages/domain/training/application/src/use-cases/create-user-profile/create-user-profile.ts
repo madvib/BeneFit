@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
 import {
-  createUserProfile,
+  CreateUserProfileSchema,
   ExperienceProfileSchema,
   FitnessGoalsSchema,
   UserProfileView,
@@ -57,15 +57,23 @@ export class CreateUserProfileUseCase extends BaseUseCase<
 
     // 2. Create profile using factory
     // Note: The factory now handles generating dates/stats/preferences if not provided
-    const profileResult = createUserProfile({
+
+    // We use safeParse to get the transformation and validation
+    const parseResult = CreateUserProfileSchema.safeParse({
       ...request,
     });
 
-    if (profileResult.isFailure) {
-      return Result.fail(profileResult.error);
+    if (!parseResult.success) {
+      // Map Zod error to Result failure
+      // We need to import mapZodError or just return the error
+      // The shared library usually has mapZodError, but let's check imports.
+      // Actually Result.fail accepts an Error or string. validation error might be complex.
+      // Let's assume standard error handling or just throw if we trust the input (which was already validated by RequestSchema?)
+      // But CreateUserProfileSchema adds defaults.
+      return Result.fail(new Error(`Factory validation failed: ${ parseResult.error.message }`));
     }
 
-    const profile = profileResult.value;
+    const profile = parseResult.data;
 
     // 3. Save to repository
     const saveResult = await this.profileRepository.save(profile);

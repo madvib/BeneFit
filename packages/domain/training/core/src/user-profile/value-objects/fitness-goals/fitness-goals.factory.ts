@@ -95,15 +95,4 @@ export const CreateFitnessGoalsSchema: z.ZodType<FitnessGoals> = FitnessGoalsSch
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateFitnessGoalsSchema or call via transform.
- */
-export function createFitnessGoals(
-  params: z.input<typeof CreateFitnessGoalsSchema>,
-): Result<FitnessGoals> {
-  const parseResult = CreateFitnessGoalsSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as FitnessGoals);
-}
+

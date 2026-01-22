@@ -113,18 +113,4 @@ export const CreateWorkoutTemplateSchema = WorkoutTemplateSchema.pick({
 /**
  * @deprecated Use CreateWorkoutTemplateSchema or call via transform.
  */
-export function createWorkoutTemplate(
-  params: z.infer<typeof CreateWorkoutTemplateSchema>,
-): Result<WorkoutTemplate> {
-  const data = {
-    ...params,
-    id: params.id || randomUUID(),
-    status: params.status ?? 'scheduled',
-    rescheduledTo: params.rescheduledTo,
-    completedWorkoutId: undefined,
-    userNotes: undefined,
-    coachNotes: undefined,
-  };
 
-  return validateAndBrand(data);
-}

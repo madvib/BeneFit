@@ -60,15 +60,4 @@ export const CreateCoachContextSchema = CoachContextSchema.transform((input, ctx
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateCoachContextSchema or coachContextFromPersistence.
- */
-export function createCoachContext(
-  params: z.input<typeof CreateCoachContextSchema>,
-): Result<CoachContext> {
-  const result = CreateCoachContextSchema.safeParse(params);
-  if (!result.success) {
-    return Result.fail(mapZodError(result.error));
-  }
-  return Result.ok(result.data);
-}
+

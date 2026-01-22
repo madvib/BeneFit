@@ -157,26 +157,4 @@ export const ActivateFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSche
  * @deprecated Use CreateDraftFitnessPlanSchema or call via transform.
  * Kept for test compatibility.
  */
-export function createDraftFitnessPlan(
-  params: z.input<typeof CreateDraftFitnessPlanSchema>,
-): Result<FitnessPlan> {
-  const parseResult = CreateDraftFitnessPlanSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as FitnessPlan);
-}
 
-/**
- * @deprecated Use ActivateFitnessPlanSchema or call via transform.
- * Kept for test compatibility.
- */
-export function createActivePlan(
-  draftPlan: z.input<typeof ActivateFitnessPlanSchema>,
-): Result<FitnessPlan> {
-  const parseResult = ActivateFitnessPlanSchema.safeParse(draftPlan);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as FitnessPlan);
-}

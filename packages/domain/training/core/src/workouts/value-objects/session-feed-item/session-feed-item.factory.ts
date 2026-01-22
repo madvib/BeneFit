@@ -79,22 +79,4 @@ export const CreateSessionFeedItemSchema = SessionFeedItemSchema.pick({
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<SessionFeedItem>;
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateSessionFeedItemSchema or sessionFeedItemFromPersistence.
- * Kept for test compatibility.
- */
-export function createFeedItem(
-  params: z.input<typeof CreateSessionFeedItemSchema>,
-): Result<SessionFeedItem> {
-  const data = {
-    ...params,
-    id: params.id || randomUUID(),
-    timestamp: params.timestamp || new Date(),
-  };
-
-  return validateSessionFeedItem(data);
-}

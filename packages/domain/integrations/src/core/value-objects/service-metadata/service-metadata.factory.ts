@@ -69,21 +69,4 @@ export const CreateServiceMetadataSchema: z.ZodType<ServiceMetadata> = ServiceMe
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateServiceMetadataSchema or serviceMetadataFromPersistence.
- */
-export function createServiceMetadata(
-  props: Partial<ServiceMetadata>,
-): ServiceMetadata {
-  const result = CreateServiceMetadataSchema.safeParse(props);
 
-  if (!result.success) {
-    return {
-      supportsWebhooks: false,
-      webhookRegistered: false,
-      ...props
-    } as ServiceMetadata;
-  }
-
-  return result.data;
-}

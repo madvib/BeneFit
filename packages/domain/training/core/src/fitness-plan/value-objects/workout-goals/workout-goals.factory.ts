@@ -116,9 +116,4 @@ export function createVolumeWorkout(
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateWorkoutGoalsSchema or call via transform.
- */
-export function createWorkoutGoals(props: unknown): Result<WorkoutGoals> {
-  return validate(props);
-}
+

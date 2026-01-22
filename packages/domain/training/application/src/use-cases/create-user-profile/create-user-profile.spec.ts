@@ -1,10 +1,10 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { Result } from '@bene/shared';
-import { UserProfile } from '@bene/training-core/fixtures';
+
 import { CreateUserProfileUseCase } from './create-user-profile.js';
 import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 import { EventBus } from '@bene/shared';
-import { createUserProfile, createUserProfileFixture } from '@bene/training-core/fixtures';
+import { createUserProfileFixture } from '@bene/training-core/fixtures';
 
 // Mock repositories and services
 const mockProfileRepository = {
@@ -16,14 +16,7 @@ const mockEventBus = {
   publish: vi.fn(),
 } as unknown as EventBus;
 
-vi.mock('@bene/training-core', async () => {
-  const actual =
-    await vi.importActual<typeof import('@bene/training-core')>('@bene/training-core');
-  return {
-    ...actual,
-    createUserProfile: vi.fn(),
-  };
-});
+
 
 describe('CreateUserProfileUseCase', () => {
   let useCase: CreateUserProfileUseCase;
@@ -67,13 +60,10 @@ describe('CreateUserProfileUseCase', () => {
       bio: 'Fitness enthusiast',
     };
 
-    const mockProfile = createUserProfileFixture({
-      userId: validUserId,
-      displayName: 'John Doe',
-    });
+
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.fail(new Error('Not found'))); // No existing profile
-    vi.mocked(createUserProfile).mockReturnValue(Result.ok(mockProfile)); // Mock factory
+
     vi.mocked(mockProfileRepository.save).mockResolvedValue(Result.ok());
 
     // Act
@@ -84,7 +74,7 @@ describe('CreateUserProfileUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.userId).toBe(validUserId);
       expect(result.value.displayName).toBe('John Doe');
-      expect(result.value.experienceLevel).toBe('intermediate');
+      expect(result.value.experienceProfile.level).toBe('intermediate');
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({

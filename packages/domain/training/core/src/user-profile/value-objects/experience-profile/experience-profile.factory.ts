@@ -87,15 +87,4 @@ export const CreateExperienceProfileSchema: z.ZodType<ExperienceProfile> = Exper
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateExperienceProfileSchema or call via transform.
- */
-export function createExperienceProfile(
-  params: z.input<typeof CreateExperienceProfileSchema>,
-): Result<ExperienceProfile> {
-  const parseResult = CreateExperienceProfileSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as ExperienceProfile);
-}
+

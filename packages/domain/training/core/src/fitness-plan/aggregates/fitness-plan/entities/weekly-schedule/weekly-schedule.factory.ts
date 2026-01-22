@@ -108,16 +108,4 @@ export const CreateWeeklyScheduleSchema = WeeklyScheduleSchema.pick({
 /**
  * @deprecated Use CreateWeeklyScheduleSchema or call via transform.
  */
-export function createWeeklySchedule(
-  params: z.input<typeof CreateWeeklyScheduleSchema>,
-): Result<WeeklySchedule> {
-  // We can't use .parse() here because it throws, and we need a Result
-  // We manually build the data object to match what the transform would do
-  const data = {
-    ...params,
-    id: params.id || randomUUID(),
-    workoutsCompleted: params.workoutsCompleted ?? 0,
-  };
 
-  return validateAndBrand(data);
-}

@@ -92,22 +92,4 @@ export const CreateLiveActivityProgressSchema = LiveActivityProgressSchema.pick(
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<LiveActivityProgress>;
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateLiveActivityProgressSchema or liveActivityProgressFromPersistence.
- * Kept for test compatibility.
- */
-export function createLiveActivityProgress(
-  params: z.input<typeof CreateLiveActivityProgressSchema>,
-): Result<LiveActivityProgress> {
-  const data = {
-    ...params,
-    activityStartedAt: params.activityStartedAt || new Date(),
-    elapsedSeconds: params.elapsedSeconds || 0,
-  };
-
-  return validateLiveActivityProgress(data);
-}

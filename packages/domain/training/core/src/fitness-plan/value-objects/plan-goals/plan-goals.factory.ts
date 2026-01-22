@@ -125,13 +125,4 @@ export function createHabitBuilding(
   });
 }
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreatePlanGoalsSchema or call via transform.
- */
-export function createPlanGoals(input: z.input<typeof CreatePlanGoalsSchema>): Result<PlanGoals> {
-  return validateAndBrand(input);
-}

@@ -101,18 +101,4 @@ export const CreateUserProfileSchema: z.ZodType<UserProfile> = UserProfileSchema
 /**
  * @deprecated Use CreateUserProfileSchema or call via transform.
  */
-export function createUserProfile(params: unknown): Result<UserProfile> {
-  const now = new Date();
-  const input = params as any; // Legacy mapping requires property access
 
-  const data = {
-    ...input,
-    preferences: input?.preferences || CreateUserPreferencesSchema.parse({}),
-    stats: input?.stats || CreateUserStatsSchema.parse({ joinedAt: now }),
-    createdAt: input?.createdAt || now,
-    updatedAt: input?.updatedAt || now,
-    lastActiveAt: input?.lastActiveAt || now,
-  };
-
-  return validateAndBrand(data);
-}

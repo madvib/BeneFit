@@ -79,22 +79,7 @@ export const CreateOAuthCredentialsSchema: z.ZodType<OAuthCredentials> = OAuthCr
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateOAuthCredentialsSchema or oauthCredentialsFromPersistence.
- */
-export function createOAuthCredentials(props: {
-  accessToken: string;
-  scopes: string[];
-  refreshToken?: string;
-  expiresAt?: Date;
-  tokenType?: 'Bearer' | 'OAuth';
-}): Result<OAuthCredentials> {
-  const result = CreateOAuthCredentialsSchema.safeParse(props);
-  if (!result.success) {
-    return Result.fail(mapZodError(result.error));
-  }
-  return Result.ok(result.data);
-}
+
 
 // ============================================================================
 // DOMAIN LOGIC / QUERIES

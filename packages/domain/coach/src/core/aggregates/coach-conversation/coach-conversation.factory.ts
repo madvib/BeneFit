@@ -160,15 +160,4 @@ export const CreateCoachConversationSchema = CoachConversationSchema.pick({
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateCoachConversationSchema or coachConversationFromPersistence.
- */
-export function createCoachConversation(
-  params: unknown,
-): Result<CoachConversation> {
-  const result = CreateCoachConversationSchema.safeParse(params);
-  if (!result.success) {
-    return Result.fail(mapZodError(result.error));
-  }
-  return Result.ok(result.data);
-}
+

@@ -119,20 +119,4 @@ export const CreateSystemMessageSchema = CoachMsgSchema.pick({
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/** @deprecated Use CreateUserMessageSchema */
-export function createUserMessage(params: unknown): Result<CoachMsg> {
-  const result = CreateUserMessageSchema.safeParse(params);
-  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
-}
 
-/** @deprecated Use CreateCoachMessageSchema */
-export function createCoachMessage(params: unknown): Result<CoachMsg> {
-  const result = CreateCoachMessageSchema.safeParse(params);
-  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
-}
-
-/** @deprecated Use CreateSystemMessageSchema */
-export function createSystemMessage(params: unknown): Result<CoachMsg> {
-  const result = CreateSystemMessageSchema.safeParse(params);
-  return result.success ? Result.ok(result.data) : Result.fail(mapZodError(result.error));
-}

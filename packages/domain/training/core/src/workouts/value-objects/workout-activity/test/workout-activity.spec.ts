@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createIntervalStructure, createExerciseStructure } from '../../activity-structure/index.js';
+import { CreateActivityStructureSchema } from '../../activity-structure/index.js';
 import { getTotalDuration } from '../../activity-structure/activity-structure.queries.js';
-import { createWorkoutActivity, createWarmup, createCooldown, createDistanceRun, createIntervalSession, createCircuit } from '../workout-activity.factory.js';
+import { CreateWorkoutActivitySchema } from '../workout-activity.factory.js';
 import { isWarmup, isCooldown, isMainActivity, isActivityIntervalBased, isCircuit, activityRequiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from '../workout-activity.queries.js';
 import { toWorkoutActivityView } from '../workout-activity.view.js';
 import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from '../workout-activity.commands.js';
@@ -9,21 +9,21 @@ import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from
 describe('WorkoutActivity', () => {
   describe('create', () => {
     it('should create a basic activity', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Squats',
         type: 'main',
         order: 1,
       });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.name).toBe('Squats');
-        expect(result.value.type).toBe('main');
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.name).toBe('Squats');
+        expect(result.data.type).toBe('main');
       }
     });
 
     it('should fail with empty name', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: '',
         type: 'main',
         order: 1,
@@ -33,7 +33,7 @@ describe('WorkoutActivity', () => {
     });
 
     it('should fail with negative order', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Running',
         type: 'main',
         order: -1,
@@ -43,29 +43,31 @@ describe('WorkoutActivity', () => {
     });
 
     it('should create activity with all optional fields', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ]);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [
+          { duration: 300, intensity: 'moderate', rest: 60 },
+        ]
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 2,
-          structure: structureResult.value,
+          structure: structureResult.data,
           instructions: ['Go hard', 'Rest well'],
           equipment: ['dumbbells'],
           alternativeExercises: ['Burpees'],
           videoUrl: 'https://example.com/video',
         });
 
-        expect(result.isSuccess).toBe(true);
-        if (result.isSuccess) {
-          expect(hasStructure(result.value)).toBe(true);
-          expect(hasInstructions(result.value)).toBe(true);
-          expect(activityRequiresEquipment(result.value)).toBe(true);
-          expect(hasAlternatives(result.value)).toBe(true);
-          expect(hasVideo(result.value)).toBe(true);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(hasStructure(result.data)).toBe(true);
+          expect(hasInstructions(result.data)).toBe(true);
+          expect(activityRequiresEquipment(result.data)).toBe(true);
+          expect(hasAlternatives(result.data)).toBe(true);
+          expect(hasVideo(result.data)).toBe(true);
         }
       }
     });
@@ -73,66 +75,98 @@ describe('WorkoutActivity', () => {
 
   describe('factory methods', () => {
     it('should create warmup activity', () => {
-      const result = createWarmup('Dynamic Stretching', 10, 0);
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: 'Dynamic Stretching',
+        type: 'warmup',
+        order: 0,
+        duration: 10
+      });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(isWarmup(result.value)).toBe(true);
-        expect(result.value.order).toBe(0);
-        expect(result.value.duration).toBe(10);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(isWarmup(result.data)).toBe(true);
+        expect(result.data.order).toBe(0);
+        expect(result.data.duration).toBe(10);
       }
     });
 
     it('should create cooldown activity', () => {
-      const result = createCooldown('Static Stretching', 5, 10);
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: 'Static Stretching',
+        type: 'cooldown',
+        order: 10,
+        duration: 5
+      });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(isCooldown(result.value)).toBe(true);
-        expect(result.value.duration).toBe(5);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(isCooldown(result.data)).toBe(true);
+        expect(result.data.duration).toBe(5);
       }
     });
 
     it('should create distance run', () => {
-      const result = createDistanceRun(5000, '5:00/km', 1);
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: '5000m run',
+        type: 'main',
+        order: 1,
+        distance: 5000,
+        pace: '5:00/km'
+      });
 
-      expect(result.isSuccess).toBe(true);
-      if (result.isSuccess) {
-        expect(result.value.type).toBe('main');
-        expect(result.value.distance).toBe(5000);
-        expect(result.value.pace).toBe('5:00/km');
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.type).toBe('main');
+        expect(result.data.distance).toBe(5000);
+        expect(result.data.pace).toBe('5:00/km');
       }
     });
 
     it('should create interval session', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 180, intensity: 'hard', rest: 90 },
-      ], 4);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 180, intensity: 'hard', rest: 90 }],
+        rounds: 4
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createIntervalSession('Tempo Intervals', structureResult.value, 2);
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
+          name: 'Tempo Intervals',
+          type: 'interval',
+          order: 2,
+          structure: structureResult.data,
+          duration: getTotalDuration(structureResult.data) / 60
+        });
 
-        expect(result.isSuccess).toBe(true);
-        if (result.isSuccess) {
-          expect(isActivityIntervalBased(result.value)).toBe(true);
-          expect(hasStructure(result.value)).toBe(true);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(isActivityIntervalBased(result.data)).toBe(true);
+          expect(hasStructure(result.data)).toBe(true);
         }
       }
     });
 
     it('should create circuit', () => {
-      const structureResult = createExerciseStructure([
-        { name: 'Push-ups', sets: 3, reps: 15, rest: 30 },
-        { name: 'Squats', sets: 3, reps: 20, rest: 30 },
-      ]);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        exercises: [
+          { name: 'Push-ups', sets: 3, reps: 15, rest: 30 },
+          { name: 'Squats', sets: 3, reps: 20, rest: 30 },
+        ]
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createCircuit('Upper Body Circuit', structureResult.value, 3, ['dumbbells']);
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
+          name: 'Upper Body Circuit',
+          type: 'circuit',
+          order: 3,
+          structure: structureResult.data,
+          equipment: ['dumbbells'],
+          duration: getTotalDuration(structureResult.data) / 60
+        });
 
-        expect(result.isSuccess).toBe(true);
-        if (result.isSuccess) {
-          expect(isCircuit(result.value)).toBe(true);
-          expect(activityRequiresEquipment(result.value)).toBe(true);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(isCircuit(result.data)).toBe(true);
+          expect(activityRequiresEquipment(result.data)).toBe(true);
         }
       }
     });
@@ -140,63 +174,86 @@ describe('WorkoutActivity', () => {
 
   describe('type checks', () => {
     it('should identify warmup activities', () => {
-      const result = createWarmup('Warmup', 5, 0);
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: 'Warmup',
+        type: 'warmup',
+        order: 0,
+        duration: 5
+      });
 
-      if (result.isSuccess) {
-        expect(isWarmup(result.value)).toBe(true);
-        expect(isMainActivity(result.value)).toBe(false);
-        expect(isCooldown(result.value)).toBe(false);
+      if (result.success) {
+        expect(isWarmup(result.data)).toBe(true);
+        expect(isMainActivity(result.data)).toBe(false);
+        expect(isCooldown(result.data)).toBe(false);
       }
     });
 
     it('should identify cooldown activities', () => {
-      const result = createCooldown('Cooldown', 5, 10);
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: 'Cooldown',
+        type: 'cooldown',
+        order: 10,
+        duration: 5
+      });
 
-      if (result.isSuccess) {
-        expect(isCooldown(result.value)).toBe(true);
-        expect(isMainActivity(result.value)).toBe(false);
-        expect(isWarmup(result.value)).toBe(false);
+      if (result.success) {
+        expect(isCooldown(result.data)).toBe(true);
+        expect(isMainActivity(result.data)).toBe(false);
+        expect(isWarmup(result.data)).toBe(false);
       }
     });
 
     it('should identify main activities', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Strength Training',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        expect(isMainActivity(result.value)).toBe(true);
-        expect(isWarmup(result.value)).toBe(false);
-        expect(isCooldown(result.value)).toBe(false);
+      if (result.success) {
+        expect(isMainActivity(result.data)).toBe(true);
+        expect(isWarmup(result.data)).toBe(false);
+        expect(isCooldown(result.data)).toBe(false);
       }
     });
 
     it('should identify interval-based activities', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 60, intensity: 'sprint', rest: 60 },
-      ], 3);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 60, intensity: 'sprint', rest: 60 }],
+        rounds: 3
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createIntervalSession('HIIT', structureResult.value, 1);
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
+          name: 'HIIT',
+          type: 'interval',
+          order: 1,
+          structure: structureResult.data
+        });
 
-        if (result.isSuccess) {
-          expect(isActivityIntervalBased(result.value)).toBe(true);
+        if (result.success) {
+          expect(isActivityIntervalBased(result.data)).toBe(true);
         }
       }
     });
 
     it('should identify circuits', () => {
-      const structureResult = createExerciseStructure([
-        { name: 'Exercise 1', sets: 3, reps: 10, rest: 30 },
-      ]);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        exercises: [
+          { name: 'Exercise 1', sets: 3, reps: 10, rest: 30 },
+        ]
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createCircuit('Circuit', structureResult.value, 1);
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
+          name: 'Circuit',
+          type: 'circuit',
+          order: 1,
+          structure: structureResult.data
+        });
 
-        if (result.isSuccess) {
-          expect(isCircuit(result.value)).toBe(true);
+        if (result.success) {
+          expect(isCircuit(result.data)).toBe(true);
         }
       }
     });
@@ -204,49 +261,49 @@ describe('WorkoutActivity', () => {
 
   describe('equipment queries', () => {
     it('should detect equipment requirements', () => {
-      const withEquipmentResult = createWorkoutActivity({
+      const withEquipmentResult = CreateWorkoutActivitySchema.safeParse({
         name: 'Dumbbell Press',
         type: 'main',
         order: 1,
         equipment: ['dumbbells', 'bench'],
       });
 
-      const withoutEquipmentResult = createWorkoutActivity({
+      const withoutEquipmentResult = CreateWorkoutActivitySchema.safeParse({
         name: 'Push-ups',
         type: 'main',
         order: 1,
       });
 
-      if (withEquipmentResult.isSuccess && withoutEquipmentResult.isSuccess) {
-        expect(activityRequiresEquipment(withEquipmentResult.value)).toBe(true);
-        expect(activityRequiresEquipment(withoutEquipmentResult.value)).toBe(false);
+      if (withEquipmentResult.success && withoutEquipmentResult.success) {
+        expect(activityRequiresEquipment(withEquipmentResult.data)).toBe(true);
+        expect(activityRequiresEquipment(withoutEquipmentResult.data)).toBe(false);
       }
     });
 
     it('should check for specific equipment', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Barbell Squat',
         type: 'main',
         order: 1,
         equipment: ['barbell', 'rack'],
       });
 
-      if (result.isSuccess) {
-        expect(hasEquipment(result.value, 'barbell')).toBe(true);
-        expect(hasEquipment(result.value, 'dumbbells')).toBe(false);
+      if (result.success) {
+        expect(hasEquipment(result.data, 'barbell')).toBe(true);
+        expect(hasEquipment(result.data, 'dumbbells')).toBe(false);
       }
     });
 
     it('should get equipment list', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
         equipment: ['dumbbells', 'bench', 'mat'],
       });
 
-      if (result.isSuccess) {
-        const list = getEquipmentList(result.value);
+      if (result.success) {
+        const list = getEquipmentList(result.data);
         expect(list).toEqual(['dumbbells', 'bench', 'mat']);
       }
     });
@@ -254,128 +311,129 @@ describe('WorkoutActivity', () => {
 
   describe('content queries', () => {
     it('should detect structure', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 60, intensity: 'hard', rest: 60 },
-      ]);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 60, intensity: 'hard', rest: 60 }]
+      });
 
-      if (structureResult.isSuccess) {
-        const withStructureResult = createWorkoutActivity({
+      if (structureResult.success) {
+        const withStructureResult = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        const withoutStructureResult = createWorkoutActivity({
+        const withoutStructureResult = CreateWorkoutActivitySchema.safeParse({
           name: 'Running',
           type: 'main',
           order: 1,
         });
 
-        if (withStructureResult.isSuccess && withoutStructureResult.isSuccess) {
-          expect(hasStructure(withStructureResult.value)).toBe(true);
-          expect(hasStructure(withoutStructureResult.value)).toBe(false);
+        if (withStructureResult.success && withoutStructureResult.success) {
+          expect(hasStructure(withStructureResult.data)).toBe(true);
+          expect(hasStructure(withoutStructureResult.data)).toBe(false);
         }
       }
     });
 
     it('should detect instructions', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Complex Exercise',
         type: 'main',
         order: 1,
         instructions: ['Step 1', 'Step 2', 'Step 3'],
       });
 
-      if (result.isSuccess) {
-        expect(hasInstructions(result.value)).toBe(true);
+      if (result.success) {
+        expect(hasInstructions(result.data)).toBe(true);
       }
     });
 
     it('should detect video', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
         videoUrl: 'https://example.com/video',
       });
 
-      if (result.isSuccess) {
-        expect(hasVideo(result.value)).toBe(true);
+      if (result.success) {
+        expect(hasVideo(result.data)).toBe(true);
       }
     });
 
     it('should detect alternatives', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Barbell Squat',
         type: 'main',
         order: 1,
         alternativeExercises: ['Goblet Squat', 'Leg Press'],
       });
 
-      if (result.isSuccess) {
-        expect(hasAlternatives(result.value)).toBe(true);
+      if (result.success) {
+        expect(hasAlternatives(result.data)).toBe(true);
       }
     });
   });
 
   describe('getEstimatedDuration', () => {
     it('should return explicit duration if provided', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Running',
         type: 'main',
         order: 1,
         duration: 30,
       });
 
-      if (result.isSuccess) {
-        expect(getEstimatedDuration(result.value)).toBe(30);
+      if (result.success) {
+        expect(getEstimatedDuration(result.data)).toBe(30);
       }
     });
 
     it('should calculate duration from structure', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 60, intensity: 'hard', rest: 60 },
-      ], 3);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 60, intensity: 'hard', rest: 60 }],
+        rounds: 3
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        if (result.isSuccess) {
-          const duration = getEstimatedDuration(result.value);
-          expect(duration).toBe(getTotalDuration(structureResult.value) / 60);
+        if (result.success) {
+          const duration = getEstimatedDuration(result.data);
+          expect(duration).toBe(getTotalDuration(structureResult.data) / 60);
         }
       }
     });
 
     it('should return default duration for activities with no duration info', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Stretching',
         type: 'cooldown',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        expect(getEstimatedDuration(result.value)).toBe(10);
+      if (result.success) {
+        expect(getEstimatedDuration(result.data)).toBe(10);
       }
     });
   });
 
   describe('setOrder', () => {
     it('should update order', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        const updated = setOrder(result.value, 5);
+      if (result.success) {
+        const updated = setOrder(result.data, 5);
         expect(updated.isSuccess).toBe(true);
         if (updated.isSuccess) {
           expect(updated.value.order).toBe(5);
@@ -384,14 +442,14 @@ describe('WorkoutActivity', () => {
     });
 
     it('should fail with negative order', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        const updateResult = setOrder(result.value, -1);
+      if (result.success) {
+        const updateResult = setOrder(result.data, -1);
         expect(updateResult.isFailure).toBe(true);
       }
     });
@@ -399,15 +457,15 @@ describe('WorkoutActivity', () => {
 
   describe('addInstruction', () => {
     it('should add instruction', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
         instructions: ['Step 1'],
       });
 
-      if (result.isSuccess) {
-        const updated = addInstruction(result.value, 'Step 2');
+      if (result.success) {
+        const updated = addInstruction(result.data, 'Step 2');
         expect(updated.isSuccess).toBe(true);
         if (updated.isSuccess) {
           expect(updated.value.instructions?.length).toBe(2);
@@ -417,14 +475,14 @@ describe('WorkoutActivity', () => {
     });
 
     it('should initialize instructions if none exist', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        const updated = addInstruction(result.value, 'First instruction');
+      if (result.success) {
+        const updated = addInstruction(result.data, 'First instruction');
         expect(updated.isSuccess).toBe(true);
         if (updated.isSuccess) {
           expect(updated.value.instructions?.length).toBe(1);
@@ -435,14 +493,14 @@ describe('WorkoutActivity', () => {
 
   describe('addAlternative', () => {
     it('should add alternative exercise', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Barbell Squat',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        const updated = addAlternative(result.value, 'Goblet Squat');
+      if (result.success) {
+        const updated = addAlternative(result.data, 'Goblet Squat');
         expect(updated.isSuccess).toBe(true);
         if (updated.isSuccess) {
           expect(updated.value.alternativeExercises).toContain('Goblet Squat');
@@ -451,15 +509,15 @@ describe('WorkoutActivity', () => {
     });
 
     it('should add multiple alternatives', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
         alternativeExercises: ['Alternative 1'],
       });
 
-      if (result.isSuccess) {
-        const updated = addAlternative(result.value, 'Alternative 2');
+      if (result.success) {
+        const updated = addAlternative(result.data, 'Alternative 2');
         expect(updated.isSuccess).toBe(true);
         if (updated.isSuccess) {
           expect(updated.value.alternativeExercises?.length).toBe(2);
@@ -470,20 +528,21 @@ describe('WorkoutActivity', () => {
 
   describe('makeEasier', () => {
     it('should reduce intensity by default factor', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 300, intensity: 'hard', rest: 60 },
-      ], 3);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 300, intensity: 'hard', rest: 60 }],
+        rounds: 3
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        if (result.isSuccess) {
-          const easier = makeEasier(result.value);
+        if (result.success) {
+          const easier = makeEasier(result.data);
           expect(easier.isSuccess).toBe(true);
           if (easier.isSuccess) {
             expect(easier.value.structure).toBeDefined();
@@ -493,20 +552,21 @@ describe('WorkoutActivity', () => {
     });
 
     it('should apply custom factor', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 300, intensity: 'hard', rest: 60 },
-      ], 3);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 300, intensity: 'hard', rest: 60 }],
+        rounds: 3
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        if (result.isSuccess) {
-          const easier = makeEasier(result.value, 0.7);
+        if (result.success) {
+          const easier = makeEasier(result.data, 0.7);
           expect(easier.isSuccess).toBe(true);
           if (easier.isSuccess) {
             expect(easier.value.structure).toBeDefined();
@@ -518,20 +578,21 @@ describe('WorkoutActivity', () => {
 
   describe('makeHarder', () => {
     it('should increase intensity by default factor', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ], 2);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 300, intensity: 'moderate', rest: 60 }],
+        rounds: 2
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        if (result.isSuccess) {
-          const harder = makeHarder(result.value);
+        if (result.success) {
+          const harder = makeHarder(result.data);
           expect(harder.isSuccess).toBe(true);
           if (harder.isSuccess) {
             expect(harder.value.structure).toBeDefined();
@@ -541,20 +602,21 @@ describe('WorkoutActivity', () => {
     });
 
     it('should apply custom factor', () => {
-      const structureResult = createIntervalStructure([
-        { duration: 300, intensity: 'moderate', rest: 60 },
-      ], 2);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        intervals: [{ duration: 300, intensity: 'moderate', rest: 60 }],
+        rounds: 2
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'HIIT',
           type: 'interval',
           order: 1,
-          structure: structureResult.value,
+          structure: structureResult.data,
         });
 
-        if (result.isSuccess) {
-          const harder = makeHarder(result.value, 1.5);
+        if (result.success) {
+          const harder = makeHarder(result.data, 1.5);
           expect(harder.isSuccess).toBe(true);
           if (harder.isSuccess) {
             expect(harder.value.structure).toBeDefined();
@@ -566,22 +628,22 @@ describe('WorkoutActivity', () => {
 
   describe('display helpers', () => {
     it('should get short description', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Running',
         type: 'main',
         order: 1,
         distance: 5000,
       });
 
-      if (result.isSuccess) {
-        const description = getShortDescription(result.value);
+      if (result.success) {
+        const description = getShortDescription(result.data);
         expect(description).toContain('Running');
         expect(description.length).toBeGreaterThan(0);
       }
     });
 
     it('should get detailed description', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Strength Training',
         type: 'main',
         order: 1,
@@ -589,36 +651,36 @@ describe('WorkoutActivity', () => {
         duration: 60,
       });
 
-      if (result.isSuccess) {
-        const description = getDetailedDescription(result.value);
+      if (result.success) {
+        const description = getDetailedDescription(result.data);
         expect(description.length).toBeGreaterThan(0);
       }
     });
 
     it('should get instructions list', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Complex Exercise',
         type: 'main',
         order: 1,
         instructions: ['Step 1', 'Step 2', 'Step 3'],
       });
 
-      if (result.isSuccess) {
-        const instructions = getInstructionsList(result.value);
+      if (result.success) {
+        const instructions = getInstructionsList(result.data);
         expect(instructions.length).toBe(3);
         expect(instructions).toEqual(['Step 1', 'Step 2', 'Step 3']);
       }
     });
 
     it('should return empty array when no instructions', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Exercise',
         type: 'main',
         order: 1,
       });
 
-      if (result.isSuccess) {
-        const instructions = getInstructionsList(result.value);
+      if (result.success) {
+        const instructions = getInstructionsList(result.data);
         expect(instructions).toEqual([]);
       }
     });
@@ -626,31 +688,33 @@ describe('WorkoutActivity', () => {
 
   describe('complex scenarios', () => {
     it('should handle complete warmup with structure', () => {
-      const structureResult = createExerciseStructure([
-        { name: 'Arm Circles', sets: 1, reps: 10, rest: 0 },
-        { name: 'Leg Swings', sets: 1, reps: 10, rest: 0 },
-      ]);
+      const structureResult = CreateActivityStructureSchema.safeParse({
+        exercises: [
+          { name: 'Arm Circles', sets: 1, reps: 10, rest: 0 },
+          { name: 'Leg Swings', sets: 1, reps: 10, rest: 0 },
+        ]
+      });
 
-      if (structureResult.isSuccess) {
-        const result = createWorkoutActivity({
+      if (structureResult.success) {
+        const result = CreateWorkoutActivitySchema.safeParse({
           name: 'Dynamic Warmup',
           type: 'warmup',
           order: 0,
-          structure: structureResult.value,
+          structure: structureResult.data,
           instructions: ['Move slowly', 'Focus on form'],
         });
 
-        if (result.isSuccess) {
-          expect(isWarmup(result.value)).toBe(true);
-          expect(hasStructure(result.value)).toBe(true);
-          expect(hasInstructions(result.value)).toBe(true);
-          expect(getEstimatedDuration(result.value)).toBeGreaterThan(0);
+        if (result.success) {
+          expect(isWarmup(result.data)).toBe(true);
+          expect(hasStructure(result.data)).toBe(true);
+          expect(hasInstructions(result.data)).toBe(true);
+          expect(getEstimatedDuration(result.data)).toBeGreaterThan(0);
         }
       }
     });
 
     it('should handle strength workout with alternatives', () => {
-      const result = createWorkoutActivity({
+      const result = CreateWorkoutActivitySchema.safeParse({
         name: 'Barbell Bench Press',
         type: 'main',
         order: 1,
@@ -660,11 +724,11 @@ describe('WorkoutActivity', () => {
         videoUrl: 'https://example.com/bench-press',
       });
 
-      if (result.isSuccess) {
-        expect(activityRequiresEquipment(result.value)).toBe(true);
-        expect(hasAlternatives(result.value)).toBe(true);
-        expect(hasInstructions(result.value)).toBe(true);
-        expect(hasVideo(result.value)).toBe(true);
+      if (result.success) {
+        expect(activityRequiresEquipment(result.data)).toBe(true);
+        expect(hasAlternatives(result.data)).toBe(true);
+        expect(hasInstructions(result.data)).toBe(true);
+        expect(hasVideo(result.data)).toBe(true);
       }
     });
   });
@@ -673,7 +737,7 @@ describe('WorkoutActivity', () => {
 
 describe('toWorkoutActivityView', () => {
   it('should map domain entity to view with computed fields', () => {
-    const result = createWorkoutActivity({
+    const result = CreateWorkoutActivitySchema.safeParse({
       name: 'Bench Press',
       type: 'main',
       order: 1,
@@ -682,8 +746,8 @@ describe('toWorkoutActivityView', () => {
       instructions: ['Lift heavy'],
     });
 
-    if (result.isSuccess) {
-      const view = toWorkoutActivityView(result.value);
+    if (result.success) {
+      const view = toWorkoutActivityView(result.data);
 
       // Base fields
       expect(view.name).toBe('Bench Press');
@@ -703,14 +767,20 @@ describe('toWorkoutActivityView', () => {
   });
 
   it('should handle computed fields from structure', () => {
-    const structureResult = createIntervalStructure([
-      { duration: 60, intensity: 'sprint', rest: 60 },
-    ], 5); // 5 rounds * (60+60) = 600s = 10min
+    const structureResult = CreateActivityStructureSchema.safeParse({
+      intervals: [{ duration: 60, intensity: 'sprint', rest: 60 }],
+      rounds: 5
+    }); // 5 rounds * (60+60) = 600s = 10min
 
-    if (structureResult.isSuccess) {
-      const result = createIntervalSession('Sprints', structureResult.value, 1);
-      if (result.isSuccess) {
-        const view = toWorkoutActivityView(result.value);
+    if (structureResult.success) {
+      const result = CreateWorkoutActivitySchema.safeParse({
+        name: 'Sprints',
+        type: 'interval',
+        order: 1,
+        structure: structureResult.data,
+      });
+      if (result.success) {
+        const view = toWorkoutActivityView(result.data);
         expect(view.estimatedDuration).toBe(10);
         expect(view.estimatedCalories).toBeGreaterThan(0);
       }

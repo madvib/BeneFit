@@ -2,7 +2,7 @@ import { AIError, ParseError, Result, parseJsonResponse } from '@bene/shared';
 import type { FitnessPlan, PlanGoals, TrainingConstraints } from '@bene/training-core';
 import {
   CreateDraftFitnessPlanSchema,
-  createWeeklySchedule,
+  CreateWeeklyScheduleSchema,
   type WorkoutTemplate,
 } from '@bene/training-core';
 import type { AICompletionRequest, AIProvider } from '@bene/shared';
@@ -89,7 +89,7 @@ export class AIPlanGenerator {
           })),
         }));
 
-        return createWeeklySchedule({
+        const scheduleResult = CreateWeeklyScheduleSchema.safeParse({
           weekNumber: week.weekNumber,
           planId: tempPlanId,
           startDate: weekStart,
@@ -98,6 +98,12 @@ export class AIPlanGenerator {
           targetWorkouts: workouts.length,
           workouts,
         });
+
+        if (!scheduleResult.success) {
+          return Result.fail(new Error(`Failed to create weekly schedule: ${ scheduleResult.error.message }`));
+        }
+
+        return Result.ok(scheduleResult.data);
       });
 
       // Check for any factory failures

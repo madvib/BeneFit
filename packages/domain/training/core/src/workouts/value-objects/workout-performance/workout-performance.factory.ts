@@ -108,24 +108,4 @@ export const CreateWorkoutPerformanceSchema = WorkoutPerformanceSchema.omit({
   return unwrapOrIssue(validationResult, ctx);
 });
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateWorkoutPerformanceSchema or workoutPerformanceFromPersistence.
- * Kept for test compatibility.
- */
-export function createWorkoutPerformance(
-  params: z.input<typeof CreateWorkoutPerformanceSchema>,
-): Result<WorkoutPerformance> {
-  const durationMs = params.completedAt.getTime() - params.startedAt.getTime();
-  const calculatedDurationMinutes = Math.round(durationMs / 60000);
-
-  const data = {
-    ...params,
-    durationMinutes: params.durationMinutes ?? calculatedDurationMinutes,
-  };
-
-  return validateWorkoutPerformance(data);
-}

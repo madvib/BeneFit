@@ -73,25 +73,4 @@ export const CreateServicePermissionsSchema: z.ZodType<ServicePermissions> = Ser
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateServicePermissionsSchema or servicePermissionsFromPersistence.
- */
-export function createServicePermissions(
-  props: Partial<ServicePermissions>,
-): ServicePermissions {
-  const result = CreateServicePermissionsSchema.safeParse(props);
 
-  if (!result.success) {
-    return {
-      readWorkouts: false,
-      readHeartRate: false,
-      readSleep: false,
-      readNutrition: false,
-      readBodyMetrics: false,
-      writeWorkouts: false,
-      ...props
-    } as ServicePermissions;
-  }
-
-  return result.data;
-}

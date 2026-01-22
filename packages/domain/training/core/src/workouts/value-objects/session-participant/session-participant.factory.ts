@@ -100,20 +100,4 @@ export const CreateSessionParticipantSchema = SessionParticipantSchema.pick({
  * @deprecated Use CreateSessionParticipantSchema or sessionParticipantFromPersistence.
  * Kept for test compatibility.
  */
-export function createSessionParticipant(
-  params: z.input<typeof CreateSessionParticipantSchema>,
-): Result<SessionParticipant> {
-  const data = {
-    userId: params.userId,
-    userName: params.userName,
-    avatar: params.avatar,
-    role: params.role,
-    status: 'active' as const,
-    joinedAt: new Date(),
-    completedActivities: 0,
-    leftAt: undefined,
-    currentActivity: undefined,
-  };
 
-  return validateSessionParticipant(data);
-}

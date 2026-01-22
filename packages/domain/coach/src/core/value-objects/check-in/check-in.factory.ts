@@ -76,15 +76,4 @@ export const CreateCheckInSchema = CheckInSchema.pick({
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateCheckInSchema or checkInFromPersistence.
- */
-export function createCheckIn(
-  params: z.input<typeof CreateCheckInSchema>,
-): Result<CheckIn> {
-  const result = CreateCheckInSchema.safeParse(params);
-  if (!result.success) {
-    return Result.fail(mapZodError(result.error));
-  }
-  return Result.ok(result.data);
-}
+

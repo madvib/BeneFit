@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { SessionConfiguration, SessionConfigurationSchema } from './session-configuration.types.js';
 
@@ -85,37 +84,4 @@ export const CreateSessionConfigurationSchema = SessionConfigurationSchema.parti
   },
 );
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use sessionConfigurationFromPersistence with default config.
- * Kept for test compatibility.
- */
-export function createDefaultSessionConfig(isMultiplayer: boolean): SessionConfiguration {
-  const data = getDefaultConfig(isMultiplayer);
-  const result = validateSessionConfiguration(data);
-
-  if (result.isFailure) {
-    throw new Error(`Failed to create default session config: ${ result.error }`);
-  }
-
-  return result.value;
-}
-
-/**
- * @deprecated Use CreateSessionConfigurationSchema or sessionConfigurationFromPersistence.
- * Kept for test compatibility.
- */
-export function createSessionConfiguration(
-  params: z.input<typeof CreateSessionConfigurationSchema>,
-): Result<SessionConfiguration> {
-  const defaults = getDefaultConfig(params.isMultiplayer ?? false);
-  const data = {
-    ...defaults,
-    ...params,
-  };
-
-  return validateSessionConfiguration(data);
-}

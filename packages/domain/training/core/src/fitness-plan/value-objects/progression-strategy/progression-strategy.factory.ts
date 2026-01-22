@@ -126,9 +126,4 @@ export function createAggressiveProgression(): Result<ProgressionStrategy> {
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateProgressionStrategySchema or call via transform.
- */
-export function createProgressionStrategy(props: unknown): Result<ProgressionStrategy> {
-  return validate(props);
-}
+

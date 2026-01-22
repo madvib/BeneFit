@@ -1,6 +1,6 @@
 import { Guard, Result } from '@bene/shared';
 import { VerificationData } from '../../../../value-objects/workout-verification/workout-verification.types.js';
-import { createWorkoutVerification } from '../../../../value-objects/workout-verification/workout-verification.factory.js';
+import { CreateWorkoutVerificationSchema } from '../../../../value-objects/workout-verification/workout-verification.factory.js';
 import { Reaction } from '../reaction/reaction.types.js';
 import { CompletedWorkout } from './completed-workout.types.js';
 
@@ -67,15 +67,15 @@ export function addVerification(
 
   // Create updated verification with new verification added
   const updatedVerifications = [...workout.verification.verifications, newVerification];
-  const verificationResult = createWorkoutVerification({
+  const verificationResult = CreateWorkoutVerificationSchema.safeParse({
     verifications: updatedVerifications,
     verifiedAt: new Date(),
   });
 
-  if (verificationResult.isFailure) return Result.fail(verificationResult.error);
+  if (!verificationResult.success) return Result.fail(new Error('Invalid verification data'));
 
   return Result.ok({
     ...workout,
-    verification: verificationResult.value,
+    verification: verificationResult.data,
   });
 }

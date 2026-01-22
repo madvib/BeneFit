@@ -73,19 +73,4 @@ export const CreateReactionSchema = ReactionSchema.pick({
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<Reaction>;
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateReactionSchema or call via transform.
- */
-export function createReaction(
-  params: z.input<typeof CreateReactionSchema>,
-): Result<Reaction> {
-  const parseResult = CreateReactionSchema.safeParse(params);
-  if (!parseResult.success) {
-    return Result.fail(mapZodError(parseResult.error));
-  }
-  return Result.ok(parseResult.data as Reaction);
-}

@@ -113,9 +113,4 @@ export function createGymTrainingConstraints(
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use CreateTrainingConstraintsSchema or call via transform.
- */
-export function createTrainingConstraints(props: unknown): Result<TrainingConstraints> {
-  return validateAndBrand(props);
-}
+

@@ -72,47 +72,4 @@ export const CreateActivityStructureSchema: z.ZodType<ActivityStructure> = Activ
   },
 );
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
 
-/**
- * @deprecated Use CreateActivityStructureSchema or activityStructureFromPersistence.
- * Kept for test compatibility.
- */
-export function createActivityStructure(
-  params: z.input<typeof ActivityStructureSchema>,
-): Result<ActivityStructure> {
-  return validateActivityStructure(params);
-}
-
-/**
- * @deprecated Use activityStructureFromPersistence with empty object.
- */
-export function createEmptyActivityStructure(): ActivityStructure {
-  const result = activityStructureFromPersistence({});
-  if (result.isFailure) {
-    throw new Error('Failed to create empty activity structure');
-  }
-  return result.value;
-}
-
-/**
- * @deprecated Use CreateActivityStructureSchema.
- */
-export function createIntervalStructure(
-  intervals: Interval[],
-  rounds?: number,
-): Result<ActivityStructure> {
-  return createActivityStructure({ intervals, rounds });
-}
-
-/**
- * @deprecated Use CreateActivityStructureSchema.
- */
-export function createExerciseStructure(
-  exercises: Exercise[],
-  rounds?: number,
-): Result<ActivityStructure> {
-  return createActivityStructure({ exercises, rounds });
-}

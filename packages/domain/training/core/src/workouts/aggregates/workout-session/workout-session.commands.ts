@@ -2,9 +2,9 @@ import { Guard, Result } from '@bene/shared';
 
 import { SessionState, WorkoutSession } from './workout-session.types.js';
 import {
-  createSessionParticipant,
-  createLiveActivityProgress,
-  createFeedItem,
+  CreateSessionParticipantSchema,
+  CreateLiveActivityProgressSchema,
+  CreateSessionFeedItemSchema,
   ParticipantRole,
   ActivityPerformance,
   LiveActivityProgress,
@@ -22,41 +22,44 @@ export function startSession(
   ]);
   if (guardResult.isFailure) return Result.fail(guardResult.error);
   // Add owner as first participant
-  const ownerResult = createSessionParticipant({
+  const ownerResult = CreateSessionParticipantSchema.safeParse({
     userId: session.ownerId,
     userName: ownerName,
     avatar: ownerAvatar,
     role: 'owner',
   });
-  if (ownerResult.isFailure) return Result.fail(ownerResult.error);
+
+  if (!ownerResult.success) {
+    return Result.fail(new Error(ownerResult.error.message));
+  }
 
   const firstActivity = session.activities[0];
   if (!firstActivity) {
     return Result.fail(new Error('No activities in session'));
   }
-  const liveProgressResult = createLiveActivityProgress({
+  const liveProgressResult = CreateLiveActivityProgressSchema.safeParse({
     activityType: firstActivity.type,
     activityIndex: 0,
     totalActivities: session.activities.length,
   });
-  if (liveProgressResult.isFailure) return Result.fail(liveProgressResult.error);
+  if (!liveProgressResult.success) return Result.fail(new Error('Invalid live progress data'));
 
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'user_joined',
     userId: session.ownerId,
     userName: ownerName,
-    content: `${ownerName} started the workout`,
+    content: `${ ownerName } started the workout`,
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   const now = new Date();
 
   return Result.ok({
     ...session,
     state: 'in_progress',
-    participants: [ownerResult.value],
-    liveProgress: liveProgressResult.value,
-    activityFeed: [feedItemResult.value],
+    participants: [ownerResult.data],
+    liveProgress: liveProgressResult.data,
+    activityFeed: [feedItemResult.data],
     startedAt: now,
     updatedAt: now,
   });
@@ -95,26 +98,30 @@ export function joinSession(
     throw new Error('User is already in session');
   }
 
-  const participantResult = createSessionParticipant({
+  // Use schema for creation/validation
+  const participantResult = CreateSessionParticipantSchema.safeParse({
     userId,
     userName,
     avatar,
     role,
   });
-  if (participantResult.isFailure) return Result.fail(participantResult.error);
 
-  const feedItemResult = createFeedItem({
+  if (!participantResult.success) {
+    return Result.fail(new Error(participantResult.error.message)); // Simplified error handling or mapZodError
+  }
+
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'user_joined',
     userId,
     userName,
-    content: `${userName} joined the workout`,
+    content: `${ userName } joined the workout`,
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
-    participants: [...session.participants, participantResult.value],
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    participants: [...session.participants, participantResult.data],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     updatedAt: new Date(),
   });
 }
@@ -152,18 +159,18 @@ export function leaveSession(
   const updatedParticipants = [...session.participants];
   updatedParticipants[participantIndex] = updatedParticipant;
 
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'user_left',
     userId,
     userName: participant.userName,
-    content: `${participant.userName} left the workout`,
+    content: `${ participant.userName } left the workout`,
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
     participants: updatedParticipants,
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     updatedAt: new Date(),
   });
 }
@@ -234,25 +241,25 @@ export function completeActivity(
     if (!nextActivity) {
       return Result.fail(new Error('Next activity not found'));
     }
-    const liveProgressResult = createLiveActivityProgress({
+    const liveProgressResult = CreateLiveActivityProgressSchema.safeParse({
       activityType: nextActivity.type,
       activityIndex: nextActivityIndex,
       totalActivities: session.activities.length,
     });
-    if (liveProgressResult.isFailure) return Result.fail(liveProgressResult.error);
-    liveProgress = liveProgressResult.value;
+    if (!liveProgressResult.success) return Result.fail(new Error('Invalid live progress data'));
+    liveProgress = liveProgressResult.data;
   }
 
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'activity_completed',
     userId: session.ownerId,
     userName: 'You', // Would need participant context
-    content: `Completed ${activityPerformance.activityType}`,
+    content: `Completed ${ activityPerformance.activityType }`,
     metadata: {
       durationMinutes: activityPerformance.durationMinutes,
     },
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
@@ -260,7 +267,7 @@ export function completeActivity(
     currentActivityIndex: nextActivityIndex,
     liveProgress,
     completedActivities,
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     completedAt: isLastActivity ? new Date() : session.completedAt,
     updatedAt: new Date(),
   });
@@ -277,20 +284,20 @@ export function abandonSession(
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'user_left',
     userId: session.ownerId,
     userName: 'You',
     content: reason || 'Workout ended early',
     metadata: { reason },
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
     state: 'abandoned',
     liveProgress: undefined,
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     abandonedAt: new Date(),
     updatedAt: new Date(),
   });
@@ -333,17 +340,17 @@ export function addChatMessage(
   if (guardResult.isFailure) {
     return Result.fail(guardResult.error);
   }
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'chat_message',
     userId,
     userName,
     content: message,
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     updatedAt: new Date(),
   });
 }
@@ -357,18 +364,18 @@ export function sendEncouragement(
 ): Result<WorkoutSession> {
   const guardResult = Guard.againstEmptyString(message, 'message');
   if (guardResult.isFailure) return Result.fail(guardResult.error);
-  const feedItemResult = createFeedItem({
+  const feedItemResult = CreateSessionFeedItemSchema.safeParse({
     type: 'encouragement',
     userId: fromUserId,
     userName: fromUserName,
     content: message,
     metadata: { toUserId },
   });
-  if (feedItemResult.isFailure) return Result.fail(feedItemResult.error);
+  if (!feedItemResult.success) return Result.fail(new Error('Invalid feed item data'));
 
   return Result.ok({
     ...session,
-    activityFeed: [...session.activityFeed, feedItemResult.value],
+    activityFeed: [...session.activityFeed, feedItemResult.data],
     updatedAt: new Date(),
   });
 }
