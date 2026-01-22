@@ -2,7 +2,7 @@ import type {
   NewDbCompletedWorkout,
   DbCompletedWorkout,
 } from '../data/schema';
-import { CompletedWorkout } from '@bene/training-core';
+import { CompletedWorkout, CompletedWorkoutSchema } from '@bene/training-core';
 
 // Domain to Database
 export function toDatabase(workout: CompletedWorkout): NewDbCompletedWorkout {
@@ -55,7 +55,7 @@ export function toDatabase(workout: CompletedWorkout): NewDbCompletedWorkout {
 
 // Database to Domain
 export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
-  return {
+  const data = {
     id: row.id,
     userId: row.userId,
 
@@ -89,4 +89,6 @@ export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
     createdAt: row.createdAt,
     recordedAt: row.recordedAt,
   };
+
+  return CompletedWorkoutSchema.parse(data);
 }

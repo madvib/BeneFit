@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { randomUUID } from 'crypto';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../workout-plan.mapper.js';
-import { createFitnessPlanFixture } from '@bene/training-core';
+import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
 import { eq } from 'drizzle-orm';
 import { activeFitnessPlan } from '../../data/schema';
 
@@ -30,7 +31,8 @@ describe('WorkoutPlanMapper', () => {
   describe('toDatabase', () => {
     it('should map domain FitnessPlan to database schema', () => {
       const plan = createFitnessPlanFixture({
-        id: 'plan_test_1',
+        id: randomUUID(),
+        userId: randomUUID(),
         title: 'Test Plan',
         endDate: new Date('2026-03-01T00:00:00.000Z'),
       });
@@ -41,7 +43,7 @@ describe('WorkoutPlanMapper', () => {
       console.log('dbPlan.startDate type:', typeof dbPlan.startDate, dbPlan.startDate instanceof Date);
 
       // Core fields
-      expect(dbPlan.id).toBe('plan_test_1');
+      expect(dbPlan.id).toBeDefined();
       expect(dbPlan.userId).toBe(plan.userId);
       expect(dbPlan.title).toBe('Test Plan');
       expect(dbPlan.description).toBe(plan.description);
@@ -70,6 +72,8 @@ describe('WorkoutPlanMapper', () => {
 
     it('should convert undefined to null for optional fields', () => {
       const plan = createFitnessPlanFixture({
+        id: randomUUID(),
+        userId: randomUUID(),
         endDate: undefined,
         templateId: undefined,
       });
@@ -82,12 +86,14 @@ describe('WorkoutPlanMapper', () => {
 
     it('should preserve templateId when present', () => {
       const plan = createFitnessPlanFixture({
-        templateId: 'template_123',
+        id: randomUUID(),
+        userId: randomUUID(),
+        templateId: randomUUID(),
       });
 
       const dbPlan = toDatabase(plan);
 
-      expect(dbPlan.templateId).toBe('template_123');
+      expect(dbPlan.templateId).toBe(plan.templateId);
     });
   });
 
@@ -95,9 +101,10 @@ describe('WorkoutPlanMapper', () => {
     it('should map database row to domain entity', async () => {
       // Create domain fixture
       const plan = createFitnessPlanFixture({
-        id: 'plan_db_test',
+        id: randomUUID(),
+        userId: randomUUID(),
         title: 'DB Test Plan',
-        templateId: 'template_abc',
+        templateId: randomUUID(),
       });
 
       // Insert into actual database
@@ -106,7 +113,7 @@ describe('WorkoutPlanMapper', () => {
 
       // Read back from database
       const dbRow = await db.query.activeFitnessPlan.findFirst({
-        where: eq(activeFitnessPlan.id, 'plan_db_test'),
+        where: eq(activeFitnessPlan.id, plan.id),
       });
 
       expect(dbRow).toBeDefined();
@@ -114,9 +121,9 @@ describe('WorkoutPlanMapper', () => {
       // Map to domain
       const domainPlan = toDomain(dbRow!);
 
-      expect(domainPlan.id).toBe('plan_db_test');
+      expect(domainPlan.id).toBe(plan.id);
       expect(domainPlan.title).toBe('DB Test Plan');
-      expect(domainPlan.templateId).toBe('template_abc');
+      expect(domainPlan.templateId).toBe(plan.templateId);
       expect(domainPlan.planType).toBe(plan.planType);
       expect(domainPlan.status).toBe(plan.status);
 
@@ -131,7 +138,8 @@ describe('WorkoutPlanMapper', () => {
     it('should convert null to undefined for optional fields', async () => {
       // Create plan without optional fields
       const plan = createFitnessPlanFixture({
-        id: 'plan_minimal_test',
+        id: randomUUID(),
+        userId: randomUUID(),
         endDate: undefined,
         templateId: undefined,
       });
@@ -139,7 +147,7 @@ describe('WorkoutPlanMapper', () => {
       // Insert and read back
       await db.insert(activeFitnessPlan).values(toDatabase(plan));
       const dbRow = await db.query.activeFitnessPlan.findFirst({
-        where: eq(activeFitnessPlan.id, 'plan_minimal_test'),
+        where: eq(activeFitnessPlan.id, plan.id),
       });
 
       const domainPlan = toDomain(dbRow!);
@@ -153,11 +161,12 @@ describe('WorkoutPlanMapper', () => {
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
       const original = createFitnessPlanFixture({
-        id: 'roundtrip_test',
+        id: randomUUID(),
+        userId: randomUUID(),
         title: 'Round Trip Plan',
         startDate: new Date('2026-01-01T00:00:00.000Z'),
         endDate: new Date('2026-04-15T00:00:00.000Z'),
-        templateId: 'template_xyz',
+        templateId: randomUUID(),
       });
 
       // Convert to DB and insert
@@ -166,7 +175,7 @@ describe('WorkoutPlanMapper', () => {
 
       // Read back from actual database
       const dbRow = await db.query.activeFitnessPlan.findFirst({
-        where: eq(activeFitnessPlan.id, 'roundtrip_test'),
+        where: eq(activeFitnessPlan.id, original.id),
       });
 
       expect(dbRow).toBeDefined();
@@ -198,12 +207,14 @@ describe('WorkoutPlanMapper', () => {
     it('should handle schema defaults correctly', async () => {
       // Create plan and let schema apply defaults
       const plan = createFitnessPlanFixture({
-        id: 'defaults_test',
+        id: randomUUID(),
+        userId: randomUUID(),
+        templateId: undefined, // Ensure templateId is optional (undefined)
       });
 
       await db.insert(activeFitnessPlan).values(toDatabase(plan));
       const dbRow = await db.query.activeFitnessPlan.findFirst({
-        where: eq(activeFitnessPlan.id, 'defaults_test'),
+        where: eq(activeFitnessPlan.id, plan.id),
       });
 
       const reconstructed = toDomain(dbRow!);

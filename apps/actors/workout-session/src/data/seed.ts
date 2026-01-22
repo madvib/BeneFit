@@ -3,7 +3,7 @@ import {
   createWorkoutSessionFixture,
   createSessionParticipantFixture,
   createSessionFeedItemFixture
-} from '@bene/training-core';
+} from '@bene/training-core/fixtures';
 import { SEED_USERS } from '@bene/shared';
 import * as schema from './schema/index.js';
 import { toDatabase, toParticipantDatabase, toChatDatabase } from '../mappers/workout-session.mapper.js';

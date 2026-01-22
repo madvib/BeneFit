@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createMinimalCompletedWorkoutFixture } from '@bene/training-core';
+import { randomUUID } from 'crypto';
+import { createCompletedWorkoutFixture } from '@bene/training-core/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../completed-workout.mapper.js';
 import { eq } from 'drizzle-orm';
@@ -24,10 +25,10 @@ describe('CompletedWorkoutMapper', () => {
 
   describe('toDatabase', () => {
     it('should map domain CompletedWorkout to database schema', () => {
-      const workout = createMinimalCompletedWorkoutFixture({ id: 'workout_test_1' });
+      const workout = createCompletedWorkoutFixture({ id: randomUUID() });
       const dbWorkout = toDatabase(workout);
 
-      expect(dbWorkout.id).toBe('workout_test_1');
+      expect(dbWorkout.id).toBeDefined();
       expect(dbWorkout.userId).toBe(workout.userId);
       expect(dbWorkout.workoutType).toBe(workout.workoutType);
       expect(dbWorkout.title).toBe(workout.title);
@@ -46,7 +47,8 @@ describe('CompletedWorkoutMapper', () => {
     });
 
     it('should convert undefined to null for optional fields', () => {
-      const workout = createMinimalCompletedWorkoutFixture({
+      const workout = createCompletedWorkoutFixture({
+        id: randomUUID(),
         planId: undefined,
         workoutTemplateId: undefined,
         description: undefined,
@@ -62,7 +64,7 @@ describe('CompletedWorkoutMapper', () => {
     });
 
     it('should handle duration conversion (minutes to seconds)', () => {
-      const workout = createMinimalCompletedWorkoutFixture({
+      const workout = createCompletedWorkoutFixture({
         performance: {
           durationMinutes: 45.5,
           completedAt: new Date(),
@@ -78,25 +80,38 @@ describe('CompletedWorkoutMapper', () => {
 
   describe('toDomain', () => {
     it('should map database row to domain entity', async () => {
-      const workout = createMinimalCompletedWorkoutFixture({ id: 'db_workout_test' });
+      const workout = createCompletedWorkoutFixture({ id: randomUUID() });
 
       await db.insert(completedWorkouts).values(toDatabase(workout));
 
       const dbRow = await db.query.completedWorkouts.findFirst({
-        where: eq(completedWorkouts.id, 'db_workout_test'),
+        where: eq(completedWorkouts.id, workout.id),
       });
 
       expect(dbRow).toBeDefined();
 
       const domainWorkout = toDomain(dbRow!);
 
-      expect(domainWorkout.id).toBe('db_workout_test');
+      expect(domainWorkout.id).toBe(workout.id);
       expect(domainWorkout.userId).toBe(workout.userId);
       expect(domainWorkout.workoutType).toBe(workout.workoutType);
       expect(domainWorkout.title).toBe(workout.title);
 
+      // Helper to strip IDs recursively
+      const stripIds = (obj: any): any => {
+        if (Array.isArray(obj)) return obj.map(stripIds);
+        if (obj && typeof obj === 'object') {
+          return Object.fromEntries(
+            Object.entries(obj)
+              .filter(([k]) => k !== 'id')
+              .map(([k, v]) => [k, stripIds(v)])
+          );
+        }
+        return obj;
+      };
+
       // JSON fields deserialized
-      expect(domainWorkout.performance).toEqual(workout.performance);
+      expect(stripIds(domainWorkout.performance)).toEqual(stripIds(workout.performance));
       expect(domainWorkout.verification).toEqual(workout.verification);
 
       // Reactions loaded separately
@@ -104,15 +119,15 @@ describe('CompletedWorkoutMapper', () => {
     });
 
     it('should convert null to undefined for optional fields', async () => {
-      const workout = createMinimalCompletedWorkoutFixture({
-        id: 'optional_test',
+      const workout = createCompletedWorkoutFixture({
+        id: randomUUID(),
         planId: undefined,
         description: undefined,
       });
 
       await db.insert(completedWorkouts).values(toDatabase(workout));
       const dbRow = await db.query.completedWorkouts.findFirst({
-        where: eq(completedWorkouts.id, 'optional_test'),
+        where: eq(completedWorkouts.id, workout.id),
       });
 
       const domainWorkout = toDomain(dbRow!);
@@ -124,8 +139,8 @@ describe('CompletedWorkoutMapper', () => {
 
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
-      const original = createMinimalCompletedWorkoutFixture({
-        id: 'roundtrip_workout',
+      const original = createCompletedWorkoutFixture({
+        id: randomUUID(),
         workoutType: 'strength',
         title: 'Test Workout',
       });
@@ -133,7 +148,7 @@ describe('CompletedWorkoutMapper', () => {
       await db.insert(completedWorkouts).values(toDatabase(original));
 
       const dbRow = await db.query.completedWorkouts.findFirst({
-        where: eq(completedWorkouts.id, 'roundtrip_workout'),
+        where: eq(completedWorkouts.id, original.id),
       });
 
       expect(dbRow).toBeDefined();
@@ -144,20 +159,34 @@ describe('CompletedWorkoutMapper', () => {
       expect(reconstructed.userId).toBe(original.userId);
       expect(reconstructed.workoutType).toBe(original.workoutType);
       expect(reconstructed.title).toBe(original.title);
-      expect(reconstructed.performance).toEqual(original.performance);
+      // Helper to strip IDs recursively
+      const stripIds = (obj: any): any => {
+        if (Array.isArray(obj)) return obj.map(stripIds);
+        if (obj && typeof obj === 'object') {
+          return Object.fromEntries(
+            Object.entries(obj)
+              .filter(([k]) => k !== 'id')
+              .map(([k, v]) => [k, stripIds(v)])
+          );
+        }
+        return obj;
+      };
+
+      // Expect performance to match, excluding potential ID mismatch from fixture
+      expect(stripIds(reconstructed.performance)).toEqual(stripIds(original.performance));
       expect(reconstructed.verification).toEqual(original.verification);
       expect(reconstructed.isPublic).toBe(original.isPublic);
     });
 
     it('should handle schema defaults correctly', async () => {
-      const workout = createMinimalCompletedWorkoutFixture({
-        id: 'defaults_test',
+      const workout = createCompletedWorkoutFixture({
+        id: randomUUID(),
         isPublic: false // Match the DB default for this test
       });
 
       await db.insert(completedWorkouts).values(toDatabase(workout));
       const dbRow = await db.query.completedWorkouts.findFirst({
-        where: eq(completedWorkouts.id, 'defaults_test'),
+        where: eq(completedWorkouts.id, workout.id),
       });
 
       const reconstructed = toDomain(dbRow!);

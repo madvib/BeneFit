@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createCoachConversationFixture } from '@bene/coach-domain';
+import { createCoachConversationFixture } from '@bene/coach-domain/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../coach-conversation.mapper.js';
 import { eq } from 'drizzle-orm';

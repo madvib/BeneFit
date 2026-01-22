@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createConnectedServiceFixture } from '@bene/integrations-domain';
+import { createConnectedServiceFixture } from '@bene/integrations-domain/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../connected-service.mapper.js';
 import { eq } from 'drizzle-orm';

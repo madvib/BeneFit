@@ -1,13 +1,13 @@
 import { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
+import { SEED_USERS, SEED_PERSONAS } from '@bene/shared';
 import {
-  createMinimalCompletedWorkoutFixture as createCompletedWorkoutFixture,
+  createCompletedWorkoutFixture,
   createFitnessPlanFixture,
   createUserProfileFixture,
-  PlanType,
-} from '@bene/training-core';
-import { createCoachConversationFixture } from '@bene/coach-domain';
-import { createConnectedServiceFixture } from '@bene/integrations-domain';
-import { SEED_USERS, SEED_PERSONAS } from '@bene/shared';
+} from '@bene/training-core/fixtures';
+import { createCoachConversationFixture } from '@bene/coach-domain/fixtures';
+import { createConnectedServiceFixture } from '@bene/integrations-domain/fixtures';
+import { PlanType } from '@bene/training-core';
 import * as schema from './schema/index.js';
 import {
   toProfileDatabase as profileToDb,
@@ -72,7 +72,6 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       // ==========================================
       // Only seed for users who might have conversations in personas (or just all for now)
       const conversation = createCoachConversationFixture({
-        id: `conv_${ user.id.split('_').pop() }`,
         userId: user.id,
         totalMessages: 5,
       });
@@ -85,7 +84,6 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       // Seed a service for users who have it
       if (user.id === SEED_USERS[0].id || user.id === SEED_USERS[1].id) {
         const service = createConnectedServiceFixture({
-          id: `service_${ user.id.split('_').pop() }`,
           userId: user.id,
           serviceType: user.id === SEED_USERS[0].id ? 'strava' : 'garmin',
         });
@@ -99,7 +97,6 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       // Seed workouts if they have them in persona or just seed 1 for everyone
       if (user.id !== SEED_USERS[2].id) { // USER_003 is the "empty" user in repository tests
         const workout = createCompletedWorkoutFixture({
-          id: `workout_${ user.id.split('_').pop() }`,
           userId: user.id,
           workoutType: 'strength',
           description: 'Fixture generated workout',
@@ -110,7 +107,6 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
 
       if (persona.plan) {
         const plan = createFitnessPlanFixture({
-          id: `plan_${ user.id.split('_').pop() }`,
           userId: user.id,
           title: persona.plan.title as string,
           status: persona.plan.status,

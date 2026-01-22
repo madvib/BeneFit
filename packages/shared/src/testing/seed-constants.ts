@@ -2,11 +2,11 @@
  * Centralized User IDs for seeding
  */
 export const SEED_USER_IDS = {
-  USER_001: 'user_seed_001',
-  USER_002: 'user_seed_002',
-  USER_003: 'user_seed_003',
-  USER_004: 'user_seed_004',
-  USER_005: 'user_seed_005',
+  USER_001: '10000000-0000-4000-8000-000000000001',
+  USER_002: '10000000-0000-4000-8000-000000000002',
+  USER_003: '10000000-0000-4000-8000-000000000003',
+  USER_004: '10000000-0000-4000-8000-000000000004',
+  USER_005: '10000000-0000-4000-8000-000000000005',
 } as const;
 
 /**
@@ -106,12 +106,12 @@ export const SEED_PERSONAS = {
   },
   [SEED_USER_IDS.USER_004]: {
     role: 'Yogi',
-    plan: { type: 'recovery_plan', status: 'paused', title: 'Yoga for Recovery' },
+    plan: { type: 'general_fitness', status: 'paused', title: 'Yoga for Recovery' },
     sync: null,
   },
   [SEED_USER_IDS.USER_005]: {
     role: 'Challenger',
-    plan: { type: 'hiit_program', status: 'completed', title: '30-Day Shred Challenge' },
+    plan: { type: 'general_fitness', status: 'completed', title: '30-Day Shred Challenge' },
     sync: null,
   },
 } as const;

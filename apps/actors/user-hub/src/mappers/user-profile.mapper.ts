@@ -1,5 +1,6 @@
 import {
   UserProfile,
+  UserProfileSchema,
   Achievement,
 } from '@bene/training-core';
 import type {
@@ -63,7 +64,7 @@ export function toStatsDatabase(profile: UserProfile): NewUserStats {
 
 // Database to Domain
 export function toDomain(row: ProfileWithRelations): UserProfile {
-  return {
+  const data = {
     userId: row.userId,
 
     displayName: row.displayName,
@@ -100,6 +101,8 @@ export function toDomain(row: ProfileWithRelations): UserProfile {
     updatedAt: row.updatedAt,
     lastActiveAt: row.lastActiveAt,
   };
+
+  return UserProfileSchema.parse(data);
 }
 
 // Achievement mappers

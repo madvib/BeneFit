@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createWorkoutSessionFixture, createSessionFeedItemFixture } from '@bene/training-core';
+import { createWorkoutSessionFixture, createSessionFeedItemFixture } from '@bene/training-core/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import * as mapper from '../workout-session.mapper.js';
 import { sessionMetadata as sessionTable } from '../../data/schema/index.js';

@@ -1,8 +1,8 @@
-import { FitnessPlan } from '@bene/training-core';
+import { FitnessPlan, FitnessPlanSchema } from '@bene/training-core';
 import type { ActiveFitnessPlan, NewActiveFitnessPlan } from '../data/schema';
 
 export function toDomain(row: ActiveFitnessPlan): FitnessPlan {
-  return {
+  const data = {
     id: row.id,
     userId: row.userId,
     title: row.title,
@@ -23,6 +23,8 @@ export function toDomain(row: ActiveFitnessPlan): FitnessPlan {
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
+
+  return FitnessPlanSchema.parse(data);
 }
 
 export function toDatabase(plan: FitnessPlan): NewActiveFitnessPlan {

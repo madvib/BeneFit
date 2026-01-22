@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createUserProfileFixture } from '@bene/training-core';
+import { randomUUID } from 'crypto';
+import { createUserProfileFixture } from '@bene/training-core/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import {
   toProfileDatabase,
@@ -30,10 +31,10 @@ describe('UserProfileMapper', () => {
 
   describe('toProfileDatabase', () => {
     it('should map domain UserProfile to profile schema', () => {
-      const userProfile = createUserProfileFixture({ userId: 'user_test_1' });
+      const userProfile = createUserProfileFixture({ userId: randomUUID() });
       const dbProfile = toProfileDatabase(userProfile);
 
-      expect(dbProfile.userId).toBe('user_test_1');
+      expect(dbProfile.userId).toBe(userProfile.userId);
       expect(dbProfile.displayName).toBe(userProfile.displayName);
       expect(dbProfile.avatarUrl).toBe(userProfile.avatar ?? null);
       expect(dbProfile.bio).toBe(userProfile.bio ?? null);
@@ -45,8 +46,8 @@ describe('UserProfileMapper', () => {
       expect(dbProfile.fitnessGoalsTargetDate).toEqual(userProfile.fitnessGoals.targetDate);
 
       // JSON fields - dates removed
-      const { lastAssessmentDate, ...experienceWithoutDate } = userProfile.experienceProfile;
-      const { targetDate: fitnessTargetDate, ...fitnessGoalsWithoutDate } = userProfile.fitnessGoals;
+      const { lastAssessmentDate: _lastAssessmentDate, ...experienceWithoutDate } = userProfile.experienceProfile;
+      const { targetDate: _fitnessTargetDate, ...fitnessGoalsWithoutDate } = userProfile.fitnessGoals;
 
       expect(dbProfile.experienceProfileJson).toEqual(experienceWithoutDate);
       expect(dbProfile.fitnessGoalsJson).toEqual(fitnessGoalsWithoutDate);
@@ -57,10 +58,10 @@ describe('UserProfileMapper', () => {
 
   describe('toStatsDatabase', () => {
     it('should map domain UserStats to stats schema', () => {
-      const userProfile = createUserProfileFixture({ userId: 'user_stats_test' });
+      const userProfile = createUserProfileFixture({ userId: randomUUID() });
       const dbStats = toStatsDatabase(userProfile);
 
-      expect(dbStats.userId).toBe('user_stats_test');
+      expect(dbStats.userId).toBe(userProfile.userId);
       expect(dbStats.currentStreakDays).toBe(userProfile.stats.currentStreak);
       expect(dbStats.longestStreakDays).toBe(userProfile.stats.longestStreak);
       expect(dbStats.totalWorkoutsCompleted).toBe(userProfile.stats.totalWorkouts);
@@ -79,7 +80,7 @@ describe('UserProfileMapper', () => {
         throw new Error('Fixture should have at least one achievement');
       }
 
-      const userId = 'user_ach_test';
+      const userId = randomUUID();
       const dbAch = achievementToDatabase(userId, achievement);
 
       expect(dbAch.userId).toBe(userId);
@@ -99,7 +100,7 @@ describe('UserProfileMapper', () => {
 
   describe('toDomain', () => {
     it('should map database row with relations to domain entity', async () => {
-      const userProfile = createUserProfileFixture({ userId: 'db_profile_test' });
+      const userProfile = createUserProfileFixture({ userId: randomUUID() });
 
       // Insert profile and stats
       await db.insert(profile).values(toProfileDatabase(userProfile));
@@ -108,14 +109,14 @@ describe('UserProfileMapper', () => {
       // Insert achievements
       if (userProfile.stats.achievements.length > 0) {
         const achData = userProfile.stats.achievements.map((a) =>
-          achievementToDatabase('db_profile_test', a)
+          achievementToDatabase(userProfile.userId, a)
         );
         await db.insert(achievements).values(achData);
       }
 
       // Read back with relations
       const dbRow = await db.query.profile.findFirst({
-        where: eq(profile.userId, 'db_profile_test'),
+        where: eq(profile.userId, userProfile.userId),
         with: {
           stats: true,
           achievements: true,
@@ -144,7 +145,7 @@ describe('UserProfileMapper', () => {
         },
       };
 
-      expect(profileWithAchievements.userId).toBe('db_profile_test');
+      expect(profileWithAchievements.userId).toBe(userProfile.userId);
       expect(profileWithAchievements.displayName).toBe(userProfile.displayName);
       expect(profileWithAchievements.stats.totalWorkouts).toBe(userProfile.stats.totalWorkouts);
       expect(profileWithAchievements.stats.achievements.length).toBeGreaterThan(0);
@@ -152,7 +153,7 @@ describe('UserProfileMapper', () => {
 
     it('should convert null to undefined for optional fields', async () => {
       const userProfile = createUserProfileFixture({
-        userId: 'optional_profile',
+        userId: randomUUID(),
         avatar: undefined,
         bio: undefined,
         location: undefined,
@@ -162,7 +163,7 @@ describe('UserProfileMapper', () => {
       await db.insert(userStats).values(toStatsDatabase(userProfile));
 
       const dbRow = await db.query.profile.findFirst({
-        where: eq(profile.userId, 'optional_profile'),
+        where: eq(profile.userId, userProfile.userId),
         with: { stats: true },
       });
 
@@ -180,7 +181,7 @@ describe('UserProfileMapper', () => {
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
       const original = createUserProfileFixture({
-        userId: 'roundtrip_profile',
+        userId: randomUUID(),
         displayName: 'Test User',
       });
 
@@ -190,14 +191,14 @@ describe('UserProfileMapper', () => {
 
       if (original.stats.achievements.length > 0) {
         const achData = original.stats.achievements.map((a) =>
-          achievementToDatabase('roundtrip_profile', a)
+          achievementToDatabase(original.userId, a)
         );
         await db.insert(achievements).values(achData);
       }
 
       // Read back
       const dbRow = await db.query.profile.findFirst({
-        where: eq(profile.userId, 'roundtrip_profile'),
+        where: eq(profile.userId, original.userId),
         with: {
           stats: true,
           achievements: true,
