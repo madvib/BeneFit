@@ -8,10 +8,13 @@ export {
 } from './lib/auth/auth.js';
 export type { AuthSession, AuthUser, AuthError } from './lib/auth/auth.js';
 export * as authSchemas from './schemas/auth';
-export * as coach from './hooks/use-coach';
-export * as fitnessPlan from './hooks/use-fitness-plan';
-export * as integrations from './hooks/use-integrations';
-export * as profile from './hooks/use-profile';
-export * as workouts from './hooks/use-workouts';
-export * as wss from './hooks/use-websocket';
+
+// Export all hooks
+export * from './hooks/use-coach/use-coach';
+export * from './hooks/use-profile/use-profile';
+export * from './hooks/use-fitness-plan/use-fitness-plan';
+export * from './hooks/use-workouts/use-workouts';
+export * from './hooks/use-integrations/use-integrations';
+export * from './hooks/use-session';
+export * from './hooks/use-websocket';
 export { useSession } from './hooks/use-session';

@@ -83,6 +83,7 @@ export type {
 export {
   CreateUserProfileRequestSchema,
 } from './use-cases/create-user-profile/create-user-profile.js';
+export { buildCreateUserProfileResponse } from './use-cases/create-user-profile/test/create-user-profile.fixture.js';
 
 export { UpdateFitnessGoalsUseCase } from './use-cases/update-fitness-goals/update-fitness-goals.js';
 export type {
@@ -92,6 +93,7 @@ export type {
 export {
   UpdateFitnessGoalsRequestSchema,
 } from './use-cases/update-fitness-goals/update-fitness-goals.js';
+export { buildUpdateFitnessGoalsResponse } from './use-cases/update-fitness-goals/test/update-fitness-goals.fixture.js';
 
 export { UpdateTrainingConstraintsUseCase } from './use-cases/update-training-constraints/update-training-constraints.js';
 export type {
@@ -101,6 +103,7 @@ export type {
 export {
   UpdateTrainingConstraintsRequestSchema,
 } from './use-cases/update-training-constraints/update-training-constraints.js';
+export { buildUpdateTrainingConstraintsResponse } from './use-cases/update-training-constraints/test/update-training-constraints.fixture.js';
 
 export { UpdatePreferencesUseCase } from './use-cases/update-preferences/update-preferences.js';
 export type {
@@ -110,6 +113,7 @@ export type {
 export {
   UpdatePreferencesRequestSchema,
 } from './use-cases/update-preferences/update-preferences.js';
+export { buildUpdatePreferencesResponse } from './use-cases/update-preferences/test/update-preferences.fixture.js';
 
 export { GetUserStatsUseCase } from './use-cases/get-user-stats/get-user-stats.js';
 export type {

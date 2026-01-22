@@ -3,7 +3,14 @@ import { withThemeByClassName } from '@storybook/addon-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../src/lib/components/theme/theme-provider';
 import { UIProvider } from '../src/lib/providers/ui-context';
+import { initialize, mswLoader } from 'msw-storybook-addon';
+import { handlers } from '@bene/react-api-client/src/test';
 import '../src/app/globals.css';
+
+// Initialize MSW with default handlers for all stories
+initialize({
+  onUnhandledRequest: 'bypass', // Don't warn for unhandled requests
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,7 +39,12 @@ const preview: Preview = {
         { name: 'light', value: '#ffffff' },
       ],
     },
+    // Default MSW handlers for all stories
+    msw: {
+      handlers,
+    },
   },
+  loaders: [mswLoader], // Enable MSW loader
   decorators: [
     withThemeByClassName({
       themes: {

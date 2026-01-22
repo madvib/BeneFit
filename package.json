@@ -23,8 +23,6 @@
     "build:shared": "nx run-many -t build --projects=tag:scope:shared",
     "wrangler:types:env": "nx run-many -t types:env --projects=tag:runtime:worker,tag:runtime:durable-object ",
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
-    "test:fixtures": "nx test @bene/web src/lib/testing/fixtures/__tests__",
-    "test:schema": "pnpm test:mappers && pnpm test:fixtures",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
     "nx:affected": "nx affected -t lint test build",
     "inspect-eslint": "eslint --inspect-config"
@@ -85,6 +83,8 @@
     "jiti": "2.4.2",
     "jsdom": "~27.3.0",
     "jsonc-eslint-parser": "^2.1.0",
+    "msw": "2.12.7",
+    "msw-storybook-addon": "^2.0.6",
     "nx": "22.3.3",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",

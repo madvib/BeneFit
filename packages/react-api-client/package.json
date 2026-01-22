@@ -13,8 +13,8 @@
       "default": "./dist/index.js"
     },
     "./fixtures": {
-      "types": "./src/generated/fixtures/index.ts",
-      "default": "./src/generated/fixtures/index.ts"
+      "development": "./src/fixtures/index.ts",
+      "types": "./src/fixtures/index.d.ts"
     }
   },
   "peerDependencies": {
@@ -27,10 +27,12 @@
     "react-dom": "catalog:",
     "zod": "catalog:"
   },
+  "devDependencies": {
+    "@bene/training-application": "workspace:*",
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*"
+  },
   "nx": {
-    "implicitDependencies": [
-      "@bene/gateway"
-    ],
     "targets": {
       "build": {
         "dependsOn": [

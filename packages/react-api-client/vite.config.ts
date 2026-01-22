@@ -75,6 +75,7 @@ export default defineConfig(() => ({
     watch: false,
     globals: true,
     environment: 'happy-dom',
+    setupFiles: ['./src/test/setup.ts'],
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     includeSource: ['src/**/*.{ts,tsx}'],
     reporters: ['default'],
