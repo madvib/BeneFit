@@ -1,5 +1,4 @@
-import { faker } from '@faker-js/faker';
-import { Result } from '@bene/shared';
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import {
   createFitnessPlanFixture,
 
@@ -10,10 +9,6 @@ import {
 } from '@bene/training-core'
 import type { ActivatePlanResponse } from '../activate-plan.js';
 
-export interface ActivatePlanFixtureOptions {
-  overrides?: Partial<ActivatePlanResponse>;
-  temperature?: number; // 0 to 1, probability of returning a failure result
-}
 
 /**
  * Build ActivatePlanResponse fixture using domain fixture + commands
@@ -21,14 +16,12 @@ export interface ActivatePlanFixtureOptions {
  * Pattern: Domain fixture → Domain command → View mapper → Use case response
  */
 export function buildActivatePlanResponse(
-  options: ActivatePlanFixtureOptions = {}
+  options: BaseFixtureOptions<ActivatePlanResponse> = {}
 ): Result<ActivatePlanResponse> {
-  const { overrides, temperature = 0 } = options;
+  const { overrides } = options;
 
-  // Simulate a failure based on temperature
-  if (faker.datatype.boolean({ probability: temperature })) {
-    return Result.fail(new Error('Plan is already active or cannot be activated'));
-  }
+  const errorResult = handleFixtureOptions(options, 'Plan is already active or cannot be activated');
+  if (errorResult) return errorResult;
 
   // 1. Create domain fixture
   const plan = createFitnessPlanFixture({ status: 'draft' });

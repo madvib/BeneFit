@@ -19,33 +19,33 @@ function applySeed(options?: FixtureOptions) {
 }
 
 export function buildConnectServiceResponse(
-  overrides?: Parameters<typeof _buildConnectServiceResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildConnectServiceResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildConnectServiceResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildConnectServiceResponse(options);
 }
 
 export function buildDisconnectServiceResponse(
-  overrides?: Parameters<typeof _buildDisconnectServiceResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildDisconnectServiceResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildDisconnectServiceResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildDisconnectServiceResponse(options);
 }
 
 export function buildGetConnectedServicesResponse(
-  overrides?: Parameters<typeof _buildGetConnectedServicesResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetConnectedServicesResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetConnectedServicesResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetConnectedServicesResponse(options);
 }
 
 export function buildSyncServiceDataResponse(
-  overrides?: Parameters<typeof _buildSyncServiceDataResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildSyncServiceDataResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildSyncServiceDataResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildSyncServiceDataResponse(options);
 }

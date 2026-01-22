@@ -1,12 +1,8 @@
-import { faker } from '@faker-js/faker';
-import { Result } from '@bene/shared';
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import { createCheckInFixture } from '../../../../fixtures.js';
 import type { TriggerProactiveCheckInResponse } from '../trigger-proactive-check-in.js';
 
-export interface TriggerProactiveCheckInFixtureOptions {
-  success?: boolean;      // If false, return failure
-  temperature?: number;   // 0-1 probability of failure (for fuzzing)
-}
+export type TriggerProactiveCheckInFixtureOptions = BaseFixtureOptions<TriggerProactiveCheckInResponse>;
 
 /**
  * Build TriggerProactiveCheckInResponse fixture with Result<T> wrapper
@@ -15,13 +11,12 @@ export interface TriggerProactiveCheckInFixtureOptions {
  * Supports fuzzing mode for failure testing
  */
 export function buildTriggerProactiveCheckInResponse(
-  overrides?: Partial<TriggerProactiveCheckInResponse>,
-  options: TriggerProactiveCheckInFixtureOptions = { success: true, temperature: 0 }
+  options: TriggerProactiveCheckInFixtureOptions = {}
 ): Result<TriggerProactiveCheckInResponse> {
-  // Fuzzing mode - random failures based on temperature
-  if (!options.success || faker.datatype.boolean({ probability: options.temperature })) {
-    return Result.fail(new Error('Failed to trigger check-in: User already has a pending check-in'));
-  }
+  const { overrides } = options;
+
+  const errorResult = handleFixtureOptions(options, 'Failed to trigger check-in: User already has a pending check-in');
+  if (errorResult) return errorResult;
 
   // Compose with domain fixture - ensure triggeredBy is set
   const checkIn = createCheckInFixture({ status: 'pending' });

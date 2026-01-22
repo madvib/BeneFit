@@ -1,3 +1,4 @@
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import { faker } from '@faker-js/faker';
 import { createCoachActionFixture } from '../../../../fixtures.js';
 import {
@@ -5,12 +6,19 @@ import {
 } from '@core/index.js';
 import type { SendMessageToCoachResponse } from '../send-message-to-coach.js';
 
+export type SendMessageToCoachFixtureOptions = BaseFixtureOptions<SendMessageToCoachResponse>;
+
 /**
  * Build SendMessageToCoachResponse fixture
  */
 export function buildSendMessageToCoachResponse(
-  overrides?: Partial<SendMessageToCoachResponse>
-): SendMessageToCoachResponse {
+  options: SendMessageToCoachFixtureOptions = {}
+): Result<SendMessageToCoachResponse> {
+  const { overrides } = options;
+
+  const errorResult = handleFixtureOptions(options, 'Failed to send message to coach');
+  if (errorResult) return errorResult;
+
   const action = createCoachActionFixture({
     type: 'adjusted_plan',
     details: 'Added recovery session on Wednesday'
@@ -27,8 +35,8 @@ export function buildSendMessageToCoachResponse(
     ]
   };
 
-  return {
+  return Result.ok({
     ...response,
     ...overrides,
-  };
+  });
 }

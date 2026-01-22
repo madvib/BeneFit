@@ -23,8 +23,10 @@ export const coachHandlers = [
     await delay(300);
     const body = await request.json() as { message: string };
     const data = buildSendMessageToCoachResponse({
-      coachResponse: `I understand you said: "${ body.message }". Let me help with that.`,
-      conversationId: crypto.randomUUID(),
+      overrides: {
+        coachResponse: `I understand you said: "${ body.message }". Let me help with that.`,
+        conversationId: crypto.randomUUID(),
+      }
     });
     return toHttpResponse(data);
   }),
@@ -71,16 +73,18 @@ export const coachScenarios = {
   withPendingCheckIn: [
     http.get('http://*/api/coach/history', () => {
       const data = buildGetCoachHistoryResponse({
-        pendingCheckIns: [
-          {
-            id: 'check-in-pending',
-            question: 'How are you feeling about your training this week?',
-            triggeredBy: 'low_adherence',
-            status: 'pending',
-            type: 'proactive',
-            createdAt: new Date().toISOString(),
-          },
-        ],
+        overrides: {
+          pendingCheckIns: [
+            {
+              id: 'check-in-pending',
+              question: 'How are you feeling about your training this week?',
+              triggeredBy: 'low_adherence',
+              status: 'pending',
+              type: 'proactive',
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        },
       });
       return HttpResponse.json(data);
     }),

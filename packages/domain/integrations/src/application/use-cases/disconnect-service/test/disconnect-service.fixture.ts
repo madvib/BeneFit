@@ -1,3 +1,4 @@
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import { createConnectedServiceFixture } from '../../../../fixtures.js';
 import {
   toConnectedServiceView,
@@ -5,14 +6,21 @@ import {
 } from '@core/index.js';
 import type { DisconnectServiceResponse } from '../disconnect-service.js';
 
+export type DisconnectServiceFixtureOptions = BaseFixtureOptions<DisconnectServiceResponse>;
+
 /**
  * Build DisconnectServiceResponse fixture using domain fixture + view mapper
  * 
  * Pattern: Domain fixture → Disconnect command → View mapper → Use case response
  */
 export function buildDisconnectServiceResponse(
-  overrides?: Partial<DisconnectServiceResponse>
-): DisconnectServiceResponse {
+  options: DisconnectServiceFixtureOptions = {}
+): Result<DisconnectServiceResponse> {
+  const { overrides } = options;
+
+  const errorResult = handleFixtureOptions(options, 'Failed to disconnect service');
+  if (errorResult) return errorResult;
+
   // 1. Create domain fixture
   const service = createConnectedServiceFixture();
 
@@ -23,8 +31,8 @@ export function buildDisconnectServiceResponse(
   const view = toConnectedServiceView(disconnectedService);
 
   // 4. Apply any overrides and return
-  return {
+  return Result.ok({
     ...view,
     ...overrides,
-  };
+  });
 }

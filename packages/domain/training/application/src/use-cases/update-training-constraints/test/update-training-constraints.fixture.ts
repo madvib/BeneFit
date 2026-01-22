@@ -1,3 +1,4 @@
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import {
   createUserProfileFixture,
 } from '@bene/training-core/fixtures';
@@ -8,15 +9,20 @@ import type { UpdateTrainingConstraintsResponse } from '../update-training-const
  * Build UpdateTrainingConstraintsResponse fixture using domain fixture + view mapper
  */
 export function buildUpdateTrainingConstraintsResponse(
-  overrides?: Partial<UpdateTrainingConstraintsResponse>
-): UpdateTrainingConstraintsResponse {
+  options: BaseFixtureOptions<UpdateTrainingConstraintsResponse> = {}
+): Result<UpdateTrainingConstraintsResponse> {
+  const { overrides } = options;
+
+  const errorResult = handleFixtureOptions(options, 'Failed to update training constraints');
+  if (errorResult) return errorResult;
+
   const profile = createUserProfileFixture();
   const constraintsView = toTrainingConstraintsView(profile.trainingConstraints);
 
-  return {
+  return Result.ok({
     userId: profile.userId,
     constraints: constraintsView,
     shouldAdjustPlan: false,
     ...overrides,
-  };
+  });
 }

@@ -34,153 +34,153 @@ function applySeed(options?: FixtureOptions) {
 }
 
 export function buildGetProfileResponse(
-  overrides?: Parameters<typeof _buildGetProfileResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetProfileResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetProfileResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetProfileResponse(options);
 }
 
 export function buildGetCurrentPlanResponse(
-  overrides?: Parameters<typeof _buildGetCurrentPlanResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetCurrentPlanResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetCurrentPlanResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetCurrentPlanResponse(options);
 }
 
 export function buildGeneratePlanFromGoalsResponse(
-  overrides?: Parameters<typeof _buildGeneratePlanFromGoalsResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGeneratePlanFromGoalsResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGeneratePlanFromGoalsResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGeneratePlanFromGoalsResponse(options);
 }
 
 export function buildActivatePlanResponse(
-  overrides?: Parameters<typeof _buildActivatePlanResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildActivatePlanResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildActivatePlanResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildActivatePlanResponse(options);
 }
 
 export function buildPausePlanResponse(
-  overrides?: Parameters<typeof _buildPausePlanResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildPausePlanResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildPausePlanResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildPausePlanResponse(options);
 }
 
 export function buildGetUserStatsResponse(
-  overrides?: Parameters<typeof _buildGetUserStatsResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetUserStatsResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetUserStatsResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetUserStatsResponse(options);
 }
 
 export function buildAdjustPlanBasedOnFeedbackResponse(
-  overrides?: Parameters<typeof _buildAdjustPlanBasedOnFeedbackResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildAdjustPlanBasedOnFeedbackResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildAdjustPlanBasedOnFeedbackResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildAdjustPlanBasedOnFeedbackResponse(options);
 }
 
 export function buildGetTodaysWorkoutResponse(
-  overrides?: Parameters<typeof _buildGetTodaysWorkoutResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetTodaysWorkoutResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetTodaysWorkoutResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetTodaysWorkoutResponse(options);
 }
 
 export function buildGetUpcomingWorkoutsResponse(
-  overrides?: Parameters<typeof _buildGetUpcomingWorkoutsResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetUpcomingWorkoutsResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetUpcomingWorkoutsResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetUpcomingWorkoutsResponse(options);
 }
 
 export function buildGetWorkoutHistoryResponse(
-  overrides?: Parameters<typeof _buildGetWorkoutHistoryResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildGetWorkoutHistoryResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildGetWorkoutHistoryResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildGetWorkoutHistoryResponse(options);
 }
 
 export function buildSkipWorkoutResponse(
-  overrides?: Parameters<typeof _buildSkipWorkoutResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildSkipWorkoutResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildSkipWorkoutResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildSkipWorkoutResponse(options);
 }
 
 export function buildStartWorkoutResponse(
-  overrides?: Parameters<typeof _buildStartWorkoutResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildStartWorkoutResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildStartWorkoutResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildStartWorkoutResponse(options);
 }
 
 export function buildCompleteWorkoutResponse(
-  overrides?: Parameters<typeof _buildCompleteWorkoutResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildCompleteWorkoutResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildCompleteWorkoutResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildCompleteWorkoutResponse(options);
 }
 
 export function buildJoinMultiplayerWorkoutResponse(
-  overrides?: Parameters<typeof _buildJoinMultiplayerWorkoutResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildJoinMultiplayerWorkoutResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildJoinMultiplayerWorkoutResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildJoinMultiplayerWorkoutResponse(options);
 }
 
 export function buildCreateUserProfileResponse(
-  overrides?: Parameters<typeof _buildCreateUserProfileResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildCreateUserProfileResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildCreateUserProfileResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildCreateUserProfileResponse(options);
 }
 
 export function buildUpdateFitnessGoalsResponse(
-  overrides?: Parameters<typeof _buildUpdateFitnessGoalsResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildUpdateFitnessGoalsResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildUpdateFitnessGoalsResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildUpdateFitnessGoalsResponse(options);
 }
 
 export function buildUpdatePreferencesResponse(
-  overrides?: Parameters<typeof _buildUpdatePreferencesResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildUpdatePreferencesResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildUpdatePreferencesResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildUpdatePreferencesResponse(options);
 }
 
 export function buildUpdateTrainingConstraintsResponse(
-  overrides?: Parameters<typeof _buildUpdateTrainingConstraintsResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildUpdateTrainingConstraintsResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildUpdateTrainingConstraintsResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildUpdateTrainingConstraintsResponse(options);
 }
 
 export function buildAddWorkoutReactionResponse(
-  overrides?: Parameters<typeof _buildAddWorkoutReactionResponse>[0],
-  options?: FixtureOptions
+  options: Parameters<typeof _buildAddWorkoutReactionResponse>[0] = {},
+  fixtureOptions?: FixtureOptions
 ) {
-  applySeed(options);
-  return _buildAddWorkoutReactionResponse(overrides);
+  applySeed(fixtureOptions);
+  return _buildAddWorkoutReactionResponse(options);
 }

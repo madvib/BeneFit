@@ -1,6 +1,6 @@
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import {
   createFitnessPlanFixture
-
 } from '@bene/training-core/fixtures';
 import { toFitnessPlanView } from '@bene/training-core';
 import type { GetCurrentPlanResponse } from '../get-current-plan.js';
@@ -11,8 +11,13 @@ import type { GetCurrentPlanResponse } from '../get-current-plan.js';
  * Pattern: Domain fixture → View mapper → Use case response
  */
 export function buildGetCurrentPlanResponse(
-  overrides?: Partial<GetCurrentPlanResponse>
-): GetCurrentPlanResponse {
+  options: BaseFixtureOptions<GetCurrentPlanResponse> = {}
+): Result<GetCurrentPlanResponse> {
+  const { overrides } = options;
+
+  const errorResult = handleFixtureOptions(options, 'Failed to fetch current plan');
+  if (errorResult) return errorResult;
+
   // 1. Create domain fixture
   const plan = createFitnessPlanFixture();
 
@@ -20,8 +25,8 @@ export function buildGetCurrentPlanResponse(
   const planView = toFitnessPlanView(plan);
 
   // 3. Apply any overrides and return
-  return {
+  return Result.ok({
     plan: planView,
     ...overrides,
-  };
+  });
 }

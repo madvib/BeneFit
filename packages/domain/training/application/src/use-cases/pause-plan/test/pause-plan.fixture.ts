@@ -1,25 +1,19 @@
-import { faker } from '@faker-js/faker';
-import { Result } from '@bene/shared';
+import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
 import {
   createFitnessPlanFixture
 } from '@bene/training-core/fixtures';
 import { FitnessPlanCommands } from '@bene/training-core';
 import type { PausePlanResponse } from '../pause-plan.js';
 
-export interface PausePlanFixtureOptions {
-  overrides?: Partial<PausePlanResponse>;
-  temperature?: number; // 0 to 1, probability of returning a failure result
-}
+export type PausePlanFixtureOptions = BaseFixtureOptions<PausePlanResponse>;
 
 export function buildPausePlanResponse(
   options: PausePlanFixtureOptions = {}
 ): Result<PausePlanResponse> {
-  const { overrides, temperature = 0 } = options;
+  const { overrides } = options;
 
-  // Internal RNG to decide outcome based on temperature
-  if (faker.datatype.boolean({ probability: temperature })) {
-    return Result.fail(new Error('Plan is already paused or in an invalid state'));
-  }
+  const errorResult = handleFixtureOptions(options, 'Plan is already paused or in an invalid state');
+  if (errorResult) return errorResult;
 
   const plan = createFitnessPlanFixture({ status: 'active' });
   const pausedResult = FitnessPlanCommands.pausePlan(plan, 'Testing');
