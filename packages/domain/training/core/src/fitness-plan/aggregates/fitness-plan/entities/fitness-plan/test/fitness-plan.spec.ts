@@ -1,8 +1,9 @@
+import z from 'zod';
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
 
-import { createWeeklyScheduleFixture } from '../../weekly-schedule/test/weekly-schedule.fixtures.js';
-import { createFitnessPlanFixture } from './fitness-plan.fixtures.js';
+import { createWeeklyScheduleFixture, createFitnessPlanFixture } from '@/fixtures.js';
 import {
   CreateDraftFitnessPlanSchema,
   ActivateFitnessPlanSchema,
@@ -15,10 +16,11 @@ describe('FitnessPlan Aggregate', () => {
   describe('Factory (Draft)', () => {
     it('should create valid draft plan', () => {
       // Arrange
+      const userId = randomUUID();
       const input: CreateDraftInput = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
-        title: 'My Plan',
-        description: 'Test Description',
+        userId,
+        title: 'Test Fitness Plan',
+        description: 'Test description for fitness plan',
         planType: 'general_fitness',
         goals: createFitnessPlanFixture().goals,
         progression: createFitnessPlanFixture().progression,
@@ -34,7 +36,7 @@ describe('FitnessPlan Aggregate', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.status).toBe('draft');
-        expect(result.data.title).toBe('My Plan');
+        expect(result.data.title).toBe(input.title);
         expect(result.data.id).toBeDefined();
         expect(result.data.createdAt).toBeInstanceOf(Date);
       }
@@ -43,9 +45,9 @@ describe('FitnessPlan Aggregate', () => {
     it('should fail when title is empty', () => {
       // Arrange
       const input: CreateDraftInput = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId: randomUUID(),
         title: '',
-        description: 'Test',
+        description: 'Test description',
         planType: 'general_fitness',
         goals: createFitnessPlanFixture().goals,
         progression: createFitnessPlanFixture().progression,
@@ -69,8 +71,7 @@ describe('FitnessPlan Aggregate', () => {
     it('should activate a valid draft plan', () => {
       // Arrange
       const draft = createFitnessPlanFixture({ status: 'draft' });
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrow = faker.date.soon({ days: 1 });
 
       const input = {
         ...draft,
@@ -105,8 +106,8 @@ describe('FitnessPlan Aggregate', () => {
     it('should fail if start date is in the past', () => {
       // Arrange
       const draft = createFitnessPlanFixture({ status: 'draft' });
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterday = faker.date.recent({ days: 1 });
+      yesterday.setHours(yesterday.getHours() - 24); // Ensure it's definitely in the past
 
       const input = {
         ...draft,
@@ -173,7 +174,7 @@ describe('FitnessPlan Aggregate', () => {
     it('should include current workout when scheduled', () => {
       // Arrange
       const plan = createFitnessPlanFixture({
-        currentPosition: { week: 1, day: 1 }
+        currentPosition: { week: 1, day: 1 },
       });
 
       // Act
@@ -188,7 +189,7 @@ describe('FitnessPlan Aggregate', () => {
     it('should handle missing current workout gracefully', () => {
       // Arrange
       const plan = createFitnessPlanFixture({
-        currentPosition: { week: 1, day: 2 } // Day 2 has no workout in fixture
+        currentPosition: { week: 1, day: 2 }, // Day 2 has no workout in fixture
       });
 
       // Act
@@ -219,7 +220,7 @@ describe('FitnessPlan Aggregate', () => {
 
     it('should omit internal fields from view', () => {
       // Arrange
-      const plan = createFitnessPlanFixture({ templateId: 'internal-template-123' });
+      const plan = createFitnessPlanFixture({ templateId: randomUUID() });
 
       // Act
       const view = toFitnessPlanView(plan);
@@ -231,7 +232,7 @@ describe('FitnessPlan Aggregate', () => {
     it('should include current week in view', () => {
       // Arrange
       const plan = createFitnessPlanFixture({
-        currentPosition: { week: 1, day: 1 }
+        currentPosition: { week: 1, day: 1 },
       });
 
       // Act

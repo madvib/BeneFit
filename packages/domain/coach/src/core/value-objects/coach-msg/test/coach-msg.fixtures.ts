@@ -23,7 +23,7 @@ export function createCoachMsgFixture(overrides?: Partial<CoachMsg>): CoachMsg {
     ...overrides,
   };
 
-  const result = coachMsgFromPersistence(data as CoachMsg);
+  const result = coachMsgFromPersistence(data);
 
   if (result.isFailure) {
     throw new Error(`Failed to create CoachMsg fixture: ${ result.error }`);

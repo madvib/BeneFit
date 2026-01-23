@@ -1,9 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+
 import { Result, EventBus } from '@bene/shared';
-import { CoachConversation, CoachAction } from '../../../../core/index.js';
-import { SendMessageToCoachUseCase } from '../send-message-to-coach.js';
+
+import { createCoachConversationFixture, createCoachContextFixture, createCoachActionFixture } from '@/fixtures.js';
+
 import { CoachConversationRepository } from '../../../ports/coach-conversation-repository.js';
 import { CoachContextBuilder, AICoachService } from '../../../services/index.js';
+import { SendMessageToCoachUseCase } from '../send-message-to-coach.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -29,6 +32,8 @@ const mockEventBus = {
 
 describe('SendMessageToCoachUseCase', () => {
   let useCase: SendMessageToCoachUseCase;
+  const TEST_USER_ID = crypto.randomUUID();
+  const TEST_CONVERSATION_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -42,61 +47,24 @@ describe('SendMessageToCoachUseCase', () => {
 
   it('should successfully send a message to coach when conversation exists', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const message = 'I need help with my workout plan';
+    const userId = TEST_USER_ID;
+    const message = 'Sample user message to coach';
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
+    const mockConversation = createCoachConversationFixture({
+      id: TEST_CONVERSATION_ID,
       userId,
-      context: {
-        recentWorkouts: [],
-        userGoals: {
-          primary: 'strength',
-          secondary: [],
-          motivation: 'test',
-          successCriteria: [],
-        },
-        userConstraints: {
-          availableDays: [],
-          availableEquipment: [],
-          location: 'home' as const,
-        },
-        experienceLevel: 'beginner' as const,
-        trends: {
-          volumeTrend: 'stable',
-          adherenceTrend: 'stable',
-          energyTrend: 'medium',
-          exertionTrend: 'stable',
-          enjoymentTrend: 'stable',
-        } as const,
-        daysIntoCurrentWeek: 0,
-        workoutsThisWeek: 0,
-        plannedWorkoutsThisWeek: 0,
-        energyLevel: 'medium',
-      },
-      messages: [],
-      checkIns: [],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    } as unknown as CoachConversation;
+    });
 
     const mockAIResponse = {
-      message:
-        'I understand you need help with your workout plan. Can you tell me more about your goals?',
+      message: 'Sample coach response message',
       actions: [
-        {
+        createCoachActionFixture({
           type: 'adjusted_plan' as const,
-          details: 'Schedule a strength workout for tomorrow',
+          details: 'Details about the adjusted plan',
           appliedAt: new Date(),
-        },
-      ] as CoachAction[],
-      suggestedFollowUps: ['What are your specific goals?'],
+        }),
+      ],
+      suggestedFollowUps: ['Would you like to discuss this further?'],
     };
 
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
@@ -113,11 +81,8 @@ describe('SendMessageToCoachUseCase', () => {
 
     // Assert
     expect(result.isSuccess).toBe(true);
-    if (!result.isSuccess) {
-      console.log('Test Failure Error:', result.error);
-    }
     if (result.isSuccess) {
-      expect(result.value.conversationId).toBe('550e8400-e29b-41d4-a716-446655440001');
+      expect(result.value.conversationId).toBe(TEST_CONVERSATION_ID);
       expect(result.value.coachResponse).toBe(mockAIResponse.message);
       expect(result.value.actions).toHaveLength(1);
       expect(result.value.suggestedFollowUps).toHaveLength(1);
@@ -131,49 +96,27 @@ describe('SendMessageToCoachUseCase', () => {
       expect.objectContaining({
         eventName: 'CoachMessageSent',
         userId,
-        conversationId: '550e8400-e29b-41d4-a716-446655440001',
+        conversationId: TEST_CONVERSATION_ID,
       }),
     );
   });
 
   it('should create a new conversation if none exists for user', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
     const message = 'Hello coach!';
 
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.fail(new Error('Not found')),
     );
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength' as const,
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' as const },
-      experienceLevel: 'beginner' as const,
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
-        enjoymentTrend: 'stable',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-    };
+    const mockContext = createCoachContextFixture();
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
 
     const mockAIResponse = {
-      message:
-        "Hi! I'm your AI coach. I'm here to help you reach your fitness goals. What brings you here today?",
-      actions: [] as CoachAction[],
+      message: 'Hello! How can I help you today?',
+      actions: [],
       suggestedFollowUps: [],
     };
 
@@ -194,7 +137,7 @@ describe('SendMessageToCoachUseCase', () => {
 
   it('should fail if context building fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
     const message = 'Hello coach!';
 
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
@@ -220,49 +163,12 @@ describe('SendMessageToCoachUseCase', () => {
 
   it('should fail if AI coach is unavailable', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
     const message = 'Hello coach!';
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
+    const mockConversation = createCoachConversationFixture({
       userId,
-      context: {
-        recentWorkouts: [],
-        userGoals: {
-          primary: 'strength',
-          secondary: [],
-          motivation: 'test',
-          successCriteria: [],
-        },
-        userConstraints: {
-          availableDays: [],
-          availableEquipment: [],
-          location: 'home',
-        },
-        experienceLevel: 'beginner',
-        trends: {
-          volumeTrend: 'stable',
-          adherenceTrend: 'stable',
-          energyTrend: 'medium',
-          exertionTrend: 'stable',
-          enjoymentTrend: 'stable',
-        },
-        daysIntoCurrentWeek: 0,
-        workoutsThisWeek: 0,
-        plannedWorkoutsThisWeek: 0,
-        energyLevel: 'medium',
-      },
-      messages: [],
-      checkIns: [],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),

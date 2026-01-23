@@ -1,7 +1,9 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
+import { randomUUID } from 'node:crypto';
 import { Result, EventBus } from '@bene/shared';
+import { IntegrationClient } from '@/application/ports/integration-client.js';
+import { createOAuthCredentialsFixture, createServicePermissionsFixture, createServiceMetadataFixture } from '@/fixtures.js';
 import { ConnectServiceUseCase } from '../connect-service.js';
-import { IntegrationClient } from '../../../ports/integration-client.js';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -30,8 +32,9 @@ const mockIntegrationClient = {
   getActivitiesSince: Mock;
 };
 
+const SERVICE_TYPE = 'strava';
 const mockIntegrationClients = new Map<string, IntegrationClient>();
-mockIntegrationClients.set('strava', mockIntegrationClient);
+mockIntegrationClients.set(SERVICE_TYPE, mockIntegrationClient);
 
 const mockEventBus = {
   publish: vi.fn(),
@@ -39,6 +42,9 @@ const mockEventBus = {
 
 describe('ConnectServiceUseCase', () => {
   let useCase: ConnectServiceUseCase;
+  const TEST_USER_ID = randomUUID();
+  const TEST_AUTH_CODE = 'test-auth-code';
+  const TEST_REDIRECT_URI = 'https://example.com/callback';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -51,31 +57,40 @@ describe('ConnectServiceUseCase', () => {
 
   it('should successfully connect a service', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const serviceType = 'strava';
-    const authorizationCode = 'auth-code-456';
-    const redirectUri = 'https://example.com/callback';
+    const userId = TEST_USER_ID;
+    const serviceType = SERVICE_TYPE;
+    const authorizationCode = TEST_AUTH_CODE;
+    const redirectUri = TEST_REDIRECT_URI;
 
+    const accessToken = 'test-access-token';
     const mockTokens = {
-      accessToken: 'access-token-789',
-      refreshToken: 'refresh-token-101',
-      expiresAt: new Date(Date.now() + 3600000),
-      scopes: ['read', 'write'],
-      permissions: {
+      ...createOAuthCredentialsFixture({
+        accessToken,
+        refreshToken: 'test-refresh-token',
+        scopes: ['read', 'write'],
+      }),
+      permissions: createServicePermissionsFixture({
         readWorkouts: true,
         writeWorkouts: true,
         readHeartRate: true,
         readSleep: true,
         readNutrition: true,
         readBodyMetrics: true,
-      },
+      }),
     };
 
+    const mockProfileMetadata = createServiceMetadataFixture({
+      externalUserId: 'test-external-id',
+      externalUsername: 'test-username',
+      profileUrl: 'https://example.com/profile/test-user',
+      units: 'metric',
+    });
+
     const mockProfile = {
-      id: 'external-123',
-      username: 'john_doe',
-      profileUrl: 'https://strava.com/athlete/123',
-      units: 'metric' as const,
+      id: mockProfileMetadata.externalUserId,
+      username: mockProfileMetadata.externalUsername,
+      profileUrl: mockProfileMetadata.profileUrl,
+      units: mockProfileMetadata.units,
     };
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));
@@ -93,16 +108,16 @@ describe('ConnectServiceUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.serviceId).toBeDefined();
+      expect(result.value.id).toBeDefined();
       expect(result.value.serviceType).toBe(serviceType);
-      expect(result.value.connected).toBe(true);
+      expect(result.value.isActive).toBe(true);
     }
     expect(mockIntegrationClient.exchangeAuthCode).toHaveBeenCalledWith(
       authorizationCode,
       redirectUri,
     );
     expect(mockIntegrationClient.getUserProfile).toHaveBeenCalledWith(
-      'access-token-789',
+      accessToken,
     );
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -115,10 +130,10 @@ describe('ConnectServiceUseCase', () => {
 
   it('should fail if service type is not supported', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
     const serviceType = 'unsupported-service' as any;
-    const authorizationCode = 'auth-code-456';
-    const redirectUri = 'https://example.com/callback';
+    const authorizationCode = TEST_AUTH_CODE;
+    const redirectUri = TEST_REDIRECT_URI;
 
     // Act
     const result = await useCase.execute({
@@ -138,10 +153,10 @@ describe('ConnectServiceUseCase', () => {
 
   it('should fail if OAuth exchange fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const serviceType = 'strava';
-    const authorizationCode = 'auth-code-456';
-    const redirectUri = 'https://example.com/callback';
+    const userId = TEST_USER_ID;
+    const serviceType = SERVICE_TYPE;
+    const authorizationCode = TEST_AUTH_CODE;
+    const redirectUri = TEST_REDIRECT_URI;
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(
       Result.fail(new Error('Invalid code')),
@@ -165,24 +180,25 @@ describe('ConnectServiceUseCase', () => {
 
   it('should fail if getting user profile fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const serviceType = 'strava';
-    const authorizationCode = 'auth-code-456';
-    const redirectUri = 'https://example.com/callback';
+    const userId = TEST_USER_ID;
+    const serviceType = SERVICE_TYPE;
+    const authorizationCode = TEST_AUTH_CODE;
+    const redirectUri = TEST_REDIRECT_URI;
 
     const mockTokens = {
-      accessToken: 'access-token-789',
-      refreshToken: 'refresh-token-101',
-      expiresAt: new Date(Date.now() + 3600000),
-      scopes: ['read', 'write'],
-      permissions: {
+      ...createOAuthCredentialsFixture({
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+        scopes: ['read', 'write'],
+      }),
+      permissions: createServicePermissionsFixture({
         readWorkouts: true,
         writeWorkouts: true,
         readHeartRate: true,
         readSleep: true,
         readNutrition: true,
         readBodyMetrics: true,
-      },
+      }),
     };
 
     mockIntegrationClient.exchangeAuthCode.mockResolvedValue(Result.ok(mockTokens));

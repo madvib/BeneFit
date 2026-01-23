@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Result, BaseUseCase } from '@bene/shared';
-import { toConnectedServiceView, type ConnectedServiceView } from '@core/index.js';
-import { ConnectedServiceRepository } from '@app/index.js';
+import { toConnectedServiceView, type ConnectedServiceView } from '@/core/index.js';
+import { ConnectedServiceRepository } from '@/application/index.js';
 
 /**
  * Input schema

@@ -1,5 +1,5 @@
 import { DomainEvent } from '@bene/shared';
-import type { NormalizedActivity } from '@core/normalized-activity.js';
+import type { NormalizedActivity } from '@/core/normalized-activity.js';
 
 export interface ActivitiesSyncedEventPayload {
   userId: string;

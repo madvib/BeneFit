@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { createCoachActionFixture } from '../../../../fixtures.js';
 import {
   toCoachActionView
-} from '@core/index.js';
+} from '@/core/index.js';
 import type { SendMessageToCoachResponse } from '../send-message-to-coach.js';
 
 export type SendMessageToCoachFixtureOptions = BaseFixtureOptions<SendMessageToCoachResponse>;

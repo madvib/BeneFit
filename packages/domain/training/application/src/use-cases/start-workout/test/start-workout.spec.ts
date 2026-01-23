@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
-import { WorkoutSessionRepository } from '../../../repositories/workout-session-repository.js';
-import { StartWorkoutUseCase } from '../start-workout.js';
-import { StartWorkoutRequest, StartWorkoutRequestSchema } from '../start-workout.js';
+
+import { WorkoutSessionRepository } from '@/repositories/workout-session-repository.js';
+
+import { StartWorkoutUseCase, type StartWorkoutRequest } from '../start-workout.js';
 
 describe('StartWorkoutUseCase', () => {
   let useCase: StartWorkoutUseCase;
@@ -15,22 +18,24 @@ describe('StartWorkoutUseCase', () => {
     } as unknown as WorkoutSessionRepository;
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
+      subscribe: vi.fn(),
     } as unknown as EventBus;
 
     useCase = new StartWorkoutUseCase(sessionRepo, eventBus);
   });
 
   it('should start a custom workout successfully', async () => {
-    const request = {
-      userId: 'user-1',
-      userName: 'User 1',
+    const userId = randomUUID();
+    const request: StartWorkoutRequest = {
+      userId,
+      userName: 'Test User',
       workoutType: 'strength',
       activities: [
         {
-          name: 'Push ups',
-          type: 'main', // Explicit valid enum
+          name: 'Test Exercise',
+          type: 'main',
           order: 1,
-          instructions: ['Do 10 reps'],
+          instructions: ['Test instruction'],
           duration: 60,
         },
       ],
@@ -38,14 +43,6 @@ describe('StartWorkoutUseCase', () => {
 
     const result = await useCase.execute(request);
 
-    // With real logic, if the inputs are valid, it should succeed.
-    // The previous test mocked strict return values. Use real logic means we are testing integration.
-
-    // Note: UseCase.execute calls creates a session and starts it.
-
-    if (result.isFailure) {
-      console.error('StartWorkout failed:', result.error);
-    }
     expect(result.isSuccess).toBe(true);
     expect(result.value.session.id).toBeDefined();
     expect(result.value.session.workoutType).toBe('strength');
@@ -54,27 +51,21 @@ describe('StartWorkoutUseCase', () => {
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         eventName: 'WorkoutStarted',
-        userId: 'user-1',
-        // Check other fields if necessary
+        userId,
       }),
     );
   });
 
   it('should fail if custom workout missing details', async () => {
     const request = {
-      ...fake(StartWorkoutRequestSchema),
-      userId: 'user-1',
-      userName: 'User 1',
+      userId: randomUUID(),
+      userName: 'Test User',
       workoutType: undefined, // Missing workoutType
       activities: undefined, // Missing activities
     } as unknown as StartWorkoutRequest;
 
-    // Real domain validation should catch this
     const result = await useCase.execute(request);
 
     expect(result.isFailure).toBe(true);
-    // The error message depends on the domain validation. 
-    // It likely validates workoutType presence.
-    // expect((result.error as Error).message).toContain('Must provide workoutType');
   });
 });

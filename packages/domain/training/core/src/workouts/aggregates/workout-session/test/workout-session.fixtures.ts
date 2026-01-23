@@ -1,10 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { z } from 'zod';
 import { WorkoutSession, SessionState } from '../workout-session.types.js';
 import { createWorkoutActivityFixture, createSessionParticipantFixture, createSessionConfigurationFixture, createSessionFeedItemFixture } from '@/fixtures.js';
-import { workoutSessionFromPersistence, CreateWorkoutSessionSchema } from '../workout-session.factory.js';
-
-type CreateWorkoutSessionInput = z.input<typeof CreateWorkoutSessionSchema>;
+import { workoutSessionFromPersistence } from '../workout-session.factory.js';
+import type { CreateWorkoutSessionInput } from '../workout-session.factory.js';
 
 export function createWorkoutSessionInputFixture(
   overrides?: Partial<CreateWorkoutSessionInput>,

@@ -1,6 +1,9 @@
+
 import { describe, it, expect } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
 import { CreateTemplateStructureSchema } from '../template-structure.factory.js';
-import { createTemplateStructureFixture } from './template-structure.fixtures.js';
+import { createTemplateStructureFixture } from '@/fixtures.js';
 
 describe('TemplateStructure', () => {
   describe('creation', () => {
@@ -17,14 +20,16 @@ describe('TemplateStructure', () => {
 
     it('should allow customization through overrides', () => {
       // Arrange & Act
+      const formula = 'Test progression formula';
+      const weeks = 8;
       const structure = createTemplateStructureFixture({
-        duration: { type: 'fixed', weeks: 8 },
-        progressionFormula: 'custom formula',
+        duration: { type: 'fixed', weeks },
+        progressionFormula: formula,
       });
 
       // Assert
-      expect(structure.duration).toEqual({ type: 'fixed', weeks: 8 });
-      expect(structure.progressionFormula).toBe('custom formula');
+      expect(structure.duration).toEqual({ type: 'fixed', weeks });
+      expect(structure.progressionFormula).toBe(formula);
     });
   });
 
@@ -39,7 +44,7 @@ describe('TemplateStructure', () => {
           workouts: [{
             type: 'cardio' as const,
             durationMinutes: 30,
-            activities: [{ activityType: 'main' as const, template: 'Run', variables: {} }]
+            activities: [{ activityType: 'main' as const, template: 'test_template', variables: {} }]
           }]
         }],
       };
@@ -61,7 +66,7 @@ describe('TemplateStructure', () => {
           workouts: [{
             type: 'cardio' as const,
             durationMinutes: 30,
-            activities: [{ activityType: 'main' as const, template: 'Run', variables: {} }]
+            activities: [{ activityType: 'main' as const, template: 'test_template', variables: {} }]
           }]
         }],
       };
@@ -136,7 +141,7 @@ describe('TemplateStructure', () => {
           workouts: [{
             type: 'cardio' as const,
             durationMinutes: 30,
-            activities: [{ activityType: 'main' as const, template: 'Run', variables: {} }]
+            activities: [{ activityType: 'main' as const, template: 'test_template', variables: {} }]
           }]
         }],
       };
@@ -158,7 +163,7 @@ describe('TemplateStructure', () => {
           workouts: [{
             type: 'cardio' as const,
             durationMinutes: 30,
-            activities: [{ activityType: 'main' as const, template: 'Run', variables: {} }]
+            activities: [{ activityType: 'main' as const, template: 'test_template', variables: {} }]
           }]
         }],
       };

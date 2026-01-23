@@ -1,4 +1,6 @@
+
 import { describe, it, expect } from 'vitest';
+import { faker } from '@faker-js/faker';
 import {
   CreateProgressionStrategySchema,
   createLinearProgression,
@@ -11,20 +13,21 @@ import {
   isConservative,
   calculateNextWeekLoad,
 } from '../progression-strategy.commands.js';
-import { createProgressionStrategyFixture } from './progression-strategy.fixtures.js';
+import { createProgressionStrategyFixture } from '@/fixtures.js';
 
 describe('ProgressionStrategy', () => {
   describe('creation', () => {
     it('should create valid progression strategy with correct defaults', () => {
       // Arrange & Act
+      const weeklyIncrease = faker.number.float({ min: 0, max: 0.2, fractionDigits: 2 });
       const strategy = createProgressionStrategyFixture({
         type: 'linear',
-        weeklyIncrease: 0.05,
+        weeklyIncrease,
       });
 
       // Assert
       expect(strategy.type).toBe('linear');
-      expect(strategy.weeklyIncrease).toBe(0.05);
+      expect(strategy.weeklyIncrease).toBe(weeklyIncrease);
     });
   });
 
@@ -71,14 +74,15 @@ describe('ProgressionStrategy', () => {
     it('should create linear progression strategy with capped deload weeks', () => {
       // Arrange & Act
       // Use frequency of 10: 10, 20, 30, 40, 50, (60)
-      const result = createLinearProgression(0.05, 10);
+      const weeklyIncrease = faker.number.float({ min: 0.01, max: 0.1, fractionDigits: 3 });
+      const result = createLinearProgression(weeklyIncrease, 10);
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
         expect(result.value).toMatchObject({
           type: 'linear',
-          weeklyIncrease: 0.05,
+          weeklyIncrease,
           deloadWeeks: [10, 20, 30, 40, 50],
         });
       }
@@ -86,14 +90,15 @@ describe('ProgressionStrategy', () => {
 
     it('should create undulating progression strategy', () => {
       // Arrange & Act
-      const result = createUndulatingProgression(0.03);
+      const weeklyIncrease = faker.number.float({ min: 0.01, max: 0.05, fractionDigits: 3 });
+      const result = createUndulatingProgression(weeklyIncrease);
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
         expect(result.value).toMatchObject({
           type: 'undulating',
-          weeklyIncrease: 0.03,
+          weeklyIncrease,
           testWeeks: [2, 4, 6, 8, 10, 12],
         });
       }
@@ -101,14 +106,15 @@ describe('ProgressionStrategy', () => {
 
     it('should create adaptive progression strategy', () => {
       // Arrange & Act
-      const result = createAdaptiveProgression(0.04);
+      const weeklyIncrease = faker.number.float({ min: 0.01, max: 0.05, fractionDigits: 3 });
+      const result = createAdaptiveProgression(weeklyIncrease);
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
         expect(result.value).toMatchObject({
           type: 'adaptive',
-          weeklyIncrease: 0.04,
+          weeklyIncrease,
           testWeeks: [3, 6, 9, 12, 15, 18],
         });
       }
@@ -141,16 +147,18 @@ describe('ProgressionStrategy', () => {
   describe('logic & commands', () => {
     it('should calculate next week load correctly for linear progression', () => {
       // Arrange
+      const weeklyIncrease = 0.05;
       const strategy = createProgressionStrategyFixture({
         type: 'linear',
-        weeklyIncrease: 0.05,
+        weeklyIncrease,
       });
 
       // Act
-      const nextLoad = calculateNextWeekLoad(strategy, 100, 1);
+      const baseLoad = faker.number.int({ min: 50, max: 200 });
+      const nextLoad = calculateNextWeekLoad(strategy, baseLoad, 1);
 
       // Assert
-      expect(nextLoad).toBe(105); // 100 + (100 * 0.05)
+      expect(nextLoad).toBe(baseLoad + (baseLoad * weeklyIncrease));
     });
 
     it('should identify conservative strategy correctly', () => {

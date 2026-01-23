@@ -27,4 +27,3 @@ export const CoachConversationSchema = z
  * 2. INFER TYPES (Derived directly from Zod)
  */
 export type CoachConversation = Readonly<z.infer<typeof CoachConversationSchema>>;
-

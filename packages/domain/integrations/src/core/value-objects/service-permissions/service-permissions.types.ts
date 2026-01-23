@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { DomainBrandTag } from '@bene/shared';
 
 /**
  * 1. DEFINE SCHEMAS (Zod as Source of Truth)
@@ -12,8 +11,7 @@ export const ServicePermissionsSchema = z
     readNutrition: z.boolean().default(false),
     readBodyMetrics: z.boolean().default(false),
     writeWorkouts: z.boolean().default(false),
-  })
-  .brand<DomainBrandTag>();
+  });
 
 /**
  * 2. INFER TYPES (Derived directly from Zod)

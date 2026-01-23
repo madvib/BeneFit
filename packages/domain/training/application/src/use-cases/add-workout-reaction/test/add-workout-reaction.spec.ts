@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
-import { CompletedWorkoutRepository } from '../../../repositories/completed-workout-repository.js';
+import { createCompletedWorkoutFixture } from '@bene/training-core/fixtures';
+
+import { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
+
 import { AddWorkoutReactionUseCase } from '../add-workout-reaction.js';
 
 describe('AddWorkoutReactionUseCase', () => {
@@ -15,31 +20,33 @@ describe('AddWorkoutReactionUseCase', () => {
     };
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
-    };
+      subscribe: vi.fn(),
+    } as unknown as EventBus;
 
     useCase = new AddWorkoutReactionUseCase(completedWorkoutRepo, eventBus);
   });
 
   it('should add a reaction successfully', async () => {
-    const mockWorkout = {
-      id: 'workout-1',
-      userId: 'user-1',
+    const workoutId = randomUUID();
+    const mockWorkout = createCompletedWorkoutFixture({
+      id: workoutId,
+      userId: randomUUID(),
       isPublic: true,
       reactions: [],
-    };
+    });
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      workoutId: 'workout-1',
+      userId: randomUUID(),
+      userName: 'Test User',
+      workoutId,
       reactionType: 'fire' as const,
     };
 
     const result = await useCase.execute(request);
 
     expect(result.isSuccess).toBe(true);
-    expect(result.value.workoutId).toBe('workout-1');
+    expect(result.value.workoutId).toBe(workoutId);
     // totalReactions depends on the command logic. If command is not mocked, it might fail if mockWorkout is just a plain object and command expects more. 
     // Assuming command works on data:
     // expect(result.value.totalReactions).toBe(1);
@@ -53,12 +60,13 @@ describe('AddWorkoutReactionUseCase', () => {
   });
 
   it('should fail if workout not found', async () => {
+    const workoutId = randomUUID();
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      workoutId: 'workout-1',
+      userId: randomUUID(),
+      userName: 'Test User',
+      workoutId,
       reactionType: 'fire' as const,
     };
 
@@ -69,16 +77,17 @@ describe('AddWorkoutReactionUseCase', () => {
   });
 
   it('should fail if workout is private', async () => {
-    const mockWorkout = {
-      id: 'workout-1',
+    const workoutId = randomUUID();
+    const mockWorkout = createCompletedWorkoutFixture({
+      id: workoutId,
       isPublic: false,
-    };
+    });
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      workoutId: 'workout-1',
+      userId: randomUUID(),
+      userName: 'Test User',
+      workoutId,
       reactionType: 'fire' as const,
     };
 

@@ -25,7 +25,8 @@ export type OAuthCredentialsView = CreateView<
  * - Adds computed security status fields
  */
 export function toOAuthCredentialsView(credentials: OAuthCredentials): OAuthCredentialsView {
-  const base = serializeForView(credentials);
+  const { accessToken: _accessToken, refreshToken: _refreshToken, ...rest } = credentials;
+  const base = serializeForView(rest);
 
   return {
     ...base,
@@ -33,5 +34,5 @@ export function toOAuthCredentialsView(credentials: OAuthCredentials): OAuthCred
     hasRefreshToken: !!credentials.refreshToken,
     isExpired: isCredentialExpired(credentials),
     willExpireSoon: willExpireSoon(credentials, 30),
-  };
+  } as OAuthCredentialsView;
 }

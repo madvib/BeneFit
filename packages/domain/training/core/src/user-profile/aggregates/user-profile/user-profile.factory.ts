@@ -13,11 +13,11 @@ import { UserProfile, UserProfileSchema } from './user-profile.types.js';
  * ============================================================================
  * USER PROFILE FACTORY (Canonical Pattern)
  * ============================================================================
- * 
+ *
  * PUBLIC API:
  * 1. userProfileFromPersistence() - For fixtures & DB hydration
  * 2. CreateUserProfileSchema - Zod transform for API boundaries
- * 
+ *
  * Everything else is internal.
  * ============================================================================
  */
@@ -45,32 +45,25 @@ function validateAndBrand(data: unknown): Result<UserProfile> {
  * Rehydrates UserProfile from persistence/fixtures (trusts the data).
  * This is the ONLY place where Unbrand is used.
  */
-export function userProfileFromPersistence(
-  data: Unbrand<UserProfile>,
-): Result<UserProfile> {
+export function userProfileFromPersistence(data: Unbrand<UserProfile>): Result<UserProfile> {
   return Result.ok(data as UserProfile);
 }
 
 // ============================================================================
 // 2. CREATION FACTORY (FOR API BOUNDARIES)
 // ============================================================================
-
-/**
- * Zod transform for creating UserProfile with validation.
- * Use at API boundaries (controllers, resolvers).
- */
-export const CreateUserProfileSchema: z.ZodType<UserProfile> = UserProfileSchema
-  .pick({
-    userId: true,
-    displayName: true,
-    avatar: true,
-    bio: true,
-    location: true,
-    timezone: true,
-    experienceProfile: true,
-    fitnessGoals: true,
-    trainingConstraints: true,
-  })
+export type CreateUserProfileInput = z.infer<typeof CreateUserProfileSchema>;
+export const CreateUserProfileSchema = UserProfileSchema.pick({
+  userId: true,
+  displayName: true,
+  avatar: true,
+  bio: true,
+  location: true,
+  timezone: true,
+  experienceProfile: true,
+  fitnessGoals: true,
+  trainingConstraints: true,
+})
   .extend({
     preferences: UserPreferencesSchema.optional(),
     stats: UserStatsSchema.optional(),
@@ -92,13 +85,4 @@ export const CreateUserProfileSchema: z.ZodType<UserProfile> = UserProfileSchema
 
     const result = validateAndBrand(data);
     return unwrapOrIssue(result, ctx);
-  });
-
-// ============================================================================
-// LEGACY EXPORTS (FOR BACKWARD COMPATIBILITY)
-// ============================================================================
-
-/**
- * @deprecated Use CreateUserProfileSchema or call via transform.
- */
-
+  }) satisfies z.ZodType<UserProfile>;

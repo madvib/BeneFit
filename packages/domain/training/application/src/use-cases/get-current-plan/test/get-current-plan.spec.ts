@@ -1,8 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result } from '@bene/shared';
 import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
 import { GetCurrentPlanUseCase } from '../get-current-plan.js';
-import { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
 
 const mockPlanRepository = {
   findActiveByUserId: vi.fn(),
@@ -18,7 +22,7 @@ describe('GetCurrentPlanUseCase', () => {
 
   it('should return plan when active plan exists', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
     const mockPlan = createFitnessPlanFixture({
       userId,
       status: 'active',
@@ -43,7 +47,7 @@ describe('GetCurrentPlanUseCase', () => {
 
   it('should fail when no active plan exists', async () => {
     // Arrange
-    const userId = 'user-456';
+    const userId = randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan found'))

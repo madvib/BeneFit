@@ -1,4 +1,6 @@
+
 import { describe, it, expect } from 'vitest';
+import { faker } from '@faker-js/faker';
 import {
   CreateWorkoutGoalsSchema,
   createDistanceWorkout,
@@ -11,45 +13,49 @@ import {
   hasVolumeGoal,
   isCompletionRequired
 } from '../workout-goals.commands.js';
-import { createWorkoutGoalsFixture } from './workout-goals.fixtures.js';
+import { createWorkoutGoalsFixture } from '@/fixtures.js';
 
 describe('WorkoutGoals', () => {
   describe('creation', () => {
     it('should create valid workout goals with distance goal', () => {
       // Arrange & Act
+      const value = faker.number.int({ min: 1000, max: 10000 });
       const goals = createWorkoutGoalsFixture({
-        distance: { value: 5000, unit: 'meters' },
+        distance: { value, unit: 'meters' },
         duration: undefined, // Ensure only one goal
       });
 
       // Assert
-      expect(goals.distance?.value).toBe(5000);
+      expect(goals.distance?.value).toBe(value);
       expect(goals.distance?.unit).toBe('meters');
       expect(hasDistanceGoal(goals)).toBe(true);
     });
 
     it('should create valid workout goals with duration goal', () => {
       // Arrange & Act
+      const value = faker.number.int({ min: 300, max: 7200 });
       const goals = createWorkoutGoalsFixture({
-        duration: { value: 3600, intensity: 'moderate' },
+        duration: { value, intensity: 'moderate' },
       });
 
       // Assert
-      expect(goals.duration?.value).toBe(3600);
+      expect(goals.duration?.value).toBe(value);
       expect(goals.duration?.intensity).toBe('moderate');
       expect(hasDurationGoal(goals)).toBe(true);
     });
 
     it('should create valid workout goals with volume goal', () => {
       // Arrange & Act
+      const totalSets = faker.number.int({ min: 1, max: 10 });
+      const totalReps = faker.number.int({ min: 1, max: 20 });
       const goals = createWorkoutGoalsFixture({
-        volume: { totalSets: 4, totalReps: 12, targetWeight: 'moderate' },
+        volume: { totalSets, totalReps, targetWeight: 'moderate' },
         duration: undefined, // Ensure only one goal
       });
 
       // Assert
-      expect(goals.volume?.totalSets).toBe(4);
-      expect(goals.volume?.totalReps).toBe(12);
+      expect(goals.volume?.totalSets).toBe(totalSets);
+      expect(goals.volume?.totalReps).toBe(totalReps);
       expect(hasVolumeGoal(goals)).toBe(true);
     });
   });
@@ -106,14 +112,15 @@ describe('WorkoutGoals', () => {
     it('should create distance workout', () => {
       // Arrange
       const criteria = { mustComplete: true, autoVerifiable: true };
+      const distance = faker.number.int({ min: 1000, max: 10000 });
 
       // Act
-      const result = createDistanceWorkout(5000, 'meters', criteria);
+      const result = createDistanceWorkout(distance, 'meters', criteria);
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
-        expect(result.value.distance?.value).toBe(5000);
+        expect(result.value.distance?.value).toBe(distance);
         expect(result.value.distance?.unit).toBe('meters');
         expect(isCompletionRequired(result.value)).toBe(true);
       }
@@ -122,14 +129,15 @@ describe('WorkoutGoals', () => {
     it('should create duration workout', () => {
       // Arrange
       const criteria = { mustComplete: false, autoVerifiable: false };
+      const duration = faker.number.int({ min: 10, max: 120 });
 
       // Act
-      const result = createDurationWorkout(30, criteria, 'moderate');
+      const result = createDurationWorkout(duration, criteria, 'moderate');
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
-        expect(result.value.duration?.value).toBe(30);
+        expect(result.value.duration?.value).toBe(duration);
         expect(result.value.duration?.intensity).toBe('moderate');
         expect(isCompletionRequired(result.value)).toBe(false);
       }
@@ -138,15 +146,17 @@ describe('WorkoutGoals', () => {
     it('should create volume workout', () => {
       // Arrange
       const criteria = { mustComplete: true, autoVerifiable: true };
+      const sets = faker.number.int({ min: 1, max: 10 });
+      const reps = faker.number.int({ min: 1, max: 20 });
 
       // Act
-      const result = createVolumeWorkout(4, 12, criteria);
+      const result = createVolumeWorkout(sets, reps, criteria);
 
       // Assert
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
-        expect(result.value.volume?.totalSets).toBe(4);
-        expect(result.value.volume?.totalReps).toBe(12);
+        expect(result.value.volume?.totalSets).toBe(sets);
+        expect(result.value.volume?.totalReps).toBe(reps);
         expect(isCompletionRequired(result.value)).toBe(true);
       }
     });

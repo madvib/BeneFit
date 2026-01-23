@@ -1,10 +1,11 @@
+import z from 'zod';
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
 
-import { createWorkoutTemplateFixture } from '../../workout-template/test/workout-template.fixtures.js';
+import { createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@/fixtures.js';
 import { CreateWeeklyScheduleSchema } from '../weekly-schedule.factory.js';
 import { toWeeklyScheduleView } from '../weekly-schedule.view.js';
-import { createWeeklyScheduleFixture } from './weekly-schedule.fixtures.js';
 
 type CreateScheduleInput = z.input<typeof CreateWeeklyScheduleSchema>;
 
@@ -22,24 +23,26 @@ describe('WeeklySchedule Aggregate', () => {
 
     it('should allow customization through overrides', () => {
       // Arrange & Act
+      const focus = 'Test focus area';
+      const targetWorkouts = 3;
       const schedule = createWeeklyScheduleFixture({
-        focus: 'Custom Focus',
-        targetWorkouts: 5,
+        focus,
+        targetWorkouts,
       });
 
       // Assert
-      expect(schedule.focus).toBe('Custom Focus');
-      expect(schedule.targetWorkouts).toBe(5);
+      expect(schedule.focus).toBe(focus);
+      expect(schedule.targetWorkouts).toBe(targetWorkouts);
     });
   });
 
   describe('Validation', () => {
     const validInput: CreateScheduleInput = {
-      planId: '550e8400-e29b-41d4-a716-446655440000',
+      planId: randomUUID(),
       weekNumber: 1,
       startDate: new Date(),
       endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-      focus: 'Strength',
+      focus: 'Test focus',
       targetWorkouts: 3,
       workouts: [],
       workoutsCompleted: 0,
@@ -63,8 +66,8 @@ describe('WeeklySchedule Aggregate', () => {
       // Arrange
       const input = {
         ...validInput,
-        startDate: new Date('2024-01-02'),
-        endDate: new Date('2024-01-01'),
+        startDate: faker.date.future(),
+        endDate: faker.date.past(),
       };
 
       // Act

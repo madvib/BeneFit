@@ -1,8 +1,9 @@
+
 import { describe, it, expect } from 'vitest';
 import { CreateWorkoutVerificationSchema } from '../workout-verification.factory.js';
 import { WorkoutVerificationSchema } from '../workout-verification.types.js';
 import { toWorkoutVerificationView } from '../workout-verification.view.js';
-import { createGPSVerifiedWorkoutFixture } from './workout-verification.fixtures.js';
+import { createGPSVerifiedWorkoutFixture } from '@/fixtures.js';
 
 describe('WorkoutVerification', () => {
   describe('creation', () => {
@@ -27,8 +28,8 @@ describe('WorkoutVerification', () => {
           {
             method: 'gps',
             data: {
-              latitude: 40.7128,
-              longitude: -74.006,
+              latitude: 40.7128, // Example latitude (New York City)
+              longitude: -74.0060, // Example longitude (New York City)
               accuracy: 10,
               timestamp: new Date(),
             },
@@ -50,13 +51,14 @@ describe('WorkoutVerification', () => {
 
     it('should create valid Gym Checkin verification', () => {
       // Act
+      const gymName = 'Fitness Plus Gym';
       const result = CreateWorkoutVerificationSchema.safeParse({
         verifications: [
           {
             method: 'gym_checkin',
             data: {
-              gymId: '550e8400-e29b-41d4-a716-446655440001',
-              gymName: 'Gold Gym',
+              gymId: crypto.randomUUID(),
+              gymName,
               checkinTime: new Date(),
             },
           },
@@ -83,8 +85,8 @@ describe('WorkoutVerification', () => {
           {
             method: 'gps',
             data: {
-              latitude: 100, // Invalid
-              longitude: -74.006,
+              latitude: 100, // Invalid (> 90)
+              longitude: -74.0060, // Example longitude (New York City)
               accuracy: 10,
               timestamp: new Date(),
             },
@@ -107,8 +109,8 @@ describe('WorkoutVerification', () => {
           {
             method: 'gym_checkin',
             data: {
-              gymId: '550e8400-e29b-41d4-a716-446655440001',
-              gymName: 'Gold Gym',
+              gymId: crypto.randomUUID(),
+              gymName: 'Fitness Plus Gym',
               checkinTime,
               checkoutTime,
             },

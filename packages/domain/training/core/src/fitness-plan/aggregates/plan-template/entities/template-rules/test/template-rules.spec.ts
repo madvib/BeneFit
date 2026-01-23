@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CreateTemplateRulesSchema } from '../template-rules.factory.js';
-import { createTemplateRulesFixture } from './template-rules.fixtures.js';
+import { createTemplateRulesFixture } from '@/fixtures.js';
 
 describe('TemplateRules', () => {
   describe('creation', () => {
@@ -17,16 +17,17 @@ describe('TemplateRules', () => {
 
     it('should allow customization through overrides', () => {
       // Arrange & Act
+      const requiredDaysPerWeek = 5;
       const rules = createTemplateRulesFixture({
         minExperienceLevel: 'advanced',
         maxExperienceLevel: 'advanced',
-        requiredDaysPerWeek: 5,
+        requiredDaysPerWeek,
       });
 
       // Assert
       expect(rules.minExperienceLevel).toBe('advanced');
       expect(rules.maxExperienceLevel).toBe('advanced');
-      expect(rules.requiredDaysPerWeek).toBe(5);
+      expect(rules.requiredDaysPerWeek).toBe(requiredDaysPerWeek);
     });
   });
 
@@ -93,16 +94,18 @@ describe('TemplateRules', () => {
   describe('restrictions', () => {
     it('should accept valid session duration restrictions', () => {
       // Arrange & Act
+      const minSessionMinutes = 20;
+      const maxSessionMinutes = 90;
       const rules = createTemplateRulesFixture({
         restrictions: {
-          minSessionMinutes: 30,
-          maxSessionMinutes: 90,
-        }
+          minSessionMinutes,
+          maxSessionMinutes,
+        },
       });
 
       // Assert
-      expect(rules.restrictions?.minSessionMinutes).toBe(30);
-      expect(rules.restrictions?.maxSessionMinutes).toBe(90);
+      expect(rules.restrictions?.minSessionMinutes).toBe(minSessionMinutes);
+      expect(rules.restrictions?.maxSessionMinutes).toBe(maxSessionMinutes);
     });
 
     it('should fail when minSessionMinutes exceeds maxSessionMinutes', () => {
@@ -113,7 +116,7 @@ describe('TemplateRules', () => {
         restrictions: {
           minSessionMinutes: 90,
           maxSessionMinutes: 30, // min > max violates domain rule
-        }
+        },
       };
 
       // Act
@@ -125,26 +128,28 @@ describe('TemplateRules', () => {
 
     it('should accept optional equipment requirements', () => {
       // Arrange & Act
+      const equipment = ['Dumbbells', 'Resistance Bands'];
       const rules = createTemplateRulesFixture({
-        requiredEquipment: ['Dumbbells', 'Barbell']
+        requiredEquipment: equipment,
       });
 
       // Assert
-      expect(rules.requiredEquipment).toEqual(['Dumbbells', 'Barbell']);
+      expect(rules.requiredEquipment).toEqual(equipment);
     });
 
     it('should accept optional location requirements', () => {
       // Arrange & Act
+      const locations = ['gym' as const, 'home' as const];
       const rules = createTemplateRulesFixture({
         restrictions: {
           minSessionMinutes: 30,
           maxSessionMinutes: 60,
-          requiresLocation: ['gym', 'home']
-        }
+          requiresLocation: locations,
+        },
       });
 
       // Assert
-      expect(rules.restrictions?.requiresLocation).toEqual(['gym', 'home']);
+      expect(rules.restrictions?.requiresLocation).toEqual(locations);
     });
   });
 });

@@ -1,16 +1,16 @@
+import z from 'zod';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { z } from 'zod';
+import { faker } from '@faker-js/faker';
+
 import { CreateFitnessGoalsSchema } from '../fitness-goals.factory.js';
-import { createFitnessGoalsFixture } from './fitness-goals.fixtures.js';
+import { createFitnessGoalsFixture } from '@/fixtures.js';
 import { FitnessGoals } from '../fitness-goals.types.js';
-
-type CreateGoalsInput = z.input<typeof CreateFitnessGoalsSchema>;
-
+type CreateFitnessGoalsInput = z.input<typeof CreateFitnessGoalsSchema>;
 describe('FitnessGoals Value Object', () => {
   describe('Factory', () => {
-    const validInput: CreateGoalsInput = {
+    const validInput: CreateFitnessGoalsInput = {
       primary: 'strength',
-      motivation: 'Get stronger to lift heavy weights',
+      motivation: 'Test motivation',
     };
 
     it('should create valid fitness goals', () => {
@@ -22,7 +22,7 @@ describe('FitnessGoals Value Object', () => {
       if (result.success) {
         const goals = result.data;
         expect(goals.primary).toBe('strength');
-        expect(goals.motivation).toBe('Get stronger to lift heavy weights');
+        expect(goals.motivation).toBe(validInput.motivation);
         expect(goals.secondary).toEqual([]);
         expect(goals.successCriteria).toEqual([]);
       }
@@ -30,11 +30,14 @@ describe('FitnessGoals Value Object', () => {
 
     it('should create with all properties', () => {
       // Arrange
-      const targetDate = new Date('2026-12-31');
-      const input: CreateGoalsInput = {
+      const targetDate = faker.date.future();
+      const motivation = 'Test motivation for all properties';
+      const secondary = ['strength', 'endurance'];
+      const successCriteria = ['criteria1', 'criteria2'];
+      const input: CreateFitnessGoalsInput = {
         primary: 'weight_loss',
-        motivation: 'Lose weight for health',
-        secondary: ['improve endurance', 'gain strength'],
+        motivation,
+        secondary,
         targetWeight: {
           current: 80,
           target: 70,
@@ -42,7 +45,7 @@ describe('FitnessGoals Value Object', () => {
         },
         targetBodyFat: 15,
         targetDate,
-        successCriteria: ['feel stronger', 'look better'],
+        successCriteria,
       };
 
       // Act
@@ -59,12 +62,15 @@ describe('FitnessGoals Value Object', () => {
           unit: 'kg',
         });
         expect(goals.targetDate).toEqual(targetDate);
+        expect(goals.motivation).toBe(motivation);
+        expect(goals.secondary).toEqual(secondary);
+        expect(goals.successCriteria).toEqual(successCriteria);
       }
     });
 
     it('should fail with empty motivation', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
         motivation: '',
       };
@@ -81,7 +87,7 @@ describe('FitnessGoals Value Object', () => {
 
     it('should fail with too long motivation', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
         motivation: 'A'.repeat(1001),
       };
@@ -98,7 +104,7 @@ describe('FitnessGoals Value Object', () => {
 
     it('should fail with negative target weight', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
         targetWeight: {
           current: -100,
@@ -116,7 +122,7 @@ describe('FitnessGoals Value Object', () => {
 
     it('should fail with zero target weight', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
         targetWeight: {
           current: 0,
@@ -134,7 +140,7 @@ describe('FitnessGoals Value Object', () => {
 
     it('should fail with invalid body fat percentage', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
         targetBodyFat: 61,
       };
@@ -148,9 +154,9 @@ describe('FitnessGoals Value Object', () => {
 
     it('should fail with past target date', () => {
       // Arrange
-      const input: CreateGoalsInput = {
+      const input: CreateFitnessGoalsInput = {
         ...validInput,
-        targetDate: new Date('2020-01-01'),
+        targetDate: faker.date.past(),
       };
 
       // Act
@@ -181,8 +187,9 @@ describe('FitnessGoals Value Object', () => {
     });
 
     it('should allow fixture overrides', () => {
-      const customGoals = createFitnessGoalsFixture({ motivation: 'Be awesome' });
-      expect(customGoals.motivation).toBe('Be awesome');
+      const motivation = 'Test fixture override motivation';
+      const customGoals = createFitnessGoalsFixture({ motivation });
+      expect(customGoals.motivation).toBe(motivation);
     });
   });
 });

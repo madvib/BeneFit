@@ -74,20 +74,40 @@ export class AIPlanGenerator {
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekEnd.getDate() + 7);
 
-        const workouts: WorkoutTemplate[] = (week.workouts || []).map((workout: any) => ({
-          id: randomUUID(),
-          name: workout.type,
-          dayOfWeek: workout.dayOfWeek,
-          type: workout.type,
-          activities: (workout.activities || []).map((activity: any) => ({
+        const workouts: WorkoutTemplate[] = (week.workouts || []).map((workout: any) => {
+          const scheduledDate = new Date(weekStart);
+          scheduledDate.setDate(scheduledDate.getDate() + (workout.dayOfWeek || 0));
+
+          return {
             id: randomUUID(),
-            name: activity.activityType,
-            type: activity.activityType,
-            instructions: activity.instructions,
-            duration: 30, // Default or parse from activity
-            structure: activity.structure,
-          })),
-        }));
+            planId: tempPlanId,
+            weekNumber: week.weekNumber,
+            dayOfWeek: workout.dayOfWeek || 0,
+            scheduledDate,
+            title: workout.type || 'Workout',
+            type: workout.type || 'custom',
+            category: (['cardio', 'strength', 'recovery'].includes(workout.type))
+              ? workout.type
+              : 'strength',
+            status: 'scheduled',
+            importance: 'recommended',
+            goals: {
+              completionCriteria: {
+                mustComplete: true,
+                autoVerifiable: false,
+              },
+            },
+            activities: (workout.activities || []).map((activity: any, idx: number) => ({
+              id: randomUUID(),
+              name: activity.activityType || 'Activity',
+              type: activity.activityType || 'main',
+              order: idx,
+              instructions: Array.isArray(activity.instructions) ? activity.instructions : [activity.instructions],
+              duration: 30, // Default or parse from activity
+              structure: activity.structure,
+            })),
+          };
+        });
 
         const scheduleResult = CreateWeeklyScheduleSchema.safeParse({
           weekNumber: week.weekNumber,

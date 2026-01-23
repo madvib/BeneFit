@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { CreateServiceMetadataSchema } from '../service-metadata.factory.js';
+import { randomUUID } from 'node:crypto';
+
 import { createServiceMetadataFixture } from './service-metadata.fixtures.js';
+import { CreateServiceMetadataSchema } from '../service-metadata.factory.js';
 
 describe('ServiceMetadata', () => {
   describe('Factory', () => {
@@ -18,8 +20,9 @@ describe('ServiceMetadata', () => {
 
     it('should create metadata with provided values', () => {
       // Arrange
+      const externalUserId = randomUUID();
       const input = {
-        externalUserId: '550e8400-e29b-41d4-a716-446655440000',
+        externalUserId,
         supportsWebhooks: true,
         webhookRegistered: true
       };
@@ -30,7 +33,7 @@ describe('ServiceMetadata', () => {
       // Assert
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.externalUserId).toBe(input.externalUserId);
+        expect(result.data.externalUserId).toBe(externalUserId);
         expect(result.data.supportsWebhooks).toBe(true);
         expect(result.data.webhookRegistered).toBe(true);
       }
@@ -46,9 +49,10 @@ describe('ServiceMetadata', () => {
     });
 
     it('should allow overrides in fixture', () => {
-      const fixture = createServiceMetadataFixture({ externalUserId: 'custom-id' });
+      const externalUserId = randomUUID();
+      const fixture = createServiceMetadataFixture({ externalUserId });
 
-      expect(fixture.externalUserId).toBe('custom-id');
+      expect(fixture.externalUserId).toBe(externalUserId);
     });
   });
 });

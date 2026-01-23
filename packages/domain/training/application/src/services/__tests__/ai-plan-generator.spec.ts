@@ -1,8 +1,10 @@
 
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'node:crypto';
 import { Result } from '@bene/shared';
-import { AIPlanGenerator, GeneratePlanInput } from '../ai-plan-generator.js';
-import { AIProvider, AICompletionRequest } from '@bene/shared';
+import type { AIProvider } from '@bene/shared';
+import { createPlanGoalsFixture, createTrainingConstraintsFixture } from '@bene/training-core/fixtures';
+import { AIPlanGenerator, type GeneratePlanInput } from '../ai-plan-generator.js';
 
 // Mock Provider
 const mockProvider = {
@@ -19,16 +21,18 @@ describe('AIPlanGenerator', () => {
 
   it('should correctly parse AI JSON response into FitnessPlan', async () => {
     // Arrange
+    const userId = randomUUID();
     const input: GeneratePlanInput = {
-      userId: 'user-123',
-      goals: { primary: 'strength_hypertrophy', secondary: [], targetMetrics: {} },
-      constraints: {
-        availableDays: [1, 3, 5],
-        availableEquipment: ['dumbbell'],
+      userId,
+      goals: createPlanGoalsFixture({
+        primary: 'strength'
+      }),
+      constraints: createTrainingConstraintsFixture({
+        availableDays: ['Monday', 'Wednesday', 'Friday'],
+        availableEquipment: ['Dumbbells'],
         location: 'home',
         maxDuration: 45,
-        injuries: [],
-      },
+      }),
       experienceLevel: 'intermediate',
     };
 
@@ -40,16 +44,16 @@ describe('AIPlanGenerator', () => {
           workouts: [
             {
               dayOfWeek: 1,
-              type: 'Upper Body',
+              type: 'strength',
               activities: [
                 {
                   activityType: 'warmup',
-                  instructions: 'Arm circles',
+                  instructions: ['Arm circles'],
                   structure: { type: 'exercises', exercises: [] }
                 },
                 {
                   activityType: 'main',
-                  instructions: 'Dumbbell Press 3x10',
+                  instructions: ['Dumbbell Press 3x10'],
                   structure: { type: 'exercises', exercises: [] }
                 }
               ]
@@ -77,17 +81,25 @@ describe('AIPlanGenerator', () => {
     expect(plan.weeks).toHaveLength(1);
     expect(plan.weeks[0].weekNumber).toBe(1);
     expect(plan.weeks[0].workouts).toHaveLength(1);
-    expect(plan.weeks[0].workouts[0].type).toBe('Upper Body');
+    expect(plan.weeks[0].workouts[0].type).toBe('strength');
     // Verify activities mapped
     expect(plan.weeks[0].workouts[0].activities).toHaveLength(2);
-    expect(plan.weeks[0].workouts[0].activities[1].instructions).toBe('Dumbbell Press 3x10');
+    expect(plan.weeks[0].workouts[0].activities[1].instructions[0]).toBe('Dumbbell Press 3x10');
   });
 
   it('should handle invalid JSON from AI', async () => {
+    const userId = randomUUID();
     const input: GeneratePlanInput = {
-      userId: 'user-123',
-      goals: { primary: 'strength', secondary: [], targetMetrics: {} },
-      constraints: { availableDays: [], availableEquipment: [], location: 'gym', maxDuration: 60, injuries: [] },
+      userId,
+      goals: createPlanGoalsFixture({
+        primary: 'strength'
+      }),
+      constraints: createTrainingConstraintsFixture({
+        availableDays: [],
+        availableEquipment: [],
+        location: 'gym',
+        maxDuration: 60,
+      }),
       experienceLevel: 'beginner'
     };
 
@@ -100,6 +112,6 @@ describe('AIPlanGenerator', () => {
 
     const result = await generator.generatePlan(input);
     expect(result.isFailure).toBe(true);
-    expect(result.error?.message).toContain('Failed to parse plan data');
+    expect((result.error as Error).message).toContain('Failed to parse plan data');
   });
 });

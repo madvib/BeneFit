@@ -1,9 +1,14 @@
+
 import { describe, it, expect, beforeAll } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
 import { publishTemplate } from '../plan-template.commands.js';
 import { CreatePlanTemplateSchema, createTemplateRevision } from '../plan-template.factory.js';
-import { createPlanTemplateFixture } from './plan-template.fixtures.js';
-import { createTemplateStructureFixture } from '../../template-structure/index.js';
-import { createTemplateRulesFixture } from '../../template-rules/index.js';
+import {
+  createPlanTemplateFixture,
+  createTemplateStructureFixture,
+  createTemplateRulesFixture,
+} from '@/fixtures.js';
 import type { TemplateStructure } from '../../template-structure/index.js';
 import type { TemplateRules } from '../../template-rules/index.js';
 
@@ -36,7 +41,7 @@ describe('PlanTemplate', () => {
       const input = {
         name: '',
         description: 'Test description',
-        author: { name: 'Coach', userId: '550e8400-e29b-41d4-a716-446655440000' },
+        author: { name: 'Test Author', userId: randomUUID() },
         tags: [],
         structure: validStructure,
         rules: validRules,
@@ -52,9 +57,9 @@ describe('PlanTemplate', () => {
     it('should fail with validation error when description is empty', () => {
       // Arrange
       const input = {
-        name: 'Test Plan',
+        name: 'Test Plan Template',
         description: '',
-        author: { name: 'Coach', userId: '550e8400-e29b-41d4-a716-446655440000' },
+        author: { name: 'Test Author', userId: randomUUID() },
         tags: [],
         structure: validStructure,
         rules: validRules,
@@ -77,8 +82,8 @@ describe('PlanTemplate', () => {
           isFeatured: false,
           isVerified: false,
           usageCount: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: faker.date.past(),
+          updatedAt: faker.date.past(),
           publishedAt: undefined,
         }
       });
@@ -107,14 +112,15 @@ describe('PlanTemplate', () => {
 
     it('should update updatedAt timestamp when publishing', () => {
       // Arrange
+      const pastDate = faker.date.past();
       const template = createPlanTemplateFixture({
         metadata: {
           isPublic: false,
           isFeatured: false,
           isVerified: false,
           usageCount: 0,
-          createdAt: new Date('2024-01-01'),
-          updatedAt: new Date('2024-01-01'),
+          createdAt: pastDate,
+          updatedAt: pastDate,
           publishedAt: undefined,
         }
       });
@@ -136,7 +142,7 @@ describe('PlanTemplate', () => {
       const template = createPlanTemplateFixture();
 
       // Act
-      const result = createTemplateRevision(template, { name: 'Updated Plan' });
+      const result = createTemplateRevision(template, { name: 'Updated Template Name' });
 
       // Assert
       expect(result.isSuccess).toBe(true);
@@ -146,13 +152,14 @@ describe('PlanTemplate', () => {
     it('should update name when creating revision with new name', () => {
       // Arrange
       const template = createPlanTemplateFixture();
-      const newName = 'Updated Plan Name';
+      const newName = 'New Template Name';
 
       // Act
-      const revision = createTemplateRevision(template, { name: newName }).value;
+      const revisionResult = createTemplateRevision(template, { name: newName });
 
       // Assert
-      expect(revision.name).toBe(newName);
+      expect(revisionResult.isSuccess).toBe(true);
+      expect(revisionResult.value.name).toBe(newName);
     });
 
     it('should reset publication status when creating revision', () => {
@@ -160,27 +167,34 @@ describe('PlanTemplate', () => {
       const template = createPlanTemplateFixture();
 
       // Act
-      const revision = createTemplateRevision(template, {}).value;
+      const revisionResult = createTemplateRevision(template, {});
 
       // Assert
-      expect(revision.metadata.isPublic).toBe(false);
-      expect(revision.metadata.publishedAt).toBeUndefined();
+      expect(revisionResult.isSuccess).toBe(true);
+      expect(revisionResult.value.metadata.isPublic).toBe(false);
+      expect(revisionResult.value.metadata.publishedAt).toBeUndefined();
     });
 
     it('should preserve unchanged properties when creating revision', () => {
       // Arrange
+      const name = 'Test Template Name';
+      const description = 'Test template description';
+      const tags = ['strength', 'beginner'];
       const template = createPlanTemplateFixture({
-        name: 'Original Name',
-        description: 'Original Description',
-        tags: ['strength', 'endurance']
+        name,
+        description,
+        tags,
       });
 
       // Act
-      const revision = createTemplateRevision(template, {
-        name: 'Updated Name'
-      }).value;
+      const updatedName = 'Updated Template Name';
+      const revisionResult = createTemplateRevision(template, {
+        name: updatedName
+      });
 
       // Assert
+      expect(revisionResult.isSuccess).toBe(true);
+      const revision = revisionResult.value;
       expect(revision.description).toBe(template.description);
       expect(revision.tags).toEqual(template.tags);
       expect(revision.author).toEqual(template.author);
@@ -196,12 +210,14 @@ describe('PlanTemplate', () => {
       });
 
       // Act
-      const revision = createTemplateRevision(template, {
+      const revisionResult = createTemplateRevision(template, {
         name: 'Updated',
         tags: ['strength', 'cardio']
-      }).value;
+      });
 
       // Assert
+      expect(revisionResult.isSuccess).toBe(true);
+      const revision = revisionResult.value;
       expect(revision.name).toBe('Updated');
       expect(revision.tags).toEqual(['strength', 'cardio']);
       expect(revision.description).toBe(template.description);
@@ -212,9 +228,11 @@ describe('PlanTemplate', () => {
       const template = createPlanTemplateFixture();
 
       // Act
-      const revision = createTemplateRevision(template, {}).value;
+      const revisionResult = createTemplateRevision(template, {});
 
       // Assert
+      expect(revisionResult.isSuccess).toBe(true);
+      const revision = revisionResult.value;
       expect(revision.metadata.createdAt).toBeInstanceOf(Date);
       expect(revision.metadata.updatedAt).toBeInstanceOf(Date);
       expect(revision.metadata.createdAt.getTime()).toBeGreaterThanOrEqual(

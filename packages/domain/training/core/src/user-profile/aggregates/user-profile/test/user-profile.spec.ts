@@ -1,30 +1,40 @@
-import { z } from 'zod';
 import { describe, it, expect, beforeAll } from 'vitest';
-
-import { createTrainingConstraintsFixture } from '@/shared/index.js';
+import { randomUUID } from 'crypto';
+import { omit } from '@bene/shared';
 import {
+  createTrainingConstraintsFixture,
   createExperienceProfileFixture,
   createFitnessGoalsFixture,
   createUserStatsFixture,
+} from '@/fixtures.js';
+import {
+  ExperienceProfile,
+  FitnessGoals,
+  Achievement,
 } from '@/user-profile/value-objects/index.js';
-import { ExperienceProfile, FitnessGoals } from '@/user-profile/value-objects/index.js';
 import { TrainingConstraints } from '@/shared/index.js';
 
 import {
   updateDisplayName,
+  updateAvatar,
   updateBio,
   updateFitnessGoals,
+  updateTrainingConstraints,
+  updateExperienceProfile,
+  updatePreferences,
   recordWorkoutCompleted,
+  awardAchievement,
+  updateLastActive,
 } from '../user-profile.commands.js';
 import {
   isStreakActive,
   getDaysSinceLastWorkout,
   getAverageWorkoutDuration,
+  shouldReceiveCheckIn,
+  getMemberSinceDays,
 } from '../user-profile.queries.js';
-import { CreateUserProfileSchema } from '../user-profile.factory.js';
+import { CreateUserProfileSchema, type CreateUserProfileInput } from '../user-profile.factory.js';
 import { createUserProfileFixture } from './user-profile.fixtures.js';
-
-type CreateUserProfileInput = z.input<typeof CreateUserProfileSchema>;
 
 describe('UserProfile Aggregate', () => {
   let validExperienceProfile: ExperienceProfile;
@@ -46,7 +56,7 @@ describe('UserProfile Aggregate', () => {
 
     validFitnessGoals = createFitnessGoalsFixture({
       primary: 'strength',
-      motivation: 'Get stronger',
+      motivation: 'Test motivation',
     });
 
     validConstraints = createTrainingConstraintsFixture({
@@ -55,17 +65,17 @@ describe('UserProfile Aggregate', () => {
       location: 'home',
     });
 
-    validParams = {
-      userId: '550e8400-e29b-41d4-a716-446655440000',
-      displayName: 'John Doe',
-      timezone: 'UTC',
+    const fullProfile = createUserProfileFixture({
+      displayName: 'Test User Profile',
       experienceProfile: validExperienceProfile,
       fitnessGoals: validFitnessGoals,
       trainingConstraints: validConstraints,
-      bio: 'Fitness enthusiast',
-      avatar: 'https://example.com/avatar.jpg',
-      location: 'New York',
-    };
+      bio: 'Test bio',
+      avatar: 'https://example.com/avatar.png',
+      location: 'Test City',
+    });
+
+    validParams = fullProfile;
   });
 
   describe('Factory', () => {
@@ -78,12 +88,34 @@ describe('UserProfile Aggregate', () => {
       if (result.success) {
         expect(result.data).toMatchObject({
           userId: validParams.userId,
-          displayName: 'John Doe',
+          displayName: validParams.displayName,
           experienceProfile: validExperienceProfile,
           fitnessGoals: validFitnessGoals,
         });
+      }
+    });
+
+    it('should generate defaults when optional fields are omitted', () => {
+      // Arrange
+      // Explicitly remove optional fields to test default generation logic
+      const minimalParams = omit(validParams, [
+        'stats',
+        'preferences',
+        'createdAt',
+        'updatedAt',
+        'lastActiveAt',
+      ]);
+
+      // Act
+      const result = CreateUserProfileSchema.safeParse(minimalParams);
+
+      // Assert
+      expect(result.success).toBe(true);
+      if (result.success) {
         expect(result.data.preferences).toBeDefined();
         expect(result.data.stats).toBeDefined();
+        expect(result.data.stats.totalWorkouts).toBe(0); // Default value check
+        expect(result.data.createdAt).toBeInstanceOf(Date);
       }
     });
 
@@ -134,13 +166,14 @@ describe('UserProfile Aggregate', () => {
     it('should update display name', () => {
       // Arrange
       const profile = createUserProfileFixture();
+      const newName = 'Updated Test User';
 
       // Act
-      const updatedResult = updateDisplayName(profile, 'Jane Doe');
+      const updatedResult = updateDisplayName(profile, newName);
 
       // Assert
       expect(updatedResult.isSuccess).toBe(true);
-      expect(updatedResult.value.displayName).toBe('Jane Doe');
+      expect(updatedResult.value.displayName).toBe(newName);
       expect(updatedResult.value.updatedAt).toBeDefined();
     });
 
@@ -158,13 +191,14 @@ describe('UserProfile Aggregate', () => {
     it('should update bio', () => {
       // Arrange
       const profile = createUserProfileFixture();
+      const newBio = 'Updated test bio';
 
       // Act
-      const updatedResult = updateBio(profile, 'New bio');
+      const updatedResult = updateBio(profile, newBio);
 
       // Assert
       expect(updatedResult.isSuccess).toBe(true);
-      expect(updatedResult.value.bio).toBe('New bio');
+      expect(updatedResult.value.bio).toBe(newBio);
       expect(updatedResult.value.updatedAt).toBeDefined();
     });
 
@@ -173,7 +207,7 @@ describe('UserProfile Aggregate', () => {
       const profile = createUserProfileFixture();
       const newGoals = createFitnessGoalsFixture({
         primary: 'hypertrophy',
-        motivation: 'Build muscle',
+        motivation: 'Updated motivation',
       });
 
       // Act
@@ -193,20 +227,77 @@ describe('UserProfile Aggregate', () => {
           totalMinutes: 0,
           totalVolume: 0,
           lastWorkoutDate: undefined,
-        })
+        }),
       });
       const workoutDate = new Date();
+      const duration = 45;
+      const volume = 5000;
 
       // Act
-      const updatedProfile = recordWorkoutCompleted(profile, workoutDate, 60, 500);
+      const updatedProfile = recordWorkoutCompleted(profile, workoutDate, duration, volume);
 
       // Assert
       expect(updatedProfile.stats).toMatchObject({
         totalWorkouts: 1,
-        totalMinutes: 60,
-        totalVolume: 500,
+        totalMinutes: duration,
+        totalVolume: volume,
         lastWorkoutDate: workoutDate,
       });
+    });
+
+    it('should update avatar', () => {
+      const profile = createUserProfileFixture();
+      const newAvatar = 'https://example.com/new-avatar.png';
+      const result = updateAvatar(profile, newAvatar);
+      expect(result.isSuccess).toBe(true);
+      expect(result.value.avatar).toBe(newAvatar);
+    });
+
+    it('should update training constraints', () => {
+      const profile = createUserProfileFixture();
+      const newConstraints = createTrainingConstraintsFixture({ location: 'gym' });
+      const result = updateTrainingConstraints(profile, newConstraints);
+      expect(result.isSuccess).toBe(true);
+      expect(result.value.trainingConstraints.location).toBe('gym');
+    });
+
+    it('should update experience profile', () => {
+      const profile = createUserProfileFixture();
+      const newExp = createExperienceProfileFixture({ level: 'advanced' });
+      const result = updateExperienceProfile(profile, newExp);
+      expect(result.isSuccess).toBe(true);
+      expect(result.value.experienceProfile.level).toBe('advanced');
+    });
+
+    it('should update preferences', () => {
+      const profile = createUserProfileFixture();
+      const newPrefs = { units: 'imperial' as const };
+      const updated = updatePreferences(profile, newPrefs);
+      expect(updated.preferences.units).toBe('imperial');
+    });
+
+    it('should award achievement', () => {
+      const profile = createUserProfileFixture({
+        stats: createUserStatsFixture({ achievements: [] }),
+      });
+      const achievementId = randomUUID();
+      const achievement: Achievement = {
+        id: achievementId,
+        type: 'first_workout',
+        name: 'Test Achievement Name',
+        earnedAt: new Date(),
+        description: 'Test achievement description',
+      };
+      const updated = awardAchievement(profile, achievement);
+      expect(updated.stats.achievements).toHaveLength(1);
+      expect(updated.stats.achievements[0]?.id).toBe(achievementId);
+    });
+
+    it('should update last active', () => {
+      const profile = createUserProfileFixture();
+      const original = profile.lastActiveAt;
+      const updated = updateLastActive(profile);
+      expect(updated.lastActiveAt.getTime()).toBeGreaterThanOrEqual(original?.getTime() || 0);
     });
   });
 
@@ -214,7 +305,7 @@ describe('UserProfile Aggregate', () => {
     it('should check if streak is active', () => {
       // Arrange
       const profile = createUserProfileFixture({
-        stats: createUserStatsFixture({ lastWorkoutDate: undefined })
+        stats: createUserStatsFixture({ lastWorkoutDate: undefined }),
       });
 
       // Act & Assert
@@ -224,7 +315,7 @@ describe('UserProfile Aggregate', () => {
     it('should get days since last workout', () => {
       // Arrange
       const profile = createUserProfileFixture({
-        stats: createUserStatsFixture({ lastWorkoutDate: undefined })
+        stats: createUserStatsFixture({ lastWorkoutDate: undefined }),
       });
 
       // Act
@@ -237,7 +328,7 @@ describe('UserProfile Aggregate', () => {
     it('should calculate average workout duration', () => {
       // Arrange
       const profile = createUserProfileFixture({
-        stats: createUserStatsFixture({ totalWorkouts: 0 })
+        stats: createUserStatsFixture({ totalWorkouts: 0 }),
       });
 
       // Act
@@ -245,6 +336,18 @@ describe('UserProfile Aggregate', () => {
 
       // Assert
       expect(duration).toBe(0);
+    });
+
+    it('should determine if check-in is needed', () => {
+      const profile = createUserProfileFixture();
+      const result = shouldReceiveCheckIn(profile);
+      expect(typeof result).toBe('boolean');
+    });
+
+    it('should get member since days', () => {
+      const profile = createUserProfileFixture();
+      const days = getMemberSinceDays(profile);
+      expect(days).toBeGreaterThanOrEqual(0);
     });
   });
 });

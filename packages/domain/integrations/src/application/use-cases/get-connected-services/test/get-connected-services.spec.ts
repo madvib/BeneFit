@@ -1,6 +1,14 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
+import { randomUUID } from 'node:crypto';
+
 import { Result } from '@bene/shared';
-import { ConnectedService } from '../../../../core/index.js';
+
+import {
+  createConnectedServiceFixture,
+  createSyncStatusFixture,
+  createServiceMetadataFixture
+} from '@/fixtures.js';
+
 import { GetConnectedServicesUseCase } from '../get-connected-services.js';
 
 // Mock repositories and services
@@ -16,7 +24,11 @@ const mockServiceRepository = {
   delete: Mock;
 };
 
+const SERVICE_TYPE = 'strava';
+
 describe('GetConnectedServicesUseCase', () => {
+  const TEST_USER_ID = randomUUID();
+
   let useCase: GetConnectedServicesUseCase;
 
   beforeEach(() => {
@@ -26,51 +38,19 @@ describe('GetConnectedServicesUseCase', () => {
 
   it('should successfully get connected services', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
+    const serviceId = randomUUID();
+    const externalUserId = 'test-external-user-id';
 
-    const mockService: ConnectedService = {
-      id: 'service-456',
+    const mockService = createConnectedServiceFixture({
+      id: serviceId,
       userId,
-      serviceType: 'strava' as 'strava' | 'garmin',
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000),
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: {
-        readWorkouts: true,
-        writeWorkouts: true,
-        readHeartRate: true,
-        readSleep: true,
-        readNutrition: true,
-        readBodyMetrics: true,
-      },
-      syncStatus: {
-        state: 'synced',
-        lastAttemptAt: new Date(),
-        lastSuccessAt: new Date(),
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 10,
-        workoutsSynced: 5,
-        heartRateDataSynced: 3,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
+      serviceType: SERVICE_TYPE,
+      syncStatus: createSyncStatusFixture({ state: 'synced' }),
+      metadata: createServiceMetadataFixture({ externalUserId }),
       isActive: true,
       isPaused: false,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-      lastSyncAt: new Date(),
-    };
+    });
 
     mockServiceRepository.findByUserId.mockResolvedValue(Result.ok([mockService]));
 
@@ -85,11 +65,11 @@ describe('GetConnectedServicesUseCase', () => {
       expect(result.value.services).toHaveLength(1);
       const service = result.value.services[0];
       if (service) {
-        expect(service.id).toBe('service-456');
-        expect(service.serviceType).toBe('strava');
+        expect(service.id).toBe(serviceId);
+        expect(service.serviceType).toBe(SERVICE_TYPE);
         expect(service.isActive).toBe(true);
         expect(service.isPaused).toBe(false);
-        expect(service.syncStatus).toBe('synced');
+        expect(service.syncStatus.state).toBe('synced');
         expect(service.lastSyncAt).toBeDefined();
       }
     }
@@ -97,7 +77,7 @@ describe('GetConnectedServicesUseCase', () => {
 
   it('should return empty array if no services are found', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
     mockServiceRepository.findByUserId.mockResolvedValue(Result.ok([]));
 
@@ -115,7 +95,7 @@ describe('GetConnectedServicesUseCase', () => {
 
   it('should fail if repository call fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
     mockServiceRepository.findByUserId.mockResolvedValue(
       Result.fail(new Error('Database error')),

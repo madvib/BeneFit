@@ -1,14 +1,17 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
+
 import { Result, type EventBus } from '@bene/shared';
 import {
   createFitnessPlanFixture,
   createUserProfileFixture,
-  createPlanGoalsFixture
+  createPlanGoalsFixture,
 } from '@bene/training-core/fixtures';
-import { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
-import { AIPlanGenerator } from '../../../services/ai-plan-generator.js';
-import { UserProfileRepository } from '../../../repositories/user-profile-repository.js';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { AIPlanGenerator } from '@/services/ai-plan-generator.js';
+import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+
 import { GeneratePlanFromGoalsUseCase } from '../generate-plan-from-goals.js';
 
 // Mock repositories and services
@@ -30,6 +33,7 @@ const mockAIPlanGenerator = {
 
 const mockEventBus = {
   publish: vi.fn(),
+  subscribe: vi.fn(),
 } as unknown as EventBus;
 
 describe('GeneratePlanFromGoalsUseCase', () => {
@@ -47,7 +51,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should successfully generate a plan when user has no active plan', async () => {
     // Arrange
-    const userId = faker.string.uuid();
+    const userId = randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
     const mockPlan = createFitnessPlanFixture({
@@ -92,7 +96,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if user profile is not found', async () => {
     // Arrange
-    const userId = faker.string.uuid();
+    const userId = randomUUID();
     const goals = createPlanGoalsFixture();
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
@@ -114,7 +118,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if user already has an active plan', async () => {
     // Arrange
-    const userId = faker.string.uuid();
+    const userId = randomUUID();
     const goals = createPlanGoalsFixture();
     const mockActivePlan = createFitnessPlanFixture({
       userId,
@@ -143,7 +147,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if AI plan generation fails', async () => {
     // Arrange
-    const userId = faker.string.uuid();
+    const userId = randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
 
@@ -164,15 +168,13 @@ describe('GeneratePlanFromGoalsUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe(
-        'Failed to generate plan: Error: AI generation failed',
-      );
+      expect(result.errorMessage).toBe('Failed to generate plan: Error: AI generation failed');
     }
   });
 
   it('should fail if saving the plan fails', async () => {
     // Arrange
-    const userId = faker.string.uuid();
+    const userId = randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
     const mockPlan = createFitnessPlanFixture({

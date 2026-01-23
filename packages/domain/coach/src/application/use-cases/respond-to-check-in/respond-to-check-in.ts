@@ -5,7 +5,7 @@ import {
   toCoachActionView,
   type CoachActionView,
   CoachConversationCommands
-} from '@core/index.js';
+} from '@/core/index.js';
 import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 import { AICoachService } from '../../services/index.js';
 import { CheckInRespondedEvent } from '../../events/check-in-responded.event.js';

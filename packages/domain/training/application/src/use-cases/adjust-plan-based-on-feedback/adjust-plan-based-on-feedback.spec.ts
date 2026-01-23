@@ -1,9 +1,13 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
-import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
+import { createFitnessPlanFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+import { AIPlanGenerator } from '@/services/ai-plan-generator.js';
+
 import { AdjustPlanBasedOnFeedbackUseCase } from './adjust-plan-based-on-feedback.js';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
-import { AIPlanGenerator } from '../../services/ai-plan-generator.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -20,6 +24,7 @@ const mockAIPlanGenerator = {
 
 const mockEventBus = {
   publish: vi.fn(),
+  subscribe: vi.fn(),
 } as unknown as EventBus;
 
 describe('AdjustPlanBasedOnFeedbackUseCase', () => {
@@ -36,15 +41,14 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should successfully adjust a plan based on feedback', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
     const feedback = 'Too hard, need more rest days';
-
     const originalPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'active',
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 } as any],
+      weeks: [createWeeklyScheduleFixture()],
     });
 
     const adjustedPlan = {
@@ -93,13 +97,13 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
-    const feedback = 'Too hard, need more rest days';
+    const userId = randomUUID();
+    const planId = randomUUID();
+    const feedback = 'Too easy';
     const recentWorkouts = [
       {
         perceivedExertion: 8,
-        enjoyment: 6,
+        enjoyment: 5,
         difficultyRating: 'too_hard' as const,
       },
     ];
@@ -125,15 +129,16 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if user is not authorized', async () => {
     // Arrange
-    const userId = 'user-123';
-    const otherUserId = 'user-789';
-    const planId = 'plan-456';
-    const feedback = 'Too hard, need more rest days';
+    const userId = randomUUID();
+    const otherUserId = randomUUID();
+    const planId = randomUUID();
+    const feedback = 'Too easy';
 
     const originalPlan = createFitnessPlanFixture({
       id: planId,
       userId: otherUserId,
       status: 'active',
+      weeks: [createWeeklyScheduleFixture()],
     });
 
     const recentWorkouts = [
@@ -163,14 +168,15 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if AI plan adjustment fails', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
     const feedback = 'Too hard, need more rest days';
 
     const originalPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'active',
+      weeks: [createWeeklyScheduleFixture()],
     });
 
     const recentWorkouts = [

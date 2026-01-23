@@ -79,7 +79,6 @@ export function createCoachContextFixture(overrides?: Partial<CoachContext>): Co
       'beginner',
       'intermediate',
       'advanced',
-      'elite',
     ] as const),
     trends: createPerformanceTrendsFixture(),
     daysIntoCurrentWeek: faker.number.int({ min: 0, max: 7 }),

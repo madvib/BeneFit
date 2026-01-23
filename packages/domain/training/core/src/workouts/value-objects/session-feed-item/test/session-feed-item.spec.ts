@@ -1,20 +1,24 @@
+
 import { describe, it, expect } from 'vitest';
+import { faker } from '@faker-js/faker';
 import { randomUUID } from 'crypto';
 import { CreateSessionFeedItemSchema } from '../session-feed-item.factory.js';
-import { createSessionFeedItemFixture } from './session-feed-item.fixtures.js';
+import { createSessionFeedItemFixture } from '@/fixtures.js';
 
 describe('SessionFeedItem', () => {
   describe('creation', () => {
     it('should create a valid feed item with fixture', () => {
       // Arrange
       const userId = randomUUID();
+      const userName = 'Test User';
+      const content = 'Test feed content';
 
       // Act
       const feedItem = createSessionFeedItemFixture({
         type: 'chat_message',
         userId,
-        userName: 'John Doe',
-        content: 'Hello everyone!',
+        userName,
+        content,
       });
 
       // Assert
@@ -22,20 +26,22 @@ describe('SessionFeedItem', () => {
       expect(feedItem.id).toBeDefined();
       expect(feedItem.timestamp).toBeInstanceOf(Date);
       expect(feedItem.userId).toBe(userId);
+      expect(feedItem.userName).toBe(userName);
+      expect(feedItem.content).toBe(content);
     });
 
     it('should respect provided optional fields', () => {
       // Arrange
       const customId = randomUUID();
-      const customDate = new Date('2023-01-01');
+      const customDate = faker.date.past();
       const userId = randomUUID();
 
       // Act
       const feedItem = createSessionFeedItemFixture({
         type: 'chat_message',
         userId,
-        userName: 'John Doe',
-        content: 'Hello',
+        userName: 'Test User',
+        content: 'Test feed content',
         id: customId,
         timestamp: customDate,
       });
@@ -47,14 +53,14 @@ describe('SessionFeedItem', () => {
 
     it('should create with metadata', () => {
       // Arrange
-      const metadata = { weight: 100, reps: 10 };
+      const metadata = { weight: 150, reps: 10 };
 
       // Act
       const feedItem = createSessionFeedItemFixture({
         type: 'set_completed',
-        userId: '550e8400-e29b-41d4-a716-446655440000',
-        userName: 'John Doe',
-        content: 'Completed a set',
+        userId: randomUUID(),
+        userName: 'Test User',
+        content: 'Test feed content',
         metadata,
       });
 
@@ -69,8 +75,8 @@ describe('SessionFeedItem', () => {
       const invalidInput = {
         type: 'chat_message' as const,
         userId: '',
-        userName: 'John Doe',
-        content: 'Hello',
+        userName: 'Test User',
+        content: 'Test feed content',
       };
 
       // Act
@@ -83,11 +89,10 @@ describe('SessionFeedItem', () => {
     it('should fail if content is too long', () => {
       // Arrange
       const longContent = 'a'.repeat(1001);
-      const userId = randomUUID();
       const invalidInput = {
         type: 'chat_message' as const,
-        userId,
-        userName: 'John Doe',
+        userId: randomUUID(),
+        userName: 'Test User',
         content: longContent,
       };
 

@@ -1,11 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
-import { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
-import { WorkoutSessionRepository } from '../../repositories/workout-session-repository.js';
-import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import {
+  createWorkoutSessionFixture,
+  createUserProfileFixture,
+  createMinimalPerformanceFixture,
+  createFitnessPlanFixture,
+} from '@bene/training-core/fixtures';
+
+import { CompletedWorkoutRepository } from '@/repositories/completed-workout-repository.js';
+import { WorkoutSessionRepository } from '@/repositories/workout-session-repository.js';
+import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
 import { CompleteWorkoutUseCase } from './complete-workout.js';
-import { createWorkoutSessionFixture, createMinimalCompletedWorkoutFixture as createCompletedWorkoutFixture } from '@bene/training-core/fixtures';
 
 describe('CompleteWorkoutUseCase', () => {
   let useCase: CompleteWorkoutUseCase;
@@ -37,6 +46,7 @@ describe('CompleteWorkoutUseCase', () => {
 
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
+      subscribe: vi.fn(),
     } as unknown as EventBus;
 
     useCase = new CompleteWorkoutUseCase(
@@ -44,61 +54,55 @@ describe('CompleteWorkoutUseCase', () => {
       completedWorkoutRepo,
       profileRepo,
       planRepo,
-      eventBus
+      eventBus,
     );
   });
 
   it('should complete a workout successfully', async () => {
-    const validUserId = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+    const validUserId = randomUUID();
+    const sessionId = randomUUID();
 
     const session = createWorkoutSessionFixture({
-      id: 'session-1',
+      id: sessionId,
       ownerId: validUserId,
       state: 'in_progress',
       workoutType: 'strength',
     });
 
     vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(session));
-    vi.mocked(profileRepo.findById).mockResolvedValue(Result.ok({
-      id: validUserId,
-      stats: { totalWorkouts: 5, totalVolume: 1000, totalMinutes: 100, currentStreak: 2 }
-    } as any));
+    vi.mocked(profileRepo.findById).mockResolvedValue(
+      Result.ok(
+        createUserProfileFixture({
+          userId: validUserId,
+          displayName: 'User',
+        }),
+      ),
+    );
+    vi.mocked(planRepo.findById).mockResolvedValue(Result.ok(createFitnessPlanFixture()));
 
     const request = {
       userId: validUserId,
-      sessionId: 'session-1',
-      title: 'Morning Lift',
-      performance: {
-        startedAt: new Date(Date.now() - 45 * 60000).toISOString(),
-        completedAt: new Date().toISOString(),
-        durationMinutes: 45,
-        activities: [
-          {
-            activityType: 'main',
-            completed: true,
-            durationMinutes: 40,
-            exercises: [
-              {
-                name: 'Squat',
-                setsCompleted: 1,
-                setsPlanned: 1,
-                reps: [10],
-                weight: [100],
-              }
-            ]
-          }
-        ],
-        perceivedExertion: 8,
-        enjoyment: 4,
-        energyLevel: 'high',
-        difficultyRating: 'just_right',
-      },
+      sessionId: sessionId,
+      title: 'Strength Workout',
+      performance: (() => {
+        const p = createMinimalPerformanceFixture({
+          startedAt: new Date(),
+          completedAt: new Date(),
+          durationMinutes: 60,
+        });
+        return {
+          ...JSON.parse(JSON.stringify(p)),
+          activities: p.activities.map((a: any, i: number) => ({
+            ...a,
+            name: 'Bench Press',
+            order: i + 1,
+          })),
+        };
+      })(),
       verification: {
         verified: true,
         sponsorEligible: true,
-        verifications: [
-          { method: 'manual', data: null }
-        ],
+        verifications: [{ method: 'manual', data: null }],
       },
       shareToFeed: true,
     } as any;
@@ -113,6 +117,6 @@ describe('CompleteWorkoutUseCase', () => {
     expect(result.value.workout.id).toBeDefined();
     expect(result.value.workout.workoutType).toBe('strength');
     expect(completedWorkoutRepo.save).toHaveBeenCalled();
-    expect(sessionRepo.delete).toHaveBeenCalledWith('session-1');
+    expect(sessionRepo.delete).toHaveBeenCalledWith(sessionId);
   });
 });

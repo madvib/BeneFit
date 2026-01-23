@@ -4,9 +4,9 @@ import {
   ConnectedServiceCommands,
   toConnectedServiceView,
   type ConnectedServiceView,
-} from '@core/index.js';
-import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
-import { ServiceDisconnectedEvent } from '@app/events/service-disconnected.event.js';
+} from '@/core/index.js';
+import { ConnectedServiceRepository } from '@/application/ports/connected-service-repository.js';
+import { ServiceDisconnectedEvent } from '@/application/events/service-disconnected.event.js';
 
 /**
  * Input schema

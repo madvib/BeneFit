@@ -26,11 +26,11 @@ export function createCheckInFixture(overrides?: Partial<CheckIn>): CheckIn {
     question: faker.lorem.sentence() + '?',
     userResponse: status === 'responded' ? faker.lorem.paragraph() : undefined,
     coachAnalysis: status === 'responded' ? faker.lorem.paragraph() : undefined,
-    actions: faker.helpers.multiple(() => createCoachActionFixture(), { count: { min: 0, max: 3 } }),
-    status,
-    createdAt: faker.date.recent({ days: 7 }),
-    respondedAt: status === 'responded' ? faker.date.recent({ days: 5 }) : undefined,
-    dismissedAt: status === 'dismissed' ? faker.date.recent({ days: 5 }) : undefined,
+    actions: overrides?.actions ?? (status === 'responded' ? faker.helpers.multiple(() => createCoachActionFixture(), { count: { min: 1, max: 3 } }) : []),
+    status: overrides?.status ?? status,
+    createdAt: overrides?.createdAt ?? faker.date.recent({ days: 7 }),
+    respondedAt: (overrides?.status ?? status) === 'responded' ? (overrides?.respondedAt ?? faker.date.recent({ days: 5 })) : undefined,
+    dismissedAt: (overrides?.status ?? status) === 'dismissed' ? (overrides?.dismissedAt ?? faker.date.recent({ days: 5 })) : undefined,
     ...overrides,
   };
 

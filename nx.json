@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tui":{"enabled":true},
   "plugins": [
     {
       "plugin": "./tools/nx-plugin/src/plugins/swc_inference.ts",

@@ -1,17 +1,22 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
 import { createUserProfileFixture } from '@bene/training-core/fixtures';
+
+import { UserProfileRepository } from '@/repositories/user-profile-repository.js';
+
 import { UpdateFitnessGoalsUseCase } from './update-fitness-goals.js';
-import { UserProfileRepository } from '../../repositories/user-profile-repository.js';
 
 // Mock repositories and services
 const mockProfileRepository = {
   findById: vi.fn(),
   save: vi.fn(),
-} as any;
+} as unknown as UserProfileRepository;
 
 const mockEventBus = {
   publish: vi.fn(),
+  subscribe: vi.fn(),
 } as unknown as EventBus;
 
 describe('UpdateFitnessGoalsUseCase', () => {
@@ -22,23 +27,22 @@ describe('UpdateFitnessGoalsUseCase', () => {
     useCase = new UpdateFitnessGoalsUseCase(mockProfileRepository, mockEventBus);
   });
 
-  const validUserId = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
-
   it('should successfully update fitness goals', async () => {
     // Arrange
+    const userId = randomUUID();
     const newGoals = {
       primary: 'hypertrophy' as const,
       secondary: ['endurance'],
-      motivation: 'Look better',
-      successCriteria: ['Bigger muscles']
+      motivation: 'Test motivation',
+      successCriteria: ['test']
     };
 
     const mockProfile = createUserProfileFixture({
-      userId: validUserId,
+      userId,
       fitnessGoals: {
         primary: 'strength',
         secondary: [],
-        motivation: 'Stay fit',
+        motivation: 'Original motivation',
         successCriteria: []
       },
     });
@@ -48,14 +52,14 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
     // Act
     const result = await useCase.execute({
-      userId: validUserId,
-      goals: newGoals as any,
+      userId,
+      goals: newGoals,
     });
 
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.userId).toBe(validUserId);
+      expect(result.value.userId).toBe(userId);
       expect(result.value.goals.primary).toBe(newGoals.primary);
     }
 
@@ -65,11 +69,12 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
   it('should fail if profile is not found', async () => {
     // Arrange
+    const userId = randomUUID();
     const newGoals = {
       primary: 'hypertrophy' as const,
       secondary: [],
-      motivation: 'Get big',
-      successCriteria: ['Bigger arms']
+      motivation: 'Test motivation',
+      successCriteria: ['test']
     };
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
@@ -78,7 +83,7 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
     // Act
     const result = await useCase.execute({
-      userId: validUserId,
+      userId,
       goals: newGoals,
     });
 

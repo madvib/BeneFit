@@ -2,16 +2,16 @@ import { z } from 'zod';
 import { randomUUID } from 'crypto';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
-  CoachConversation,
-  CoachConversationSchema
-} from './coach-conversation.types.js';
-import {
   CoachContext,
   CoachContextSchema,
   CoachMsg,
   CreateCoachContextSchema,
   CreateCoachMessageSchema
 } from '../../value-objects/index.js';
+import {
+  CoachConversation,
+  CoachConversationSchema
+} from './coach-conversation.types.js';
 
 /**
  * ============================================================================
@@ -155,9 +155,3 @@ export const CreateCoachConversationSchema = CoachConversationSchema.pick({
   const validationResult = validateCoachConversation(data);
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<CoachConversation>;
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
-
-

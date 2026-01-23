@@ -1,15 +1,26 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Result, EventBus } from '@bene/shared';
-import { WorkoutSessionRepository } from '../../../repositories/workout-session-repository.js';
-import { JoinMultiplayerWorkoutUseCase } from '../join-multiplayer-workout.js';
-import * as workoutsDomain from '@bene/training-core';
 
-vi.mock('@bene/training-core', () => ({
-  WorkoutSessionCommands: {
-    joinSession: vi.fn(),
-  },
-  toWorkoutSessionSchema: vi.fn((session) => session),
-}));
+import { Result, EventBus } from '@bene/shared';
+import { WorkoutSessionCommands, toWorkoutSessionView } from '@bene/training-core';
+import {
+  createWorkoutSessionFixture,
+  createSessionParticipantFixture,
+} from '@bene/training-core/fixtures';
+
+import { WorkoutSessionRepository } from '@/repositories/workout-session-repository.js';
+
+import { JoinMultiplayerWorkoutUseCase } from '../join-multiplayer-workout.js';
+
+vi.mock('@bene/training-core', async () => {
+  const actual = await vi.importActual('@bene/training-core');
+  return {
+    ...(actual as any),
+    WorkoutSessionCommands: {
+      joinSession: vi.fn(),
+    },
+    toWorkoutSessionView: vi.fn((session) => session),
+  };
+});
 
 describe('JoinMultiplayerWorkoutUseCase', () => {
   let useCase: JoinMultiplayerWorkoutUseCase;
@@ -20,42 +31,53 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
     sessionRepo = {
       findById: vi.fn(),
       save: vi.fn().mockResolvedValue(Result.ok()),
-    } as any;
+    } as unknown as WorkoutSessionRepository;
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
-    } as any;
+      subscribe: vi.fn(),
+    } as unknown as EventBus;
 
     useCase = new JoinMultiplayerWorkoutUseCase(sessionRepo, eventBus);
   });
 
   it('should join a multiplayer session successfully', async () => {
-    const mockSession = {
-      id: 'session-1',
-      ownerId: 'user-1',
+    const userId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
+
+    const mockSession = createWorkoutSessionFixture({
+      id: sessionId,
+      ownerId: userId,
       configuration: { isMultiplayer: true, maxParticipants: 5, isPublic: true },
       participants: [],
-      activities: [{ activityType: 'run', instructions: 'Run' }],
-      currentActivityIndex: 0,
-    };
-    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
-    vi.mocked(workoutsDomain.WorkoutSessionCommands.joinSession).mockReturnValue(
+    });
+
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession));
+
+    const joiningUserId = crypto.randomUUID();
+    const joiningUserName = 'John Doe';
+    const participant = createSessionParticipantFixture({
+      userId: joiningUserId,
+      userName: joiningUserName,
+    });
+
+    vi.mocked(WorkoutSessionCommands.joinSession).mockReturnValue(
       Result.ok({
         ...mockSession,
-        participants: [{ userId: 'user-2', userName: 'User 2' }],
+        participants: [participant],
       }),
     );
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      sessionId: 'session-1',
+      userId: joiningUserId,
+      userName: joiningUserName,
+      sessionId: sessionId,
     };
 
     const result = await useCase.execute(request);
 
     expect(result.isSuccess).toBe(true);
-    expect(result.value.session.id).toBe('session-1');
-    expect(result.value.session.participants).toHaveLength(2);
+    expect(result.value.session.id).toBe(sessionId);
+    expect(result.value.session.participants).toHaveLength(1);
 
     expect(sessionRepo.save).toHaveBeenCalled();
     expect(eventBus.publish).toHaveBeenCalledWith(
@@ -66,12 +88,13 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
   });
 
   it('should fail if session not found', async () => {
+    const sessionId = crypto.randomUUID();
     vi.mocked(sessionRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      sessionId: 'session-1',
+      userId: crypto.randomUUID(),
+      userName: 'Jane Smith',
+      sessionId,
     };
 
     const result = await useCase.execute(request);
@@ -81,16 +104,17 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
   });
 
   it('should fail if session is not multiplayer', async () => {
-    const mockSession = {
-      id: 'session-1',
+    const sessionId = crypto.randomUUID();
+    const mockSession = createWorkoutSessionFixture({
+      id: sessionId,
       configuration: { isMultiplayer: false },
-    };
-    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
+    });
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      sessionId: 'session-1',
+      userId: crypto.randomUUID(),
+      userName: 'Alice Johnson',
+      sessionId,
     };
 
     const result = await useCase.execute(request);
@@ -100,17 +124,19 @@ describe('JoinMultiplayerWorkoutUseCase', () => {
   });
 
   it('should fail if session is private and user is not owner', async () => {
-    const mockSession = {
-      id: 'session-1',
-      ownerId: 'user-1',
+    const sessionId = crypto.randomUUID();
+    const ownerId = crypto.randomUUID();
+    const mockSession = createWorkoutSessionFixture({
+      id: sessionId,
+      ownerId,
       configuration: { isMultiplayer: true, isPublic: false },
-    };
-    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession as any));
+    });
+    vi.mocked(sessionRepo.findById).mockResolvedValue(Result.ok(mockSession));
 
     const request = {
-      userId: 'user-2',
-      userName: 'User 2',
-      sessionId: 'session-1',
+      userId: crypto.randomUUID(),
+      userName: 'Bob Williams',
+      sessionId,
     };
 
     const result = await useCase.execute(request);

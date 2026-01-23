@@ -1,6 +1,12 @@
 import { CreateView, serializeForView } from '@bene/shared';
 import { ConnectedService } from './connected-service.types.js';
 import * as Queries from './connected-service.queries.js';
+import {
+  toSyncStatusView,
+  SyncStatusView,
+  toServiceMetadataView,
+  ServiceMetadataView
+} from '@/core/value-objects/index.js';
 
 /**
  * 3. VIEW TYPES (Serialized, with credentials omitted for security)
@@ -9,6 +15,8 @@ export type ConnectedServiceView = CreateView<
   ConnectedService,
   'credentials',
   {
+    syncStatus: SyncStatusView;
+    metadata: ServiceMetadataView;
     hasValidCredentials: boolean;
     isSyncHealthy: boolean;
     totalSyncedItems: number;
@@ -30,6 +38,9 @@ export function toConnectedServiceView(service: ConnectedService): ConnectedServ
 
   return {
     ...base,
+    syncStatus: toSyncStatusView(service.syncStatus),
+    metadata: toServiceMetadataView(service.metadata),
+
     hasValidCredentials: !!service.credentials.accessToken,
     isSyncHealthy: Queries.isSyncHealthy(service),
     totalSyncedItems: Queries.getTotalSyncedItems(service),

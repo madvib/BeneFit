@@ -1,5 +1,12 @@
+
 import { describe, it, expect } from 'vitest';
-import { createWorkoutActivityFixture } from '@/workouts/index.js';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
+
+import {
+  createWorkoutActivityFixture,
+  createWorkoutTemplateFixture,
+} from '@/fixtures.js';
 import {
   createDurationWorkout,
   createVolumeWorkout,
@@ -15,7 +22,6 @@ import { WORKOUT_TEMPLATE_ERRORS } from '../workout-template.types.js';
 import { CreateWorkoutTemplateSchema } from '../workout-template.factory.js';
 import * as WorkoutTemplateQueries from '../workout-template.queries.js';
 import { toWorkoutTemplateView } from '../workout-template.view.js';
-import { createWorkoutTemplateFixture } from './workout-template.fixtures.js';
 
 describe('WorkoutTemplate Aggegrate', () => {
 
@@ -26,14 +32,15 @@ describe('WorkoutTemplate Aggegrate', () => {
   describe('creation', () => {
     it('should create valid workout template with correct defaults', () => {
       // Arrange & Act
+      const title = 'Test Workout Title';
       const template = createWorkoutTemplateFixture({
-        title: 'Morning Run',
+        title,
         status: 'scheduled',
       });
 
       // Assert
       expect(template.id).toBeDefined();
-      expect(template.title).toBe('Morning Run');
+      expect(template.title).toBe(title);
       expect(template.status).toBe('scheduled');
     });
 
@@ -44,34 +51,34 @@ describe('WorkoutTemplate Aggegrate', () => {
         autoVerifiable: false
       }, 'moderate').value;
 
-      const sampleActivity = createWorkoutActivityFixture({ name: 'Jog' });
+      const sampleActivity = createWorkoutActivityFixture({ name: 'Test Activity Name' });
 
       // Act
       const template = createWorkoutTemplateFixture({
-        title: 'Morning Run',
+        title: 'Test Workout Title',
         goals,
         activities: [sampleActivity],
       });
 
       // Assert
-      expect(template.title).toBe('Morning Run');
       expect(template.goals).toEqual(goals);
       expect(template.activities).toContain(sampleActivity);
     });
 
     it('should create a workout template with volume goals for strength training', () => {
       // Arrange
-      const goals = createVolumeWorkout(15, 45, {
+      const sets = 10;
+      const goals = createVolumeWorkout(sets, 45, {
         mustComplete: false,
         minimumEffort: 80,
         autoVerifiable: true,
       }).value;
 
-      const sampleActivity = createWorkoutActivityFixture({ name: 'Strength Exercise' });
+      const sampleActivity = createWorkoutActivityFixture({ name: 'Test Activity Name' });
 
       // Act
       const template = createWorkoutTemplateFixture({
-        title: 'Upper Body Strength',
+        title: 'Test Workout Title',
         type: 'strength',
         category: 'strength',
         goals,
@@ -79,7 +86,7 @@ describe('WorkoutTemplate Aggegrate', () => {
       });
 
       // Assert
-      expect(template.goals.volume?.totalSets).toBe(15);
+      expect(template.goals.volume?.totalSets).toBe(sets);
     });
 
     it('should create rest day workout without activities', () => {
@@ -109,7 +116,6 @@ describe('WorkoutTemplate Aggegrate', () => {
 
       // Assert
       expect(parseResult.success).toBe(false);
-
     });
 
     it('should fail when weekNumber is < 1', () => {
@@ -167,15 +173,16 @@ describe('WorkoutTemplate Aggegrate', () => {
         status: 'scheduled',
       });
       const inProgress = startWorkout(workout).value;
+      const completedWorkoutId = randomUUID();
 
       // Act
-      const completeResult = markComplete(inProgress, 'completed-id');
+      const completeResult = markComplete(inProgress, completedWorkoutId);
 
       // Assert
       expect(completeResult.isSuccess).toBe(true);
       if (completeResult.isSuccess) {
         expect(completeResult.value.status).toBe('completed');
-        expect(completeResult.value.completedWorkoutId).toBe('completed-id');
+        expect(completeResult.value.completedWorkoutId).toBe(completedWorkoutId);
       }
     });
 
@@ -184,9 +191,10 @@ describe('WorkoutTemplate Aggegrate', () => {
       const workout = createWorkoutTemplateFixture({
         status: 'scheduled',
       });
+      const reason = 'Test skip reason';
 
       // Act
-      const skipResult = skipWorkout(workout, 'Feeling unwell');
+      const skipResult = skipWorkout(workout, reason);
 
       // Assert
       expect(skipResult.isSuccess).toBe(true);
@@ -198,7 +206,7 @@ describe('WorkoutTemplate Aggegrate', () => {
     it('should allow rescheduling a scheduled workout with valid date', () => {
       // Arrange
       const workout = createWorkoutTemplateFixture();
-      const newDate = '2027-12-01T10:00:00Z';
+      const newDate = faker.date.future().toISOString();
 
       // Act
       const result = rescheduleWorkout(workout, newDate);
@@ -208,7 +216,7 @@ describe('WorkoutTemplate Aggegrate', () => {
       if (result.isSuccess) {
         expect(result.value.status).toBe('rescheduled');
         expect(result.value.rescheduledTo).toBeInstanceOf(Date);
-        expect(result.value.rescheduledTo?.toISOString()).toBe('2027-12-01T10:00:00.000Z');
+        expect(result.value.rescheduledTo?.toISOString()).toBe(new Date(newDate).toISOString());
       }
     });
 
@@ -227,17 +235,19 @@ describe('WorkoutTemplate Aggegrate', () => {
   describe('intensity adjustment', () => {
     it('should reduce workout intensity correctly', () => {
       // Arrange
-      const originalGoals = createDurationWorkout(60, { mustComplete: true, autoVerifiable: false }, 'hard').value;
+      const originalDuration = 60;
+      const originalGoals = createDurationWorkout(originalDuration, { mustComplete: true, autoVerifiable: false }, 'hard').value;
       const workout = createWorkoutTemplateFixture({ goals: originalGoals });
 
       // Act
-      const adjustedGoals = createDurationWorkout(48, { mustComplete: true, autoVerifiable: false }, 'moderate').value;
+      const reducedDuration = 48;
+      const adjustedGoals = createDurationWorkout(reducedDuration, { mustComplete: true, autoVerifiable: false }, 'moderate').value;
       const updatedWorkoutResult = updateGoals(workout, adjustedGoals);
 
       // Assert
       expect(updatedWorkoutResult.isSuccess).toBe(true);
       if (updatedWorkoutResult.isSuccess) {
-        expect(updatedWorkoutResult.value.goals.duration?.value).toBe(48);
+        expect(updatedWorkoutResult.value.goals.duration?.value).toBe(reducedDuration);
       }
     });
   });
@@ -245,12 +255,13 @@ describe('WorkoutTemplate Aggegrate', () => {
   describe('View Mapper', () => {
     it('should map a valid workout template entity to view model with enriched fields', () => {
       // Arrange
+      const scheduledDate = faker.date.future();
       const template = createWorkoutTemplateFixture({
         activities: [
           createWorkoutActivityFixture({ duration: 10 }),
           createWorkoutActivityFixture({ duration: 20 }),
         ],
-        scheduledDate: new Date('2025-01-20T10:00:00Z'),
+        scheduledDate,
       });
 
       // Act
@@ -259,7 +270,7 @@ describe('WorkoutTemplate Aggegrate', () => {
       // Assert
       expect(view.id).toBe(template.id);
       expect(view.title).toBe(template.title);
-      expect(view.scheduledDate).toBe('2025-01-20T10:00:00.000Z');
+      expect(view.scheduledDate).toBe(scheduledDate.toISOString());
 
       // Check enriched fields
       expect(view.estimatedDuration).toBe(30);
@@ -317,11 +328,8 @@ describe('WorkoutTemplate Aggegrate', () => {
 
     it('should identify past due workouts correctly', () => {
       // Arrange
-      const past = new Date();
-      past.setDate(past.getDate() - 1);
-
-      const future = new Date();
-      future.setDate(future.getDate() + 1);
+      const past = faker.date.past();
+      const future = faker.date.future();
 
       const overdue = createWorkoutTemplateFixture({
         status: 'scheduled',
@@ -344,9 +352,10 @@ describe('WorkoutTemplate Aggegrate', () => {
 
     it('should provide correct display info summary', () => {
       // Arrange
-      const date = new Date('2025-01-20T10:00:00Z');
+      const date = faker.date.future();
+      const title = 'Test Workout Title';
       const template = createWorkoutTemplateFixture({
-        title: 'Test Workout',
+        title,
         status: 'scheduled',
         scheduledDate: date,
         activities: [createWorkoutActivityFixture({ duration: 25 })],
@@ -357,7 +366,7 @@ describe('WorkoutTemplate Aggegrate', () => {
 
       // Assert
       expect(info).toMatchObject({
-        title: 'Test Workout',
+        title,
         status: 'scheduled',
         scheduledDate: date.toISOString(),
         estimatedDuration: 25,

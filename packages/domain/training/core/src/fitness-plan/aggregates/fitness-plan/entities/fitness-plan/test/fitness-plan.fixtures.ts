@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { createTrainingConstraintsFixture,createPlanGoalsFixture, createProgressionStrategyFixture, createPlanPositionFixture, createWeeklyScheduleFixture } from '@/fixtures.js';
+import { createTrainingConstraintsFixture, createPlanGoalsFixture, createProgressionStrategyFixture, createPlanPositionFixture, createWeeklyScheduleFixture } from '@/fixtures.js';
 import { type FitnessPlan, type PlanType } from '../fitness-plan.types.js';
 import { fitnessPlanFromPersistence } from '../fitness-plan.factory.js';
 
 export function createFitnessPlanFixture(overrides?: Partial<FitnessPlan>): FitnessPlan {
-  const weeks = [
-    createWeeklyScheduleFixture({ weekNumber: 1 }),
-    createWeeklyScheduleFixture({ weekNumber: 2 }),
-  ];
+  const weeks = overrides?.weeks ?? faker.helpers.multiple(
+    (_, i) => createWeeklyScheduleFixture({ weekNumber: i + 1 }),
+    { count: { min: 4, max: 12 } }
+  );
 
   const data = {
     id: faker.string.uuid(),

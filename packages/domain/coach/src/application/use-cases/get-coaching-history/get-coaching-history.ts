@@ -6,8 +6,8 @@ import {
   type CoachMsgView,
   type CheckInView,
   CoachConversationQueries
-} from '@core/index.js';
-import { CoachConversationRepository } from '@app/ports/coach-conversation-repository.js';
+} from '@/core/index.js';
+import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
 
 /**
  * Request schema

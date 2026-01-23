@@ -10,8 +10,8 @@
       "vitest"
     ],
     "paths": {
-      "@core/*": [
-        "./src/core/*"
+      "@/*": [
+        "./src/*"
       ]
     }
   },

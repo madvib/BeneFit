@@ -4,7 +4,7 @@ import {
   createOAuthCredentialsFixture,
   createServiceMetadataFixture,
   createSyncStatusFixture
-} from '../../../../fixtures.js';
+} from '@/fixtures.js';
 import { ConnectedService, ServiceType } from '../connected-service.types.js';
 import { connectedServiceFromPersistence } from '../connected-service.factory.js';
 
@@ -40,6 +40,7 @@ export function createConnectedServiceFixture(
     isActive: true,
     isPaused: false,
     connectedAt: faker.date.past(),
+    lastSyncAt: faker.date.recent(),
     updatedAt: faker.date.recent(),
     ...overrides,
   };

@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { createCoachActionFixture } from '../../../../fixtures.js';
 import {
   toCoachActionView
-} from '@core/index.js';
+} from '@/core/index.js';
 import type { RespondToCheckInResponse } from '../respond-to-check-in.js';
 
 export type RespondToCheckInFixtureOptions = BaseFixtureOptions<RespondToCheckInResponse>;

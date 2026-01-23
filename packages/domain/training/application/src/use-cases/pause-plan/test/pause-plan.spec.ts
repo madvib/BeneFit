@@ -1,10 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared';
-// Removed unused imports: FitnessPlan, pausePlan
-import { PausePlanUseCase } from '../pause-plan.js';
-import { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
-import { EventBus } from '@bene/shared';
+import { randomUUID } from 'crypto';
+
+import { Result, EventBus } from '@bene/shared';
 import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
+import { PausePlanUseCase } from '../pause-plan.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -17,6 +19,7 @@ const mockPlanRepository = {
 
 const mockEventBus = {
   publish: vi.fn(),
+  subscribe: vi.fn(),
 } as unknown as EventBus;
 
 describe('PausePlanUseCase', () => {
@@ -29,9 +32,9 @@ describe('PausePlanUseCase', () => {
 
   it('should successfully pause an active plan', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
-    const reason = 'Going on vacation';
+    const userId = randomUUID();
+    const planId = randomUUID();
+    const reason = 'Test pause reason';
 
     const activePlan = createFitnessPlanFixture({
       id: planId,
@@ -76,8 +79,8 @@ describe('PausePlanUseCase', () => {
 
   it('should successfully pause an active plan without a reason', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
 
     const activePlan = createFitnessPlanFixture({
       id: planId,
@@ -117,8 +120,8 @@ describe('PausePlanUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
@@ -140,9 +143,9 @@ describe('PausePlanUseCase', () => {
 
   it('should fail if user is not authorized to pause the plan', async () => {
     // Arrange
-    const userId = 'user-123';
-    const otherUserId = 'user-789';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const otherUserId = randomUUID();
+    const planId = randomUUID();
 
     const activePlan = createFitnessPlanFixture({
       id: planId,
@@ -165,10 +168,4 @@ describe('PausePlanUseCase', () => {
       expect((result.error as Error).message).toBe('Not authorized');
     }
   });
-
-  // Note: We removed the "should fail if plan pause command fails" test because
-  // we are now using the REAL domain logic, and it is hard to force it to fail
-  // without mocking the internal function (which we explicitly want to avoid).
-  // The domain logic is pure and deterministic.
-  // Instead, we could trust that the domain unit tests cover failure cases (like non-active status).
 });

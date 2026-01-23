@@ -1,4 +1,6 @@
+
 import { describe, it, expect } from 'vitest';
+import { faker } from '@faker-js/faker';
 import { CreateWorkoutPerformanceSchema } from '../workout-performance.factory.js';
 
 describe('WorkoutPerformance', () => {
@@ -8,9 +10,12 @@ describe('WorkoutPerformance', () => {
     durationMinutes: 30,
   };
 
+  const startedAt = faker.date.recent();
+  const completedAt = new Date(startedAt.getTime() + 60 * 60 * 1000); // 1 hour later
+
   const validInput = {
-    startedAt: new Date('2023-01-01T10:00:00Z'),
-    completedAt: new Date('2023-01-01T11:00:00Z'),
+    startedAt,
+    completedAt,
     activities: [validActivity],
     perceivedExertion: 5,
     energyLevel: 'medium' as const,
@@ -37,7 +42,7 @@ describe('WorkoutPerformance', () => {
       // Act
       const result = CreateWorkoutPerformanceSchema.safeParse({
         ...validInput,
-        completedAt: new Date('2023-01-01T09:00:00Z'),
+        completedAt: new Date(startedAt.getTime() - 1000),
       });
 
       // Assert
@@ -139,4 +144,3 @@ describe('WorkoutPerformance', () => {
     });
   });
 });
-

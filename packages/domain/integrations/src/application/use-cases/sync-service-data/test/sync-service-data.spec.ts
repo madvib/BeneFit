@@ -1,9 +1,12 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { Result } from '@bene/shared';
-import { ConnectedService } from '../../../../core/index.js';
+import { randomUUID } from 'node:crypto';
+
+import { Result, EventBus } from '@bene/shared';
+
+import { IntegrationClient } from '@/application/ports/integration-client.js';
+import { createConnectedServiceFixture } from '@/fixtures.js';
+
 import { SyncServiceDataUseCase } from '../sync-service-data.js';
-import { IntegrationClient } from '../../../ports/integration-client.js';
-import { EventBus } from '@bene/shared';
 
 // Mock repositories and services
 const mockServiceRepository = {
@@ -32,8 +35,9 @@ const mockIntegrationClient = {
   getActivitiesSince: Mock;
 };
 
+const SERVICE_TYPE = 'strava';
 const mockIntegrationClients = new Map<string, IntegrationClient>();
-mockIntegrationClients.set('strava', mockIntegrationClient);
+mockIntegrationClients.set(SERVICE_TYPE, mockIntegrationClient);
 
 const mockEventBus = {
   publish: vi.fn(),
@@ -41,6 +45,8 @@ const mockEventBus = {
 
 describe('SyncServiceDataUseCase', () => {
   let useCase: SyncServiceDataUseCase;
+  const TEST_USER_ID = randomUUID();
+  const TEST_SERVICE_ID = randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -53,55 +59,20 @@ describe('SyncServiceDataUseCase', () => {
 
   it('should successfully sync service data', async () => {
     // Arrange
-    const serviceId = 'service-456';
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const serviceId = TEST_SERVICE_ID;
+    const userId = TEST_USER_ID;
 
-    const mockService: ConnectedService = {
+    const mockService = createConnectedServiceFixture({
       id: serviceId,
       userId,
-      serviceType: 'strava' as 'strava' | 'garmin',
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000), // Not expired
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: {
-        readWorkouts: true,
-        writeWorkouts: true,
-        readHeartRate: true,
-        readSleep: true,
-        readNutrition: true,
-        readBodyMetrics: true,
-      },
-      syncStatus: {
-        state: 'synced',
-        lastAttemptAt: new Date(),
-        lastSuccessAt: new Date(),
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 10,
-        workoutsSynced: 5,
-        heartRateDataSynced: 3,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
+      serviceType: SERVICE_TYPE,
       isActive: true,
       isPaused: false,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     const mockActivities = [
-      { id: 'act-1', type: 'workout', name: 'Morning Run' },
-      { id: 'act-2', type: 'activity', name: 'Evening Walk' },
+      { id: 'activity-1', type: 'workout', name: 'Morning Run' },
+      { id: 'activity-2', type: 'activity', name: 'Afternoon Walk' },
     ];
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
@@ -120,15 +91,15 @@ describe('SyncServiceDataUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.serviceId).toBe(serviceId);
       expect(result.value.success).toBe(true);
-      expect(result.value.activitiesSynced).toBe(2); // 2 total activities
+      expect(result.value.activitiesSynced).toBe(2);
     }
-    expect(mockServiceRepository.save).toHaveBeenCalled(); // Called for startSync and recordSyncSuccess
+    expect(mockServiceRepository.save).toHaveBeenCalled();
     expect(mockEventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         eventName: 'ActivitiesSynced',
         userId,
         serviceId,
-        serviceType: 'strava',
+        serviceType: SERVICE_TYPE,
       }),
     );
     expect(mockEventBus.publish).toHaveBeenCalledWith(
@@ -143,7 +114,7 @@ describe('SyncServiceDataUseCase', () => {
 
   it('should fail if service is not found', async () => {
     // Arrange
-    const serviceId = 'service-456';
+    const serviceId = TEST_SERVICE_ID;
 
     mockServiceRepository.findById.mockResolvedValue(
       Result.fail(new Error('Service not found')),
@@ -164,51 +135,16 @@ describe('SyncServiceDataUseCase', () => {
 
   it('should fail if service is not active', async () => {
     // Arrange
-    const serviceId = 'service-456';
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const serviceId = TEST_SERVICE_ID;
+    const userId = TEST_USER_ID;
 
-    const mockInActiveService: ConnectedService = {
+    const mockInActiveService = createConnectedServiceFixture({
       id: serviceId,
       userId,
-      serviceType: 'strava' as 'strava' | 'garmin',
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000),
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: {
-        readWorkouts: true,
-        writeWorkouts: true,
-        readHeartRate: true,
-        readSleep: true,
-        readNutrition: true,
-        readBodyMetrics: true,
-      },
-      syncStatus: {
-        state: 'never_synced',
-        lastAttemptAt: undefined,
-        lastSuccessAt: undefined,
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 0,
-        workoutsSynced: 0,
-        heartRateDataSynced: 0,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
-      isActive: false, // Not active
+      serviceType: SERVICE_TYPE,
+      isActive: false,
       isPaused: true,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockInActiveService));
 
@@ -227,52 +163,17 @@ describe('SyncServiceDataUseCase', () => {
 
   it('should fail if no client exists for service type', async () => {
     // Arrange
-    const serviceId = 'service-456';
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const serviceId = TEST_SERVICE_ID;
+    const userId = TEST_USER_ID;
 
-    const mockService: ConnectedService = {
+    const mockService = createConnectedServiceFixture({
       id: serviceId,
       userId,
       // @ts-expect-error Testing invalid service type
       serviceType: 'nonexistent-service',
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000),
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: {
-        readWorkouts: true,
-        writeWorkouts: true,
-        readHeartRate: true,
-        readSleep: true,
-        readNutrition: true,
-        readBodyMetrics: true,
-      },
-      syncStatus: {
-        state: 'synced',
-        lastAttemptAt: new Date(),
-        lastSuccessAt: new Date(),
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 10,
-        workoutsSynced: 5,
-        heartRateDataSynced: 3,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
       isActive: true,
       isPaused: false,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
 
@@ -291,51 +192,16 @@ describe('SyncServiceDataUseCase', () => {
 
   it('should fail if getting activities fails', async () => {
     // Arrange
-    const serviceId = 'service-456';
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const serviceId = TEST_SERVICE_ID;
+    const userId = TEST_USER_ID;
 
-    const mockService: ConnectedService = {
+    const mockService = createConnectedServiceFixture({
       id: serviceId,
       userId,
-      serviceType: 'strava' as 'strava' | 'garmin',
-      credentials: {
-        accessToken: 'access-token-789',
-        refreshToken: 'refresh-token-101',
-        expiresAt: new Date(Date.now() + 3600000), // Not expired
-        scopes: ['read', 'write'],
-        tokenType: 'Bearer',
-      },
-      permissions: {
-        readWorkouts: true,
-        writeWorkouts: true,
-        readHeartRate: true,
-        readSleep: true,
-        readNutrition: true,
-        readBodyMetrics: true,
-      },
-      syncStatus: {
-        state: 'synced',
-        lastAttemptAt: new Date(),
-        lastSuccessAt: new Date(),
-        error: undefined,
-        consecutiveFailures: 0,
-        activitiesSynced: 10,
-        workoutsSynced: 5,
-        heartRateDataSynced: 3,
-      },
-      metadata: {
-        externalUserId: 'external-123',
-        externalUsername: 'john_doe',
-        profileUrl: 'https://strava.com/athlete/123',
-        units: 'metric',
-        supportsWebhooks: true,
-        webhookRegistered: false,
-      },
+      serviceType: SERVICE_TYPE,
       isActive: true,
       isPaused: false,
-      connectedAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
     mockServiceRepository.findById.mockResolvedValue(Result.ok(mockService));
     mockIntegrationClient.getActivitiesSince.mockResolvedValue(

@@ -1,4 +1,10 @@
 import { describe, it, expect } from 'vitest';
+
+import {
+  createFitnessGoalsFixture,
+  createTrainingConstraintsFixture
+} from '@bene/training-core/fixtures';
+
 import { CreateCoachContextSchema } from '../coach-context.factory.js';
 import {
   createCoachContextFixture,
@@ -6,10 +12,6 @@ import {
   createRecentWorkoutSummaryFixture,
   createPerformanceTrendsFixture
 } from './coach-context.fixtures.js';
-import {
-  createFitnessGoalsFixture,
-  createTrainingConstraintsFixture
-} from '@bene/training-core';
 
 describe('CoachContext', () => {
   describe('Factory', () => {

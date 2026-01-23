@@ -1,17 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { CreateConnectedServiceSchema } from '../connected-service.factory.js';
-import { refreshCredentials } from '../connected-service.commands.js';
+import { randomUUID } from 'node:crypto';
+
+import { createOAuthCredentialsFixture, createServicePermissionsFixture } from '@/fixtures.js';
+
 import { createConnectedServiceFixture } from './connected-service.fixtures.js';
-import { createOAuthCredentialsFixture, createServicePermissionsFixture } from '../../../value-objects/index.js';
+import { refreshCredentials } from '../connected-service.commands.js';
+import { CreateConnectedServiceSchema } from '../connected-service.factory.js';
 
 describe('ConnectedService', () => {
+  const TEST_USER_ID = randomUUID();
+
   describe('Factory', () => {
     it('should create a valid connected service', () => {
       // Arrange
       const credentials = createOAuthCredentialsFixture();
       const permissions = createServicePermissionsFixture();
       const input = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId: TEST_USER_ID,
         serviceType: 'strava' as const,
         credentials,
         permissions
@@ -24,7 +29,7 @@ describe('ConnectedService', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         const service = result.data;
-        expect(service.userId).toBe('550e8400-e29b-41d4-a716-446655440000');
+        expect(service.userId).toBe(TEST_USER_ID);
         expect(service.serviceType).toBe('strava');
         expect(service.isActive).toBe(true);
         expect(service.credentials).toEqual(credentials);
@@ -50,8 +55,9 @@ describe('ConnectedService', () => {
     it('should allow refreshing credentials', () => {
       // Arrange
       const service = createConnectedServiceFixture();
+      const accessToken = 'new-access-token';
       const newCredentials = createOAuthCredentialsFixture({
-        accessToken: 'new_token'
+        accessToken
       });
 
       // Act
@@ -60,7 +66,7 @@ describe('ConnectedService', () => {
       // Assert
       expect(updatedResult.isSuccess).toBe(true);
       if (updatedResult.isSuccess) {
-        expect(updatedResult.value.credentials.accessToken).toBe('new_token');
+        expect(updatedResult.value.credentials.accessToken).toBe(accessToken);
       }
     });
   });

@@ -20,6 +20,8 @@ import { WorkoutSession, WorkoutSessionSchema } from './workout-session.types.js
  * ============================================================================
  */
 
+export type CreateWorkoutSessionInput = z.input<typeof CreateWorkoutSessionSchema>;
+
 // ============================================================================
 // INTERNAL HELPERS (not exported)
 // ============================================================================
@@ -53,13 +55,7 @@ export function workoutSessionFromPersistence(
 // 2. CREATION (for API boundaries)
 // ============================================================================
 
-/**
- * Zod transform for creating WorkoutSession with domain validation.
- * Use at API boundaries (controllers, resolvers).
- * 
- * Infer input type with: z.input<typeof CreateWorkoutSessionSchema>
- */
-export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSessionSchema.pick({
+export const CreateWorkoutSessionSchema = WorkoutSessionSchema.pick({
   ownerId: true,
   workoutType: true,
   activities: true,
@@ -80,7 +76,7 @@ export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSess
   const configResult = CreateSessionConfigurationSchema.safeParse(configInput);
   if (!configResult.success) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Invalid configuration',
       path: ['configuration']
     });
@@ -107,10 +103,6 @@ export const CreateWorkoutSessionSchema: z.ZodType<WorkoutSession> = WorkoutSess
   // Validate and brand
   const validationResult = validateWorkoutSession(data);
   return unwrapOrIssue(validationResult, ctx);
-});
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
+}) satisfies z.ZodType<WorkoutSession>;
 
 

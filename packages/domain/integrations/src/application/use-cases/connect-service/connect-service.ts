@@ -6,10 +6,10 @@ import {
   CreateOAuthCredentialsSchema,
   toConnectedServiceView,
   type ConnectedServiceView,
-} from '@core/index.js';
-import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
-import { IntegrationClient } from '@app/ports/integration-client.js';
-import { ServiceConnectedEvent } from '@app/events/service-connected.event.js';
+} from '@/core/index.js';
+import { ConnectedServiceRepository } from '@/application/ports/connected-service-repository.js';
+import { IntegrationClient } from '@/application/ports/integration-client.js';
+import { ServiceConnectedEvent } from '@/application/events/service-connected.event.js';
 
 /**
  * Input schema - composes from domain schemas

@@ -1,9 +1,13 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared';
-import { FitnessPlanCommands, createFitnessPlanFixture } from '@bene/training-core/fixtures';
+import { randomUUID } from 'node:crypto';
+
+import { Result, EventBus } from '@bene/shared';
+import { FitnessPlanCommands } from '@bene/training-core';
+import { createFitnessPlanFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
 import { ActivatePlanUseCase } from '../activate-plan.js';
-import { EventBus } from '@bene/shared';
-import { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -28,13 +32,13 @@ describe('ActivatePlanUseCase', () => {
 
   it('should successfully activate a draft plan', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'draft',
-      weeks: [{ weekNumber: 1, workouts: [], workoutsCompleted: 0 } as any], // simplifying week for test
+      weeks: [createWeeklyScheduleFixture({ id: randomUUID(), planId, weekNumber: 1 })],
     });
 
     const activatedPlan = {
@@ -71,8 +75,8 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
@@ -94,9 +98,9 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if user is not authorized to activate the plan', async () => {
     // Arrange
-    const userId = 'user-123';
-    const otherUserId = 'user-789';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const otherUserId = randomUUID();
+    const planId = randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId: otherUserId,
@@ -123,12 +127,13 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if plan activation command fails', async () => {
     // Arrange
-    const userId = 'user-123';
-    const planId = 'plan-456';
+    const userId = randomUUID();
+    const planId = randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'draft',
+      weeks: [createWeeklyScheduleFixture({ id: randomUUID() })],
     });
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(draftPlan));

@@ -55,7 +55,7 @@ export function completedWorkoutFromPersistence(
  * 
  * Infer input type with: z.input<typeof CreateCompletedWorkoutSchema>
  */
-export const CreateCompletedWorkoutSchema: z.ZodType<CompletedWorkout> = CompletedWorkoutSchema.pick({
+export const CreateCompletedWorkoutSchema = CompletedWorkoutSchema.pick({
   userId: true,
   workoutType: true,
   performance: true,
@@ -86,16 +86,12 @@ export const CreateCompletedWorkoutSchema: z.ZodType<CompletedWorkout> = Complet
     reactions: [],
     isPublic: input.isPublic ?? false,
     createdAt: input.createdAt || now,
-    recordedAt: input.recordedAt || input.performance.completedAt || now,
+    recordedAt: input.recordedAt || input.performance?.completedAt || now,
   };
 
   // Validate and brand
   const validationResult = validateCompletedWorkout(data);
   return unwrapOrIssue(validationResult, ctx);
-});
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
+}) satisfies z.ZodType<CompletedWorkout>;
 
 

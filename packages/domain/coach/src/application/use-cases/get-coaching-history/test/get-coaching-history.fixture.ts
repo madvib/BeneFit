@@ -1,10 +1,10 @@
 import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
-import { createCoachConversationFixture } from '../../../../fixtures.js';
+import { createCoachConversationFixture } from '@/fixtures.js';
 import {
   toCoachMsgView,
   toCheckInView,
   CoachConversationQueries
-} from '@core/index.js';
+} from '@/core/index.js';
 import type { GetCoachHistoryResponse } from '../get-coaching-history.js';
 
 export type GetCoachHistoryFixtureOptions = BaseFixtureOptions<GetCoachHistoryResponse>;

@@ -19,16 +19,19 @@ export function createWorkoutActivityFixture(overrides?: Partial<WorkoutActivity
 
   // Build unbranded data with faker
   const data = {
-    name: faker.helpers.arrayElement(['Pushups', 'Squats', 'Running', 'Bench Press', 'Yoga Flow']),
+    name: faker.helpers.arrayElement([
+      'Pushups', 'Squats', 'Running', 'Bench Press', 'Yoga Flow',
+      'Cycling', 'Swimming', 'Plank', 'Lunges', 'Deadlift'
+    ]),
     type,
-    order: faker.number.int({ min: 1, max: 10 }),
-    instructions: [faker.lorem.sentence(), faker.lorem.sentence()],
-    duration: faker.number.int({ min: 5, max: 60 }),
-    distance: type === 'main' ? faker.number.float({ min: 100, max: 10000 }) : undefined,
-    pace: type === 'main' ? faker.helpers.arrayElement(['easy', 'moderate', 'hard', '5:00/km']) : undefined,
-    videoUrl: 'https://example.com/video',
-    equipment: faker.helpers.arrayElements(['Dumbbells', 'Mat', 'Barbell'], { min: 0, max: 2 }),
-    alternativeExercises: faker.helpers.arrayElements(['Burpees', 'Lunges'], { min: 0, max: 1 }),
+    order: faker.number.int({ min: 0, max: 20 }),
+    instructions: faker.helpers.multiple(() => faker.lorem.sentence(), { count: { min: 1, max: 5 } }),
+    duration: faker.number.int({ min: 1, max: 90 }),
+    distance: type === 'main' ? faker.number.float({ min: 100, max: 20000 }) : undefined,
+    pace: type === 'main' ? faker.helpers.arrayElement(['easy', 'moderate', 'hard', '4:30/km', '5:00/km', '6:00/km']) : undefined,
+    videoUrl: faker.internet.url(),
+    equipment: faker.helpers.arrayElements(['Dumbbells', 'Mat', 'Barbell', 'Kettlebell', 'Bench'], { min: 0, max: 3 }),
+    alternativeExercises: faker.helpers.arrayElements(['Burpees', 'Lunges', 'Mountain Climbers'], { min: 0, max: 2 }),
     structure,
     ...overrides,
   };

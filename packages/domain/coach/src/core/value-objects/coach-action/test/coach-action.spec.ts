@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { CreateCoachActionSchema } from '../coach-action.factory.js';
 import { createCoachActionFixture } from './coach-action.fixtures.js';
 
@@ -6,10 +7,11 @@ describe('CoachAction', () => {
   describe('Factory', () => {
     it('should create a valid coach action', () => {
       // Arrange
+      const planChangeId = crypto.randomUUID();
       const input = {
         type: 'encouraged' as const,
         details: 'Keep up the good work!',
-        planChangeId: '550e8400-e29b-41d4-a716-446655440003',
+        planChangeId,
       };
 
       // Act
@@ -21,7 +23,7 @@ describe('CoachAction', () => {
         const action = result.data;
         expect(action.type).toBe('encouraged');
         expect(action.details).toBe('Keep up the good work!');
-        expect(action.planChangeId).toBe('550e8400-e29b-41d4-a716-446655440003');
+        expect(action.planChangeId).toBe(planChangeId);
         expect(action.appliedAt).toBeInstanceOf(Date);
       }
     });

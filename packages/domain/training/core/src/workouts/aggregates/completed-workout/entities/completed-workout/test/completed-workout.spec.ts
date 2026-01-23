@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
-import { createMinimalPerformanceFixture } from '@/workouts/value-objects/index.js';
-import { createFireReactionFixture, createStrongReactionFixture } from '../../reaction/test/reaction.fixtures.js';
+import { randomUUID } from 'crypto';
+import {
+  createMinimalPerformanceFixture,
+  createFireReactionFixture,
+  createStrongReactionFixture,
+  createCompletedWorkoutFixture,
+} from '@/fixtures.js';
 import {
   addReaction,
   removeReaction,
@@ -10,20 +14,22 @@ import {
 } from '../completed-workout.commands.js';
 import * as Queries from '../completed-workout.queries.js';
 import { CreateCompletedWorkoutSchema } from '../completed-workout.factory.js';
-import { createCompletedWorkoutFixture, createCompletedWorkoutInputFixture } from './completed-workout.fixtures.js';
-
-type CreateWorkoutInput = z.input<typeof CreateCompletedWorkoutSchema>;
 
 describe('CompletedWorkout', () => {
   describe('Factory', () => {
     it('should create a valid completed workout', () => {
       // Arrange
       const performance = createMinimalPerformanceFixture();
+      const userId = randomUUID();
       const input = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId,
         workoutType: 'strength' as const,
         performance,
-        verification: { verifications: [{ method: 'manual', data: null }] },
+        verification: {
+          verifications: [{ method: 'manual', data: null }],
+          verified: true,
+          sponsorEligible: false,
+        },
         isPublic: true,
       };
 
@@ -32,24 +38,23 @@ describe('CompletedWorkout', () => {
 
       // Assert
       if (!result.success) {
-        throw new Error(`Validation Error: ${ JSON.stringify(result.error.format(), null, 2) }`);
+        throw new Error(`Validation Error: ${JSON.stringify(result.error.format(), null, 2)}`);
       }
       expect(result.success).toBe(true);
       if (result.success) {
         const workout = result.data;
         expect(workout.id).toBeDefined();
         expect(workout.createdAt).toBeInstanceOf(Date);
-        expect(workout.userId).toBe(input.userId);
+        expect(workout.userId).toBe(userId);
         expect(workout.workoutType).toBe(input.workoutType);
       }
     });
 
     it('should fail if required properties are missing', () => {
       // Arrange
-      const now = new Date();
       const input = {
         workoutType: 'strength',
-        completedAt: now,
+        completedAt: new Date(),
         // userId missing
       };
 
@@ -91,7 +96,7 @@ describe('CompletedWorkout', () => {
 
     it('should update existing reaction from same user', () => {
       const workout = createCompletedWorkoutFixture();
-      const userId = 'user-test-update';
+      const userId = randomUUID();
       const reaction1 = createFireReactionFixture({ userId });
       const reaction2 = createStrongReactionFixture({ userId }); // Same user
 
@@ -141,31 +146,37 @@ describe('CompletedWorkout', () => {
   describe('Queries', () => {
     it('should calculate total volume', () => {
       // Arrange
+      const weight = 100;
+      const reps = 10;
       const performance = createMinimalPerformanceFixture({
-        activities: [{
-          activityType: 'main',
-          completed: true,
-          durationMinutes: 30,
-          exercises: [{
-            name: 'Bench',
-            setsCompleted: 1,
-            setsPlanned: 1,
-            reps: [10],
-            weight: [100],
-          }]
-        }]
+        activities: [
+          {
+            activityType: 'main',
+            completed: true,
+            durationMinutes: 30,
+            exercises: [
+              {
+                name: 'Bench Press',
+                setsCompleted: 1,
+                setsPlanned: 1,
+                reps: [reps],
+                weight: [weight],
+              },
+            ],
+          },
+        ],
       });
 
       const workout = createCompletedWorkoutFixture({ performance });
 
       // Act & Assert
-      expect(Queries.getTotalVolume(workout)).toBe(1000); // 10 * 100
+      expect(Queries.getTotalVolume(workout)).toBe(Math.round(weight * reps * 10) / 10);
     });
 
     it('should count reactions', () => {
       const workout = createCompletedWorkoutFixture();
-      const r1 = createFireReactionFixture({ userId: 'u1' });
-      const r2 = createStrongReactionFixture({ userId: 'u2' });
+      const r1 = createFireReactionFixture({ userId: randomUUID() });
+      const r2 = createStrongReactionFixture({ userId: randomUUID() });
 
       let w = addReaction(workout, r1).value!;
       w = addReaction(w, r2).value!;

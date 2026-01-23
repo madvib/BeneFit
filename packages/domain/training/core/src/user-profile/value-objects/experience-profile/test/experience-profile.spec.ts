@@ -1,14 +1,13 @@
+import z from 'zod';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { z } from 'zod';
 import { CreateExperienceProfileSchema } from '../experience-profile.factory.js';
-import { createExperienceProfileFixture } from './experience-profile.fixtures.js';
+import { createExperienceProfileFixture } from '@/fixtures.js';
 import { ExperienceProfile } from '../experience-profile.types.js';
 
-type CreateProfileInput = z.input<typeof CreateExperienceProfileSchema>;
-
+type CreateExperienceProfileInput = z.input<typeof CreateExperienceProfileSchema>;
 describe('ExperienceProfile Value Object', () => {
   describe('Factory', () => {
-    const validInput: CreateProfileInput = {
+    const validInput: CreateExperienceProfileInput = {
       level: 'intermediate',
       capabilities: {
         canDoFullPushup: true,
@@ -35,14 +34,16 @@ describe('ExperienceProfile Value Object', () => {
 
     it('should create with history', () => {
       // Arrange
-      const input: CreateProfileInput = {
+      const yearsTraining = 5;
+      const previousPrograms = ['Beginner Program', 'Intermediate Program'];
+      const input: CreateExperienceProfileInput = {
         ...validInput,
         level: 'advanced',
         history: {
-          yearsTraining: 5,
-          previousPrograms: ['Starting Strength', 'StrongLifts 5x5'],
-          sports: ['Basketball', 'Swimming'],
-          certifications: ['CPT'],
+          yearsTraining,
+          previousPrograms,
+          sports: ['Running', 'Swimming'],
+          certifications: ['CPR Certified'],
         },
       };
 
@@ -53,14 +54,14 @@ describe('ExperienceProfile Value Object', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         const profile = result.data;
-        expect(profile.history.yearsTraining).toBe(5);
-        expect(profile.history.previousPrograms).toEqual(['Starting Strength', 'StrongLifts 5x5']);
+        expect(profile.history.yearsTraining).toBe(yearsTraining);
+        expect(profile.history.previousPrograms).toEqual(previousPrograms);
       }
     });
 
     it('should fail with years training less than 0', () => {
       // Arrange
-      const input: CreateProfileInput = {
+      const input: CreateExperienceProfileInput = {
         ...validInput,
         history: {
           yearsTraining: -1,

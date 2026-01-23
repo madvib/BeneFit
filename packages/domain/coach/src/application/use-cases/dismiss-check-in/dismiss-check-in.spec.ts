@@ -1,8 +1,11 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
+import { randomUUID } from 'crypto';
 import { EventBus, Result } from '@bene/shared';
-import { CoachConversation, CheckIn } from '../../../core/index.js';
+
+import { createCoachConversationFixture, createCheckInFixture } from '@/fixtures.js';
+import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
+
 import { DismissCheckInUseCase } from './dismiss-check-in.js';
-import { CoachConversationRepository } from '../../ports/coach-conversation-repository.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -17,6 +20,9 @@ const mockEventBus = {
 
 describe('DismissCheckInUseCase', () => {
   let useCase: DismissCheckInUseCase;
+  const TEST_USER_ID = randomUUID();
+  const TEST_CHECK_IN_ID = randomUUID();
+  const TEST_CONVERSATION_ID = randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -25,64 +31,24 @@ describe('DismissCheckInUseCase', () => {
 
   it('should successfully dismiss a check-in', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const userId = TEST_USER_ID;
+    const checkInId = TEST_CHECK_IN_ID;
 
-    const mockCheckIn: CheckIn = {
+    const mockCheckIn = createCheckInFixture({
       id: checkInId,
-      type: 'proactive',
-      question: 'How are you feeling today?',
       status: 'pending',
-      createdAt: new Date(),
-      triggeredBy: 'enjoyment_declining',
-    } as CheckIn;
+    });
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440007',
+    const mockConversation = createCoachConversationFixture({
+      id: TEST_CONVERSATION_ID,
       userId,
-      context: {
-        recentWorkouts: [],
-        userGoals: {
-          primary: 'strength',
-          secondary: [],
-          motivation: 'test',
-          successCriteria: [],
-        },
-        userConstraints: {
-          availableDays: [],
-          availableEquipment: [],
-          location: 'home',
-        },
-        experienceLevel: 'beginner',
-        trends: {
-          volumeTrend: 'stable',
-          adherenceTrend: 'stable',
-          energyTrend: 'medium',
-          exertionTrend: 'stable',
-          enjoymentTrend: 'stable',
-        },
-        daysIntoCurrentWeek: 0,
-        workoutsThisWeek: 0,
-        plannedWorkoutsThisWeek: 0,
-        energyLevel: 'medium',
-        reportedInjuries: [],
-      },
-      messages: [],
       checkIns: [mockCheckIn],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 1,
-      pendingCheckIns: 1,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
-    mockConversationRepository.save.mockResolvedValue(Result.ok());
+    vi.mocked(mockConversationRepository.save).mockResolvedValue(Result.ok());
 
     // Act
     const result = await useCase.execute({
@@ -93,7 +59,7 @@ describe('DismissCheckInUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
-      expect(result.value.conversationId).toBe('550e8400-e29b-41d4-a716-446655440007');
+      expect(result.value.conversationId).toBe(TEST_CONVERSATION_ID);
       expect(result.value.dismissed).toBe(true);
     }
     expect(mockEventBus.publish).toHaveBeenCalledWith(
@@ -107,8 +73,8 @@ describe('DismissCheckInUseCase', () => {
 
   it('should fail if conversation is not found', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const userId = TEST_USER_ID;
+    const checkInId = TEST_CHECK_IN_ID;
 
     (mockConversationRepository.findByUserId as Mock).mockResolvedValue(
       Result.fail(new Error('Not found')),
@@ -130,51 +96,15 @@ describe('DismissCheckInUseCase', () => {
 
   it('should fail if check-in is not found', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
-    const checkInId = '550e8400-e29b-41d4-a716-446655440006';
+    const userId = TEST_USER_ID;
+    const checkInId = TEST_CHECK_IN_ID;
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440007',
+    const mockConversation = createCoachConversationFixture({
       userId,
-      context: {
-        recentWorkouts: [],
-        userGoals: {
-          primary: 'strength',
-          secondary: [],
-          motivation: 'test',
-          successCriteria: [],
-        },
-        userConstraints: {
-          availableDays: [],
-          availableEquipment: [],
-          location: 'home',
-        },
-        experienceLevel: 'beginner',
-        trends: {
-          volumeTrend: 'stable',
-          adherenceTrend: 'stable',
-          energyTrend: 'medium',
-          exertionTrend: 'stable',
-          enjoymentTrend: 'stable',
-        },
-        daysIntoCurrentWeek: 0,
-        workoutsThisWeek: 0,
-        plannedWorkoutsThisWeek: 0,
-        energyLevel: 'medium',
-      },
-      messages: [],
       checkIns: [], // No check-ins
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
-    mockConversationRepository.findByUserId.mockResolvedValue(
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
       Result.ok(mockConversation),
     );
 

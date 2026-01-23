@@ -50,13 +50,7 @@ export function fitnessPlanFromPersistence(
 // 2. DRAFT CREATION (for API boundaries)
 // ============================================================================
 
-/**
- * Zod transform for creating a new FitnessPlan in 'draft' status.
- * Use at API boundaries (controllers, resolvers).
- * 
- * Infer input type with: z.input<typeof CreateDraftFitnessPlanSchema>
- */
-export const CreateDraftFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSchema.pick({
+export const CreateDraftFitnessPlanSchema = FitnessPlanSchema.pick({
   userId: true,
   title: true,
   description: true,
@@ -83,7 +77,7 @@ export const CreateDraftFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanS
   // Validate and brand
   const validationResult = validateFitnessPlan(data);
   return unwrapOrIssue(validationResult, ctx);
-});
+}) satisfies z.ZodType<FitnessPlan>;
 
 // ============================================================================
 // 3. ACTIVATION (for state transitions)
@@ -95,7 +89,7 @@ export const CreateDraftFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanS
  * 
  * Infer input type with: z.input<typeof ActivateFitnessPlanSchema>
  */
-export const ActivateFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSchema.pick({
+export const ActivateFitnessPlanSchema = FitnessPlanSchema.pick({
   userId: true,
   id: true,
   title: true,
@@ -147,14 +141,5 @@ export const ActivateFitnessPlanSchema: z.ZodType<FitnessPlan> = FitnessPlanSche
   // Validate and brand
   const validationResult = validateFitnessPlan(data);
   return unwrapOrIssue(validationResult, ctx);
-});
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
-
-/**
- * @deprecated Use CreateDraftFitnessPlanSchema or call via transform.
- * Kept for test compatibility.
- */
+}) satisfies z.ZodType<FitnessPlan>;
 

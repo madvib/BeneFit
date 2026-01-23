@@ -1,13 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { CreateOAuthCredentialsSchema } from '../oauth-credentials.factory.js';
+
 import { createOAuthCredentialsFixture } from './oauth-credentials.fixtures.js';
+import { CreateOAuthCredentialsSchema } from '../oauth-credentials.factory.js';
 
 describe('OAuthCredentials', () => {
   describe('Factory', () => {
+    const TEST_ACCESS_TOKEN = 'test-access-token-123';
+
     it('should create valid credentials', () => {
       // Arrange
+      const accessToken = TEST_ACCESS_TOKEN;
       const input = {
-        accessToken: 'valid_token',
+        accessToken,
         scopes: ['read', 'write']
       };
 
@@ -17,7 +21,7 @@ describe('OAuthCredentials', () => {
       // Assert
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.accessToken).toBe('valid_token');
+        expect(result.data.accessToken).toBe(accessToken);
         expect(result.data.scopes).toEqual(['read', 'write']);
       }
     });
@@ -36,7 +40,7 @@ describe('OAuthCredentials', () => {
     it('should fail with empty scopes', () => {
       // Act
       const result = CreateOAuthCredentialsSchema.safeParse({
-        accessToken: 'valid_token',
+        accessToken: TEST_ACCESS_TOKEN,
         scopes: []
       });
 
@@ -50,7 +54,7 @@ describe('OAuthCredentials', () => {
 
       // Act
       const result = CreateOAuthCredentialsSchema.safeParse({
-        accessToken: 'valid_token',
+        accessToken: TEST_ACCESS_TOKEN,
         scopes: ['read'],
         expiresAt: pastDate
       });
@@ -69,9 +73,10 @@ describe('OAuthCredentials', () => {
     });
 
     it('should allow overrides in fixture', () => {
-      const fixture = createOAuthCredentialsFixture({ accessToken: 'custom-token' });
+      const accessToken = 'override-access-token';
+      const fixture = createOAuthCredentialsFixture({ accessToken });
 
-      expect(fixture.accessToken).toBe('custom-token');
+      expect(fixture.accessToken).toBe(accessToken);
     });
   });
 });

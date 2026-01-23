@@ -1,10 +1,30 @@
+
 import { describe, it, expect } from 'vitest';
-import { createSessionConfigurationFixture, createSessionParticipantFixture } from '../../../value-objects/index.js';
-import { WorkoutActivity } from '../../../value-objects/workout-activity/workout-activity.types.js';
-import { startSession, joinSession, pauseSession, resumeSession, completeActivity, abandonSession } from '../workout-session.commands.js';
-import { getCurrentActivity, getCompletionPercentage, getActiveParticipants, isParticipantInSession, canJoin } from '../workout-session.queries.js';
+import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
+import {
+  createSessionConfigurationFixture,
+  createSessionParticipantFixture,
+  createWorkoutActivityFixture,
+  createWorkoutSessionInputFixture,
+  createWorkoutSessionFixture
+} from '@/fixtures.js';
+import {
+  startSession,
+  joinSession,
+  pauseSession,
+  resumeSession,
+  completeActivity,
+  abandonSession
+} from '../workout-session.commands.js';
+import {
+  getCurrentActivity,
+  getCompletionPercentage,
+  getActiveParticipants,
+  isParticipantInSession,
+  canJoin
+} from '../workout-session.queries.js';
 import { CreateWorkoutSessionSchema } from '../workout-session.factory.js';
-import { createWorkoutSessionInputFixture, createWorkoutSessionFixture } from './workout-session.fixtures.js';
 
 describe('WorkoutSession', () => {
   describe('Factory', () => {
@@ -19,20 +39,6 @@ describe('WorkoutSession', () => {
         expect(result.data.state).toBe('preparing');
         expect(result.data.id).toBeDefined();
       }
-    });
-
-    it('should fail if activities array is empty', () => {
-      const input = createWorkoutSessionInputFixture({ activities: [] });
-      const result = CreateWorkoutSessionSchema.safeParse(input);
-
-      // Assuming validation rule exists for non-empty activities
-      // If not, this test might need adjustment or factory update
-      // Based on previous code, empty array might have failed valid activity checks if they exist
-      // But standard Zod array doesn't fail on empty unless .min(1) is used
-      // Let's assume validation is robust or we check result.success
-      // Actually, looking at previous factory, there wasn't explicit check for empty activities array length > 0
-      // BUT, let's keep it assuming we want to enforce it via business logic or check if it fails now
-      // If it passes, we should add .min(1) to schema or custom validation
     });
 
     it('should create multiplayer session', () => {
@@ -62,8 +68,9 @@ describe('WorkoutSession', () => {
   describe('Commands', () => {
     it('should start a session', () => {
       const session = createWorkoutSessionFixture({ state: 'preparing', participants: [] });
+      const ownerName = 'Test Owner';
 
-      const result = startSession(session, 'John Doe');
+      const result = startSession(session, ownerName);
 
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
@@ -85,7 +92,7 @@ describe('WorkoutSession', () => {
     });
 
     it('should resume a paused session', () => {
-      const session = createWorkoutSessionFixture({ state: 'paused', pausedAt: new Date() });
+      const session = createWorkoutSessionFixture({ state: 'paused', pausedAt: faker.date.recent() });
       const result = resumeSession(session);
 
       expect(result.isSuccess).toBe(true);
@@ -96,7 +103,12 @@ describe('WorkoutSession', () => {
     });
 
     it('should complete an activity', () => {
-      const session = createWorkoutSessionFixture({ state: 'in_progress', activities: [{ type: 'main', name: 'test', order: 0, duration: 10 }] });
+      const activity = createWorkoutActivityFixture({ type: 'main', order: 0 });
+      const session = createWorkoutSessionFixture({
+        state: 'in_progress',
+        activities: [activity],
+        currentActivityIndex: 0
+      });
 
       const activityPerformance = {
         activityType: 'main' as const,
@@ -116,7 +128,8 @@ describe('WorkoutSession', () => {
 
     it('should abandon a session', () => {
       const session = createWorkoutSessionFixture({ state: 'in_progress' });
-      const result = abandonSession(session, 'Feeling tired');
+      const reason = 'Test abandonment reason';
+      const result = abandonSession(session, reason);
 
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
@@ -131,33 +144,34 @@ describe('WorkoutSession', () => {
         state: 'in_progress'
       });
 
-      const result = joinSession(session, '550e8400-e29b-41d4-a716-446655440002', 'Jane Doe');
+      const userId = randomUUID();
+      const userName = 'Test Participant';
+      const result = joinSession(session, userId, userName);
 
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
-        // user was already in participant list in fixture probably, checking length increment
-        // Fixture creates 1 participant by default
         expect(result.value.participants.length).toBeGreaterThan(1);
+        expect(isParticipantInSession(result.value, userId)).toBe(true);
       }
     });
   });
 
   describe('Queries', () => {
     it('should get current activity', () => {
-      const activities: WorkoutActivity[] = [{ type: 'main', name: 'A1', order: 0, duration: 10 }];
-      const session = createWorkoutSessionFixture({ activities, currentActivityIndex: 0 });
+      const activity = createWorkoutActivityFixture({ order: 0 });
+      const session = createWorkoutSessionFixture({ activities: [activity], currentActivityIndex: 0 });
 
       const current = getCurrentActivity(session);
-      expect(current).toEqual(activities[0]);
+      expect(current).toEqual(activity);
     });
 
     it('should calculate completion percentage', () => {
-      const activities: WorkoutActivity[] = [
-        { type: 'main', name: 'A1', order: 0, duration: 10 },
-        { type: 'main', name: 'A2', order: 1, duration: 10 }
+      const activities = [
+        createWorkoutActivityFixture({ order: 0 }),
+        createWorkoutActivityFixture({ order: 1 })
       ];
       // Create session with 1 completed activity
-      let session = createWorkoutSessionFixture({ activities, currentActivityIndex: 0, state: 'in_progress' });
+      const session = createWorkoutSessionFixture({ activities, currentActivityIndex: 0, state: 'in_progress' });
 
       const activityPerformance = {
         activityType: 'main' as const,
@@ -165,9 +179,11 @@ describe('WorkoutSession', () => {
         durationMinutes: 10,
       };
 
-      session = completeActivity(session, activityPerformance).value!;
-
-      expect(getCompletionPercentage(session)).toBe(50);
+      const result = completeActivity(session, activityPerformance);
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(getCompletionPercentage(result.value)).toBe(50);
+      }
     });
 
     it('should get active participants', () => {
@@ -183,13 +199,13 @@ describe('WorkoutSession', () => {
     });
 
     it('should check if participant is in session', () => {
-      const userId = '550e8400-e29b-41d4-a716-446655440001';
+      const userId = randomUUID();
       const session = createWorkoutSessionFixture({
-        participants: [{ userId, name: 'p1', role: 'owner', isActive: true, joinedAt: new Date() }]
+        participants: [createSessionParticipantFixture({ userId, role: 'owner', status: 'active' })]
       });
 
       expect(isParticipantInSession(session, userId)).toBe(true);
-      expect(isParticipantInSession(session, 'other-id')).toBe(false);
+      expect(isParticipantInSession(session, randomUUID())).toBe(false);
     });
 
     it('should check if session can be joined', () => {

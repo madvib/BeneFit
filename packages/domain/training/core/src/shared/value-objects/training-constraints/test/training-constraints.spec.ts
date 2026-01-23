@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import {
   CreateTrainingConstraintsSchema,
   createHomeTrainingConstraints,
@@ -11,7 +12,7 @@ import {
   isAvailableDay,
   getAvailableDaysCount,
 } from '../training-constraints.commands.js';
-import { createTrainingConstraintsFixture, createInjuryFixture } from './training-constraints.fixtures.js';
+import { createTrainingConstraintsFixture, createInjuryFixture } from '@/fixtures.js';
 
 describe('TrainingConstraints', () => {
   describe('creation & rehydration', () => {
@@ -134,52 +135,68 @@ describe('TrainingConstraints', () => {
   describe('specialized factories', () => {
     it('should create home training constraints', () => {
       // Act
-      const result = createHomeTrainingConstraints(['Monday', 'Thursday'], ['Mat', 'Bands']);
+      const equipment1 = 'Dumbbells';
+      const equipment2 = 'Resistance Bands';
+      const result = createHomeTrainingConstraints(
+        ['Monday', 'Thursday'],
+        [equipment1, equipment2],
+      );
 
       // Assert
       expect(result.isSuccess).toBe(true);
-      expect(result.value).toMatchObject({
-        location: 'home',
-        availableEquipment: ['Mat', 'Bands'],
-        availableDays: ['Monday', 'Thursday'],
-      });
+      if (result.isSuccess) {
+        expect(result.value).toMatchObject({
+          location: 'home',
+          availableEquipment: [equipment1, equipment2],
+          availableDays: ['Monday', 'Thursday'],
+        });
+      }
     });
 
     it('should create gym training constraints', () => {
       // Act
-      const result = createGymTrainingConstraints(['Monday', 'Wednesday', 'Friday'], 60);
+      const maxDuration = 60;
+      const result = createGymTrainingConstraints(['Monday', 'Wednesday', 'Friday'], maxDuration);
 
       // Assert
       expect(result.isSuccess).toBe(true);
-      expect(result.value).toMatchObject({
-        location: 'gym',
-        maxDuration: 60,
-        availableDays: ['Monday', 'Wednesday', 'Friday'],
-      });
+      if (result.isSuccess) {
+        expect(result.value).toMatchObject({
+          location: 'gym',
+          maxDuration,
+          availableDays: ['Monday', 'Wednesday', 'Friday'],
+        });
+      }
     });
   });
 
   describe('commands & queries', () => {
     it('should correctly report injury status', () => {
       // Arrange
-      const injury = createInjuryFixture({ bodyPart: 'Knee', avoidExercises: ['Squats'] });
+      const bodyPart = 'knee';
+      const avoidExercise = 'squats';
+      const otherExercise = 'swimming';
+      const injury = createInjuryFixture({ bodyPart, avoidExercises: [avoidExercise] });
       const constraints = createTrainingConstraintsFixture({ injuries: [injury] });
 
       // Act & Assert
       expect(hasInjuries(constraints)).toBe(true);
-      expect(canExercise(constraints, 'Squats')).toBe(false);
-      expect(canExercise(constraints, 'Pushups')).toBe(true);
+      expect(canExercise(constraints, avoidExercise)).toBe(false);
+      expect(canExercise(constraints, otherExercise)).toBe(true);
     });
 
     it('should correctly check for equipment', () => {
       // Arrange
+      const equipment1 = 'Dumbbells';
+      const equipment2 = 'Resistance Bands';
+      const missingEquipment = 'Treadmill';
       const constraints = createTrainingConstraintsFixture({
-        availableEquipment: ['Dumbbells', 'Bench'],
+        availableEquipment: [equipment1, equipment2],
       });
 
       // Act & Assert
-      expect(hasEquipment(constraints, 'Dumbbells')).toBe(true);
-      expect(hasEquipment(constraints, 'Barbell')).toBe(false);
+      expect(hasEquipment(constraints, equipment1)).toBe(true);
+      expect(hasEquipment(constraints, missingEquipment)).toBe(false);
     });
 
     it('should correctly check available days', () => {

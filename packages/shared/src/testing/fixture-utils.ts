@@ -7,6 +7,7 @@ export interface BaseFixtureOptions<T> {
   overrides?: Partial<T>;
   success?: boolean;
   temperature?: number; // 0 to 1, probability of returning a failure result
+  errorMessage?: string;
 }
 
 /**
@@ -25,16 +26,16 @@ export function handleFixtureOptions<T>(
   options: BaseFixtureOptions<T>,
   defaultFailureMessage: string = 'Simulated fixture failure'
 ): Result<T> | undefined {
-  const { success, temperature = 0 } = options;
+  const { success, temperature = 0, errorMessage } = options;
 
   // 1. Fuzzing: probabilistic failure
   if (temperature > 0 && Math.random() < temperature) {
-    return Result.fail(new Error(`[Fuzzed] ${ defaultFailureMessage }`));
+    return Result.fail(new Error(`[Fuzzed] ${ errorMessage || defaultFailureMessage }`));
   }
 
   // 2. Deterministic failure
   if (success === false) {
-    return Result.fail(new Error(defaultFailureMessage));
+    return Result.fail(new Error(errorMessage || defaultFailureMessage));
   }
 
   return undefined;

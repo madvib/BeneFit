@@ -1,15 +1,10 @@
-// import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { defineConfig } from 'vite';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../../../node_modules/.vite/packages/domain/training',
-  plugins: [viteTsconfigPaths({
-    root: __dirname,
-    // Point to the tsconfig that has your paths
-    projects: ['./tsconfig.spec.json'], // or whatever yours is named
-  })],
+  plugins: [nxViteTsPaths()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],

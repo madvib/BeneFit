@@ -1,5 +1,5 @@
 import { Result } from '@bene/shared';
-import { ConnectedService } from '@core/index.js';
+import { ConnectedService } from '@/core/index.js';
 
 export interface ConnectedServiceRepository {
   findById(id: string): Promise<Result<ConnectedService>>;

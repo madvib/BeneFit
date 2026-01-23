@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
-import { CoachMsg, CoachMsgSchema } from './coach-msg.types.js';
+import { CoachMsg, CoachMsgSchema, MessageRole } from './coach-msg.types.js';
 
 /**
  * ============================================================================
@@ -32,6 +32,30 @@ function validateCoachMsg(data: unknown): Result<CoachMsg> {
 
   return Result.ok(parseResult.data);
 }
+/**
+ * Internal helper to create role-specific message schemas
+ */
+function createMessageSchema<TRole extends MessageRole>(
+  role: TRole,
+  pickFields: (keyof z.infer<typeof CoachMsgSchema>)[],
+) {
+  return CoachMsgSchema.pick(
+    Object.fromEntries(pickFields.map(k => [k, true]))
+  ).extend({
+    id: z.uuid().optional(),
+    timestamp: z.coerce.date<Date>().optional(),
+  }).transform((input, ctx) => {
+    const data = {
+      ...input,
+      id: input.id || randomUUID(),
+      role,
+      timestamp: input.timestamp || new Date(),
+    };
+    const validationResult = validateCoachMsg(data);
+    return unwrapOrIssue(validationResult, ctx);
+  }) satisfies z.ZodType<CoachMsg>;
+}
+
 
 // ============================================================================
 // 1. REHYDRATION (for fixtures & DB)
@@ -54,69 +78,24 @@ export function coachMsgFromPersistence(
 /**
  * User Message Creation Schema
  */
-export const CreateUserMessageSchema = CoachMsgSchema.pick({
-  content: true,
-  checkInId: true,
-}).extend({
-  id: z.uuid().optional(),
-  timestamp: z.coerce.date<Date>().optional(),
-}).transform((input, ctx) => {
-  const data = {
-    ...input,
-    id: input.id || randomUUID(),
-    role: 'user' as const,
-    timestamp: input.timestamp || new Date(),
-  };
-
-  const validationResult = validateCoachMsg(data);
-  return unwrapOrIssue(validationResult, ctx);
-}) satisfies z.ZodType<CoachMsg>;
+export const CreateUserMessageSchema = createMessageSchema('user', [
+  'content',
+  'checkInId',
+]);
 
 /**
  * Coach Message Creation Schema
  */
-export const CreateCoachMessageSchema = CoachMsgSchema.pick({
-  content: true,
-  actions: true,
-  checkInId: true,
-  tokens: true,
-}).extend({
-  id: z.uuid().optional(),
-  timestamp: z.coerce.date<Date>().optional(),
-}).transform((input, ctx) => {
-  const data = {
-    ...input,
-    id: input.id || randomUUID(),
-    role: 'coach' as const,
-    timestamp: input.timestamp || new Date(),
-  };
-
-  const validationResult = validateCoachMsg(data);
-  return unwrapOrIssue(validationResult, ctx);
-}) satisfies z.ZodType<CoachMsg>;
+export const CreateCoachMessageSchema = createMessageSchema('coach', [
+  'content',
+  'actions',
+  'checkInId',
+  'tokens',
+]);
 
 /**
  * System Message Creation Schema
  */
-export const CreateSystemMessageSchema = CoachMsgSchema.pick({
-  content: true,
-}).extend({
-  id: z.uuid().optional(),
-  timestamp: z.coerce.date<Date>().optional(),
-}).transform((input, ctx) => {
-  const data = {
-    ...input,
-    id: input.id || randomUUID(),
-    role: 'system' as const,
-    timestamp: input.timestamp || new Date(),
-  };
-
-  const validationResult = validateCoachMsg(data);
-  return unwrapOrIssue(validationResult, ctx);
-}) satisfies z.ZodType<CoachMsg>;
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
-
-
+export const CreateSystemMessageSchema = createMessageSchema('system', [
+  'content',
+]);

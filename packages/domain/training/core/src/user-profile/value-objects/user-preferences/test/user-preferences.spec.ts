@@ -1,6 +1,7 @@
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CreateUserPreferencesSchema } from '../user-preferences.factory.js';
-import { createUserPreferencesFixture } from './user-preferences.fixtures.js';
+import { createUserPreferencesFixture } from '@/fixtures.js';
 import { UserPreferences } from '../user-preferences.types.js';
 
 describe('UserPreferences Value Object', () => {

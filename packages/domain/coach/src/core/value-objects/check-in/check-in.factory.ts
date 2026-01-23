@@ -72,8 +72,3 @@ export const CreateCheckInSchema = CheckInSchema.pick({
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<CheckIn>;
 
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
-
-

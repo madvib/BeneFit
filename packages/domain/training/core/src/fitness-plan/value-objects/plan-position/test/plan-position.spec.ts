@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
+
 import { CreatePlanPositionSchema } from '../plan-position.factory.js';
-import { createPlanPositionFixture } from './plan-position.fixtures.js';
+import { createPlanPositionFixture } from '@/fixtures.js';
 import {
   advanceDay,
   daysUntil,
@@ -13,11 +14,13 @@ describe('PlanPosition', () => {
   describe('creation', () => {
     it('should create valid plan position with correct defaults', () => {
       // Arrange & Act
-      const pos = createPlanPositionFixture({ week: 2, day: 3 });
+      const week = 5;
+      const day = 3;
+      const pos = createPlanPositionFixture({ week, day });
 
       // Assert
-      expect(pos.week).toBe(2);
-      expect(pos.day).toBe(3);
+      expect(pos.week).toBe(week);
+      expect(pos.day).toBe(day);
     });
   });
 
@@ -50,13 +53,14 @@ describe('PlanPosition', () => {
   describe('state transitions & navigation', () => {
     it('should advance correctly across week boundary', () => {
       // Arrange
-      const saturday = createPlanPositionFixture({ week: 1, day: 6 });
+      const week = 10;
+      const saturday = createPlanPositionFixture({ week, day: 6 });
 
       // Act
       const sunday = advanceDay(saturday);
 
       // Assert
-      expect(sunday.week).toBe(2);
+      expect(sunday.week).toBe(week + 1);
       expect(sunday.day).toBe(0);
     });
 
@@ -82,14 +86,15 @@ describe('PlanPosition', () => {
 
     it('should navigate to next monday correctly', () => {
       // Arrange
-      const thursday = createPlanPositionFixture({ week: 1, day: 4 });
+      const week = 15;
+      const thursday = createPlanPositionFixture({ week, day: 4 });
 
       // Act
       const monday = goToNextMonday(thursday);
 
       // Assert
       expect(monday.day).toBe(1); // Monday
-      expect(monday.week).toBe(2); // Next week
+      expect(monday.week).toBe(week + 1); // Next week
     });
   });
 });

@@ -34,7 +34,7 @@ export function createIntervalFixture(overrides?: Partial<Interval>): Interval {
  * Ensures domain invariants (like not having both intervals and exercises) are respected.
  */
 export function createActivityStructureFixture(overrides?: Partial<ActivityStructure>): ActivityStructure {
-  const isInterval = faker.datatype.boolean();
+  const isInterval = overrides?.intervals !== undefined || (overrides?.exercises === undefined && faker.datatype.boolean());
 
   // Build unbranded data with faker
   const data = {
@@ -48,10 +48,7 @@ export function createActivityStructureFixture(overrides?: Partial<ActivityStruc
   const result = activityStructureFromPersistence(data);
 
   if (result.isFailure) {
-    const errorMsg = Array.isArray(result.error)
-      ? result.error.map(e => e.message).join(', ')
-      : result.error?.message || String(result.error);
-    throw new Error(`Failed to create ActivityStructure fixture: ${ errorMsg }`);
+    throw new Error(`Failed to create ActivityStructure fixture: ${ result.errorMessage }`);
   }
 
   return result.value;

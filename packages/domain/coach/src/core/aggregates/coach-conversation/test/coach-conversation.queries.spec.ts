@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { createCoachMsgFixture, createCheckInFixture, createCoachContextFixture } from '../../../../fixtures.js';
+import {
+  createCoachMsgFixture,
+  createCheckInFixture,
+  createCoachContextFixture,
+  createCoachConversationFixture
+} from '@/fixtures.js';
 import * as Queries from '../coach-conversation.queries.js';
-import { createCoachConversationFixture } from './coach-conversation.fixtures.js';
 
 describe('CoachConversation Queries', () => {
   describe('getRecentMessages', () => {

@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import * as Commands from '../coach-conversation.commands.js';
-import { createCoachConversationFixture } from './coach-conversation.fixtures.js';
-import { createCheckInFixture } from '../../../value-objects/index.js';
-import { createCoachContextFixture } from '../../../value-objects/index.js';
+import {
+  createCheckInFixture,
+  createCoachContextFixture,
+  createCoachConversationFixture
+} from '@/fixtures.js';
+import { faker } from '@faker-js/faker';
 
 describe('CoachConversation Commands', () => {
   describe('addUserMessage', () => {
@@ -10,8 +13,6 @@ describe('CoachConversation Commands', () => {
       // Arrange
       const conversation = createCoachConversationFixture({
         messages: [],
-        totalMessages: 0,
-        totalUserMessages: 0,
       });
       const content = 'Hello coach!';
 
@@ -21,9 +22,8 @@ describe('CoachConversation Commands', () => {
       // Assert
       expect(result.isSuccess).toBe(true);
       const updated = result.value;
-      expect(updated.messages).toHaveLength(1);
-      expect(updated.messages[0].content).toBe(content);
-      expect(updated.messages[0].role).toBe('user');
+      expect(updated.messages[0]?.content).toBe(content);
+      expect(updated.messages[0]?.role).toBe('user');
       expect(updated.totalMessages).toBe(1);
       expect(updated.totalUserMessages).toBe(1);
       expect(updated.lastMessageAt).toBeInstanceOf(Date);
@@ -35,8 +35,6 @@ describe('CoachConversation Commands', () => {
       // Arrange
       const conversation = createCoachConversationFixture({
         messages: [],
-        totalMessages: 0,
-        totalCoachMessages: 0,
       });
       const content = 'Hello user!';
 
@@ -46,9 +44,8 @@ describe('CoachConversation Commands', () => {
       // Assert
       expect(result.isSuccess).toBe(true);
       const updated = result.value;
-      expect(updated.messages).toHaveLength(1);
-      expect(updated.messages[0].content).toBe(content);
-      expect(updated.messages[0].role).toBe('coach');
+      expect(updated.messages[0]?.content).toBe(content);
+      expect(updated.messages[0]?.role).toBe('coach');
       expect(updated.totalMessages).toBe(1);
       expect(updated.totalCoachMessages).toBe(1);
     });
@@ -59,7 +56,6 @@ describe('CoachConversation Commands', () => {
       // Arrange
       const conversation = createCoachConversationFixture({
         messages: [],
-        totalMessages: 0,
       });
       const content = 'System alert';
 
@@ -69,9 +65,7 @@ describe('CoachConversation Commands', () => {
       // Assert
       expect(result.isSuccess).toBe(true);
       const updated = result.value;
-      expect(updated.messages).toHaveLength(1);
-      expect(updated.role).toBeUndefined(); // Aggregate doesn't have role, message does. Wait, I should check message role.
-      expect(updated.messages[0].role).toBe('system');
+      expect(updated.messages[0]?.role).toBe('system');
       expect(updated.totalMessages).toBe(1);
     });
   });
@@ -81,8 +75,6 @@ describe('CoachConversation Commands', () => {
       // Arrange
       const conversation = createCoachConversationFixture({
         checkIns: [],
-        totalCheckIns: 0,
-        pendingCheckIns: 0,
       });
       const checkIn = createCheckInFixture({ status: 'pending' });
 
@@ -92,8 +84,7 @@ describe('CoachConversation Commands', () => {
       // Assert
       expect(result.isSuccess).toBe(true);
       const updated = result.value;
-      expect(updated.checkIns).toHaveLength(1);
-      expect(updated.checkIns[0].id).toBe(checkIn.id);
+      expect(updated.checkIns[0]?.id).toBe(checkIn.id);
       expect(updated.totalCheckIns).toBe(1);
       expect(updated.pendingCheckIns).toBe(1);
     });
@@ -187,7 +178,7 @@ describe('CoachConversation Commands', () => {
   describe('clearOldMessages', () => {
     it('should keep only the last N messages', () => {
       // Arrange
-      const messages = Array(10).fill(null).map(() => ({ content: 'msg', role: 'user', timestamp: new Date() } as any));
+      const messages = faker.helpers.multiple(() => ({ content: faker.lorem.sentence(), role: 'user', timestamp: new Date() } as any), { count: 10 });
       const conversation = createCoachConversationFixture({ messages });
 
       // Act

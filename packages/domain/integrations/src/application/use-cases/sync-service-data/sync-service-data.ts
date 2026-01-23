@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { Result, type EventBus, BaseUseCase } from '@bene/shared';
-import { ConnectedService, ConnectedServiceCommands } from '@core/index.js';
-import { ConnectedServiceRepository } from '@app/ports/connected-service-repository.js';
-import { IntegrationClient } from '@app/ports/integration-client.js';
-import { ServiceSyncedEvent } from '@app/events/service-synced.event.js';
-import { ActivitiesSyncedEvent } from '@app/events/activities-synced.event.js';
+import { ConnectedService, ConnectedServiceCommands } from '@/core/index.js';
+import { ConnectedServiceRepository } from '@/application/ports/connected-service-repository.js';
+import { IntegrationClient } from '@/application/ports/integration-client.js';
+import { ServiceSyncedEvent } from '@/application/events/service-synced.event.js';
+import { ActivitiesSyncedEvent } from '@/application/events/activities-synced.event.js';
 
 // Type for activity normalizer functions (Strava, Garmin, etc.)
-type ActivityNormalizer = (activities: unknown[]) => import('@core/normalized-activity.js').NormalizedActivity[];
+type ActivityNormalizer = (activities: unknown[]) => import('@/core/normalized-activity.js').NormalizedActivity[];
 
 /**
  * Input schema

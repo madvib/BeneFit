@@ -1,5 +1,7 @@
+
 import { describe, it, expect } from 'vitest';
-import { createSessionConfigurationFixture } from './session-configuration.fixtures.js';
+import { faker } from '@faker-js/faker';
+import { createSessionConfigurationFixture } from '@/fixtures.js';
 
 describe('SessionConfiguration', () => {
   describe('creation', () => {
@@ -27,16 +29,17 @@ describe('SessionConfiguration', () => {
 
     it('should allow customization through overrides', () => {
       // Arrange & Act
+      const maxParticipants = faker.number.int({ min: 2, max: 10 });
       const config = createSessionConfigurationFixture({
         isMultiplayer: true,
         isPublic: true,
-        maxParticipants: 5,
+        maxParticipants,
         enableChat: false,
       });
 
       // Assert
       expect(config.isPublic).toBe(true);
-      expect(config.maxParticipants).toBe(5);
+      expect(config.maxParticipants).toBe(maxParticipants);
       expect(config.enableChat).toBe(false);
     });
   });

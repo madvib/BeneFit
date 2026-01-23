@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
+
+import {
+  createCoachConversationFixture,
+  createCoachContextFixture
+} from '@/fixtures.js';
+
 import { CreateCoachConversationSchema } from '../coach-conversation.factory.js';
-import { createCoachConversationFixture } from './coach-conversation.fixtures.js';
-import { createCoachContextFixture } from '../../../value-objects/index.js';
 
 describe('CoachConversation', () => {
   describe('Factory', () => {
@@ -9,8 +13,9 @@ describe('CoachConversation', () => {
 
     it('should create a valid coaching conversation', () => {
       // Arrange
+      const userId = crypto.randomUUID();
       const input = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId,
         context: mockContext,
         initialMessage: 'Welcome!',
       };
@@ -23,7 +28,7 @@ describe('CoachConversation', () => {
       if (result.success) {
         const conversation = result.data;
         expect(conversation.id).toBeDefined();
-        expect(conversation.userId).toBe('550e8400-e29b-41d4-a716-446655440000');
+        expect(conversation.userId).toBe(userId);
         expect(conversation.context).toEqual(mockContext);
         expect(conversation.messages).toHaveLength(1);
         expect(conversation.messages[0]?.content).toBe('Welcome!');
@@ -36,7 +41,7 @@ describe('CoachConversation', () => {
     it('should create a conversation without initial message', () => {
       // Act
       const result = CreateCoachConversationSchema.safeParse({
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId: crypto.randomUUID(),
         context: mockContext,
       });
 
@@ -51,7 +56,7 @@ describe('CoachConversation', () => {
     it('should create a conversation without context (uses default context)', () => {
       // Act
       const result = CreateCoachConversationSchema.safeParse({
-        userId: '550e8400-e29b-41d4-a716-446655440000',
+        userId: crypto.randomUUID(),
       });
 
       // Assert

@@ -1,22 +1,40 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CreateActivityStructureSchema, activityStructureFromPersistence } from '../activity-structure.factory.js';
-import { createActivityStructureFixture } from './activity-structure.fixtures.js';
-import { isIntervalBased, isExerciseBased, isEmpty, getTotalDuration, getTotalSets, getAverageIntensity, requiresEquipment, getDescription } from '../activity-structure.queries.js';
-import { adjustDuration, adjustIntensity, addRounds, reduceRounds, increaseRest } from '../activity-structure.commands.js';
-import { Interval } from '../activity-structure.types.js';
+import {
+  CreateActivityStructureSchema,
+  activityStructureFromPersistence,
+} from '../activity-structure.factory.js';
+import { createActivityStructureFixture } from '@/fixtures.js';
+import {
+  isIntervalBased,
+  isExerciseBased,
+  isEmpty,
+  getTotalDuration,
+  getTotalSets,
+  getAverageIntensity,
+  requiresEquipment,
+  getDescription,
+} from '../activity-structure.queries.js';
+import {
+  adjustDuration,
+  adjustIntensity,
+  addRounds,
+  reduceRounds,
+  increaseRest,
+} from '../activity-structure.commands.js';
+import { Interval, Exercise } from '../activity-structure.types.js';
 
 describe('ActivityStructure', () => {
   // Shared test data for validation tests
   let validIntervals: Interval[];
-
+  let validExercises: Exercise[];
   beforeAll(() => {
     validIntervals = [
       { duration: 300, intensity: 'moderate' as const, rest: 60 },
       { duration: 180, intensity: 'hard' as const, rest: 90 },
     ];
     validExercises = [
-      { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-      { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+      { name: 'Bench Press', sets: 3, reps: 10, rest: 90 },
+      { name: 'Squat', sets: 3, reps: 15, rest: 60 },
     ];
   });
 
@@ -39,28 +57,23 @@ describe('ActivityStructure', () => {
 
     it('should create interval-based structure with fixture', () => {
       // Arrange & Act
+      const rounds = 3;
       const structure = createActivityStructureFixture({
-        intervals: [
-          { duration: 300, intensity: 'moderate' as const, rest: 60 },
-          { duration: 180, intensity: 'hard' as const, rest: 90 },
-        ],
-        rounds: 3,
+        intervals: validIntervals,
+        rounds,
         exercises: undefined,
       });
 
       // Assert
       expect(isIntervalBased(structure)).toBe(true);
       expect(structure.intervals?.length).toBe(2);
-      expect(structure.rounds).toBe(3);
+      expect(structure.rounds).toBe(rounds);
     });
 
     it('should create exercise-based structure with fixture', () => {
       // Arrange & Act
       const structure = createActivityStructureFixture({
-        exercises: [
-          { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-          { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
-        ],
+        exercises: validExercises,
         intervals: undefined,
       });
 
@@ -75,7 +88,7 @@ describe('ActivityStructure', () => {
       // Arrange
       const invalidInput = {
         intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
-        exercises: [{ name: 'Squats', sets: 3, reps: 10, rest: 90 }],
+        exercises: [{ name: 'Test Exercise', sets: 3, reps: 10, rest: 90 }],
       };
 
       // Act
@@ -101,7 +114,7 @@ describe('ActivityStructure', () => {
     it('should fail when exercise sets are not positive', () => {
       // Arrange
       const invalidInput = {
-        exercises: [{ name: 'Squats', sets: 0, reps: 10, rest: 90 }],
+        exercises: [{ name: 'Test Exercise', sets: 0, reps: 10, rest: 90 }],
       };
 
       // Act
@@ -150,7 +163,7 @@ describe('ActivityStructure', () => {
       it('should calculate duration for exercise-based structure with duration', () => {
         // Arrange
         const structure = createActivityStructureFixture({
-          exercises: [{ name: 'Plank', sets: 3, duration: 60, rest: 30 }],
+          exercises: [{ name: 'Test Exercise', sets: 3, duration: 60, rest: 30 }],
           rounds: 1,
           intervals: undefined,
         });
@@ -179,11 +192,14 @@ describe('ActivityStructure', () => {
     describe('getTotalSets', () => {
       it('should calculate total sets for exercise-based structure', () => {
         // Arrange
+        const sets1 = 3;
+        const sets2 = 4;
         const structure = createActivityStructureFixture({
           exercises: [
-            { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-            { name: 'Push-ups', sets: 4, reps: 15, rest: 60 },
+            { name: 'Bench Press', sets: sets1, reps: 10, rest: 90 },
+            { name: 'Squat', sets: sets2, reps: 15, rest: 60 },
           ],
+          rounds: 1,
           intervals: undefined,
         });
 
@@ -191,7 +207,7 @@ describe('ActivityStructure', () => {
         const totalSets = getTotalSets(structure);
 
         // Assert
-        expect(totalSets).toBe(7); // 3 + 4
+        expect(totalSets).toBe(sets1 + sets2);
       });
 
       it('should return 0 for interval structure', () => {
@@ -230,30 +246,34 @@ describe('ActivityStructure', () => {
     describe('adjustDuration', () => {
       it('should adjust interval durations', () => {
         // Arrange
+        const duration = 300;
+        const factor = 1.2;
         const structure = createActivityStructureFixture({
-          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          intervals: [{ duration, intensity: 'moderate' as const, rest: 60 }],
           exercises: undefined,
         });
 
         // Act
-        const adjusted = adjustDuration(structure, 0.8);
+        const adjusted = adjustDuration(structure, factor);
 
         // Assert
-        expect(adjusted.intervals![0]!.duration).toBe(240); // 300 * 0.8
+        expect(adjusted.intervals![0]!.duration).toBe(Math.round(duration * factor));
       });
 
       it('should adjust exercise durations', () => {
         // Arrange
+        const duration = 60;
+        const factor = 1.5;
         const structure = createActivityStructureFixture({
-          exercises: [{ name: 'Plank', sets: 3, duration: 60, rest: 30 }],
+          exercises: [{ name: 'Test Exercise', sets: 3, duration, rest: 30 }],
           intervals: undefined,
         });
 
         // Act
-        const adjusted = adjustDuration(structure, 1.5);
+        const adjusted = adjustDuration(structure, factor);
 
         // Assert
-        expect(adjusted.exercises![0]!.duration).toBe(90); // 60 * 1.5
+        expect(adjusted.exercises![0]!.duration).toBe(Math.round(duration * factor));
       });
 
       it('should return same structure if empty', () => {
@@ -289,47 +309,53 @@ describe('ActivityStructure', () => {
 
       it('should adjust exercise weights', () => {
         // Arrange
+        const weight = 100;
+        const factor = 0.7;
         const structure = createActivityStructureFixture({
-          exercises: [{ name: 'Squats', sets: 3, reps: 10, weight: 100, rest: 90 }],
+          exercises: [{ name: 'Test Exercise', sets: 3, reps: 10, weight, rest: 90 }],
           intervals: undefined,
         });
 
         // Act
-        const lighter = adjustIntensity(structure, 0.7);
+        const lighter = adjustIntensity(structure, factor);
 
         // Assert
-        expect(lighter.exercises![0]!.weight).toBe(70); // 100 * 0.7
+        expect(lighter.exercises![0]!.weight).toBe(Math.round(weight * factor * 10) / 10);
       });
     });
 
     describe('addRounds', () => {
       it('should add rounds to existing structure', () => {
         // Arrange
+        const rounds = 2;
+        const added = 1;
         const structure = createActivityStructureFixture({
           intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
-          rounds: 2,
+          rounds,
           exercises: undefined,
         });
 
         // Act
-        const withMore = addRounds(structure, 1);
+        const withMore = addRounds(structure, added);
 
         // Assert
-        expect(withMore.rounds).toBe(3);
+        expect(withMore.rounds).toBe(rounds + added);
       });
 
       it('should initialize rounds if not present', () => {
         // Arrange
+        const added = 2;
         const structure = createActivityStructureFixture({
           intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          rounds: undefined,
           exercises: undefined,
         });
 
         // Act
-        const withRounds = addRounds(structure, 2);
+        const withRounds = addRounds(structure, added);
 
         // Assert
-        expect(withRounds.rounds).toBeDefined();
+        expect(withRounds.rounds).toBe(1 + added);
       });
     });
 
@@ -368,30 +394,34 @@ describe('ActivityStructure', () => {
     describe('increaseRest', () => {
       it('should increase rest periods for intervals', () => {
         // Arrange
+        const rest = 60;
+        const factor = 1.5;
         const structure = createActivityStructureFixture({
-          intervals: [{ duration: 300, intensity: 'moderate' as const, rest: 60 }],
+          intervals: [{ duration: 300, intensity: 'moderate' as const, rest }],
           exercises: undefined,
         });
 
         // Act
-        const moreRest = increaseRest(structure, 1.5);
+        const moreRest = increaseRest(structure, factor);
 
         // Assert
-        expect(moreRest.intervals![0]!.rest).toBe(90); // 60 * 1.5
+        expect(moreRest.intervals![0]!.rest).toBe(Math.round(rest * factor));
       });
 
       it('should increase rest periods for exercises', () => {
         // Arrange
+        const rest = 90;
+        const factor = 2;
         const structure = createActivityStructureFixture({
-          exercises: [{ name: 'Squats', sets: 3, reps: 10, rest: 90 }],
+          exercises: [{ name: 'Test Exercise', sets: 3, reps: 10, rest }],
           intervals: undefined,
         });
 
         // Act
-        const moreRest = increaseRest(structure, 2);
+        const moreRest = increaseRest(structure, factor);
 
         // Assert
-        expect(moreRest.exercises![0]!.rest).toBe(180); // 90 * 2
+        expect(moreRest.exercises![0]!.rest).toBe(Math.round(rest * factor));
       });
     });
 
@@ -432,7 +462,7 @@ describe('ActivityStructure', () => {
       it('should return true when exercises have weight specified', () => {
         // Arrange
         const structure = createActivityStructureFixture({
-          exercises: [{ name: 'Barbell Squats', sets: 3, reps: 10, weight: 100, rest: 90 }],
+          exercises: [{ name: 'Test Exercise', sets: 3, reps: 10, weight: 100, rest: 90 }],
           intervals: undefined,
         });
 
@@ -448,7 +478,7 @@ describe('ActivityStructure', () => {
         const structure = createActivityStructureFixture({
           exercises: [
             { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
-            { name: 'Air Squats', sets: 3, reps: 20, rest: 60 },
+            { name: 'Squats', sets: 3, reps: 20, rest: 60 },
           ],
           intervals: undefined,
         });
@@ -482,8 +512,8 @@ describe('ActivityStructure', () => {
         // Arrange
         const structure = createActivityStructureFixture({
           exercises: [
-            { name: 'Squats', sets: 3, reps: 10, rest: 90 },
-            { name: 'Push-ups', sets: 3, reps: 15, rest: 60 },
+            { name: 'Bench Press', sets: 3, reps: 10, rest: 90 },
+            { name: 'Squat', sets: 3, reps: 15, rest: 60 },
           ],
           intervals: undefined,
         });
@@ -535,8 +565,8 @@ describe('ActivityStructure', () => {
         // Arrange
         const structure = createActivityStructureFixture({
           exercises: [
-            { name: 'Barbell Squat', sets: 4, reps: 5, weight: 150, rest: 180 },
-            { name: 'Bench Press', sets: 4, reps: 5, weight: 100, rest: 180 },
+            { name: 'Bench Press', sets: 4, reps: 5, weight: 150, rest: 180 },
+            { name: 'Squat', sets: 4, reps: 5, weight: 100, rest: 180 },
             { name: 'Deadlift', sets: 3, reps: 5, weight: 180, rest: 240 },
           ],
           rounds: 1,

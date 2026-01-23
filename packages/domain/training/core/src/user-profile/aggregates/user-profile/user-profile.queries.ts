@@ -39,3 +39,15 @@ export function getMemberSinceDays(profile: UserProfile): number {
     (now.getTime() - profile.createdAt.getTime()) / (1000 * 60 * 60 * 24)
   );
 }
+
+export function isStreakActive(profile: UserProfile): boolean {
+  return UserStatsQueries.isStreakActive(profile.stats);
+}
+
+export function getDaysSinceLastWorkout(profile: UserProfile): number | null {
+  return UserStatsQueries.getDaysSinceLastWorkout(profile.stats);
+}
+
+export function getAverageWorkoutDuration(profile: UserProfile): number {
+  return UserStatsQueries.getAverageWorkoutDuration(profile.stats);
+}

@@ -1,8 +1,8 @@
 import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
-import { createConnectedServiceFixture } from '../../../../fixtures.js';
+import { createConnectedServiceFixture } from '@/fixtures.js';
 import {
   toConnectedServiceView,
-} from '@core/index.js';
+} from '@/core/index.js';
 import type { GetConnectedServicesResponse } from '../get-connected-services.js';
 
 export type GetConnectedServicesFixtureOptions = BaseFixtureOptions<GetConnectedServicesResponse>;

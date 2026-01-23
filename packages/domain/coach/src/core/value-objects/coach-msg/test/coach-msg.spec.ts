@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { randomUUID } from 'node:crypto';
+
 import {
   CreateUserMessageSchema,
   CreateCoachMessageSchema,
@@ -10,7 +12,8 @@ describe('CoachMsg', () => {
   describe('User Message Factory', () => {
     it('should create a valid user message', () => {
       // Arrange
-      const input = { content: 'Hello coach', checkInId: '550e8400-e29b-41d4-a716-446655440001' };
+      const checkInId = randomUUID();
+      const input = { content: 'Hello coach', checkInId };
 
       // Act
       const result = CreateUserMessageSchema.safeParse(input);
@@ -21,7 +24,7 @@ describe('CoachMsg', () => {
         const message = result.data;
         expect(message.role).toBe('user');
         expect(message.content).toBe('Hello coach');
-        expect(message.checkInId).toBe('550e8400-e29b-41d4-a716-446655440001');
+        expect(message.checkInId).toBe(checkInId);
         expect(message.timestamp).toBeInstanceOf(Date);
       }
     });
@@ -41,9 +44,10 @@ describe('CoachMsg', () => {
   describe('Coach Message Factory', () => {
     it('should create a valid coach message', () => {
       // Arrange
+      const checkInId = randomUUID();
       const input = {
         content: 'Hello user',
-        checkInId: '550e8400-e29b-41d4-a716-446655440001',
+        checkInId,
         tokens: 100
       };
 
@@ -56,7 +60,7 @@ describe('CoachMsg', () => {
         const message = result.data;
         expect(message.role).toBe('coach');
         expect(message.content).toBe('Hello user');
-        expect(message.checkInId).toBe('550e8400-e29b-41d4-a716-446655440001');
+        expect(message.checkInId).toBe(checkInId);
         expect(message.tokens).toBe(100);
         expect(message.timestamp).toBeInstanceOf(Date);
       }

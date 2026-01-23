@@ -30,6 +30,8 @@ function validateCoachContext(data: unknown): Result<CoachContext> {
   return Result.ok(parseResult.data);
 }
 
+
+
 // ============================================================================
 // 1. REHYDRATION (for fixtures & DB)
 // ============================================================================
@@ -55,9 +57,4 @@ export const CreateCoachContextSchema = CoachContextSchema.transform((input, ctx
   const validationResult = validateCoachContext(input);
   return unwrapOrIssue(validationResult, ctx);
 }) satisfies z.ZodType<CoachContext>;
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================
-
 

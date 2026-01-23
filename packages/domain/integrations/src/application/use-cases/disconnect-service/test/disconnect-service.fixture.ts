@@ -1,9 +1,9 @@
 import { Result, type BaseFixtureOptions, handleFixtureOptions } from '@bene/shared';
-import { createConnectedServiceFixture } from '../../../../fixtures.js';
+import { createConnectedServiceFixture } from '@/fixtures.js';
 import {
   toConnectedServiceView,
   ConnectedServiceCommands,
-} from '@core/index.js';
+} from '@/core/index.js';
 import type { DisconnectServiceResponse } from '../disconnect-service.js';
 
 export type DisconnectServiceFixtureOptions = BaseFixtureOptions<DisconnectServiceResponse>;

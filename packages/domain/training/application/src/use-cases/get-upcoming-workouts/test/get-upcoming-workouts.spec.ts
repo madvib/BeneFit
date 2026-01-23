@@ -1,9 +1,17 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { Result } from '@bene/shared';
-import { FitnessPlanQueries, createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
-import { GetUpcomingWorkoutsUseCase } from '../get-upcoming-workouts.js';
-import { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
+import { randomUUID } from 'crypto';
 
+import { Result } from '@bene/shared';
+import { FitnessPlanQueries } from '@bene/training-core';
+import {
+  createFitnessPlanFixture,
+  createWorkoutTemplateFixture,
+  createWeeklyScheduleFixture,
+} from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
+import { GetUpcomingWorkoutsUseCase } from '../get-upcoming-workouts.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -24,25 +32,16 @@ describe('GetUpcomingWorkoutsUseCase', () => {
 
   it('should return upcoming workouts for the next 7 days when there is an active plan', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
+    const workoutId = randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
-      id: 'workout-456',
+      id: workoutId,
       type: 'strength',
       dayOfWeek: 1, // Monday
       status: 'scheduled',
-      activities: [
-        {
-          name: 'Bench Press',
-          type: 'main',
-          order: 1,
-          duration: 45,
-          instructions: ['Do 3 sets of 10 reps'],
-        },
-      ],
     });
 
     const activePlan = createFitnessPlanFixture({
-      id: 'plan-789',
       userId,
       weeks: [
         createWeeklyScheduleFixture({
@@ -55,7 +54,6 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     });
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(Result.ok(activePlan));
-    // Mock the getUpcomingWorkouts function to return the workout for upcoming days
     vi.spyOn(FitnessPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
 
     // Act
@@ -66,31 +64,22 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.workouts).toBeDefined();
       expect(result.value.workouts.length).toBe(1);
-      expect(result.value.workouts[0].id).toBe('workout-456');
+      expect(result.value.workouts[0].id).toBe(workoutId);
     }
   });
 
   it('should return upcoming workouts for specified number of days', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
+    const workoutId = randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
-      id: 'workout-456',
+      id: workoutId,
       type: 'strength',
       dayOfWeek: 1, // Monday
       status: 'scheduled',
-      activities: [
-        {
-          name: 'Bench Press',
-          type: 'main',
-          order: 1,
-          duration: 45,
-          instructions: ['Do 3 sets of 10 reps'],
-        },
-      ],
     });
 
     const activePlan = createFitnessPlanFixture({
-      id: 'plan-789',
       userId,
       weeks: [
         createWeeklyScheduleFixture({
@@ -103,7 +92,6 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     });
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(Result.ok(activePlan));
-    // Mock the getUpcomingWorkouts function to return the workout for upcoming days
     vi.spyOn(FitnessPlanQueries, 'getUpcomingWorkouts').mockReturnValue([mockWorkout]);
 
     // Act
@@ -113,13 +101,13 @@ describe('GetUpcomingWorkoutsUseCase', () => {
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.workouts).toBeDefined();
-      expect(result.value.workouts.length).toBeGreaterThanOrEqual(0); // Can vary based on actual plan content
+      expect(result.value.workouts.length).toBeGreaterThanOrEqual(0);
     }
   });
 
   it('should return empty array when no active plan exists', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),

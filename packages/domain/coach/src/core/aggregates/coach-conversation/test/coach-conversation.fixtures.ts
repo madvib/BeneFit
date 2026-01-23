@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { CoachConversation } from '../coach-conversation.types.js';
 import {
   createCoachContextFixture,
   createCoachMsgFixture,
   createCheckInFixture
-} from '../../../../fixtures.js';
+} from '@/fixtures.js';
+import { CoachConversation } from '../coach-conversation.types.js';
 import { coachConversationFromPersistence } from '../coach-conversation.factory.js';
 
 /**
@@ -46,10 +46,21 @@ export function createCoachConversationFixture(
     ...overrides,
   };
 
+  // Recalculate stats if messages or checkIns were overridden
+  if (overrides?.messages) {
+    data.totalMessages = overrides.messages.length;
+    data.totalUserMessages = overrides.messages.filter(m => m.role === 'user').length;
+    data.totalCoachMessages = overrides.messages.filter(m => m.role === 'coach').length;
+  }
+  if (overrides?.checkIns) {
+    data.totalCheckIns = overrides.checkIns.length;
+    data.pendingCheckIns = overrides.checkIns.filter(c => c.status === 'pending').length;
+  }
+
   const result = coachConversationFromPersistence(data as CoachConversation);
 
   if (result.isFailure) {
-    throw new Error(`Failed to create CoachConversation fixture: ${ result.error }`);
+    throw new Error(`Failed to create CoachConversation fixture: ${ result.errorMessage }`);
   }
 
   return result.value;

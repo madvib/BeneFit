@@ -1,9 +1,17 @@
-import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
-import { Result } from '@bene/shared';
-import { FitnessPlanQueries, createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
-import { GetTodaysWorkoutUseCase } from './get-todays-workout.js';
-import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
+import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'crypto';
 
+import { Result } from '@bene/shared';
+import { FitnessPlanQueries } from '@bene/training-core';
+import {
+  createFitnessPlanFixture,
+  createWorkoutTemplateFixture,
+  createWeeklyScheduleFixture,
+} from '@bene/training-core/fixtures';
+
+import { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
+import { GetTodaysWorkoutUseCase } from './get-todays-workout.js';
 
 // Mock repositories and services
 const mockPlanRepository = {
@@ -24,25 +32,16 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it("should return today's workout when there is an active plan with a workout", async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
+    const workoutId = randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
-      id: 'workout-456',
+      id: workoutId,
       type: 'strength',
       dayOfWeek: 1, // Monday
       status: 'scheduled',
-      activities: [
-        {
-          name: 'Bench Press',
-          type: 'main',
-          order: 1,
-          instructions: ['Do 3 sets of 10 reps'],
-          duration: 45,
-        },
-      ],
     });
 
     const activePlan = createFitnessPlanFixture({
-      id: 'plan-789',
       userId,
       weeks: [
         createWeeklyScheduleFixture({
@@ -65,17 +64,14 @@ describe('GetTodaysWorkoutUseCase', () => {
     if (result.isSuccess) {
       expect(result.value.hasWorkout).toBe(true);
       expect(result.value.workout).toBeDefined();
-      expect(result.value.workout?.id).toBe('workout-456');
+      expect(result.value.workout?.id).toBe(workoutId);
       expect(result.value.workout?.type).toBe('strength');
-      // expectedDuration depends on the mock or mapper logic.
-      // Mocked workout has activities with duration 45.
-      // Check if toWorkoutTemplateView calculates estimatedDuration or pass it in mock.
     }
   });
 
   it('should return no active plan message when no active plan exists', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
@@ -88,17 +84,14 @@ describe('GetTodaysWorkoutUseCase', () => {
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.hasWorkout).toBe(false);
-      expect(result.value.message).toBe(
-        'No active plan. Create a plan to get started!',
-      );
+      expect(result.value.message).toBe('No active plan. Create a plan to get started!');
     }
   });
 
   it('should return rest day message when there is no workout for today', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
     const activePlan = createFitnessPlanFixture({
-      id: 'plan-789',
       userId,
       weeks: [
         createWeeklyScheduleFixture({
@@ -125,25 +118,16 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it('should return already completed message when workout is already completed', async () => {
     // Arrange
-    const userId = 'user-123';
+    const userId = randomUUID();
+    const workoutId = randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
-      id: 'workout-456',
+      id: workoutId,
       type: 'strength',
       dayOfWeek: 1,
       status: 'completed',
-      activities: [
-        {
-          name: 'Bench Press',
-          type: 'main',
-          order: 1,
-          instructions: ['Do 3 sets of 10 reps'],
-          duration: 45,
-        },
-      ],
     });
 
     const activePlan = createFitnessPlanFixture({
-      id: 'plan-789',
       userId,
       weeks: [
         createWeeklyScheduleFixture({
@@ -164,9 +148,7 @@ describe('GetTodaysWorkoutUseCase', () => {
     expect(result.isSuccess).toBe(true);
     if (result.isSuccess) {
       expect(result.value.hasWorkout).toBe(false);
-      expect(result.value.message).toBe(
-        "Already completed today's workout! Great job!",
-      );
+      expect(result.value.message).toBe("Already completed today's workout! Great job!");
     }
   });
 });

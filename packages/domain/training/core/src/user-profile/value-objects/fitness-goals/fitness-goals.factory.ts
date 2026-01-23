@@ -1,20 +1,16 @@
 import { z } from 'zod';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
-import {
-  FitnessGoals,
-  FitnessGoalsSchema,
-  TargetWeightSchema
-} from './fitness-goals.types.js';
+import { FitnessGoals, FitnessGoalsSchema, TargetWeightSchema } from './fitness-goals.types.js';
 
 /**
  * ============================================================================
  * FITNESS GOALS FACTORY (Canonical Pattern)
  * ============================================================================
- * 
+ *
  * PUBLIC API (2 exports):
  * 1. fitnessGoalsFromPersistence() - For fixtures & DB hydration
  * 2. CreateFitnessGoalsSchema - Zod transform for API boundaries
- * 
+ *
  * Everything else is internal. No Input types, no extra functions.
  * ============================================================================
  */
@@ -49,9 +45,7 @@ function validateFitnessGoals(data: unknown): Result<FitnessGoals> {
  * Rehydrates FitnessGoals from persistence/fixtures (trusts the data).
  * This is the ONLY place where Unbrand is used.
  */
-export function fitnessGoalsFromPersistence(
-  data: Unbrand<FitnessGoals>,
-): Result<FitnessGoals> {
+export function fitnessGoalsFromPersistence(data: Unbrand<FitnessGoals>): Result<FitnessGoals> {
   return Result.ok(data as FitnessGoals);
 }
 
@@ -62,37 +56,37 @@ export function fitnessGoalsFromPersistence(
 /**
  * Zod transform for creating FitnessGoals with domain validation.
  * Use at API boundaries (controllers, resolvers).
- * 
+ *
  * Infer input type with: z.input<typeof CreateFitnessGoalsSchema>
  */
-export const CreateFitnessGoalsSchema: z.ZodType<FitnessGoals> = FitnessGoalsSchema.pick({
+export const CreateFitnessGoalsSchema = FitnessGoalsSchema.pick({
   primary: true,
   motivation: true,
-}).extend({
-  secondary: z.array(z.string().min(1).max(100)).optional(),
-  targetWeight: TargetWeightSchema.optional(),
-  targetBodyFat: z.number().optional(),
-  targetDate: z.coerce.date<Date>().optional(),
-  successCriteria: z.array(z.string()).optional(),
-}).transform((input, ctx) => {
-  // Build the entity with defaults
-  const data = {
-    primary: input.primary,
-    motivation: input.motivation,
-    secondary: input.secondary || [],
-    targetWeight: input.targetWeight,
-    targetBodyFat: input.targetBodyFat,
-    targetDate: input.targetDate,
-    successCriteria: input.successCriteria || [],
-  };
+})
+  .extend({
+    secondary: z.array(z.string().min(1).max(100)).optional(),
+    targetWeight: TargetWeightSchema.optional(),
+    targetBodyFat: z.number().optional(),
+    targetDate: z.coerce.date<Date>().optional(),
+    successCriteria: z.array(z.string()).optional(),
+  })
+  .transform((input, ctx) => {
+    // Build the entity with defaults
+    const data = {
+      primary: input.primary,
+      motivation: input.motivation,
+      secondary: input.secondary || [],
+      targetWeight: input.targetWeight,
+      targetBodyFat: input.targetBodyFat,
+      targetDate: input.targetDate,
+      successCriteria: input.successCriteria || [],
+    };
 
-  // Validate and brand
-  const validationResult = validateFitnessGoals(data);
-  return unwrapOrIssue(validationResult, ctx);
-});
+    // Validate and brand
+    const validationResult = validateFitnessGoals(data);
+    return unwrapOrIssue(validationResult, ctx);
+  }) satisfies z.ZodType<FitnessGoals>;
 
 // ============================================================================
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
-
-

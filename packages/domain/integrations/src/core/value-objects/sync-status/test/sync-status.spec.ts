@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { CreateSyncStatusSchema, createInitialSyncStatus, createSyncError } from '../sync-status.factory.js';
+
 import { createSyncStatusFixture } from './sync-status.fixtures.js';
+import { CreateSyncStatusSchema, createInitialSyncStatus, createSyncError } from '../sync-status.factory.js';
 
 describe('SyncStatus', () => {
   describe('Factory', () => {
@@ -15,18 +16,20 @@ describe('SyncStatus', () => {
     });
 
     it('should create sync error via factory', () => {
+      const message = 'Test error message';
+      const retriesRemaining = 3;
       const result = createSyncError({
         code: 'auth_expired',
-        message: 'Access token expired',
-        retriesRemaining: 2
+        message,
+        retriesRemaining
       });
 
       expect(result.isSuccess).toBe(true);
       if (result.isSuccess) {
         const error = result.value;
         expect(error.code).toBe('auth_expired');
-        expect(error.message).toBe('Access token expired');
-        expect(error.retriesRemaining).toBe(2);
+        expect(error.message).toBe(message);
+        expect(error.retriesRemaining).toBe(retriesRemaining);
       }
     });
 
@@ -41,9 +44,10 @@ describe('SyncStatus', () => {
     });
 
     it('should validate SyncStatus via schema', () => {
+      const workoutsSynced = 42;
       const input = {
         state: 'synced' as const,
-        workoutsSynced: 10,
+        workoutsSynced,
       };
 
       const result = CreateSyncStatusSchema.safeParse(input);
@@ -51,7 +55,7 @@ describe('SyncStatus', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.state).toBe('synced');
-        expect(result.data.workoutsSynced).toBe(10);
+        expect(result.data.workoutsSynced).toBe(workoutsSynced);
         expect(result.data.activitiesSynced).toBe(0); // default applied in transform
       }
     });
@@ -65,10 +69,11 @@ describe('SyncStatus', () => {
     });
 
     it('should allow overrides in fixture', () => {
-      const fixture = createSyncStatusFixture({ state: 'error', consecutiveFailures: 3 });
+      const consecutiveFailures = 5;
+      const fixture = createSyncStatusFixture({ state: 'error', consecutiveFailures });
 
       expect(fixture.state).toBe('error');
-      expect(fixture.consecutiveFailures).toBe(3);
+      expect(fixture.consecutiveFailures).toBe(consecutiveFailures);
     });
   });
 });

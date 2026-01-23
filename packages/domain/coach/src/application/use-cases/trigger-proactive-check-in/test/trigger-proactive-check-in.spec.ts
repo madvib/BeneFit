@@ -1,10 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+
 import { Result, type EventBus } from '@bene/shared';
-import { CoachConversation } from '../../../../core/index.js';
+
+import { createCoachConversationFixture, createCoachContextFixture, createPerformanceTrendsFixture } from '@/fixtures.js';
+import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
+import { CoachContextBuilder, AICoachService } from '@/application/services/index.js';
+
 import { TriggerProactiveCheckInUseCase } from '../trigger-proactive-check-in.js';
-import { CoachConversationRepository } from '../../../ports/coach-conversation-repository.js';
-import { CoachContextBuilder } from '../../../services/index.js';
-import { AICoachService } from '../../../services/index.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
@@ -30,6 +32,7 @@ const mockEventBus = {
 
 describe('TriggerProactiveCheckInUseCase', () => {
   let useCase: TriggerProactiveCheckInUseCase;
+  const TEST_USER_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,58 +46,20 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
   it('should successfully trigger a proactive check-in', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
+    const mockContext = createCoachContextFixture({
+      trends: createPerformanceTrendsFixture({
         enjoymentTrend: 'declining',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-      currentPlan: {
-        planId: '550e8400-e29b-41d4-a716-446655440009',
-        planName: 'Strength Plan',
-        weekNumber: 1,
-        dayNumber: 1,
-        totalWeeks: 4,
-        totalDays: 12,
-        adherenceRate: 0.8,
-        completionRate: 0.8,
-      },
-    };
+      }),
+    });
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
+    const mockConversation = createCoachConversationFixture({
       userId,
       context: mockContext,
-      messages: [],
-      checkIns: [],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
-    const mockQuestion = 'How are you feeling about your workout routine?';
+    const mockQuestion = 'How are you feeling about your progress this week?';
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
@@ -133,42 +98,15 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
   it('should create a new conversation if none exists', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
+    const mockContext = createCoachContextFixture({
+      trends: createPerformanceTrendsFixture({
         enjoymentTrend: 'declining',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-      currentPlan: {
-        planId: '550e8400-e29b-41d4-a716-446655440009',
-        planName: 'Strength Plan',
-        weekNumber: 1,
-        dayNumber: 1,
-        totalWeeks: 4,
-        totalDays: 12,
-        adherenceRate: 0.8,
-        completionRate: 0.8,
-      },
-    };
+      }),
+    });
 
-    const mockQuestion = 'How are you feeling about your workout routine?';
+    const mockQuestion = 'How are you feeling about your progress this week?';
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
@@ -191,7 +129,7 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
   it('should fail if context building fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(
       Result.fail(new Error('Failed to build context')),
@@ -212,46 +150,19 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
   it('should fail if no check-in trigger is found', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
+    const mockContext = createCoachContextFixture({
+      trends: createPerformanceTrendsFixture({
         enjoymentTrend: 'stable',
-      },
-      daysIntoCurrentWeek: 2, // Below threshold
-      workoutsThisWeek: 2,
-      plannedWorkoutsThisWeek: 3,
-      energyLevel: 'medium',
-    };
+      }),
+      daysIntoCurrentWeek: 2,
+    });
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
+    const mockConversation = createCoachConversationFixture({
       userId,
       context: mockContext,
-      messages: [],
-      checkIns: [],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
@@ -273,56 +184,18 @@ describe('TriggerProactiveCheckInUseCase', () => {
 
   it('should fail if AI question generation fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
+    const mockContext = createCoachContextFixture({
+      trends: createPerformanceTrendsFixture({
         enjoymentTrend: 'declining',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-      currentPlan: {
-        planId: '550e8400-e29b-41d4-a716-446655440009',
-        planName: 'Strength Plan',
-        weekNumber: 1,
-        dayNumber: 1,
-        totalWeeks: 4,
-        totalDays: 12,
-        adherenceRate: 0.8,
-        completionRate: 0.8,
-      },
-    };
+      }),
+    });
 
-    const mockConversation: CoachConversation = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
+    const mockConversation = createCoachConversationFixture({
       userId,
       context: mockContext,
-      messages: [],
-      checkIns: [],
-      totalMessages: 0,
-      totalUserMessages: 0,
-      totalCoachMessages: 0,
-      totalCheckIns: 0,
-      pendingCheckIns: 0,
-      startedAt: new Date(),
-      lastMessageAt: new Date(),
-      lastContextUpdateAt: new Date(),
-    };
+    });
 
     vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(

@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { Result, EventBus } from '@bene/shared';
-import type { FitnessPlanRepository } from '../../../repositories/fitness-plan-repository.js';
+import { createFitnessPlanFixture, createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
+
+import type { FitnessPlanRepository } from '@/repositories/fitness-plan-repository.js';
+
 import { SkipWorkoutUseCase } from '../skip-workout.js';
-import { createFitnessPlanFixture, createWorkoutTemplateFixture } from '@bene/training-core/fixtures';
 
 describe('SkipWorkoutUseCase', () => {
   let useCase: SkipWorkoutUseCase;
@@ -16,26 +19,32 @@ describe('SkipWorkoutUseCase', () => {
     } as unknown as FitnessPlanRepository;
     eventBus = {
       publish: vi.fn().mockResolvedValue(undefined),
+      subscribe: vi.fn(),
     } as unknown as EventBus;
 
     useCase = new SkipWorkoutUseCase(planRepo, eventBus);
   });
 
   it('should skip a workout successfully', async () => {
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
+    const reason = 'Personal reasons';
+
     const mockWorkout = createWorkoutTemplateFixture({
-      id: 'workout-1',
-      // Ensure status is valid for a skip scenario if needed, generally 'scheduled'
-    })
+      id: workoutId,
+      status: 'scheduled',
+    });
 
     const mockPlan = createFitnessPlanFixture({
-      id: 'plan-1',
-      userId: 'user-1',
+      id: planId,
+      userId,
       weeks: [
-        {
+        createWeeklyScheduleFixture({
+          planId,
           weekNumber: 1,
           workouts: [mockWorkout],
-          workoutsCompleted: 0,
-        },
+        }),
       ],
       currentPosition: { week: 1, day: 1 },
       status: 'active',
@@ -44,10 +53,10 @@ describe('SkipWorkoutUseCase', () => {
     vi.mocked(planRepo.findById).mockResolvedValue(Result.ok(mockPlan));
 
     const request = {
-      userId: 'user-1',
-      planId: 'plan-1',
-      workoutId: 'workout-1',
-      reason: 'Sick',
+      userId,
+      planId,
+      workoutId,
+      reason,
     };
 
     const result = await useCase.execute(request);
@@ -55,30 +64,33 @@ describe('SkipWorkoutUseCase', () => {
     expect(result.isSuccess).toBe(true);
     expect(planRepo.save).toHaveBeenCalled();
 
-    expect(result.value.planId).toBe('plan-1');
-    expect(result.value.skippedWorkoutId).toBe('workout-1');
+    expect(result.value.planId).toBe(planId);
+    expect(result.value.skippedWorkoutId).toBe(workoutId);
     expect(result.value.message).toBeDefined();
 
-    // Updated event expectation based on observed failures
     expect(eventBus.publish).toHaveBeenCalledWith(
       expect.objectContaining({
         eventName: 'WorkoutSkipped',
-        userId: 'user-1',
-        planId: 'plan-1',
-        workoutId: 'workout-1',
-        reason: 'Sick',
+        userId,
+        planId,
+        workoutId,
+        reason,
       }),
     );
   });
 
   it('should fail if plan not found', async () => {
-    vi.mocked(planRepo.findById).mockResolvedValue(Result.fail('Not found'));
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
+
+    vi.mocked(planRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
-      userId: 'user-1',
-      planId: 'plan-1',
-      workoutId: 'workout-1',
-      reason: 'Sick',
+      userId,
+      planId,
+      workoutId,
+      reason: 'Personal reasons',
     };
 
     const result = await useCase.execute(request);
@@ -88,18 +100,23 @@ describe('SkipWorkoutUseCase', () => {
   });
 
   it('should fail if user not authorized', async () => {
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
+
     const mockPlan = createFitnessPlanFixture({
-      id: 'plan-1',
-      userId: 'user-2', // Different user
+      id: planId,
+      userId: otherUserId,
     });
 
     vi.mocked(planRepo.findById).mockResolvedValue(Result.ok(mockPlan));
 
     const request = {
-      userId: 'user-1',
-      planId: 'plan-1',
-      workoutId: 'workout-1',
-      reason: 'Sick',
+      userId,
+      planId,
+      workoutId,
+      reason: 'Personal reasons',
     };
 
     const result = await useCase.execute(request);

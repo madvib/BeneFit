@@ -5,15 +5,13 @@ import { CreateWorkoutActivitySchema } from '../workout-activity.factory.js';
 import { isWarmup, isCooldown, isMainActivity, isActivityIntervalBased, isCircuit, activityRequiresEquipment, hasEquipment, getEquipmentList, hasStructure, hasInstructions, hasVideo, hasAlternatives, getEstimatedDuration, getShortDescription, getDetailedDescription, getInstructionsList } from '../workout-activity.queries.js';
 import { toWorkoutActivityView } from '../workout-activity.view.js';
 import { setOrder, addInstruction, addAlternative, makeEasier, makeHarder } from '../workout-activity.commands.js';
+import { createWorkoutActivityFixture } from './workout-activity.fixtures.js';
 
 describe('WorkoutActivity', () => {
   describe('create', () => {
     it('should create a basic activity', () => {
-      const result = CreateWorkoutActivitySchema.safeParse({
-        name: 'Squats',
-        type: 'main',
-        order: 1,
-      });
+      const fixtureData = createWorkoutActivityFixture({ name: 'Squats', type: 'main', order: 1 });
+      const result = CreateWorkoutActivitySchema.safeParse(fixtureData);
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -29,7 +27,7 @@ describe('WorkoutActivity', () => {
         order: 1,
       });
 
-      expect(result.isFailure).toBe(true);
+      expect(result.success).toBe(false);
     });
 
     it('should fail with negative order', () => {
@@ -39,7 +37,7 @@ describe('WorkoutActivity', () => {
         order: -1,
       });
 
-      expect(result.isFailure).toBe(true);
+      expect(result.success).toBe(false);
     });
 
     it('should create activity with all optional fields', () => {
@@ -295,17 +293,12 @@ describe('WorkoutActivity', () => {
     });
 
     it('should get equipment list', () => {
-      const result = CreateWorkoutActivitySchema.safeParse({
-        name: 'Exercise',
-        type: 'main',
-        order: 1,
+      const activity = createWorkoutActivityFixture({
         equipment: ['dumbbells', 'bench', 'mat'],
       });
 
-      if (result.success) {
-        const list = getEquipmentList(result.data);
-        expect(list).toEqual(['dumbbells', 'bench', 'mat']);
-      }
+      const list = getEquipmentList(activity);
+      expect(list).toEqual(['dumbbells', 'bench', 'mat']);
     });
   });
 

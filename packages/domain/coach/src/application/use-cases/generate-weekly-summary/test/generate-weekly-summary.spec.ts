@@ -1,8 +1,13 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
+import { randomUUID } from 'crypto';
+
 import { Result, EventBus } from '@bene/shared';
+
+import { createCoachContextFixture } from '@/fixtures.js';
+import { CoachContextBuilder } from '@/application/services/coach-context-builder.js';
+import { AICoachService } from '@/application/services/ai-coach-service.js';
+
 import { GenerateWeeklySummaryUseCase } from '../generate-weekly-summary.js';
-import { CoachContextBuilder } from '../../ports/coach-context-builder.js';
-import { AICoachService } from '../../ports/ai-coach-service.js';
 
 // Mock services
 const mockContextBuilder = {
@@ -22,6 +27,7 @@ const mockEventBus = {
 
 describe('GenerateWeeklySummaryUseCase', () => {
   let useCase: GenerateWeeklySummaryUseCase;
+  const TEST_USER_ID = randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,42 +40,21 @@ describe('GenerateWeeklySummaryUseCase', () => {
 
   it('should successfully generate a weekly summary', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
-        enjoymentTrend: 'stable',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-    };
+    const mockContext = createCoachContextFixture();
 
     const mockSummary = {
-      summary: 'This week you completed 3 out of 4 planned workouts. Good adherence!',
+      summary: 'Test weekly summary content',
       highlights: [
-        'Completed 75% of planned workouts',
-        'Average exertion was appropriate',
+        'Test highlight 1',
+        'Test highlight 2',
       ],
-      suggestions: ['Try to maintain this consistency next week'],
+      suggestions: ['Test suggestion'],
     };
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockAICoachService.generateWeeklySummary.mockResolvedValue(Result.ok(mockSummary));
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockAICoachService.generateWeeklySummary).mockResolvedValue(Result.ok(mockSummary));
 
     // Act
     const result = await useCase.execute({
@@ -98,9 +83,9 @@ describe('GenerateWeeklySummaryUseCase', () => {
 
   it('should fail if context building fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    mockContextBuilder.buildContext.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(
       Result.fail(new Error('Failed to build context')),
     );
 
@@ -119,33 +104,12 @@ describe('GenerateWeeklySummaryUseCase', () => {
 
   it('should fail if AI summary generation fails', async () => {
     // Arrange
-    const userId = '550e8400-e29b-41d4-a716-446655440000';
+    const userId = TEST_USER_ID;
 
-    const mockContext = {
-      recentWorkouts: [],
-      userGoals: {
-        primary: 'strength',
-        secondary: [],
-        motivation: 'test',
-        successCriteria: [],
-      },
-      userConstraints: { availableDays: [], availableEquipment: [], location: 'home' },
-      experienceLevel: 'beginner',
-      trends: {
-        volumeTrend: 'stable',
-        adherenceTrend: 'stable',
-        energyTrend: 'medium',
-        exertionTrend: 'stable',
-        enjoymentTrend: 'stable',
-      },
-      daysIntoCurrentWeek: 0,
-      workoutsThisWeek: 0,
-      plannedWorkoutsThisWeek: 0,
-      energyLevel: 'medium',
-    };
+    const mockContext = createCoachContextFixture();
 
-    mockContextBuilder.buildContext.mockResolvedValue(Result.ok(mockContext));
-    mockAICoachService.generateWeeklySummary.mockResolvedValue(
+    vi.mocked(mockContextBuilder.buildContext).mockResolvedValue(Result.ok(mockContext));
+    vi.mocked(mockAICoachService.generateWeeklySummary).mockResolvedValue(
       Result.fail(new Error('AI generation failed')),
     );
 
