@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ActivityStructureSchema } from '../activity-structure/index.js';
-import { DomainBrandTag } from '@bene/shared';
+import { DomainBrandTag, ACTIVITY_TYPES } from '@bene/shared';
 
-export const ActivityTypeSchema = z.enum(['warmup', 'main', 'cooldown', 'interval', 'circuit']);
+export const ActivityTypeSchema = z.enum(ACTIVITY_TYPES);
 export type ActivityType = z.infer<typeof ActivityTypeSchema>;
 
 /**
@@ -28,4 +28,3 @@ export const WorkoutActivitySchema = z
  * 2. INFER TYPES
  */
 export type WorkoutActivity = Readonly<z.infer<typeof WorkoutActivitySchema>>;
-

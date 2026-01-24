@@ -1,8 +1,6 @@
 // EntityMixin.ts
 // Note: This needs to be compiled with a target that supports decorators or mixins (ES6/ES2015 or later).
 
-import { randomUUID } from 'crypto';
-
 type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
@@ -21,7 +19,7 @@ export function IdentityMixin<T extends Constructor>(Base: T) {
       const id: string | undefined = args[1] as string | undefined;
 
       // Inject ID assignment logic
-      this._id = id ? id : randomUUID();
+      this._id = id ? id : crypto.randomUUID();
     }
 
     // Inject ID getter

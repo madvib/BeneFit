@@ -1,11 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { UserPreferences, Theme, Units, CheckInFrequency, CoachTone } from '../user-preferences.types.js';
+import type { UserPreferences, Theme, Units, CheckInFrequency, CoachTone } from '../user-preferences.types.js';
 import { userPreferencesFromPersistence } from '../user-preferences.factory.js';
-
+//TODO more fake generation here
 export function createUserPreferencesFixture(overrides?: Partial<UserPreferences>): UserPreferences {
   const data = {
     theme: faker.helpers.arrayElement(['light', 'dark', 'auto'] as Theme[]),
     units: faker.helpers.arrayElement(['metric', 'imperial'] as Units[]),
+    language: 'EN',
+    timezone: 'UTC',
     notifications: {
       workoutReminders: true,
       reminderTime: '09:00',

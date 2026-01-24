@@ -1,1 +1,1 @@
-export * from './training.js'
+export * from './training/index.js';

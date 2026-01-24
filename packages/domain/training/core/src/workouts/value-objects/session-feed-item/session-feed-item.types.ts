@@ -1,15 +1,7 @@
 import { z } from 'zod';
-import type { CreateView } from '@bene/shared';
+import { CreateView, FEED_ITEM_TYPES } from '@bene/shared';
 
-export const FeedItemTypeSchema = z.enum([
-  'user_joined',
-  'user_left',
-  'activity_completed',
-  'set_completed',
-  'milestone_achieved',
-  'encouragement',
-  'chat_message',
-]);
+export const FeedItemTypeSchema = z.enum(FEED_ITEM_TYPES);
 export type FeedItemType = z.infer<typeof FeedItemTypeSchema>;
 
 /**

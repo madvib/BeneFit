@@ -1,23 +1,18 @@
 import { z } from 'zod';
 import { WorkoutGoalsSchema } from '@/fitness-plan/value-objects/index.js';
 import { WorkoutActivitySchema, WorkoutTypeSchema } from '@/workouts/index.js';
+import { WORKOUT_CATEGORIES, WORKOUT_STATUSES, WORKOUT_IMPORTANCE_LEVELS } from '@bene/shared';
 
 /**
  * 1. DEFINE Enums & Value Object Schemas
  */
-export const WorkoutCategorySchema = z.enum(['cardio', 'strength', 'recovery']);
+export const WorkoutCategorySchema = z.enum(WORKOUT_CATEGORIES);
 export type WorkoutCategory = z.infer<typeof WorkoutCategorySchema>;
 
-export const WorkoutStatusSchema = z.enum([
-  'scheduled',
-  'in_progress',
-  'completed',
-  'skipped',
-  'rescheduled',
-]);
+export const WorkoutStatusSchema = z.enum(WORKOUT_STATUSES);
 export type WorkoutStatus = z.infer<typeof WorkoutStatusSchema>;
 
-export const WorkoutImportanceSchema = z.enum(['optional', 'recommended', 'key', 'critical']);
+export const WorkoutImportanceSchema = z.enum(WORKOUT_IMPORTANCE_LEVELS);
 export type WorkoutImportance = z.infer<typeof WorkoutImportanceSchema>;
 
 export const WorkoutAlternativeSchema = z.object({

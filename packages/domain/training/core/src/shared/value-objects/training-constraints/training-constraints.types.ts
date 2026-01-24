@@ -1,13 +1,19 @@
 import { z } from 'zod';
-import type { CreateView, DomainBrandTag } from '@bene/shared';
+import {
+  type CreateView,
+  type DomainBrandTag,
+  INJURY_SEVERITY_LEVELS,
+  PREFERRED_TRAINING_TIMES,
+  TRAINING_LOCATIONS,
+} from '@bene/shared';
 
-export const InjurySeveritySchema = z.enum(['minor', 'moderate', 'serious']);
+export const InjurySeveritySchema = z.enum(INJURY_SEVERITY_LEVELS);
 export type InjurySeverity = z.infer<typeof InjurySeveritySchema>;
 
-export const PreferredTimeSchema = z.enum(['morning', 'afternoon', 'evening']);
+export const PreferredTimeSchema = z.enum(PREFERRED_TRAINING_TIMES);
 export type PreferredTime = z.infer<typeof PreferredTimeSchema>;
 
-export const TrainingLocationSchema = z.enum(['home', 'gym', 'outdoor', 'mixed']);
+export const TrainingLocationSchema = z.enum(TRAINING_LOCATIONS);
 export type TrainingLocation = z.infer<typeof TrainingLocationSchema>;
 
 export const InjuryPropsSchema = z

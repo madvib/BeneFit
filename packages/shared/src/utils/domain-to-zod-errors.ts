@@ -20,7 +20,7 @@ export function mapZodError(zodError: z.ZodError): Error[] {
   return zodError.issues.map((issue) => {
     // Format: "week: Number must be greater than 1"
     const path = issue.path.join('.');
-    const msg = path ? `${ path }: ${ issue.message }` : issue.message;
+    const msg = path ? `${path}: ${issue.message}` : issue.message;
     return new Error(msg);
-  })
+  });
 }

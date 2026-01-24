@@ -1,16 +1,20 @@
 import { z } from 'zod';
-import { CreateView } from '@bene/shared';
+import {
+  CreateView,
+  UI_THEMES,
+  MEASUREMENT_SYSTEMS,
+  CHECK_IN_FREQUENCIES,
+  COACH_TONES,
+} from '@bene/shared';
 
-export const ThemeSchema = z.enum(['light', 'dark', 'auto']);
+export const ThemeSchema = z.enum(UI_THEMES);
 export type Theme = z.infer<typeof ThemeSchema>;
-
-export const UnitsSchema = z.enum(['metric', 'imperial']);
+export const UnitsSchema = z.enum(MEASUREMENT_SYSTEMS);
 export type Units = z.infer<typeof UnitsSchema>;
-
-export const CheckInFrequencySchema = z.enum(['daily', 'weekly', 'biweekly', 'never']);
+export const CheckInFrequencySchema = z.enum(CHECK_IN_FREQUENCIES);
 export type CheckInFrequency = z.infer<typeof CheckInFrequencySchema>;
 
-export const CoachToneSchema = z.enum(['motivational', 'casual', 'professional', 'tough_love']);
+export const CoachToneSchema = z.enum(COACH_TONES);
 export type CoachTone = z.infer<typeof CoachToneSchema>;
 
 export const NotificationPreferencesSchema = z.object({
@@ -46,15 +50,11 @@ export const CoachPreferencesSchema = z.object({
 });
 export type CoachPreferences = z.infer<typeof CoachPreferencesSchema>;
 
-/**
- * CORE SCHEMA
- */
 export const UserPreferencesSchema = z.object({
-  // UI
   theme: ThemeSchema,
   units: UnitsSchema,
-
-  // Notifications
+  language: z.string().default('en'),
+  timezone: z.string().default('UTC'),
   notifications: NotificationPreferencesSchema,
 
   // Privacy

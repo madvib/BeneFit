@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { DomainBrandTag } from '@bene/shared';
+import { type DomainBrandTag, SESSION_STATES } from '@bene/shared';
 import {
   LiveActivityProgressSchema,
   SessionParticipantSchema,
@@ -9,14 +9,7 @@ import {
   SessionFeedItemSchema,
 } from '../../value-objects/index.js';
 
-export const SessionStateSchema = z.enum([
-  'preparing',
-  'in_progress',
-  'paused',
-  'completed',
-  'abandoned',
-]);
-
+export const SessionStateSchema = z.enum(SESSION_STATES);
 export type SessionState = z.infer<typeof SessionStateSchema>;
 
 /**
@@ -64,4 +57,3 @@ export const WorkoutSessionSchema = z.object({
  * 2. INFER TYPES
  */
 export type WorkoutSession = Readonly<z.infer<typeof WorkoutSessionSchema>>;
-

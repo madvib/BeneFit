@@ -6,20 +6,22 @@ import {
   WorkoutPerformanceSchema,
   WorkoutVerificationSchema,
   UserProfileCommands,
-  WorkoutType,
   FitnessPlanCommands,
   toCompletedWorkoutView,
   CompletedWorkoutQueries,
   toAchievementView,
   toUserStatsView,
-
   AchievementView,
   UserStatsView,
   CompletedWorkoutView,
   type CompletedWorkout,
   type Achievement,
+  WorkoutType,
 } from '@bene/training-core';
-import { Result, type EventBus, BaseUseCase, EntityNotFoundError, UseCaseError, mapZodError } from '@bene/shared';
+import {
+  Result, type EventBus,
+  BaseUseCase, EntityNotFoundError, UseCaseError, mapZodError
+} from '@bene/shared';
 import type {
   UserProfileRepository,
   CompletedWorkoutRepository,

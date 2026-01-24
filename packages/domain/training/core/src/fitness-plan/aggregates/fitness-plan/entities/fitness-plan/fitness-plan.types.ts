@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DomainBrandTag } from '@bene/shared';
+import { DomainBrandTag, PLAN_STATUSES, PLAN_TYPES } from '@bene/shared';
 import { TrainingConstraintsSchema } from '@/shared/index.js';
 import {
   PlanGoalsSchema,
@@ -15,18 +15,10 @@ export const PlanPreviewSchema = z.object({
 });
 export type PlanPreview = z.infer<typeof PlanPreviewSchema>;
 
-// TODO move to shared
-export const PlanTypeSchema = z.enum([
-  'event_training',
-  'habit_building',
-  'strength_program',
-  'general_fitness',
-]);
+export const PlanStatusSchema = z.enum(PLAN_STATUSES);
+
+export const PlanTypeSchema = z.enum(PLAN_TYPES);
 export type PlanType = z.infer<typeof PlanTypeSchema>;
-
-export const PlanStatusSchema = z.enum(['draft', 'active', 'paused', 'completed', 'abandoned']);
-export type PlanStatus = z.infer<typeof PlanStatusSchema>;
-
 export const FitnessPlanSchema = z
   .object({
     id: z.uuid(),
@@ -46,7 +38,6 @@ export const FitnessPlanSchema = z
     status: PlanStatusSchema,
     currentPosition: PlanPositionSchema,
 
-    // Dates used z.coerce to gracefully handle ISO strings from boundary
     startDate: z.coerce.date<Date>(),
     endDate: z.coerce.date<Date>().optional(),
     createdAt: z.coerce.date<Date>(),

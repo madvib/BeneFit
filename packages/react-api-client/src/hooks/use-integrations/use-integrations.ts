@@ -14,7 +14,6 @@ export const integrationKeys = {
 
 const $getConnectedServices = client.api.integrations.connected.$get;
 export type GetConnectedServicesResponse = ApiSuccessResponse<typeof $getConnectedServices>;
-export type ConnectedService = GetConnectedServicesResponse['services'][number];
 
 export function useConnectedServices() {
   return useQuery<GetConnectedServicesResponse>({

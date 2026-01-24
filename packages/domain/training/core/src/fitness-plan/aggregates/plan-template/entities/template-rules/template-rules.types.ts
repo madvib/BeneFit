@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ExperienceLevelSchema } from '@bene/shared';
+import { ExperienceLevelSchema } from '@/shared/index.js';
 
 export const LocationTypeSchema = z.enum(['gym', 'home', 'outdoor']);
 export type LocationType = z.infer<typeof LocationTypeSchema>;
@@ -46,4 +46,3 @@ export const TemplateRulesSchema = z.object({
  * 2. INFER TYPES
  */
 export type TemplateRules = Readonly<z.infer<typeof TemplateRulesSchema>>;
-

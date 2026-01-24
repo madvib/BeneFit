@@ -1,5 +1,5 @@
-// activity-structure.queries.ts
-import { ActivityStructure, IntensityLevel } from './activity-structure.types.js';
+import { IntensityLevel } from '@/shared/index.js';
+import type { ActivityStructure } from './activity-structure.types.js';
 
 /**
  * QUERY: Check if structure is interval-based.
@@ -78,6 +78,7 @@ export function getAverageIntensity(structure: ActivityStructure): number {
       moderate: 2,
       hard: 3,
       sprint: 4,
+      max: 5,
     };
 
     const totalIntensity = structure.intervals!.reduce(

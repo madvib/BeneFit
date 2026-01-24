@@ -1,6 +1,6 @@
-import { EXPERIENCE_LEVELS, ExperienceLevel } from '@bene/shared';
-import { TrainingConstraints } from '@/shared/value-objects/index.js';
-import { PlanTemplate } from './plan-template.types.js';
+import { EXPERIENCE_LEVELS } from '@bene/shared';
+import type { TrainingConstraints, ExperienceLevel } from '@/shared/index.js';
+import type { PlanTemplate } from './plan-template.types.js';
 
 export interface TemplateCompatibilityResult {
   canUse: boolean;

@@ -1,8 +1,12 @@
 import { z } from 'zod';
+import { DISTANCE_UNITS } from '@bene/shared';
+import { IntensityLevelSchema } from '@/shared/index.js';
+
+export const DistanceUnitSchema = z.enum(DISTANCE_UNITS);
 
 export const DistanceGoalSchema = z.object({
   value: z.number().min(0).max(100000), // meters, up to 100km
-  unit: z.enum(['meters', 'km', 'miles']),
+  unit: DistanceUnitSchema,
   pace: z
     .object({
       min: z.number().min(0).max(600), // seconds per unit
@@ -15,7 +19,7 @@ export type DistanceGoal = z.infer<typeof DistanceGoalSchema>;
 
 export const DurationGoalSchema = z.object({
   value: z.number().int().min(0).max(7200), // seconds, up to 2 hours
-  intensity: z.enum(['easy', 'moderate', 'hard', 'max']).optional(),
+  intensity: IntensityLevelSchema.optional(),
   heartRateZone: z
     .union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)])
     .optional(),

@@ -31,7 +31,6 @@ export function useTodaysWorkout() {
 const $getUpcomingWorkouts = client.api.workouts.upcoming.$get;
 export type GetUpcomingWorkoutsRequest = InferRequestType<typeof $getUpcomingWorkouts>;
 export type GetUpcomingWorkoutsResponse = ApiSuccessResponse<typeof $getUpcomingWorkouts>;
-
 export function useUpcomingWorkouts(input: GetUpcomingWorkoutsRequest) {
   return useQuery<GetUpcomingWorkoutsResponse>({
     queryKey: workoutKeys.upcoming(),
@@ -42,7 +41,6 @@ export function useUpcomingWorkouts(input: GetUpcomingWorkoutsRequest) {
 const $getWorkoutHistory = client.api.workouts.history.$get;
 export type GetWorkoutHistoryRequest = InferRequestType<typeof $getWorkoutHistory>;
 export type GetWorkoutHistoryResponse = ApiSuccessResponse<typeof $getWorkoutHistory>;
-
 export function useWorkoutHistory(input: GetWorkoutHistoryRequest) {
   return useQuery<GetWorkoutHistoryResponse>({
     queryKey: workoutKeys.history(),
@@ -66,8 +64,9 @@ export function useSkipWorkout() {
   });
 }
 
-const $startWorkout = client.api.workouts[':sessionId'].start.$post;
+export const $startWorkout = client.api.workouts[':sessionId'].start.$post;
 export type StartWorkoutRequest = InferRequestType<typeof $startWorkout>;
+export type StartWorkoutResponse = ApiSuccessResponse<typeof $startWorkout>;
 
 export function useStartWorkout() {
   const queryClient = useQueryClient();

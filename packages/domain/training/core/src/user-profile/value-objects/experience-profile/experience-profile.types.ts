@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ExperienceLevelSchema } from '@bene/shared';
+import { ExperienceLevelSchema } from '@/shared/index.js';
 
 export const TrainingHistorySchema = z.object({
   yearsTraining: z.number().min(0).max(100).optional(),

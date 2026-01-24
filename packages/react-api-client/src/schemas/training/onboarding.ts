@@ -1,20 +1,17 @@
 import { z } from 'zod';
-import {
-  FITNESS_GOALS,
-  EQUIPMENT_OPTIONS
-} from '../../index.js';
+import { FITNESS_GOALS, EQUIPMENT_OPTIONS, EXPERIENCE_LEVELS } from '@bene/shared';
 
-// Onboarding form schema
-// This is the unified onboarding form for initial profile creation
-
-const ExperienceLevelSchema = z.enum(['beginner', 'intermediate', 'advanced', 'elite']);
-
+/**
+ * Onboarding form schema for initial profile creation.
+ * Note: This form is a UI-optimized composite that is transformed into 
+ * a CreateProfileRequest in the submission handler.
+ */
 export const OnboardingFormSchema = z.object({
   displayName: z.string().min(1, 'Display name is required'),
   location: z.string().optional(),
   bio: z.string().optional(),
-  experienceLevel: ExperienceLevelSchema,
-  primaryGoal: z.enum(FITNESS_GOALS as unknown as [string, ...string[]]),
+  experienceLevel: z.enum(EXPERIENCE_LEVELS),
+  primaryGoal: z.enum(FITNESS_GOALS),
   secondaryGoals: z.array(z.string()),
   daysPerWeek: z.number().min(1).max(7),
   minutesPerWorkout: z.number().min(1),

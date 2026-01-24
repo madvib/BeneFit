@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { CreateView } from '@bene/shared';
+import { IntensityLevelSchema } from '@/shared/index.js';
 
-export const IntensityLevelSchema = z.enum(['easy', 'moderate', 'hard', 'sprint']);
-export type IntensityLevel = z.infer<typeof IntensityLevelSchema>;
+
 
 export const IntervalSchema = z.object({
   duration: z.number().int().min(1).max(3600),
@@ -33,10 +34,9 @@ export const ActivityStructureSchema = z.object({
 /**
  * 2. INFER TYPES
  */
-export type ActivityStructureProps = z.infer<typeof ActivityStructureSchema>;
-export type ActivityStructure = Readonly<ActivityStructureProps>;
+export type ActivityStructure = Readonly<z.infer<typeof ActivityStructureSchema>>;
 
 /**
  * 3. VIEW TYPES
  */
-export type ActivityStructureView = ActivityStructure;
+export type ActivityStructureView = CreateView<ActivityStructure>;

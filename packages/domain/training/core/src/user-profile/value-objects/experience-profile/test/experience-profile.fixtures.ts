@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ExperienceLevel } from '@bene/shared';
+import { ExperienceLevel } from '@/shared/index.js';
 import { ExperienceProfile } from '../experience-profile.types.js';
 import { experienceProfileFromPersistence } from '../experience-profile.factory.js';
 

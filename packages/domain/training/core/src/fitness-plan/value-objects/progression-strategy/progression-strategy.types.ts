@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { PROGRESSION_STRATEGIES } from '@bene/shared';
 
-export const ProgressionTypeSchema = z.enum(['linear', 'undulating', 'adaptive']);
+export const ProgressionTypeSchema = z.enum(PROGRESSION_STRATEGIES);
 export type ProgressionType = z.infer<typeof ProgressionTypeSchema>;
 
 export const ProgressionStrategySchema = z

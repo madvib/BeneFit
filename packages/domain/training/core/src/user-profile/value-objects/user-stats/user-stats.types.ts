@@ -1,19 +1,7 @@
 import { z } from 'zod';
-import { CreateView } from '@bene/shared';
+import { CreateView, ACHIEVEMENT_TYPES } from '@bene/shared';
 
-export const AchievementTypeSchema = z.enum([
-  'first_workout',
-  'streak_7',
-  'streak_30',
-  'pr_strength',
-  'pr_distance',
-  'ten_workouts',
-  'fifty_workouts',
-  '100_workouts',
-  'plan_completed',
-]);
-
-export type AchievementType = z.infer<typeof AchievementTypeSchema>;
+export const AchievementTypeSchema = z.enum(ACHIEVEMENT_TYPES);
 
 /**
  * ACHIEVEMENT SCHEMA

@@ -1,15 +1,9 @@
 import { z } from 'zod';
+import { VERIFICATION_METHODS, VERIFICATION_PLATFORMS } from '@bene/shared';
 
+export const VerificationMethodSchema = z.enum(VERIFICATION_METHODS);
 
-export const VerificationMethodSchema = z.enum([
-  'gps',
-  'gym_checkin',
-  'wearable',
-  'photo',
-  'witness',
-  'manual',
-]).readonly();
-export type VerificationMethod = z.infer<typeof VerificationMethodSchema>;
+export const VerificationPlatformSchema = z.enum(VERIFICATION_PLATFORMS);
 
 export const GPSVerificationSchema = z.object({
   latitude: z.number().min(-90).max(90),
@@ -30,7 +24,7 @@ export type GymCheckinVerification = z.infer<typeof GymCheckinVerificationSchema
 export const WearableVerificationSchema = z.object({
   device: z.string().min(1).max(100),
   activityId: z.string().min(1).max(100),
-  source: z.enum(['apple_health', 'garmin', 'fitbit', 'strava', 'other']),
+  source: VerificationPlatformSchema,
   syncedAt: z.coerce.date<Date>(),
 }).readonly();
 export type WearableVerification = z.infer<typeof WearableVerificationSchema>;

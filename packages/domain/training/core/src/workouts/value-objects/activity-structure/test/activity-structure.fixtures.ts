@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { ActivityStructure, Exercise, Interval, IntensityLevel } from '../activity-structure.types.js';
+import { ActivityStructure, Exercise, Interval } from '../activity-structure.types.js';
 import { activityStructureFromPersistence } from '../activity-structure.factory.js';
+import { IntensityLevel } from '@/shared/index.js';
 
 /**
  * Creates a mock Exercise structure

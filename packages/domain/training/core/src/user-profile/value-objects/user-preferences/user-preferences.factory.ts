@@ -33,6 +33,8 @@ function validateUserPreferences(data: unknown): Result<UserPreferences> {
 const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'auto',
   units: 'metric',
+  language: 'EN',
+  timezone: 'UTC',
   notifications: {
     workoutReminders: true,
     reminderTime: '09:00',
@@ -117,7 +119,3 @@ export const CreateUserPreferencesSchema: z.ZodType<UserPreferences> = CreateUse
     return unwrapOrIssue(validationResult, ctx);
   },
 );
-
-// ============================================================================
-// LEGACY EXPORTS (for backward compatibility)
-// ============================================================================

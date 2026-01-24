@@ -1,4 +1,6 @@
-import { ExperienceLevel, Guard } from '@bene/shared';
+import { Guard } from '@bene/shared';
+import { ExperienceLevel } from '@/shared/index.js';
+
 import {
   ExperienceProfile,
   TrainingHistory,

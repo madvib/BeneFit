@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { ExperienceLevel } from '@bene/shared';
+import { ExperienceLevel } from '@/shared/index.js';
 import { TemplateRules, LocationType } from '../template-rules.types.js';
 import { templateRulesFromPersistence } from '../template-rules.factory.js';
 

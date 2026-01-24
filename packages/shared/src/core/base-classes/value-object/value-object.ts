@@ -1,7 +1,7 @@
 // NOTE: Assuming `isDeepEqual` is an imported utility function that correctly 
 // compares objects recursively, ignoring property order.
 
-import { isDeepEqual } from "../../isDeepEqual.js";
+import { isDeepEqual } from "../../../utils/is-deep-equal.js";
 
 export abstract class ValueObject<T> {
   protected readonly props: T;
