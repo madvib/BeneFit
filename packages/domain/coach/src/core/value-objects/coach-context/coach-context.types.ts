@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { FitnessGoalsSchema, TrainingConstraintsSchema, InjuryPropsSchema } from '@bene/training-core';
-import { ExperienceLevelSchema, DomainBrandTag } from '@bene/shared';
+import { FitnessGoalsSchema, TrainingConstraintsSchema, InjuryPropsSchema, ExperienceLevelSchema } from '@bene/training-core';
+import { DomainBrandTag } from '@bene/shared';
 
 /**
  * 1. DEFINE SCHEMAS (Zod as Source of Truth)

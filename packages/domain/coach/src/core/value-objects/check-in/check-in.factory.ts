@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { CheckIn, CheckInSchema } from './check-in.types.js';
 
@@ -62,7 +62,7 @@ export const CreateCheckInSchema = CheckInSchema.pick({
 }).transform((input, ctx) => {
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     actions: [],
     status: 'pending' as const,
     createdAt: input.createdAt || new Date(),

@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 
 import { Result } from '@bene/shared';
 import { createUserProfileFixture } from '@bene/training-core/fixtures';
@@ -25,7 +25,7 @@ describe('GetProfileUseCase', () => {
 
   it('should successfully get user profile', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const mockProfile = createUserProfileFixture({
       userId,
       displayName: 'Test User Display Name',
@@ -61,7 +61,7 @@ describe('GetProfileUseCase', () => {
 
   it('should fail if profile is not found', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
       Result.fail(new Error('Profile not found')),

@@ -1,5 +1,4 @@
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
-import { randomUUID } from 'crypto';
 import { EventBus, Result } from '@bene/shared';
 
 import { createCoachConversationFixture, createCheckInFixture } from '@/fixtures.js';
@@ -20,9 +19,9 @@ const mockEventBus = {
 
 describe('DismissCheckInUseCase', () => {
   let useCase: DismissCheckInUseCase;
-  const TEST_USER_ID = randomUUID();
-  const TEST_CHECK_IN_ID = randomUUID();
-  const TEST_CONVERSATION_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
+  const TEST_CHECK_IN_ID = crypto.randomUUID();
+  const TEST_CONVERSATION_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();

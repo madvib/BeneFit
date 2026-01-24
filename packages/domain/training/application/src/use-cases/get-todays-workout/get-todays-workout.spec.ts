@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
@@ -32,8 +32,8 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it("should return today's workout when there is an active plan with a workout", async () => {
     // Arrange
-    const userId = randomUUID();
-    const workoutId = randomUUID();
+    const userId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
       id: workoutId,
       type: 'strength',
@@ -71,7 +71,7 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it('should return no active plan message when no active plan exists', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
@@ -90,7 +90,7 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it('should return rest day message when there is no workout for today', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const activePlan = createFitnessPlanFixture({
       userId,
       weeks: [
@@ -118,8 +118,8 @@ describe('GetTodaysWorkoutUseCase', () => {
 
   it('should return already completed message when workout is already completed', async () => {
     // Arrange
-    const userId = randomUUID();
-    const workoutId = randomUUID();
+    const userId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
       id: workoutId,
       type: 'strength',

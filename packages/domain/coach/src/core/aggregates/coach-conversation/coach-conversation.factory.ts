@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
   CoachContext,
@@ -137,7 +137,7 @@ export const CreateCoachConversationSchema = CoachConversationSchema.pick({
   }
 
   const data = {
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     userId: input.userId,
     context: initialContext,
     messages: initialMessages,

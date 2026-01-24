@@ -7,7 +7,7 @@ import {
 } from '@bene/training-core';
 import type { AICompletionRequest, AIProvider } from '@bene/shared';
 import { PromptBuilder } from './prompt-builder.js';
-import { randomUUID } from 'crypto';
+
 
 export interface GeneratePlanInput {
   userId: string;
@@ -66,7 +66,7 @@ export class AIPlanGenerator {
 
       // Convert AI-generated plan data to domain FitnessPlan
       const planData = planDataResult.value;
-      const tempPlanId = randomUUID(); // Generate plan ID first for weekly schedules
+      const tempPlanId = crypto.randomUUID(); // Generate plan ID first for weekly schedules
 
       // Map weeks using the createWeeklySchedule factory
       const weeksResults = (planData.weeks || []).map((week: any, index: number) => {
@@ -79,7 +79,7 @@ export class AIPlanGenerator {
           scheduledDate.setDate(scheduledDate.getDate() + (workout.dayOfWeek || 0));
 
           return {
-            id: randomUUID(),
+            id: crypto.randomUUID(),
             planId: tempPlanId,
             weekNumber: week.weekNumber,
             dayOfWeek: workout.dayOfWeek || 0,
@@ -98,7 +98,7 @@ export class AIPlanGenerator {
               },
             },
             activities: (workout.activities || []).map((activity: any, idx: number) => ({
-              id: randomUUID(),
+              id: crypto.randomUUID(),
               name: activity.activityType || 'Activity',
               type: activity.activityType || 'main',
               order: idx,

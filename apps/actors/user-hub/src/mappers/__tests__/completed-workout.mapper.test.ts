@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { createCompletedWorkoutFixture } from '@bene/training-core/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../completed-workout.mapper.js';
@@ -25,7 +25,7 @@ describe('CompletedWorkoutMapper', () => {
 
   describe('toDatabase', () => {
     it('should map domain CompletedWorkout to database schema', () => {
-      const workout = createCompletedWorkoutFixture({ id: randomUUID() });
+      const workout = createCompletedWorkoutFixture({ id: crypto.randomUUID() });
       const dbWorkout = toDatabase(workout);
 
       expect(dbWorkout.id).toBeDefined();
@@ -48,7 +48,7 @@ describe('CompletedWorkoutMapper', () => {
 
     it('should convert undefined to null for optional fields', () => {
       const workout = createCompletedWorkoutFixture({
-        id: randomUUID(),
+        id: crypto.randomUUID(),
         planId: undefined,
         workoutTemplateId: undefined,
         description: undefined,
@@ -80,7 +80,7 @@ describe('CompletedWorkoutMapper', () => {
 
   describe('toDomain', () => {
     it('should map database row to domain entity', async () => {
-      const workout = createCompletedWorkoutFixture({ id: randomUUID() });
+      const workout = createCompletedWorkoutFixture({ id: crypto.randomUUID() });
 
       await db.insert(completedWorkouts).values(toDatabase(workout));
 
@@ -120,7 +120,7 @@ describe('CompletedWorkoutMapper', () => {
 
     it('should convert null to undefined for optional fields', async () => {
       const workout = createCompletedWorkoutFixture({
-        id: randomUUID(),
+        id: crypto.randomUUID(),
         planId: undefined,
         description: undefined,
       });
@@ -140,7 +140,7 @@ describe('CompletedWorkoutMapper', () => {
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
       const original = createCompletedWorkoutFixture({
-        id: randomUUID(),
+        id: crypto.randomUUID(),
         workoutType: 'strength',
         title: 'Test Workout',
       });
@@ -180,7 +180,7 @@ describe('CompletedWorkoutMapper', () => {
 
     it('should handle schema defaults correctly', async () => {
       const workout = createCompletedWorkoutFixture({
-        id: randomUUID(),
+        id: crypto.randomUUID(),
         isPublic: false // Match the DB default for this test
       });
 

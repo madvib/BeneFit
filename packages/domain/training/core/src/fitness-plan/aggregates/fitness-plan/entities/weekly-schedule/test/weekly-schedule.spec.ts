@@ -1,7 +1,7 @@
 import z from 'zod';
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 
 import { createWorkoutTemplateFixture, createWeeklyScheduleFixture } from '@/fixtures.js';
 import { CreateWeeklyScheduleSchema } from '../weekly-schedule.factory.js';
@@ -38,7 +38,7 @@ describe('WeeklySchedule Aggregate', () => {
 
   describe('Validation', () => {
     const validInput: CreateScheduleInput = {
-      planId: randomUUID(),
+      planId: crypto.randomUUID(),
       weekNumber: 1,
       startDate: new Date(),
       endDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),

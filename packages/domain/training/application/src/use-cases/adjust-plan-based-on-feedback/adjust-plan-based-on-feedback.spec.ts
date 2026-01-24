@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 import { createFitnessPlanFixture, createWeeklyScheduleFixture } from '@bene/training-core/fixtures';
@@ -41,8 +41,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should successfully adjust a plan based on feedback', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const feedback = 'Too hard, need more rest days';
     const originalPlan = createFitnessPlanFixture({
       id: planId,
@@ -97,8 +97,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const feedback = 'Too easy';
     const recentWorkouts = [
       {
@@ -129,9 +129,9 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if user is not authorized', async () => {
     // Arrange
-    const userId = randomUUID();
-    const otherUserId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const feedback = 'Too easy';
 
     const originalPlan = createFitnessPlanFixture({
@@ -168,8 +168,8 @@ describe('AdjustPlanBasedOnFeedbackUseCase', () => {
 
   it('should fail if AI plan adjustment fails', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const feedback = 'Too hard, need more rest days';
 
     const originalPlan = createFitnessPlanFixture({

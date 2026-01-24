@@ -1,7 +1,7 @@
 import z from 'zod';
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 
 import { createWeeklyScheduleFixture, createFitnessPlanFixture } from '@/fixtures.js';
 import {
@@ -16,7 +16,7 @@ describe('FitnessPlan Aggregate', () => {
   describe('Factory (Draft)', () => {
     it('should create valid draft plan', () => {
       // Arrange
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const input: CreateDraftInput = {
         userId,
         title: 'Test Fitness Plan',
@@ -45,7 +45,7 @@ describe('FitnessPlan Aggregate', () => {
     it('should fail when title is empty', () => {
       // Arrange
       const input: CreateDraftInput = {
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         title: '',
         description: 'Test description',
         planType: 'general_fitness',
@@ -220,7 +220,7 @@ describe('FitnessPlan Aggregate', () => {
 
     it('should omit internal fields from view', () => {
       // Arrange
-      const plan = createFitnessPlanFixture({ templateId: randomUUID() });
+      const plan = createFitnessPlanFixture({ templateId: crypto.randomUUID() });
 
       // Act
       const view = toFitnessPlanView(plan);

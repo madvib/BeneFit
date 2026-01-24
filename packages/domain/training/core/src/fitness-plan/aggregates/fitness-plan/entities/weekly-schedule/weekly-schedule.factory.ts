@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { ScheduleValidationError } from '@/fitness-plan/errors/index.js';
 import { WeeklySchedule, WeeklyScheduleSchema } from './weekly-schedule.types.js';
@@ -92,7 +92,7 @@ export const CreateWeeklyScheduleSchema = WeeklyScheduleSchema.pick({
   // Build the entity with defaults
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     workoutsCompleted: input.workoutsCompleted ?? 0,
   };
 

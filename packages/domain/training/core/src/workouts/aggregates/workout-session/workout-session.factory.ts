@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
   CreateSessionConfigurationSchema,
@@ -88,7 +88,7 @@ export const CreateWorkoutSessionSchema = WorkoutSessionSchema.pick({
   // Initial state logic
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     state: 'preparing',
     currentActivityIndex: 0,
     completedActivities: [],

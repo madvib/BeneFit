@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { CreateSessionParticipantSchema } from '../session-participant.factory.js';
 import { createActiveParticipantFixture, createSpectatorParticipantFixture } from '@/fixtures.js';
 
@@ -7,7 +7,7 @@ describe('SessionParticipant', () => {
   describe('creation', () => {
     it('should create a valid participant with fixture', () => {
       // Arrange & Act
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const userName = 'Test Participant';
       const participant = createActiveParticipantFixture({
         userId,
@@ -26,7 +26,7 @@ describe('SessionParticipant', () => {
 
     it('should create a spectator', () => {
       // Arrange & Act
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const userName = 'Test Spectator';
       const spectator = createSpectatorParticipantFixture({
         userId,
@@ -44,7 +44,7 @@ describe('SessionParticipant', () => {
       // Arrange & Act
       const avatar = 'https://example.com/avatar.png';
       const participant = createActiveParticipantFixture({
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         userName: 'Test Avatar User',
         avatar,
       });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import {
   createMinimalPerformanceFixture,
   createFireReactionFixture,
@@ -20,7 +20,7 @@ describe('CompletedWorkout', () => {
     it('should create a valid completed workout', () => {
       // Arrange
       const performance = createMinimalPerformanceFixture();
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const input = {
         userId,
         workoutType: 'strength' as const,
@@ -38,7 +38,7 @@ describe('CompletedWorkout', () => {
 
       // Assert
       if (!result.success) {
-        throw new Error(`Validation Error: ${JSON.stringify(result.error.format(), null, 2)}`);
+        throw new Error(`Validation Error: ${ JSON.stringify(result.error.format(), null, 2) }`);
       }
       expect(result.success).toBe(true);
       if (result.success) {
@@ -96,7 +96,7 @@ describe('CompletedWorkout', () => {
 
     it('should update existing reaction from same user', () => {
       const workout = createCompletedWorkoutFixture();
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const reaction1 = createFireReactionFixture({ userId });
       const reaction2 = createStrongReactionFixture({ userId }); // Same user
 
@@ -175,8 +175,8 @@ describe('CompletedWorkout', () => {
 
     it('should count reactions', () => {
       const workout = createCompletedWorkoutFixture();
-      const r1 = createFireReactionFixture({ userId: randomUUID() });
-      const r2 = createStrongReactionFixture({ userId: randomUUID() });
+      const r1 = createFireReactionFixture({ userId: crypto.randomUUID() });
+      const r2 = createStrongReactionFixture({ userId: crypto.randomUUID() });
 
       let w = addReaction(workout, r1).value!;
       w = addReaction(w, r2).value!;

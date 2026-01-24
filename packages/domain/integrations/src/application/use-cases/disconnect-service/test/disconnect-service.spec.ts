@@ -1,6 +1,4 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { randomUUID } from 'node:crypto';
-
 import { Result, EventBus } from '@bene/shared';
 
 import { createConnectedServiceFixture } from '@/fixtures.js';
@@ -28,8 +26,8 @@ const SERVICE_TYPE = 'strava';
 
 describe('DisconnectServiceUseCase', () => {
   let useCase: DisconnectServiceUseCase;
-  const TEST_USER_ID = randomUUID();
-  const TEST_SERVICE_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
+  const TEST_SERVICE_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -98,7 +96,7 @@ describe('DisconnectServiceUseCase', () => {
   it('should fail if user is not authorized', async () => {
     // Arrange
     const userId = TEST_USER_ID;
-    const otherUserId = randomUUID();
+    const otherUserId = crypto.randomUUID();
     const serviceId = TEST_SERVICE_ID;
 
     const mockService = createConnectedServiceFixture({

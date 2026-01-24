@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
   WorkoutTemplate,
@@ -93,7 +93,7 @@ export const CreateWorkoutTemplateSchema = WorkoutTemplateSchema.pick({
   // Build the entity with defaults
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     status: input.status ?? 'scheduled',
     rescheduledTo: input.rescheduledTo,
     completedWorkoutId: undefined,

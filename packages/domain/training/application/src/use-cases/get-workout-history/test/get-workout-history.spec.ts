@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result } from '@bene/shared';
 import { createWorkoutListFixture } from '@bene/training-core/fixtures';
@@ -21,7 +21,7 @@ describe('GetWorkoutHistoryUseCase', () => {
   });
 
   it('should get workout history successfully', async () => {
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const mockWorkouts = createWorkoutListFixture(1);
 
     vi.mocked(completedWorkoutRepo.findByUserId).mockResolvedValue(Result.ok(mockWorkouts));
@@ -40,7 +40,7 @@ describe('GetWorkoutHistoryUseCase', () => {
   });
 
   it('should fail if repo fails', async () => {
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     vi.mocked(completedWorkoutRepo.findByUserId).mockResolvedValue(
       Result.fail(new Error('Error')),
     );

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { PlanTemplate, PlanTemplateSchema } from './plan-template.types.js';
 
@@ -70,7 +70,7 @@ export const CreatePlanTemplateSchema: z.ZodType<PlanTemplate> = PlanTemplateSch
   const now = new Date();
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     tags: input.tags ?? [],
     metadata: {
       isPublic: false,

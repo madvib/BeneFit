@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { randomUUID } from 'node:crypto';
 
 import { createOAuthCredentialsFixture, createServicePermissionsFixture } from '@/fixtures.js';
 
@@ -8,7 +7,7 @@ import { refreshCredentials } from '../connected-service.commands.js';
 import { CreateConnectedServiceSchema } from '../connected-service.factory.js';
 
 describe('ConnectedService', () => {
-  const TEST_USER_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
 
   describe('Factory', () => {
     it('should create a valid connected service', () => {

@@ -12,7 +12,7 @@ describe('CoachMsg', () => {
   describe('User Message Factory', () => {
     it('should create a valid user message', () => {
       // Arrange
-      const checkInId = randomUUID();
+      const checkInId = crypto.randomUUID();
       const input = { content: 'Hello coach', checkInId };
 
       // Act
@@ -44,7 +44,7 @@ describe('CoachMsg', () => {
   describe('Coach Message Factory', () => {
     it('should create a valid coach message', () => {
       // Arrange
-      const checkInId = randomUUID();
+      const checkInId = crypto.randomUUID();
       const input = {
         content: 'Hello user',
         checkInId,

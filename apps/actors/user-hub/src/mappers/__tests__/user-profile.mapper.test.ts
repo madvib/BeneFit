@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { createUserProfileFixture } from '@bene/training-core/fixtures';
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import {
@@ -31,7 +31,7 @@ describe('UserProfileMapper', () => {
 
   describe('toProfileDatabase', () => {
     it('should map domain UserProfile to profile schema', () => {
-      const userProfile = createUserProfileFixture({ userId: randomUUID() });
+      const userProfile = createUserProfileFixture({ userId: crypto.randomUUID() });
       const dbProfile = toProfileDatabase(userProfile);
 
       expect(dbProfile.userId).toBe(userProfile.userId);
@@ -58,7 +58,7 @@ describe('UserProfileMapper', () => {
 
   describe('toStatsDatabase', () => {
     it('should map domain UserStats to stats schema', () => {
-      const userProfile = createUserProfileFixture({ userId: randomUUID() });
+      const userProfile = createUserProfileFixture({ userId: crypto.randomUUID() });
       const dbStats = toStatsDatabase(userProfile);
 
       expect(dbStats.userId).toBe(userProfile.userId);
@@ -80,7 +80,7 @@ describe('UserProfileMapper', () => {
         throw new Error('Fixture should have at least one achievement');
       }
 
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const dbAch = achievementToDatabase(userId, achievement);
 
       expect(dbAch.userId).toBe(userId);
@@ -100,7 +100,7 @@ describe('UserProfileMapper', () => {
 
   describe('toDomain', () => {
     it('should map database row with relations to domain entity', async () => {
-      const userProfile = createUserProfileFixture({ userId: randomUUID() });
+      const userProfile = createUserProfileFixture({ userId: crypto.randomUUID() });
 
       // Insert profile and stats
       await db.insert(profile).values(toProfileDatabase(userProfile));
@@ -153,7 +153,7 @@ describe('UserProfileMapper', () => {
 
     it('should convert null to undefined for optional fields', async () => {
       const userProfile = createUserProfileFixture({
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         avatar: undefined,
         bio: undefined,
         location: undefined,
@@ -181,7 +181,7 @@ describe('UserProfileMapper', () => {
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
       const original = createUserProfileFixture({
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         displayName: 'Test User',
       });
 

@@ -20,7 +20,7 @@ describe('ServiceMetadata', () => {
 
     it('should create metadata with provided values', () => {
       // Arrange
-      const externalUserId = randomUUID();
+      const externalUserId = crypto.randomUUID();
       const input = {
         externalUserId,
         supportsWebhooks: true,
@@ -49,7 +49,7 @@ describe('ServiceMetadata', () => {
     });
 
     it('should allow overrides in fixture', () => {
-      const externalUserId = randomUUID();
+      const externalUserId = crypto.randomUUID();
       const fixture = createServiceMetadataFixture({ externalUserId });
 
       expect(fixture.externalUserId).toBe(externalUserId);

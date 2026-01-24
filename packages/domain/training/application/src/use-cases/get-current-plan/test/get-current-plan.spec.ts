@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result } from '@bene/shared';
 import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
@@ -22,7 +22,7 @@ describe('GetCurrentPlanUseCase', () => {
 
   it('should return plan when active plan exists', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const mockPlan = createFitnessPlanFixture({
       userId,
       status: 'active',
@@ -47,7 +47,7 @@ describe('GetCurrentPlanUseCase', () => {
 
   it('should fail when no active plan exists', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan found'))

@@ -21,7 +21,7 @@ describe('AIPlanGenerator', () => {
 
   it('should correctly parse AI JSON response into FitnessPlan', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const input: GeneratePlanInput = {
       userId,
       goals: createPlanGoalsFixture({
@@ -88,7 +88,7 @@ describe('AIPlanGenerator', () => {
   });
 
   it('should handle invalid JSON from AI', async () => {
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const input: GeneratePlanInput = {
       userId,
       goals: createPlanGoalsFixture({

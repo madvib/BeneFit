@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 import { createUserProfileFixture } from '@bene/training-core/fixtures';
@@ -29,7 +29,7 @@ describe('CreateUserProfileUseCase', () => {
 
   it('should successfully create a user profile', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const profile = createUserProfileFixture({ userId, displayName: 'User' });
 
     const request = {
@@ -64,7 +64,7 @@ describe('CreateUserProfileUseCase', () => {
 
   it('should fail if profile already exists', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const profile = createUserProfileFixture({ userId });
     const request = {
       userId,

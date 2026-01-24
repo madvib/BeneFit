@@ -1,5 +1,4 @@
 import { describe, it, beforeEach, vi, expect, type Mock } from 'vitest';
-import { randomUUID } from 'node:crypto';
 
 import { Result, EventBus } from '@bene/shared';
 
@@ -45,8 +44,8 @@ const mockEventBus = {
 
 describe('SyncServiceDataUseCase', () => {
   let useCase: SyncServiceDataUseCase;
-  const TEST_USER_ID = randomUUID();
-  const TEST_SERVICE_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
+  const TEST_SERVICE_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();

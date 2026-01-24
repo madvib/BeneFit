@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { setupTestDb } from '../../data/__tests__/test-utils.js';
 import { toDomain, toDatabase } from '../workout-plan.mapper.js';
 import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
@@ -31,8 +31,8 @@ describe('WorkoutPlanMapper', () => {
   describe('toDatabase', () => {
     it('should map domain FitnessPlan to database schema', () => {
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         title: 'Test Plan',
         endDate: new Date('2026-03-01T00:00:00.000Z'),
       });
@@ -72,8 +72,8 @@ describe('WorkoutPlanMapper', () => {
 
     it('should convert undefined to null for optional fields', () => {
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         endDate: undefined,
         templateId: undefined,
       });
@@ -86,9 +86,9 @@ describe('WorkoutPlanMapper', () => {
 
     it('should preserve templateId when present', () => {
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
-        templateId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
+        templateId: crypto.randomUUID(),
       });
 
       const dbPlan = toDatabase(plan);
@@ -101,10 +101,10 @@ describe('WorkoutPlanMapper', () => {
     it('should map database row to domain entity', async () => {
       // Create domain fixture
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         title: 'DB Test Plan',
-        templateId: randomUUID(),
+        templateId: crypto.randomUUID(),
       });
 
       // Insert into actual database
@@ -138,8 +138,8 @@ describe('WorkoutPlanMapper', () => {
     it('should convert null to undefined for optional fields', async () => {
       // Create plan without optional fields
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         endDate: undefined,
         templateId: undefined,
       });
@@ -161,12 +161,12 @@ describe('WorkoutPlanMapper', () => {
   describe('Round-trip integrity', () => {
     it('should maintain data through Domain → DB → Domain', async () => {
       const original = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         title: 'Round Trip Plan',
         startDate: new Date('2026-01-01T00:00:00.000Z'),
         endDate: new Date('2026-04-15T00:00:00.000Z'),
-        templateId: randomUUID(),
+        templateId: crypto.randomUUID(),
       });
 
       // Convert to DB and insert
@@ -207,8 +207,8 @@ describe('WorkoutPlanMapper', () => {
     it('should handle schema defaults correctly', async () => {
       // Create plan and let schema apply defaults
       const plan = createFitnessPlanFixture({
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: crypto.randomUUID(),
+        userId: crypto.randomUUID(),
         templateId: undefined, // Ensure templateId is optional (undefined)
       });
 

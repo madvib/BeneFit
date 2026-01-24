@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 import { createUserProfileFixture } from '@bene/training-core/fixtures';
@@ -29,7 +29,7 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
   it('should successfully update fitness goals', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const newGoals = {
       primary: 'hypertrophy' as const,
       secondary: ['endurance'],
@@ -69,7 +69,7 @@ describe('UpdateFitnessGoalsUseCase', () => {
 
   it('should fail if profile is not found', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const newGoals = {
       primary: 'hypertrophy' as const,
       secondary: [],

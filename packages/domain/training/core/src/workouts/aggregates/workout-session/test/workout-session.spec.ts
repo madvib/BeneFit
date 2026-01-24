@@ -1,7 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 import {
   createSessionConfigurationFixture,
   createSessionParticipantFixture,
@@ -144,7 +144,7 @@ describe('WorkoutSession', () => {
         state: 'in_progress'
       });
 
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const userName = 'Test Participant';
       const result = joinSession(session, userId, userName);
 
@@ -199,13 +199,13 @@ describe('WorkoutSession', () => {
     });
 
     it('should check if participant is in session', () => {
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const session = createWorkoutSessionFixture({
         participants: [createSessionParticipantFixture({ userId, role: 'owner', status: 'active' })]
       });
 
       expect(isParticipantInSession(session, userId)).toBe(true);
-      expect(isParticipantInSession(session, randomUUID())).toBe(false);
+      expect(isParticipantInSession(session, crypto.randomUUID())).toBe(false);
     });
 
     it('should check if session can be joined', () => {

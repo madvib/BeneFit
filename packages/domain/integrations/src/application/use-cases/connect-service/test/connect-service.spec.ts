@@ -42,7 +42,7 @@ const mockEventBus = {
 
 describe('ConnectServiceUseCase', () => {
   let useCase: ConnectServiceUseCase;
-  const TEST_USER_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
   const TEST_AUTH_CODE = 'test-auth-code';
   const TEST_REDIRECT_URI = 'https://example.com/callback';
 

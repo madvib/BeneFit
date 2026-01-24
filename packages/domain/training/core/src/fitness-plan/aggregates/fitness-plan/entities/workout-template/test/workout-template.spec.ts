@@ -1,7 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 
 import {
   createWorkoutActivityFixture,
@@ -173,7 +173,7 @@ describe('WorkoutTemplate Aggegrate', () => {
         status: 'scheduled',
       });
       const inProgress = startWorkout(workout).value;
-      const completedWorkoutId = randomUUID();
+      const completedWorkoutId = crypto.randomUUID();
 
       // Act
       const completeResult = markComplete(inProgress, completedWorkoutId);

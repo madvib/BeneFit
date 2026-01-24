@@ -1,7 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 import { CreateSessionFeedItemSchema } from '../session-feed-item.factory.js';
 import { createSessionFeedItemFixture } from '@/fixtures.js';
 
@@ -9,7 +9,7 @@ describe('SessionFeedItem', () => {
   describe('creation', () => {
     it('should create a valid feed item with fixture', () => {
       // Arrange
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
       const userName = 'Test User';
       const content = 'Test feed content';
 
@@ -32,9 +32,9 @@ describe('SessionFeedItem', () => {
 
     it('should respect provided optional fields', () => {
       // Arrange
-      const customId = randomUUID();
+      const customId = crypto.randomUUID();
       const customDate = faker.date.past();
-      const userId = randomUUID();
+      const userId = crypto.randomUUID();
 
       // Act
       const feedItem = createSessionFeedItemFixture({
@@ -58,7 +58,7 @@ describe('SessionFeedItem', () => {
       // Act
       const feedItem = createSessionFeedItemFixture({
         type: 'set_completed',
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         userName: 'Test User',
         content: 'Test feed content',
         metadata,
@@ -91,7 +91,7 @@ describe('SessionFeedItem', () => {
       const longContent = 'a'.repeat(1001);
       const invalidInput = {
         type: 'chat_message' as const,
-        userId: randomUUID(),
+        userId: crypto.randomUUID(),
         userName: 'Test User',
         content: longContent,
       };

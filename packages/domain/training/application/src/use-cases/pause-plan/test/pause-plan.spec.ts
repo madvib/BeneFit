@@ -1,5 +1,4 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
 
 import { Result, EventBus } from '@bene/shared';
 import { createFitnessPlanFixture } from '@bene/training-core/fixtures';
@@ -32,8 +31,8 @@ describe('PausePlanUseCase', () => {
 
   it('should successfully pause an active plan', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const reason = 'Test pause reason';
 
     const activePlan = createFitnessPlanFixture({
@@ -79,8 +78,8 @@ describe('PausePlanUseCase', () => {
 
   it('should successfully pause an active plan without a reason', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
 
     const activePlan = createFitnessPlanFixture({
       id: planId,
@@ -120,8 +119,8 @@ describe('PausePlanUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
@@ -143,9 +142,9 @@ describe('PausePlanUseCase', () => {
 
   it('should fail if user is not authorized to pause the plan', async () => {
     // Arrange
-    const userId = randomUUID();
-    const otherUserId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
 
     const activePlan = createFitnessPlanFixture({
       id: planId,

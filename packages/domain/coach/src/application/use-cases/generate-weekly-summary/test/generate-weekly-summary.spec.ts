@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 
@@ -27,7 +27,7 @@ const mockEventBus = {
 
 describe('GenerateWeeklySummaryUseCase', () => {
   let useCase: GenerateWeeklySummaryUseCase;
-  const TEST_USER_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
 
   beforeEach(() => {
     vi.clearAllMocks();

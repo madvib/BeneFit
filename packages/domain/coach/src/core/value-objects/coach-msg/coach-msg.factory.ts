@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { CoachMsg, CoachMsgSchema, MessageRole } from './coach-msg.types.js';
 
@@ -40,14 +40,17 @@ function createMessageSchema<TRole extends MessageRole>(
   pickFields: (keyof z.infer<typeof CoachMsgSchema>)[],
 ) {
   return CoachMsgSchema.pick(
-    Object.fromEntries(pickFields.map(k => [k, true]))
+
+    Object.fromEntries(pickFields.map(k => [k, true])) as any
+
+
   ).extend({
     id: z.uuid().optional(),
     timestamp: z.coerce.date<Date>().optional(),
   }).transform((input, ctx) => {
     const data = {
       ...input,
-      id: input.id || randomUUID(),
+      id: input.id || crypto.randomUUID(),
       role,
       timestamp: input.timestamp || new Date(),
     };

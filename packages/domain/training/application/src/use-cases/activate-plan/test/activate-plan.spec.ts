@@ -32,13 +32,13 @@ describe('ActivatePlanUseCase', () => {
 
   it('should successfully activate a draft plan', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'draft',
-      weeks: [createWeeklyScheduleFixture({ id: randomUUID(), planId, weekNumber: 1 })],
+      weeks: [createWeeklyScheduleFixture({ id: crypto.randomUUID(), planId, weekNumber: 1 })],
     });
 
     const activatedPlan = {
@@ -75,8 +75,8 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if plan is not found', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(
       Result.fail(new Error('Plan not found')),
@@ -98,9 +98,9 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if user is not authorized to activate the plan', async () => {
     // Arrange
-    const userId = randomUUID();
-    const otherUserId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId: otherUserId,
@@ -127,13 +127,13 @@ describe('ActivatePlanUseCase', () => {
 
   it('should fail if plan activation command fails', async () => {
     // Arrange
-    const userId = randomUUID();
-    const planId = randomUUID();
+    const userId = crypto.randomUUID();
+    const planId = crypto.randomUUID();
     const draftPlan = createFitnessPlanFixture({
       id: planId,
       userId,
       status: 'draft',
-      weeks: [createWeeklyScheduleFixture({ id: randomUUID() })],
+      weeks: [createWeeklyScheduleFixture({ id: crypto.randomUUID() })],
     });
 
     vi.mocked(mockPlanRepository.findById).mockResolvedValue(Result.ok(draftPlan));

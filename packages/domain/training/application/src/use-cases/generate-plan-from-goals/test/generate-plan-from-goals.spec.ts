@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, type EventBus } from '@bene/shared';
 import {
@@ -51,7 +51,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should successfully generate a plan when user has no active plan', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
     const mockPlan = createFitnessPlanFixture({
@@ -96,7 +96,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if user profile is not found', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const goals = createPlanGoalsFixture();
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
@@ -118,7 +118,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if user already has an active plan', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const goals = createPlanGoalsFixture();
     const mockActivePlan = createFitnessPlanFixture({
       userId,
@@ -147,7 +147,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if AI plan generation fails', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
 
@@ -174,7 +174,7 @@ describe('GeneratePlanFromGoalsUseCase', () => {
 
   it('should fail if saving the plan fails', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const goals = createPlanGoalsFixture();
     const mockProfile = createUserProfileFixture({ userId });
     const mockPlan = createFitnessPlanFixture({

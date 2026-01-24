@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { CompletedWorkout, CompletedWorkoutSchema } from './completed-workout.types.js';
 
@@ -80,7 +80,7 @@ export const CreateCompletedWorkoutSchema = CompletedWorkoutSchema.pick({
 
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     title: input.title || defaultTitle,
     description: input.description,
     reactions: [],

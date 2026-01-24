@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 
@@ -25,7 +25,7 @@ describe('StartWorkoutUseCase', () => {
   });
 
   it('should start a custom workout successfully', async () => {
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const request: StartWorkoutRequest = {
       userId,
       userName: 'Test User',
@@ -58,7 +58,7 @@ describe('StartWorkoutUseCase', () => {
 
   it('should fail if custom workout missing details', async () => {
     const request = {
-      userId: randomUUID(),
+      userId: crypto.randomUUID(),
       userName: 'Test User',
       workoutType: undefined, // Missing workoutType
       activities: undefined, // Missing activities

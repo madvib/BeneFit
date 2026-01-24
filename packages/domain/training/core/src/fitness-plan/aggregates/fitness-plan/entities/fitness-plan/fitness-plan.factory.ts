@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { FitnessPlan, FitnessPlanSchema } from './fitness-plan.types.js';
 
@@ -66,7 +66,7 @@ export const CreateDraftFitnessPlanSchema = FitnessPlanSchema.pick({
   const now = new Date();
   const data = {
     ...input,
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     status: 'draft' as const,
     currentPosition: { week: 1, day: 0 },
     createdAt: now,

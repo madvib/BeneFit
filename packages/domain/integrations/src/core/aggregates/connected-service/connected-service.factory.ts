@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import {
   createInitialSyncStatus,
@@ -83,7 +83,7 @@ export const CreateConnectedServiceSchema: z.ZodType<ConnectedService> = Connect
 
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     syncStatus: createInitialSyncStatus(),
     metadata: metadataResult.data,
     isActive: true,

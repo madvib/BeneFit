@@ -27,7 +27,7 @@ const mockServiceRepository = {
 const SERVICE_TYPE = 'strava';
 
 describe('GetConnectedServicesUseCase', () => {
-  const TEST_USER_ID = randomUUID();
+  const TEST_USER_ID = crypto.randomUUID();
 
   let useCase: GetConnectedServicesUseCase;
 
@@ -39,7 +39,7 @@ describe('GetConnectedServicesUseCase', () => {
   it('should successfully get connected services', async () => {
     // Arrange
     const userId = TEST_USER_ID;
-    const serviceId = randomUUID();
+    const serviceId = crypto.randomUUID();
     const externalUserId = 'test-external-user-id';
 
     const mockService = createConnectedServiceFixture({

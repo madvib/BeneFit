@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { omit } from '@bene/shared';
 import {
   createTrainingConstraintsFixture,
@@ -280,7 +280,7 @@ describe('UserProfile Aggregate', () => {
       const profile = createUserProfileFixture({
         stats: createUserStatsFixture({ achievements: [] }),
       });
-      const achievementId = randomUUID();
+      const achievementId = crypto.randomUUID();
       const achievement: Achievement = {
         id: achievementId,
         type: 'first_workout',

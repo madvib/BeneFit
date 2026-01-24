@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import {
   CreateCompletedWorkoutSchema,
   type WorkoutPerformance,
@@ -185,7 +185,7 @@ export class CompleteWorkoutUseCase extends BaseUseCase<
     // Simple logic for first workout achievement
     if (profileResult.isSuccess && profileResult.value.stats.totalWorkouts === 1) {
       const achievement: Achievement = {
-        id: randomUUID(),
+        id: crypto.randomUUID(),
         type: 'first_workout',
         name: 'First Steps',
         description: 'Completed your first workout!',

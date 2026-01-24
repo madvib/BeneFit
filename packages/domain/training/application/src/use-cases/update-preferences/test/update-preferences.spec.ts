@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 import { Result } from '@bene/shared';
 import {
   createUserProfileFixture,
@@ -22,7 +22,7 @@ describe('UpdatePreferencesUseCase', () => {
 
   it('should update user preferences successfully', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const profile = createUserProfileFixture({ userId });
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(Result.ok(profile));
     vi.mocked(mockProfileRepository.save).mockResolvedValue(Result.ok());
@@ -44,7 +44,7 @@ describe('UpdatePreferencesUseCase', () => {
 
   it('should return failure if profile is not found', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
       Result.fail(new Error('Profile not found')),
     );

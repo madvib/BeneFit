@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { randomUUID } from 'crypto';
+
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
 import { Reaction, ReactionSchema } from './reaction.types.js';
 
@@ -65,7 +65,7 @@ export const CreateReactionSchema = ReactionSchema.pick({
 }).transform((input, ctx) => {
   const data = {
     ...input,
-    id: input.id || randomUUID(),
+    id: input.id || crypto.randomUUID(),
     createdAt: input.createdAt || new Date(),
   };
 

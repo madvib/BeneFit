@@ -1,7 +1,7 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 import { publishTemplate } from '../plan-template.commands.js';
 import { CreatePlanTemplateSchema, createTemplateRevision } from '../plan-template.factory.js';
 import {
@@ -41,7 +41,7 @@ describe('PlanTemplate', () => {
       const input = {
         name: '',
         description: 'Test description',
-        author: { name: 'Test Author', userId: randomUUID() },
+        author: { name: 'Test Author', userId: crypto.randomUUID() },
         tags: [],
         structure: validStructure,
         rules: validRules,
@@ -59,7 +59,7 @@ describe('PlanTemplate', () => {
       const input = {
         name: 'Test Plan Template',
         description: '',
-        author: { name: 'Test Author', userId: randomUUID() },
+        author: { name: 'Test Author', userId: crypto.randomUUID() },
         tags: [],
         structure: validStructure,
         rules: validRules,

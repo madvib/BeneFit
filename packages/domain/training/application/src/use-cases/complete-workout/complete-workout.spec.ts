@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 import {
@@ -59,8 +59,8 @@ describe('CompleteWorkoutUseCase', () => {
   });
 
   it('should complete a workout successfully', async () => {
-    const validUserId = randomUUID();
-    const sessionId = randomUUID();
+    const validUserId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
 
     const session = createWorkoutSessionFixture({
       id: sessionId,

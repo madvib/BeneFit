@@ -1,7 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
+
 import { CreateTemplateStructureSchema } from '../template-structure.factory.js';
 import { createTemplateStructureFixture } from '@/fixtures.js';
 

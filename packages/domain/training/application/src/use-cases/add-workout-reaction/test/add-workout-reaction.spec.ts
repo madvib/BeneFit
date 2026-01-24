@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result, EventBus } from '@bene/shared';
 import { createCompletedWorkoutFixture } from '@bene/training-core/fixtures';
@@ -27,17 +27,17 @@ describe('AddWorkoutReactionUseCase', () => {
   });
 
   it('should add a reaction successfully', async () => {
-    const workoutId = randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createCompletedWorkoutFixture({
       id: workoutId,
-      userId: randomUUID(),
+      userId: crypto.randomUUID(),
       isPublic: true,
       reactions: [],
     });
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
-      userId: randomUUID(),
+      userId: crypto.randomUUID(),
       userName: 'Test User',
       workoutId,
       reactionType: 'fire' as const,
@@ -60,11 +60,11 @@ describe('AddWorkoutReactionUseCase', () => {
   });
 
   it('should fail if workout not found', async () => {
-    const workoutId = randomUUID();
+    const workoutId = crypto.randomUUID();
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.fail(new Error('Not found')));
 
     const request = {
-      userId: randomUUID(),
+      userId: crypto.randomUUID(),
       userName: 'Test User',
       workoutId,
       reactionType: 'fire' as const,
@@ -77,7 +77,7 @@ describe('AddWorkoutReactionUseCase', () => {
   });
 
   it('should fail if workout is private', async () => {
-    const workoutId = randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createCompletedWorkoutFixture({
       id: workoutId,
       isPublic: false,
@@ -85,7 +85,7 @@ describe('AddWorkoutReactionUseCase', () => {
     vi.mocked(completedWorkoutRepo.findById).mockResolvedValue(Result.ok(mockWorkout));
 
     const request = {
-      userId: randomUUID(),
+      userId: crypto.randomUUID(),
       userName: 'Test User',
       workoutId,
       reactionType: 'fire' as const,

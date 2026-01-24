@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import { randomUUID } from 'crypto';
+
 
 import { Result } from '@bene/shared';
 import { FitnessPlanQueries } from '@bene/training-core';
@@ -32,8 +32,8 @@ describe('GetUpcomingWorkoutsUseCase', () => {
 
   it('should return upcoming workouts for the next 7 days when there is an active plan', async () => {
     // Arrange
-    const userId = randomUUID();
-    const workoutId = randomUUID();
+    const userId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
       id: workoutId,
       type: 'strength',
@@ -70,8 +70,8 @@ describe('GetUpcomingWorkoutsUseCase', () => {
 
   it('should return upcoming workouts for specified number of days', async () => {
     // Arrange
-    const userId = randomUUID();
-    const workoutId = randomUUID();
+    const userId = crypto.randomUUID();
+    const workoutId = crypto.randomUUID();
     const mockWorkout = createWorkoutTemplateFixture({
       id: workoutId,
       type: 'strength',
@@ -107,7 +107,7 @@ describe('GetUpcomingWorkoutsUseCase', () => {
 
   it('should return empty array when no active plan exists', async () => {
     // Arrange
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
 
     vi.mocked(mockPlanRepository.findActiveByUserId).mockResolvedValue(
       Result.fail(new Error('No active plan')),
