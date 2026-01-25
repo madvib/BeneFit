@@ -3,11 +3,11 @@
 import { Button, IconBox, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Sparkles, Layout, Dumbbell, ArrowRight, Zap, Target, ShieldCheck } from 'lucide-react';
-import { fitnessPlan } from '@bene/react-api-client';
+import { GeneratePlanRequest } from '@bene/react-api-client';
 import{ GoalSelectionForm} from './goal-selection-form';
 
 interface PlanOnboardingProps {
-  onGenerate: (_request: fitnessPlan.GeneratePlanRequest) => void;
+  onGenerate: (_request: GeneratePlanRequest) => void;
   onBrowse: () => void;
   isLoading?: boolean;
 }

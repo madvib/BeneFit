@@ -3,15 +3,15 @@
 import { LoadingSpinner } from '@/lib/components';
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { profile } from '@bene/react-api-client';
+import { useProfile } from '@bene/react-api-client';
 
 // List of paths that should bypass profile check to avoid loops
 const BYPASS_PATHS = ['/onboarding'];
 
-export function RequireProfile({ children }: { children: React.ReactNode }) {
+export function RequireProfile({ children }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: userProfile, isPending, error } = profile.useProfile();
+  const { data: userProfile, isPending, error } = useProfile();
 
   useEffect(() => {
     if (isPending) return;

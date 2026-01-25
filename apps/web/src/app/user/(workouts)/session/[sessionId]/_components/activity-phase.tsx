@@ -2,7 +2,7 @@
 
 import { Badge, Card, typography } from '@/lib/components';
 import { Play, CheckCircle2, Lock } from 'lucide-react';
-import type { WorkoutActivity } from '@bene/shared';
+import type { WorkoutActivity } from '@bene/react-api-client';
 import {ExerciseRow} from './exercise-row';
 
 interface SetPerformanceData {

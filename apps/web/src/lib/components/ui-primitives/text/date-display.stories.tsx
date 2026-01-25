@@ -26,45 +26,34 @@ const meta: Meta<typeof DateDisplay> = {
 export default meta;
 type Story = StoryObj<typeof DateDisplay>;
 
-const today = new Date();
+import { Carousel } from '@/lib/components';
 
-export const Short: Story = {
-  args: {
-    date: today,
-    format: 'short',
-  },
-};
-
-export const Medium: Story = {
-  args: {
-    date: today,
-    format: 'medium',
-  },
-};
-
-export const Long: Story = {
-  args: {
-    date: today,
-    format: 'long',
-  },
-};
-
-export const DateTime: Story = {
-  args: {
-    date: today,
-    format: 'datetime',
-  },
-};
-
-export const CustomOptions: Story = {
-  args: {
-    date: today,
-    options: { weekday: 'short', year: '2-digit', month: 'short', day: 'numeric' },
-  },
-};
-
-export const InvalidDate: Story = {
-  args: {
-    date: 'invalid-date-string',
-  },
+export const Showcase: Story = {
+  render: () => {
+    const today = new Date();
+    return (
+      <Carousel className="w-full max-w-xl">
+        <div className="flex flex-col items-center gap-4 p-8">
+            <h3 className="text-lg font-medium text-muted-foreground">Short</h3>
+            <DateDisplay date={today} format="short" className="text-2xl font-bold" />
+        </div>
+        <div className="flex flex-col items-center gap-4 p-8">
+            <h3 className="text-lg font-medium text-muted-foreground">Medium</h3>
+            <DateDisplay date={today} format="medium" className="text-2xl font-bold" />
+        </div>
+        <div className="flex flex-col items-center gap-4 p-8">
+            <h3 className="text-lg font-medium text-muted-foreground">Long</h3>
+            <DateDisplay date={today} format="long" className="text-2xl font-bold" />
+        </div>
+        <div className="flex flex-col items-center gap-4 p-8">
+            <h3 className="text-lg font-medium text-muted-foreground">Full / DateTime</h3>
+            <DateDisplay date={today} format="datetime" className="text-2xl font-bold" />
+        </div>
+        <div className="flex flex-col items-center gap-4 p-8">
+            <h3 className="text-lg font-medium text-muted-foreground">Relative</h3>
+            <DateDisplay date={new Date(Date.now() - 1000 * 60 * 5)} format="relative" className="text-2xl font-bold" />
+        </div>
+      </Carousel>
+    );
+  }
 };

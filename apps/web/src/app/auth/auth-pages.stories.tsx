@@ -1,11 +1,16 @@
 import { CheckCircle2, Zap, BarChart3, Users } from 'lucide-react';
+import { profileScenarios } from '@bene/react-api-client/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LoginForm, SignupForm, typography } from '@/lib/components';
+import ConfirmEmailPage from './confirm-email/page';
 
 const meta: Meta = {
   title: 'Features/Authentication',
   parameters: {
     layout: 'fullscreen',
+    msw: {
+      handlers: profileScenarios.default,
+    },
   },
 };
 
@@ -115,4 +120,24 @@ export const Signup: StoryObj = {
       </div>
     </div>
   ),
+};
+export const ConfirmEmail: StoryObj = {
+  render: () => <ConfirmEmailPage />,
+  parameters: {
+    msw: {
+      handlers: [
+        // Mock successful email confirmation (if needed by component on mount?)
+        // The component uses URL params, so we might need to mock navigation or window location if it reads it directly.
+        // It reads useSearchParams.
+      ],
+    },
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        query: {
+          email: 'user@example.com',
+        },
+      },
+    },
+  },
 };

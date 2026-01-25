@@ -7,7 +7,7 @@ import {
   Button,
 } from '@/lib/components';
 import { getActivityTypeConfig, getActivityStatusConfig } from '@/lib/constants/training-ui';
-import type { CompletedWorkout } from '@bene/shared';
+import type { CompletedWorkout } from '@bene/react-api-client';
 
 
 const getHistoryItemDetails = (item: CompletedWorkout) => {

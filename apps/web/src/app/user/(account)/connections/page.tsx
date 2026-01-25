@@ -2,7 +2,7 @@
 
 import { ErrorPage, InlineError, LoadingSpinner } from '@/lib/components';
 import { useState } from 'react';
-import { integrations } from '@bene/react-api-client';
+import { useConnectedServices, useDisconnect, useSync, ConnectedService } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import ConnectionsView from './connections-view';
 
@@ -10,9 +10,9 @@ export default function ConnectionsClient() {
   const [syncingServiceId, setSyncingServiceId] = useState<string | null>(null);
   const [mutationError, setMutationError] = useState<Error | null>(null);
 
-  const connectedServicesQuery = integrations.useConnectedServices();
-  const disconnectMutation = integrations.useDisconnect();
-  const syncMutation = integrations.useSync();
+  const connectedServicesQuery = useConnectedServices();
+  const disconnectMutation = useDisconnect();
+  const syncMutation = useSync();
 
   const handleDisconnect = async (id: string) => {
     try {
@@ -59,7 +59,7 @@ export default function ConnectionsClient() {
 
   const servicesList = connectedServicesQuery.data?.services || [];
   const connectedServices = servicesList.filter(
-    (service: integrations.ConnectedService) => service.isActive,
+    (service: ConnectedService) => service.isActive,
   );
 
   return (

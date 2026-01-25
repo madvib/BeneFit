@@ -2,23 +2,22 @@
 
 import { ProgressBar, typography } from '@/lib/components';
 import { Timer } from 'lucide-react';
-
+import { type WorkoutSession } from '@bene/react-api-client';
 
 interface SessionHeaderProps {
-  title: string;
+  session: WorkoutSession;
   elapsedSeconds: number;
   currentStep: number;
   totalSteps: number;
-  workoutType: string;
 }
 
 export function SessionHeader({
-  title,
+  session,
   elapsedSeconds,
   currentStep,
   totalSteps,
-  workoutType,
 }: Readonly<SessionHeaderProps>) {
+  const { workoutType } = session;
   return (
     <div className="bg-background/80 sticky top-0 z-50 w-full border-b border-white/5 pb-4 backdrop-blur-xl">
       <div className="container mx-auto px-6 pt-6">
@@ -32,7 +31,7 @@ export function SessionHeader({
             <h2
               className={`${typography.h2} text-3xl leading-none font-black tracking-tighter italic`}
             >
-              {title}
+              {workoutType || 'Workout'}
             </h2>
           </div>
 

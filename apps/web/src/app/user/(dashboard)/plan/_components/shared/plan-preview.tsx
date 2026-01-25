@@ -2,26 +2,10 @@
 
 import { Button, Card, typography } from '@/lib/components';
 import { CheckCircle, Calendar } from 'lucide-react';
-
-interface PreviewWorkout {
-  day: string;
-  summary: string;
-  type: string;
-}
-
-interface PlanPreviewData {
-  planId: string;
-  name: string;
-  durationWeeks: number;
-  workoutsPerWeek: number;
-  preview: {
-    weekNumber: number;
-    workouts: PreviewWorkout[];
-  };
-}
+import type { GeneratePlanResponse } from '@bene/react-api-client';
 
 interface PlanPreviewProps {
-  planData: PlanPreviewData;
+  planData: GeneratePlanResponse;
   onActivate: (_id: string) => void;
   onCancel: () => void;
   isLoading: boolean;
@@ -69,20 +53,24 @@ export function PlanPreview({
         </div>
 
         <div className="space-y-3">
-          {preview?.workouts?.map((workout: PreviewWorkout, idx: number) => (
-            <div
-              key={idx}
-              className="bg-accent/50 border-border flex items-center rounded-lg border p-3"
-            >
-              <div className={`${typography.mutedXs} w-16 font-bold`}>{workout.day}</div>
-              <div className="flex-1">
-                <p className={`${typography.small} text-foreground font-semibold`}>
-                  {workout.summary}
-                </p>
-                <p className={`${typography.mutedXs} capitalize`}>{workout.type}</p>
+          {preview?.workouts?.map((workout: PreviewWorkout, idx: number) => {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const dayName = days[workout.dayOfWeek] || 'Day';
+            return (
+              <div
+                key={idx}
+                className="bg-accent/50 border-border flex items-center rounded-lg border p-3"
+              >
+                <div className={`${typography.mutedXs} w-16 font-bold`}>{dayName}</div>
+                <div className="flex-1">
+                  <p className={`${typography.small} text-foreground font-semibold`}>
+                    {workout.workoutSummary}
+                  </p>
+                  <p className={`${typography.mutedXs} capitalize`}>{workout.type}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
 

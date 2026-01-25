@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Clock, Dumbbell, Play, SkipForward, Star, Zap, Calendar } from 'lucide-react';
-import { workouts } from '@bene/react-api-client';
+import { GetTodaysWorkoutResponse } from '@bene/react-api-client';
 import {
   Card,
   Button,
@@ -17,7 +17,7 @@ import {
 } from '@/lib/components';
 
 // Define the shape of the workout data as returned by the API
-type WorkoutDisplayData = NonNullable<workouts.GetTodaysWorkoutResponse['workout']>;
+type WorkoutDisplayData = NonNullable<GetTodaysWorkoutResponse['workout']>;
 
 interface TodayViewProps {
   todaysWorkout: WorkoutDisplayData | undefined;
@@ -37,7 +37,7 @@ export default function TodayView({
   onSkipWorkout,
   isStarting,
   isSkipping,
-}: TodayViewProps) {
+}: Readonly<TodayViewProps>) {
   const [showSkipModal, setShowSkipModal] = useState(false);
 
   // Handle the internal state of the modal here, but delegate action to parent
@@ -142,7 +142,7 @@ export default function TodayView({
               <div className="flex gap-4">
                 <MetricCard
                   label="Duration"
-                  value={todaysWorkout.durationMinutes}
+                  value={todaysWorkout.estimatedDuration}
                   unit="min"
                   icon={Clock}
                   className="bg-transparent border-none shadow-none p-0"
@@ -190,7 +190,7 @@ export default function TodayView({
                           {activity.type}
                         </h4>
                         <Badge variant="secondary" className="font-mono">
-                          {activity.durationMinutes} min
+                          {activity.duration} min
                         </Badge>
                       </div>
                       <p className={`${typography.small} text-muted-foreground italic`}>

@@ -1,13 +1,13 @@
 'use client';
 
 import { ErrorPage, LoadingSpinner } from '@/lib/components';
-import { profile } from '@bene/react-api-client';
+import { useProfile, useUserStats } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import ProfileView from './profile-view';
 
 export default function ProfileClient() {
-  const profileQuery = profile.useProfile();
-  const statsQuery = profile.useUserStats();
+  const profileQuery = useProfile();
+  const statsQuery = useUserStats();
 
   if (profileQuery.isLoading || statsQuery.isLoading) {
     return <LoadingSpinner variant="screen" text="Loading profile..." />;

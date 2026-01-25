@@ -2,6 +2,10 @@
   "name": "@bene/web",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
   "dependencies": {
     "@bene/react-api-client": "workspace:*",
     "@bene/shared": "workspace:*",
@@ -96,6 +100,7 @@
           ],
           "parallel": false
         }
+
       }
     },
     "tags": [

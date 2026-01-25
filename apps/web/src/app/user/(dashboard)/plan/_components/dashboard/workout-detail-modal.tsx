@@ -2,12 +2,7 @@
 
 import { Badge, Button, Card, Modal, typography } from '@/lib/components';
 import { Clock, Zap, PlayCircle, SkipForward, BarChart2, Star } from 'lucide-react';
-import { fitnessPlan } from '@bene/react-api-client';
-
-// Extract types
-type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
-type Week = PlanData['weeks'][number];
-type Workout = Week['workouts'][number];
+import { type FitnessPlanWorkout as Workout } from '@bene/react-api-client';
 
 interface WorkoutDetailModalProps {
   isOpen: boolean;
@@ -71,7 +66,7 @@ export function WorkoutDetailModal({
               <Clock size={14} className="text-primary" /> Duration
             </div>
             <h3 className={typography.h3}>
-              {workout.durationMinutes || 45}
+              {workout.estimatedDuration || 45}
               <span className={`${typography.p} text-muted-foreground ml-1`}>min</span>
             </h3>
           </div>

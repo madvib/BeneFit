@@ -11,38 +11,56 @@ import { toHttpResponse } from './utils.js';
 
 export const profileHandlers = [
   // GET /api/profile
-  http.get('http://*/api/profile', async () => {
+  http.get('*/api/profile', async () => {
     await delay(100);
     return toHttpResponse(buildGetProfileResponse());
   }),
 
   // POST /api/profile
-  http.post('http://*/api/profile', async () => {
+  http.post('*/api/profile', async () => {
     await delay(100);
     return toHttpResponse(buildCreateUserProfileResponse());
   }),
 
   // PATCH /api/profile/goals
-  http.patch('http://*/api/profile/goals', async () => {
+  http.patch('*/api/profile/goals', async () => {
     await delay(100);
     return toHttpResponse(buildUpdateFitnessGoalsResponse());
   }),
 
   // PATCH /api/profile/preferences
-  http.patch('http://*/api/profile/preferences', async () => {
+  http.patch('*/api/profile/preferences', async () => {
     await delay(100);
     return toHttpResponse(buildUpdatePreferencesResponse());
   }),
 
   // GET /api/profile/stats
-  http.get('http://*/api/profile/stats', async () => {
+  http.get('*/api/profile/stats', async () => {
     await delay(100);
     return toHttpResponse(buildGetUserStatsResponse());
   }),
 
   // PATCH /api/profile/constraints
-  http.patch('http://*/api/profile/constraints', async () => {
+  http.patch('*/api/profile/constraints', async () => {
     await delay(100);
     return toHttpResponse(buildUpdateTrainingConstraintsResponse());
   }),
 ];
+
+export const profileScenarios = {
+  default: profileHandlers,
+
+  loading: [
+    http.get('*/api/profile', async () => {
+      await delay('infinite');
+      return toHttpResponse(buildGetProfileResponse());
+    }),
+  ],
+
+  error: [
+    http.get('*/api/profile', async () => {
+      await delay(100);
+      return toHttpResponse(buildGetProfileResponse({ success: false }));
+    }),
+  ],
+};

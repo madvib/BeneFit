@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge, Button, Card, EmptyState, IconBox, ProgressBar, typography } from '@/lib/components';
-import type { fitnessPlan } from '@bene/react-api-client';
+import { type FitnessPlan as PlanData } from '@bene/react-api-client';
 import {
   Calendar,
   ChevronLeft,
@@ -12,9 +12,6 @@ import {
   CheckCircle2,
   Lock,
 } from 'lucide-react';
-
-// Extract plan type from API response
-type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
 
 interface WeeklyScheduleProps {
   plan: PlanData;
@@ -184,7 +181,7 @@ export function WeeklySchedule({
                     <div className="flex flex-wrap gap-3">
                       <div className="flex items-center gap-1.5">
                         <Clock size={12} className="text-primary" />
-                        <p className={typography.mutedXs}>{workout.durationMinutes || '45'}m</p>
+                        <p className={typography.mutedXs}>{workout.estimatedDuration || '45'}m</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Zap size={12} className="text-orange-500" />

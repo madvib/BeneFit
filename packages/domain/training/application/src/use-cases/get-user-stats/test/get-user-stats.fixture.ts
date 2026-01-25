@@ -26,6 +26,7 @@ export function buildGetUserStatsResponse(
       currentStreak: 0,
       longestStreak: 0,
       achievementsCount: 0,
+      achievements: [],
       ...overrides,
     } as GetUserStatsResponse);
   }

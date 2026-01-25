@@ -2,10 +2,7 @@
 
 import { Badge, Button, Card, DateDisplay, IconBox, typography } from '@/lib/components';
 import { Trophy, Flame, Timer, Zap, Activity, Edit2, Target, Calendar } from 'lucide-react';
-import type { fitnessPlan } from '@bene/react-api-client';
-
-// Extract plan type from API response
-type PlanData = NonNullable<fitnessPlan.GetActivePlanResponse['plan']>;
+import { type FitnessPlan as PlanData } from '@bene/react-api-client';
 
 interface PlanOverviewProps {
   currentPlan: PlanData | null;
@@ -62,7 +59,7 @@ export function PlanOverview({ currentPlan, onEditPlan }: Readonly<PlanOverviewP
             <div>
               <div className={`${typography.mutedXs} mb-2 flex flex-wrap gap-2 opacity-80`}>
                 <Badge variant="success" className="px-2 py-0.5">
-                  Week {currentPlan.currentWeek}
+                  Week {typeof currentPlan.currentWeek === 'object' ? (currentPlan.currentWeek as any).weekNumber : currentPlan.currentWeek}
                 </Badge>
                 {currentPlan.planType && (
                   <Badge variant="outline" className="border-primary/30 bg-primary/5 px-2 py-0.5">

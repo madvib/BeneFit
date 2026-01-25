@@ -49,7 +49,7 @@ export function ProgressBar({
   variant,
   size,
   barVariant,
-}: ProgressBarProperties) {
+}: Readonly<ProgressBarProperties>) {
   const percentage = Math.min(100, Math.max(0, (value / (max || 1)) * 100));
 
   return (

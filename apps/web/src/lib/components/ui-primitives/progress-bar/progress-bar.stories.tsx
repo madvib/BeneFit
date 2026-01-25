@@ -49,15 +49,7 @@ export const Showcase: Story = {
         </div>
         <div className="space-y-2">
           <p className={typography.labelSm}>Success Variant</p>
-          <ProgressBar value={85} max={100} variant="success" />
-        </div>
-        <div className="space-y-2">
-          <p className={typography.labelSm}>Warning Variant</p>
-          <ProgressBar value={45} max={100} variant="warning" />
-        </div>
-        <div className="space-y-2">
-          <p className={typography.labelSm}>Error Variant</p>
-          <ProgressBar value={20} max={100} variant="error" />
+          <ProgressBar value={85} max={100} barVariant="success" />
         </div>
       </div>
 

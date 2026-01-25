@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   CheckCircle2,
 } from 'lucide-react';
-import type { CompletedWorkout, ActivityPerformance, ExercisePerformance } from '@bene/shared';
+import type { CompletedWorkout, ActivityPerformance, ExercisePerformance } from '@bene/react-api-client';
 import { getActivityTypeConfig } from '@/lib/constants/training-ui';
 
 //TODO extract out some of these components to shared for re-use

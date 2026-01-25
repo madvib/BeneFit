@@ -3,7 +3,7 @@
 import { Badge, Button, Card, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Heart, MessageCircle, Filter, History as HistoryIcon, LayoutList } from 'lucide-react';
-import type { CompletedWorkout } from '@bene/shared';
+import type { CompletedWorkout } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import WorkoutList from '../history/workout-list';
 
@@ -25,7 +25,7 @@ export function ActivityFeedView({
   userProfile,
   onSelectWorkout,
   defaultTab = 'feed',
-}: ActivityFeedViewProps) {
+}: Readonly<ActivityFeedViewProps>) {
   const [activeTab, setActiveTab] = useState<'feed' | 'history'>(defaultTab);
   const [visibleCount, setVisibleCount] = useState(5);
 

@@ -3,7 +3,7 @@
 import { Button, Stepper, typography, useAppForm } from '@/lib/components';
 import { useRouter } from 'next/navigation';
 import { Activity, Target, User, ArrowRight, ArrowLeft } from 'lucide-react';
-import { profile } from '@bene/react-api-client';
+import { useCreateProfile } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import { useStepper } from '@/lib/hooks/use-stepper';
 
@@ -33,7 +33,7 @@ export function OnboardingStepper() {
   const router = useRouter();
   const { currentStepIndex, direction, isFirstStep, isLastStep, handleNext, handleBack } =
     useStepper(STEPS.length);
-  const createProfileMutation = profile.useCreateProfile();
+  const createProfileMutation = useCreateProfile();
 
   const form = useAppForm({
     ...onboardingFormOpts,
@@ -59,7 +59,7 @@ export function OnboardingStepper() {
                 canRunMile: false,
                 canSquatBelowParallel: false,
               },
-              lastAssessmentDate: new Date().toISOString(),
+
             },
             fitnessGoals: {
               primary: value.primaryGoal,

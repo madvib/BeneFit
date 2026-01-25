@@ -1,14 +1,21 @@
 'use client';
 
-import { ChatInput, ChatLayout, ChatList, ChatMessage, ErrorPage, LoadingSpinner, type  MessageData } from '@/lib/components';
 import { useState, useCallback } from 'react';
-import { coach } from '@bene/react-api-client';
+import { 
+  GetCoachHistoryResponse, 
+  useCoachHistory, 
+  useGenerateWeeklySummary, 
+  useRespondToCheckIn, 
+  useSendMessage,
+  type CoachMessage
+} from '@bene/react-api-client';
+import { ChatInput, ChatLayout, ChatList, ChatMessage, ErrorPage, LoadingSpinner, type  MessageData } from '@/lib/components';
 import { useChatUI } from '@/lib/hooks/use-chat-ui';
+import { ROUTES } from '@/lib/constants';
 import { SavedChatsView, RightActionPanel, CoachEmptyState } from './_components';
 import CheckInModal from './_components/check-in-modal';
-import { ROUTES } from '@/lib/constants';
 
-//TODO try to use types from domain instead of below interfaces, reusable hook for message state etc?
+// Mapped type for UI consumption
 interface Recommendation {
   id: string;
   title: string;
@@ -19,68 +26,54 @@ interface Recommendation {
   createdAt: string;
 }
 
-interface ApiAction {
-  type: string;
-  details: string;
-}
 
-interface ApiMessage {
-  id: string;
-  content: string;
-  sender: string; // 'user' | 'coach'
-  sentAt?: string;
-  createdAt?: string;
-  actions?: ApiAction[] | null;
-}
-
-interface CoachPageContentProps {
-  historyData: NonNullable<coach.GetCoachHistoryResponse>;
-}
-
-export function CoachPageContent({ historyData }: CoachPageContentProps) {
+export function CoachPageContent({ historyData }: Readonly<NonNullable<GetCoachHistoryResponse>>) {
   const { leftOpen, rightOpen, toggleLeft, toggleRight } = useChatUI();
 
   // Mutations
-  const sendMessageMutation = coach.useSendMessage();
-  const generateSummaryMutation = coach.useGenerateWeeklySummary();
-  const respondToCheckInMutation = coach.useRespondToCheckIn();
+  const sendMessageMutation = useSendMessage();
+  const generateSummaryMutation = useGenerateWeeklySummary();
+  const respondToCheckInMutation = useRespondToCheckIn();
 
   // Helper to map API messages to UI messages
   // We use this for initialization to avoid useEffect synchronization
   const getInitialMessages = (): MessageData[] => {
     if (!historyData.messages) return [];
-    // We cast to unknown first if the inferred type is incomaptible, but ideally we match the shape
-    // Assuming historyData.messages matches ApiMessage[] roughly
-    const rawMessages = historyData.messages as unknown as ApiMessage[];
+    
+    // Use derived type
+    const rawMessages = historyData.messages as CoachMessage[];
 
     return rawMessages.map((msg) => ({
       id: msg.id,
       content: msg.content,
-      role: msg.sender === 'user' ? 'user' : 'assistant',
-      timestamp: new Date(msg.sentAt || msg.createdAt || new Date().toISOString()),
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      timestamp: new Date(msg.timestamp || new Date().toISOString()),
     }));
   };
 
   const getInitialRecommendations = (): Recommendation[] => {
     if (!historyData.messages) return [];
     const newRecs: Recommendation[] = [];
-    const rawMessages = historyData.messages as unknown as ApiMessage[];
+    const rawMessages = historyData.messages as CoachMessage[];
 
     for (const msg of rawMessages) {
       if (msg.actions && Array.isArray(msg.actions)) {
         for (const [idx, action] of msg.actions.entries()) {
           newRecs.push({
+            // YIKES id assignment in client code 
             id: `${msg.id}-${idx}`,
+            // Format type from snake_case to Title Case if needed, or use as is
             title: action.type
               .split('_')
               .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
               .join(' '),
             description: action.details,
-            reason: action.details,
+            reason: action.details, // Using details as reason for now
             type: action.type,
-            category: 'Wellness',
+            // TODO should not be assigning defaults here.
+            category: 'Wellness', // Default category
             createdAt: new Date(
-              msg.sentAt || msg.createdAt || new Date().toISOString(),
+              msg.timestamp || new Date().toISOString(),
             ).toISOString(),
           });
         }
@@ -94,6 +87,7 @@ export function CoachPageContent({ historyData }: CoachPageContentProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>(
     getInitialRecommendations,
   );
+  //TODO remove hardcoded data
   const [savedChats] = useState<{ id: string; title: string }[]>([
     { id: 'c-1', title: 'Marathon Training Plan' },
     { id: 'c-2', title: 'Nutrition Advice' },
@@ -227,7 +221,7 @@ export function CoachPageContent({ historyData }: CoachPageContentProps) {
 }
 
 export default function CoachPage() {
-  const historyQuery = coach.useCoachHistory();
+  const historyQuery = useCoachHistory();
 
   if (historyQuery.isLoading) {
     return <LoadingSpinner variant="screen" />;

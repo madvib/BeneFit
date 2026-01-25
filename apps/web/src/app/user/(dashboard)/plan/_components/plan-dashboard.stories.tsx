@@ -1,167 +1,100 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import * as fixtures from '@bene/react-api-client/fixtures';
-import { Carousel, DashboardShell, WorkoutDetailSheet } from '@/lib/components';
+import { workoutScenarios, fitnessPlanScenarios } from '@bene/react-api-client/test';
+import { Carousel, WorkoutDetailSheet } from '@/lib/components';
 import { PlanOverview, QuickActions, WeeklySchedule, PlanOnboarding, PlanPreview } from './index';
-
-// Use the realistic domain-based fixture!
-// This now contains faker-generated data from domain fixtures
-const mockActivePlan = fixtures.fitnessplans.getCurrentPlanResponse;
-
-// PlanOverview expects the plan object, not the full response
-const activePlan = mockActivePlan.plan!;
-
-// Generate consistent workout template from fixture
-const mockPlanFixture = fixtures.fitnessplans.generatePlanFromGoalsResponse;
-const firstWorkout = mockPlanFixture.preview!.workouts[0];
-
-const mockWorkoutTemplate = {
-  id: 'workout-1',
-  weekNumber: 1,
-  dayOfWeek: 1,
-  scheduledDate: '2026-01-13',
-  title: firstWorkout.summary || 'Upper Body Strength',
-  type: firstWorkout.type || 'strength',
-  category: 'strength' as const,
-  goals: {
-    volume: {
-      totalSets: 12,
-      totalReps: 60,
-      targetWeight: 'moderate' as const,
-    },
-    completionCriteria: {
-      mustComplete: true,
-      minimumEffort: 80,
-      autoVerifiable: false,
-    },
-  },
-  activities: [
-    {
-      name: 'Barbell Bench Press',
-      type: 'main' as const,
-      order: 1,
-      structure: {
-        exercises: [
-          {
-            name: 'Barbell Bench Press',
-            sets: 4,
-            reps: 8,
-            weight: 100,
-            rest: 120,
-            notes: 'Focus on controlled descent',
-          },
-        ],
-      },
-      instructions: [
-        'Lie flat on bench with feet planted',
-        'Grip bar slightly wider than shoulder width',
-        'Lower bar to mid-chest with control',
-        'Press explosively to starting position',
-      ],
-      equipment: ['barbell', 'bench_press'],
-    },
-  ],
-  status: 'scheduled' as const,
-  coachNotes:
-    'This is your first upper body session. Focus on learning proper form rather than pushing for maximum weight.',
-  importance: 'key' as const,
-};
+import { useActivePlan, useGeneratePlan, useTodaysWorkout } from '@bene/react-api-client';
+import PlanPage from '../page';
 
 const meta: Meta = {
   title: 'Features/Fitness Plan',
   parameters: {
     layout: 'fullscreen',
+    msw: {
+      handlers: [
+        ...fitnessPlanScenarios.default,
+        ...workoutScenarios.default,
+      ],
+    },
   },
 };
 
 export default meta;
 
-const FullDashboardSimulator = () => {
-  const [selectedWeek, setSelectedWeek] = useState(1);
-  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
-
-  // Derive selected workout from plan
-  const selectedWorkout = activePlan.weeks
-    .flatMap(w => w.workouts)
-    .find(w => w.id === selectedWorkoutId);
-
-  // Mock template from the selected workout ID (just using a single fixture for demo)
-  // In a real app we'd fetch the specific template. Here we just fallback to the mock if found.
-  const workoutDetail = selectedWorkout ? { ...mockWorkoutTemplate, id: selectedWorkout.id } : null;
-
-  return (
-    <>
-      <DashboardShell
-        overview={
-          <PlanOverview 
-            currentPlan={activePlan} 
-            onEditPlan={() => alert('Edit Plan')} 
-          />
-        }
-        schedule={
-          <WeeklySchedule
-            plan={activePlan}
-            selectedWeek={selectedWeek}
-            onWeekChange={setSelectedWeek}
-            onWorkoutClick={setSelectedWorkoutId}
-          />
-        }
-        actions={
-          <QuickActions
-            onCreatePlan={() => console.log('Create')}
-            onSavePlan={() => console.log('Save')}
-            onExportPlan={() => console.log('Export')}
-            onPausePlan={() => console.log('Pause')}
-            isLoading={false}
-          />
-        }
-      />
-      
-      {/* 
-        Note: The real page uses WorkoutDetailModal which wraps WorkoutDetailSheet.
-        We use the sheet directly here or the modal if exported 
-      */}
-      <WorkoutDetailSheet 
-        workout={workoutDetail} 
-        open={!!selectedWorkoutId} 
-        onOpenChange={(open) => !open && setSelectedWorkoutId(null)} 
-      />
-    </>
-  );
+/**
+ * The full page story now uses the actual Page component.
+ * Data is fetched via hooks and mocked by MSW.
+ * No 'any' casts needed as hooks return correct types.
+ */
+export const FullPage: StoryObj = {
+  render: () => <PlanPage />,
 };
 
-export const FullPage: StoryObj = {
-  render: () => <FullDashboardSimulator />,
+export const LoadingState: StoryObj = {
+  parameters: {
+    msw: {
+      handlers: [...fitnessPlanScenarios.loading],
+    },
+  },
+  render: () => <PlanPage />,
+};
+
+export const ErrorState: StoryObj = {
+  parameters: {
+    msw: {
+      handlers: [...fitnessPlanScenarios.error],
+    },
+  },
+  render: () => <PlanPage />,
+};
+
+export const EmptyStatePage: StoryObj = {
+  parameters: {
+    msw: {
+      handlers: [...fitnessPlanScenarios.noActivePlan],
+    },
+  },
+  render: () => <PlanPage />,
 };
 
 export const PlanOverviewShowcase: StoryObj = {
   name: 'Plan Overview Showcase',
-  render: () => (
-    <Carousel>
-      {/* Active Plan */}
-      <div className="max-w-2xl p-6">
-        <PlanOverview currentPlan={activePlan} onEditPlan={() => alert('Edit Plan Clicked')} />
-      </div>
-      {/* Empty State */}
-      <div className="h-[400px] max-w-2xl p-6">
-        <PlanOverview currentPlan={null} onEditPlan={() => {}} />
-      </div>
-    </Carousel>
-  ),
+  render: () => {
+    const { data } = useActivePlan();
+    return (
+      <Carousel>
+        {/* Active Plan */}
+        <div className="max-w-2xl p-6">
+          <PlanOverview currentPlan={data?.plan ?? null} onEditPlan={() => alert('Edit Plan Clicked')} />
+        </div>
+        {/* Empty State */}
+        <div className="h-[400px] max-w-2xl p-6">
+          <PlanOverview currentPlan={null} onEditPlan={() => {}} />
+        </div>
+      </Carousel>
+    );
+  },
 };
 
 export const WeeklyScheduleInteractive: StoryObj = {
   name: 'Weekly Schedule Interactive',
-  render: () => (
-    <div className="max-w-4xl p-6">
-      <WeeklySchedule
-        plan={activePlan}
-        selectedWeek={1}
-        onWeekChange={(week) => console.log('Week changed', week)}
-        onWorkoutClick={(id) => alert(`Workout ${id} clicked`)}
-      />
-    </div>
-  ),
+  render: () => {
+    const { data } = useActivePlan();
+    const [selectedWeek, setSelectedWeek] = useState(1);
+    
+    if (!data?.plan) return <div>Loading schedule...</div>;
+
+    return (
+      <div className="max-w-4xl p-6">
+        <WeeklySchedule
+          plan={data.plan}
+          selectedWeek={selectedWeek}
+          onWeekChange={setSelectedWeek}
+          onWorkoutClick={(id) => alert(`Workout ${id} clicked`)}
+        />
+      </div>
+    );
+  },
 };
 
 export const QuickActionsBar: StoryObj = {
@@ -190,25 +123,48 @@ export const Onboarding: StoryObj = {
   )
 };
 
-export const WorkoutDetailModalStory: StoryObj<typeof WorkoutDetailSheet> = {
+export const WorkoutDetailModalStory: StoryObj = {
   name: 'Workout Detail Sheet',
-  render: () => (
-    <WorkoutDetailSheet workout={mockWorkoutTemplate} open={true} onOpenChange={() => {}} />
-  ),
+  render: () => {
+    const { data } = useTodaysWorkout();
+    return (
+      <WorkoutDetailSheet 
+        workout={data?.workout ?? null} 
+        open={true} 
+        onOpenChange={() => {}} 
+      />
+    );
+  },
 };
 
 export const PlanPreviewStory: StoryObj = {
   name: 'Plan Preview',
   render: () => {
-    // Use schema-driven fixture for plan preview
-    const mockPreviewData = fixtures.fitnessplans.generatePlanFromGoalsResponse;
+    const generatePlan = useGeneratePlan();
+    const data = generatePlan.data;
+
+    // Use a button to trigger the mock generation if no data is present
+    if (!data) {
+      return (
+        <div className="p-12 flex flex-col items-center gap-4">
+          <p>This story simulates the generation flow. Click below to mock a plan preview.</p>
+          <button 
+            onClick={() => generatePlan.mutate({ json: { goals: { primary: 'strength' } } })}
+            className="px-4 py-2 bg-primary text-white rounded-xl"
+            disabled={generatePlan.isPending}
+          >
+            {generatePlan.isPending ? 'Generating...' : 'Mock Generation'}
+          </button>
+        </div>
+      );
+    }
 
     return (
       <div className="bg-background min-h-screen">
         <PlanPreview
-          planData={mockPreviewData}
+          planData={data}
           onActivate={(id) => console.log('Activate', id)}
-          onCancel={() => console.log('Cancel')}
+          onCancel={() => generatePlan.reset()}
           isLoading={false}
         />
       </div>

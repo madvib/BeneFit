@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Target, Settings, Wand2, ArrowRight, ArrowLeft } from 'lucide-react';
-import { fitnessPlan } from '@bene/react-api-client';
+import { GeneratePlanRequest } from '@bene/react-api-client';
 import { revalidateLogic } from '@tanstack/react-form';
 import { Button, CategorizedEquipmentSelection, IconBox, PrimaryGoalGrid, SecondaryGoalsList, Stepper, typography, useAppForm } from '@/lib/components';
 
 interface GoalSelectionFormProps {
-  onGenerate: (_request: fitnessPlan.GeneratePlanRequest) => void;
+  onGenerate: (_request: GeneratePlanRequest) => void;
   isLoading?: boolean;
 }
 

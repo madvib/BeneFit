@@ -13,27 +13,7 @@ import {
   Target,
 } from 'lucide-react';
 
-// --- Types (Inlined for self-containment) ---
-export interface PlanData {
-  id: string;
-  name: string;
-  description: string;
-  difficulty: string;
-  duration: string;
-  category: string;
-  progress: number;
-}
-
-export interface WeeklyWorkoutPlan {
-  id: string;
-  day: string;
-  date: string;
-  completed: boolean;
-  exercise: string;
-  sets: number;
-  reps: number;
-  duration?: string;
-}
+import { type FitnessPlan as PlanData, type FitnessPlanWorkout as WeeklyWorkoutPlan } from '@bene/react-api-client';
 
 interface PlanViewProps {
   currentPlan: PlanData | null;
@@ -65,11 +45,11 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
           <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row">
             <div>
               <div className="mb-3 flex items-center gap-3">
-                <h2 className={typography.h2}>{currentPlan.name}</h2>
+                <h2 className={typography.h2}>{currentPlan.title}</h2>
                 <span
                   className={`${typography.labelXs} text-primary rounded-full border border-(--primary)/20 bg-(--primary)/10 px-2.5 py-0.5`}
                 >
-                  {currentPlan.category}
+                  {currentPlan.planType}
                 </span>
               </div>
               <p className={`${typography.p} text-muted-foreground max-w-2xl leading-relaxed`}>
@@ -99,10 +79,9 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
               bodyClassName="flex-row items-center gap-4 p-4"
             />
 
-            {/* Stat 2: Duration */}
             <MetricCard
               label="Duration"
-              value={currentPlan.duration}
+              value={`${currentPlan.durationWeeks} Weeks`}
               icon={Clock}
               className="bg-accent/30 border-muted/50 transition-shadow hover:shadow-sm"
               iconClassName="text-blue-500"
@@ -117,12 +96,12 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
               <div className="flex-1">
                 <div className="mb-2 flex items-end justify-between">
                   <p className={`${typography.labelXs} text-muted-foreground`}>Plan Progress</p>
-                  <p className={`${typography.small} tabular-nums`}>{currentPlan.progress}%</p>
+                  <p className={`${typography.small} tabular-nums`}>{currentPlan.summary.completed} / {currentPlan.summary.total}</p>
                 </div>
                 <div className="bg-background border-muted/50 h-2.5 w-full overflow-hidden rounded-full border p-[1px]">
                   <div
                     className="bg-primary h-full rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${currentPlan.progress}%` }}
+                    style={{ width: `${(currentPlan.summary.completed / currentPlan.summary.total) * 100}%` }}
                   />
                 </div>
               </div>
@@ -132,17 +111,17 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
           {/* Bottom Stats Row */}
           <div className="border-muted/60 grid grid-cols-1 gap-4 border-t pt-6 md:grid-cols-3">
             <div className="border-muted/60 border-r px-4 text-center last:border-0">
-              <div className={`${typography.h3} tabular-nums`}>18</div>
+              <div className={`${typography.h3} tabular-nums`}>{currentPlan.summary.total}</div>
               <div className={`${typography.labelXs} text-muted-foreground mt-1`}>
                 Total Sessions
               </div>
             </div>
             <div className="border-muted/60 border-r px-4 text-center last:border-0">
-              <div className={`${typography.h3} text-primary tabular-nums`}>12</div>
+              <div className={`${typography.h3} text-primary tabular-nums`}>{currentPlan.summary.completed}</div>
               <div className={`${typography.labelXs} text-muted-foreground mt-1`}>Completed</div>
             </div>
             <div className="px-4 text-center">
-              <div className={`${typography.h3} text-muted-foreground tabular-nums`}>6</div>
+              <div className={`${typography.h3} text-muted-foreground tabular-nums`}>{currentPlan.summary.total - currentPlan.summary.completed}</div>
               <div className={`${typography.labelXs} text-muted-foreground mt-1`}>Remaining</div>
             </div>
           </div>
@@ -161,14 +140,14 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
             <div
               key={workout.id}
               className={`group relative flex flex-col rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
-                workout.completed
+                workout.status === 'completed'
                   ? 'bg-background/50 border-green-200/50 dark:border-green-900/30'
                   : 'bg-background border-muted hover:border-(--primary)/40'
               } `}
             >
               {/* Status Badge */}
               <div className="absolute top-4 right-4 z-10">
-                {workout.completed ? (
+                {workout.status === 'completed' ? (
                   <div className="rounded-full bg-green-500/10 p-1 text-green-500 ring-1 ring-green-500/20">
                     <CheckCircle2 size={16} />
                   </div>
@@ -181,32 +160,28 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
 
               {/* Date Info */}
               <div className="mb-3">
-                <p className={`${typography.labelXs} text-primary mb-0.5`}>{workout.day}</p>
-                <p className={`${typography.muted} font-medium`}>{workout.date}</p>
+                <p className={`${typography.labelXs} text-primary mb-0.5`}>Day {workout.dayOfWeek + 1}</p>
+                <p className={`${typography.muted} font-medium`}>{new Date(workout.scheduledDate).toLocaleDateString()}</p>
               </div>
 
               {/* Exercise Info */}
               <div className="mb-4 flex-1">
                 <h4
                   className={`${typography.large} mb-2 line-clamp-2 leading-tight`}
-                  title={workout.exercise}
+                  title={workout.title}
                 >
-                  {workout.exercise}
+                  {workout.title}
                 </h4>
 
                 <div className="space-y-1.5">
-                  {workout.sets > 0 && (
-                    <div className={`${typography.muted} flex items-center gap-2 font-medium`}>
-                      <Dumbbell size={14} className="opacity-70" />
-                      <span>
-                        {workout.sets} sets × {workout.reps} reps
-                      </span>
-                    </div>
-                  )}
-                  {workout.duration && (
+                  <div className={`${typography.muted} flex items-center gap-2 font-medium`}>
+                    <Dumbbell size={14} className="opacity-70" />
+                    <span>{workout.activities.length} activities</span>
+                  </div>
+                  {workout.estimatedDuration && (
                     <div className={`${typography.muted} flex items-center gap-2 font-medium`}>
                       <Clock size={14} className="opacity-70" />
-                      <span>{workout.duration}</span>
+                      <span>{workout.estimatedDuration} min</span>
                     </div>
                   )}
                 </div>
@@ -214,13 +189,13 @@ export function PlanView({ currentPlan, weeklyWorkouts, onEditPlan }: Readonly<P
 
               {/* Action Button */}
               <Button
-                variant={workout.completed ? 'soft-success' : 'default'}
+                variant={workout.status === 'completed' ? 'soft-success' : 'default'}
                 className={`${typography.small} w-full gap-2 rounded-lg py-2.5 transition-all duration-200 ${
-                  !workout.completed &&
+                  workout.status !== 'completed' &&
                   'group-hover:-translate-y-px hover:opacity-90 hover:shadow'
                 }`}
               >
-                {workout.completed ? (
+                {workout.status === 'completed' ? (
                   <span>View Details</span>
                 ) : (
                   <>

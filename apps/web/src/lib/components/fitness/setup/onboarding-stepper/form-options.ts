@@ -1,5 +1,5 @@
 import { formOptions } from '@tanstack/react-form';
-import { OnboardingFormSchema, type OnboardingFormValues } from '@bene/shared';
+import { trainingSchemas, type OnboardingFormValues } from '@bene/react-api-client';
 import { revalidateLogic } from '@tanstack/react-form';
 
 export const onboardingFormOpts = formOptions({
@@ -15,7 +15,7 @@ export const onboardingFormOpts = formOptions({
     equipment: [],
   } as OnboardingFormValues,
   validators: {
-    onDynamic: OnboardingFormSchema,
+    onDynamic: trainingSchemas.OnboardingFormSchema,
   },
   validationLogic: revalidateLogic(),
 });

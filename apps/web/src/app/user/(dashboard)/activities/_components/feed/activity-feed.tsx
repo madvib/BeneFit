@@ -2,13 +2,11 @@
 
 import { Button, Card, EmptyState, typography } from '@/lib/components';
 import { Activity, ArrowRight, Sparkles, History } from 'lucide-react';
-import { workouts } from '@bene/react-api-client';
+import { useWorkoutHistory, CompletedWorkout } from '@bene/react-api-client';
 import ActivityListTile from './activity-list-tile';
 
-import type { CompletedWorkout } from '@bene/shared';
-
 export default function ActivityFeed() {
-  const historyQuery = workouts.useWorkoutHistory({ query: { limit: '5' } });
+  const historyQuery = useWorkoutHistory({ query: { limit: '5' } });
 
   const renderContent = () => {
     if (historyQuery.isLoading) {

@@ -3,13 +3,13 @@
 import { ErrorPage, LoadingSpinner } from '@/lib/components';
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { integrations } from '@bene/react-api-client';
+import { useConnect } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 
 export default function IntegrationCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const connectMutation = integrations.useConnect();
+  const connectMutation = useConnect();
   const hasRun = useRef(false);
 
   useEffect(() => {

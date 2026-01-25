@@ -14,6 +14,9 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
+  resolve: {
+    conditions: ['development', 'import', 'module', 'browser', 'default'],
+  },
   define: {
     'import.meta.vitest': 'undefined',
   },

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { mockTrainingConstraints } from '../../testing/fixtures';
+import * as fixtures from '@bene/react-api-client/fixtures';
 import {
   PrimaryGoalGrid,
   CategorizedEquipmentSelection,
@@ -20,19 +20,24 @@ export default meta;
 
 export const PlanningForms: StoryObj = {
   name: 'Planning Forms',
-  render: () => (
-    <div className="grid gap-6 md:grid-cols-2">
-      <div className="max-w-md">
-        <PrimaryGoalGrid selected="strength" onChange={() => {}} />
+  render: () => {
+    // Generate sample constraints data
+    const constraints = fixtures.buildTrainingConstraintsResponse();
+    
+    return (
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="max-w-md">
+          <PrimaryGoalGrid selected="strength" onChange={() => {}} />
+        </div>
+        <div className="max-w-md">
+          <CategorizedEquipmentSelection
+            selected={constraints.availableEquipment}
+            onChange={() => {}}
+          />
+        </div>
       </div>
-      <div className="max-w-md">
-        <CategorizedEquipmentSelection
-          selected={mockTrainingConstraints.availableEquipment}
-          onChange={() => {}}
-        />
-      </div>
-    </div>
-  ),
+    );
+  },
 };
 
 export const FitnessGoalsFormStory: StoryObj<typeof FitnessGoalsForm> = {
@@ -74,20 +79,21 @@ export const FitnessPreferencesStory: StoryObj<typeof FitnessPreferences> = {
   render: () => <FitnessPreferencesWrapper />,
 };
 
-export const TrainingConstraintsStory: StoryObj<typeof TrainingConstraintsForm> = {
-  name: 'Training Constraints',
-  render: () => (
-    <div className="max-w-xl p-4">
-      <TrainingConstraintsForm
-        initialConstraints={{
-          availableDays: ['Monday', 'Wednesday', 'Friday'],
-          availableEquipment: ['dumbbells'],
-          maxDuration: 45,
-          injuries: [],
-        }}
-        onSave={async (val) => console.log(val)}
-        isLoading={false}
-      />
-    </div>
-  ),
+export const TrainingConstraints: StoryObj<typeof TrainingConstraintsForm> = {
+  name: 'Training Constraints (Default)',
+  render: () => {
+    const mockConstraints = fixtures.buildTrainingConstraintsResponse(undefined, { seed: 500 });
+    return (
+      <div className="max-w-xl p-4">
+        <TrainingConstraintsForm
+          initialConstraints={mockConstraints}
+          onSave={async (val) => {
+             console.log('Saved:', val);
+             await new Promise((resolve) => setTimeout(resolve, 1000));
+          }}
+          isLoading={false}
+        />
+      </div>
+    );
+  },
 };

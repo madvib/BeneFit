@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Activity, Calendar } from 'lucide-react';
-import { workouts, profile } from '@bene/react-api-client';
-import { CompletedWorkout } from '@bene/shared';
+import { useWorkoutHistory, useProfile, CompletedWorkout } from '@bene/react-api-client';
 import {
   Card,
   LoadingSpinner,
@@ -19,8 +18,8 @@ import { ActivityFeedView, WorkoutHistoryDetailModal } from './_components';
 export default function ActivityFeedPage() {
   const [selectedWorkout, setSelectedWorkout] = useState<CompletedWorkout | null>(null);
 
-  const historyQuery = workouts.useWorkoutHistory({ query: {} });
-  const profileQuery = profile.useProfile();
+  const historyQuery = useWorkoutHistory({ query: {} });
+  const profileQuery = useProfile();
 
   if (historyQuery.isLoading || profileQuery.isLoading) {
     return <LoadingSpinner variant="screen" text="Loading your activity..." />;

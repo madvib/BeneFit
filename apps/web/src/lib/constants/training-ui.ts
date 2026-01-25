@@ -1,5 +1,4 @@
 import {
-  Target,
   Zap,
   TrendingUp,
   Heart,
@@ -16,29 +15,24 @@ import {
   Bike,
 } from 'lucide-react';
 
-import { FitnessGoal } from '@bene/shared';
+import { type PrimaryFitnessGoal as FitnessGoal, type SecondaryFitnessGoal } from '@bene/react-api-client';
+import { SECONDARY_GOAL_CATEGORIES } from '@bene/shared';
 
 export const GOAL_UI_CONFIG: Record<FitnessGoal, { label: string; icon: LucideIcon }> = {
   strength: { label: 'Build Strength', icon: Dumbbell },
+  hypertrophy: { label: 'Muscle Growth', icon: TrendingUp },
   endurance: { label: 'Improve Endurance', icon: Timer },
-  muscle_growth: { label: 'Muscle Growth', icon: TrendingUp },
   weight_loss: { label: 'Weight Loss', icon: Flame },
-  athletic_performance: { label: 'Athletic Performance', icon: Zap },
-  general_health: { label: 'General Health', icon: Heart },
+  weight_gain: { label: 'Weight Gain', icon: Dumbbell },
+  sport_specific: { label: 'Athletic Performance', icon: Zap },
+  general_fitness: { label: 'General Health', icon: Heart },
+  mobility: { label: 'Mobility', icon: Activity },
+  rehabilitation: { label: 'Rehabilitation', icon: Activity },
 };
 
-// Fallback for any missing keys if enum expands
-export const getGoalConfig = (goal: string) => {
 
-  return GOAL_UI_CONFIG[goal as FitnessGoal] || { label: goal, icon: Target };
-};
 
-export const SECONDARY_GOAL_LABELS: Record<string, string> = {
-  consistency: 'Build Consistency',
-  flexibility: 'Improve Flexibility',
-  mobility: 'Enhance Mobility',
-  recovery: 'Better Recovery',
-  injury_prevention: 'Prevent Injuries',
+export const SECONDARY_GOAL_LABELS: Record<SecondaryFitnessGoal, string> = {
   increase_power: 'Increase Power',
   improve_speed: 'Improve Speed',
   build_stamina: 'Build Stamina',
@@ -48,18 +42,26 @@ export const SECONDARY_GOAL_LABELS: Record<string, string> = {
   increase_explosiveness: 'Explosiveness',
   tone_muscles: 'Tone Muscles',
   gain_weight: 'Gain Weight',
-  body_recomposition: 'Body Recomp',
-  rehabilitation: 'Rehab',
-  improve_posture: 'Posture',
+  body_recomposition: 'Body Recomposition',
+  injury_prevention: 'Injury Prevention',
+  rehabilitation: 'Rehabilitation',
+  improve_posture: 'Improve Posture',
   reduce_stress: 'Reduce Stress',
   better_sleep: 'Better Sleep',
-  increase_energy: 'Energy Boost',
-  boost_confidence: 'Confidence',
-  build_consistency: 'Consistency',
-  improve_recovery: 'Recovery',
+  increase_energy: 'Increase Energy',
+  boost_confidence: 'Boost Confidence',
+  build_consistency: 'Build Consistency',
+  improve_recovery: 'Improve Recovery',
   sport_specific_training: 'Sport Specific',
-  functional_fitness: 'Functional Fit',
+  functional_fitness: 'Functional Fitness',
 };
+
+export const CATEGORIZED_SECONDARY_GOALS: { category: string; goals: readonly SecondaryFitnessGoal[] }[] = Object.entries(
+  SECONDARY_GOAL_CATEGORIES
+).map(([category, goals]) => ({
+  category,
+  goals: goals as unknown as readonly SecondaryFitnessGoal[],
+}));
 
 // Activity Type Configuration
 export const ACTIVITY_TYPE_CONFIG: Record<

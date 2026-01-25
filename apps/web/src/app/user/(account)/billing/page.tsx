@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Card, EmptyState, IconBox, PageHeader, SectionHeader, typography } from '@/lib/components';
 import { CreditCard, Check, Sparkles } from 'lucide-react';
+import { Button, Card, EmptyState, IconBox, PageHeader, SectionHeader, typography } from '@/lib/components';
 
 export default function BillingPage() {
   return (

@@ -1,24 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import TodayView from './today-view';
+import * as fixtures from '@bene/react-api-client/fixtures';
 import { Carousel } from '@/lib/components';
-import { fixtures } from '@bene/react-api-client';
+import TodayView from './today-view';
 
 // Mock Data using fixtures
-const mockWorkoutResponse = fixtures.createGetTodaysWorkoutResponse({
-  hasWorkout: true as any,
-  workout: {
-    workoutId: 'w_123',
-    planId: 'p_456',
-    type: 'Upper Body Power',
-    durationMinutes: 45,
-    activities: [
-      { type: 'warmup', instructions: '5 min light jogging', durationMinutes: 5 },
-      { type: 'main', instructions: '3 sets of 8 reps @ RPE 8', durationMinutes: 15 },
-      { type: 'main', instructions: '3 sets to failure', durationMinutes: 10 },
-      { type: 'cooldown', instructions: 'Static stretching', durationMinutes: 15 },
-    ],
-  } as any, 
+const mockWorkoutResult = fixtures.buildGetTodaysWorkoutResponse({
+  hasWorkout: true, // TODO: Fix typing in domain fixture options
+
 });
+
+// Unwrap the result to get the actual workout object
+// If accessing .workout on valid response
+const mockWorkout = mockWorkoutResult.isSuccess ? mockWorkoutResult.value.workout : undefined;
 
 const meta: Meta = {
   title: 'Features/Today',
@@ -35,7 +28,7 @@ export const Showcase: StoryObj<typeof TodayView> = {
       {/* Workout Scheduled */}
       <div className="mx-auto w-full max-w-2xl">
         <TodayView
-          todaysWorkout={mockWorkoutResponse.workout}
+          todaysWorkout={mockWorkout}
           isLoading={false}
           error={null}
           onStartWorkout={() => alert('Start Workout')}

@@ -2,16 +2,16 @@
 
 import { Button, Spacer, StatisticsSection, typography } from '@/lib/components';
 import { useState } from 'react';
-import { profile } from '@bene/react-api-client';
+import { GetProfileResponse, GetUserStatsResponse } from '@bene/react-api-client';
 import { AboutMeSection, ProfileSummary } from './_components';
 
 export interface ProfileViewProps {
-  userProfile: profile.GetProfileResponse;
-  userStats: profile.GetUserStatsResponse;
+  userProfile: GetProfileResponse;
+  userStats: GetUserStatsResponse;
   onSave?: () => void;
 }
 
-export default function ProfileView({ userProfile, userStats, onSave }: ProfileViewProps) {
+export default function ProfileView({ userProfile, userStats, onSave }: Readonly<ProfileViewProps>) {
   // Initialize state directly from props - no useEffect needed
   const [aboutMe, setAboutMe] = useState(userProfile.bio || '');
 
@@ -25,12 +25,8 @@ export default function ProfileView({ userProfile, userStats, onSave }: ProfileV
       {/* Top Section */}
       <div className="relative pt-12">
         <ProfileSummary
-          name={userProfile.displayName || 'User'}
-          bio={aboutMe} // Use local state for bio to reflect immediate updates
-          profilePicture={userProfile.avatar || undefined}
-          totalWorkouts={userStats.totalWorkouts}
-          currentStreak={userStats.currentStreak}
-          totalAchievements={userStats.achievements.length}
+          profile={userProfile}
+          stats={userStats}
           onEditPicture={() => console.log('Edit picture clicked')}
         />
       </div>

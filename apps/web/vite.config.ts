@@ -7,6 +7,12 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/apps/web',
 
   plugins: [nxViteTsPaths(), react()],
+  resolve: {
+    conditions: ['development', 'import', 'module', 'browser', 'default'],
+  },
+  optimizeDeps: {
+    exclude: ['@bene/*']
+  },
   test: {
     environment: 'happy-dom',
     setupFiles: ['./test/setup.ts'],

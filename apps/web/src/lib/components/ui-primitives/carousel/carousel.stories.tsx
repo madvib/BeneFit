@@ -21,7 +21,7 @@ export const Showcase: Story = {
       <Carousel>
         <Card title="Slide 1" className="min-h-[300px]">
           <div className="space-y-4">
-            <p className={typography.body}>
+            <p className={typography.p}>
               This is the first slide of the carousel. Use the arrow buttons or keyboard arrows to
               navigate.
             </p>
@@ -30,7 +30,7 @@ export const Showcase: Story = {
         </Card>
         <Card title="Slide 2" className="min-h-[300px]">
           <div className="space-y-4">
-            <p className={typography.body}>
+            <p className={typography.p}>
               The carousel automatically adjusts height based on content. This slide has different
               content.
             </p>
@@ -46,7 +46,7 @@ export const Showcase: Story = {
         </Card>
         <Card title="Slide 3" className="min-h-[300px]">
           <div className="space-y-4">
-            <p className={typography.body}>
+            <p className={typography.p}>
               The final slide. Notice the dot indicators and slide counter below.
             </p>
             <ul className="list-disc space-y-1 pl-5">
@@ -105,11 +105,13 @@ export const SingleSlide: Story = {
   render: () => (
     <div className="max-w-md">
       <Carousel>
-        <Card title="Only One Slide">
-          <p className={typography.body}>
-            When there&apos;s only one slide, navigation buttons and indicators don&apos;t appear.
-          </p>
-        </Card>
+        <div className="w-full">
+          <Card title="Only One Slide">
+            <p className={typography.p}>
+              When there&apos;s only one slide, navigation buttons and indicators don&apos;t appear.
+            </p>
+          </Card>
+        </div>
       </Carousel>
     </div>
   ),

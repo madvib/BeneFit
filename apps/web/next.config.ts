@@ -14,17 +14,7 @@ const nextConfig: NextConfig = {
 
     ],
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Exclude fixtures from client bundle (dev-only import)
-      config.resolve = config.resolve || {};
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@bene/react-api-client/fixtures': false,
-      };
-    }
-    return config;
-  },
+
 };
 
 export default nextConfig;

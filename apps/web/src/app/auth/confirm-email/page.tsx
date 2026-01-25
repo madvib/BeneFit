@@ -7,7 +7,6 @@ import { authClient } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 
-//TODO(UI) add to storybook
 
 export default function ConfirmEmailPage() {
   const searchParameters = useSearchParams();

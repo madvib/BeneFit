@@ -1,26 +1,22 @@
 import { Camera } from 'lucide-react';
 import { PROFILE_STATS_CONFIG } from '@/lib/constants/training-ui';
 import { CountUp, MetricCard, typography } from '@/lib/components';
+import { type UserProfile, type UserStats } from '@bene/react-api-client';
 
 interface ProfileSummaryProps {
-  name: string;
-  bio: string;
-  profilePicture?: string;
-  totalWorkouts: number;
-  currentStreak: number;
-  totalAchievements: number;
+  profile: UserProfile;
+  stats: UserStats;
   onEditPicture: () => void;
 }
 
 export default function ProfileSummary({
-  name,
-  bio,
-  profilePicture,
-  totalWorkouts,
-  currentStreak,
-  totalAchievements,
+  profile,
+  stats: userStats,
   onEditPicture,
 }: ProfileSummaryProps) {
+  const { displayName: name, avatar: profilePicture, bio } = profile;
+  const { totalWorkouts, currentStreak, achievements } = userStats;
+  const totalAchievements = achievements.length;
   // Use UI Avatars as a robust fallback if no profile picture is provided
   const avatarUrl =
     profilePicture && profilePicture !== '/default-avatar.png'

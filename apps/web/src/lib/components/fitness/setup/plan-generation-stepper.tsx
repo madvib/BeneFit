@@ -1,8 +1,9 @@
 'use client';
 
-import { Badge, Button, CategorizedEquipmentSelection, PrimaryGoalGrid, SecondaryGoalsList, Stepper, type StepperStep, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Target, Dumbbell, Calendar, ArrowRight, ArrowLeft } from 'lucide-react';
+import {PrimaryFitnessGoal, SecondaryFitnessGoal} from '@bene/react-api-client'
+import { Badge, Button, CategorizedEquipmentSelection, PrimaryGoalGrid, SecondaryGoalsList, Stepper, type StepperStep, typography } from '@/lib/components';
 import { useStepper } from '@/lib/hooks/use-stepper';
 
 
@@ -37,11 +38,11 @@ export function PlanGenerationStepper({
   onComplete,
   onSkip,
   isLoading = false,
-}: PlanGenerationStepperProps) {
+}: Readonly<PlanGenerationStepperProps>) {
   const { currentStepIndex, direction, isFirstStep, isLastStep, handleNext, handleBack } =
     useStepper(STEPS.length);
-  const [primaryGoal, setPrimaryGoal] = useState<string>('strength');
-  const [secondaryGoals, setSecondaryGoals] = useState<string[]>([]);
+  const [primaryGoal, setPrimaryGoal] = useState<PrimaryFitnessGoal>('strength');
+  const [secondaryGoals, setSecondaryGoals] = useState<SecondaryFitnessGoal[]>([]);
   const [equipment, setEquipment] = useState<string[]>([]);
   const [workoutsPerWeek, setWorkoutsPerWeek] = useState(3);
 

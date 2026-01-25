@@ -7,9 +7,15 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "preserve",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "exclude": [
@@ -33,7 +39,8 @@
     "src/**/*.js",
     "src/**/*.jsx",
     ".storybook/*.js",
-    ".storybook/*.ts"
+    ".storybook/*.ts",
+    ".storybook/*.tsx"
   ],
   "files": [
     "../../node_modules/@nx/react/typings/styled-jsx.d.ts",

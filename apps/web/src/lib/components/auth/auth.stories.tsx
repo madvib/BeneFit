@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { LoginForm } from './forms/login-form';
 import { AccountSettingsForm } from './forms/account-settings-form';
+import { SignupForm } from './forms/signup-form';
+import { PasswordResetForm } from './forms/password-reset-form';
+import { UpdatePasswordForm } from './forms/update-password-form';
+import { UserAccountMenu } from '../navigation/account/account-dropdown/account-dropdown';
+import { AuthCTA } from '../navigation/account/auth-cta';
+import { UIProvider } from '../../providers/ui-context';
+import { Carousel } from '../ui-primitives';
+import { typography } from '@/lib/components';
+
 
 export const AccountSettingsFormStory: StoryObj<typeof AccountSettingsForm> = {
   name: 'Account Settings Form',
@@ -19,14 +28,7 @@ export const AccountSettingsFormStory: StoryObj<typeof AccountSettingsForm> = {
   ),
 };
 
-import { SignupForm } from './forms/signup-form';
-import { PasswordResetForm } from './forms/password-reset-form';
-import { UpdatePasswordForm } from './forms/update-password-form';
-import { UserAccountMenu } from '../navigation/account/account-dropdown/account-dropdown';
-import { AuthCTA } from '../navigation/account/auth-cta';
-import { UIProvider } from '../../providers/ui-context';
-import { Carousel } from '../ui-primitives';
-import { typography } from '@/lib/components';
+
 
 const meta: Meta = {
   title: 'Components/Auth',

@@ -1,16 +1,13 @@
 'use client';
 
-import { Badge, IconBox, MetricCard, typography } from '@/lib/components';
 import { Clock, Zap, CheckCircle2, TrendingUp, Sparkles } from 'lucide-react';
-import type { DailyWorkout, Activity } from '@bene/shared';
+import type { DailyWorkout } from '@bene/react-api-client';
 import { getActivityTypeConfig } from '@/lib/constants/training-ui';
+import { Badge, IconBox, MetricCard, typography } from '@/lib/components';
 
-interface WorkoutSummaryProps {
-  workout?: DailyWorkout;
-}
+type Activity = DailyWorkout['activities'][number];
 
-export function WorkoutSummary({ workout }: WorkoutSummaryProps) {
-  if (!workout) return null;
+export function WorkoutSummary(workout: DailyWorkout) {
 
   return (
     <div className="space-y-6">
@@ -36,7 +33,7 @@ export function WorkoutSummary({ workout }: WorkoutSummaryProps) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <MetricCard
           label="Duration"
-          value={workout.durationMinutes}
+          value={workout.estimatedDuration}
           unit="min"
           icon={Clock}
           className="transition-shadow hover:shadow-md"
@@ -89,13 +86,13 @@ export function WorkoutSummary({ workout }: WorkoutSummaryProps) {
                 </div>
                 <div className="text-right">
                   <p className={`${typography.small} text-foreground font-bold`}>
-                    {activity.durationMinutes} min
+                    {activity.duration} min
                   </p>
                   <div className="bg-primary/20 h-1 w-12 overflow-hidden rounded-full">
                     <div
                       className="bg-primary h-full rounded-full"
                       style={{
-                        width: `${Math.min(100, (activity.durationMinutes / workout.durationMinutes) * 100)}%`,
+                        width: `${Math.min(100, (activity.duration ?? 0 / workout.estimatedDuration) * 100)}%`,
                       }}
                     />
                   </div>

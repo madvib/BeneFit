@@ -1,11 +1,11 @@
 'use client';
 
 import { Award, Flame, TrendingUp, Clock, Dumbbell, Zap } from 'lucide-react';
-import { profile } from '@bene/react-api-client';
+import { type UserStats } from '@bene/react-api-client';
 import { safeFormatDate } from '@/lib/utils';
 import { Card, CountUp, IconBox, MetricCard, SpotlightCard, typography } from '@/lib/components';
 
-export function StatisticsSection({ stats }: { stats: profile.GetUserStatsResponse }) {
+export function StatisticsSection({ stats }: { stats: UserStats }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -106,10 +106,10 @@ export function StatisticsSection({ stats }: { stats: profile.GetUserStatsRespon
 
             <div className="mt-6">
               <p className={`${typography.labelXs} mb-3 opacity-60`}>
-                Recent Achievements ({stats.achievements.length})
+                Recent Achievements ({stats.achievements?.length || 0})
               </p>
               <div className="flex flex-wrap gap-2">
-                {stats.achievements.slice(0, 3).map((achievement) => (
+                {stats.achievements?.slice(0, 3).map((achievement) => (
                   <div
                     key={achievement.id}
                     className="bg-accent/50 border-muted hover:bg-accent flex items-center gap-2 rounded-xl border px-3 py-2 transition-colors"
@@ -120,12 +120,12 @@ export function StatisticsSection({ stats }: { stats: profile.GetUserStatsRespon
                     <p className={`${typography.small} font-bold`}>{achievement.name}</p>
                   </div>
                 ))}
-                {stats.achievements.length > 3 && (
+                {(stats.achievements?.length || 0) > 3 && (
                   <div className="bg-muted flex items-center justify-center rounded-xl border border-dashed px-3 py-2">
-                    <p className={typography.small}>+{stats.achievements.length - 3} more</p>
+                    <p className={typography.small}>+{(stats.achievements?.length || 0) - 3} more</p>
                   </div>
                 )}
-                {stats.achievements.length === 0 && (
+                {(!stats.achievements || stats.achievements.length === 0) && (
                   <p className={`${typography.muted} italic`}>Keep training to earn awards!</p>
                 )}
               </div>

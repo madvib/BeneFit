@@ -26,3 +26,8 @@ export { integrationHandlers } from './integration-handlers.js';
 
 // Re-export scenarios
 export * from './coach-handlers.js';
+export * from './explore-handlers.js';
+export * from './fitness-plan-handlers.js';
+export * from './profile-handlers.js';
+export * from './workout-handlers.js';
+export * from './integration-handlers.js';

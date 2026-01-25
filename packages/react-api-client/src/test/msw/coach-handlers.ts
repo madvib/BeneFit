@@ -1,3 +1,4 @@
+
 import { http, HttpResponse, delay } from 'msw';
 import {
   buildGetCoachHistoryResponse,
@@ -5,21 +6,22 @@ import {
   buildGenerateWeeklySummaryResponse,
   buildDismissCheckInResponse,
   buildRespondToCheckInResponse,
-  buildTriggerProactiveCheckInResponseRaw,
+  buildTriggerProactiveCheckInResponse,
 } from '../../fixtures/coach.js';
 import { toHttpResponse } from './utils.js';
 
 /**
  * Default coach MSW handlers
  */
+// Update handlers to be resilient to base URL variations
 export const coachHandlers = [
-  http.get('http://*/api/coach/history', async () => {
+  http.get('*/api/coach/history', async () => {
     await delay(100);
     const data = buildGetCoachHistoryResponse(undefined, { seed: 100 });
     return toHttpResponse(data);
   }),
 
-  http.post('http://*/api/coach/message', async ({ request }) => {
+  http.post('*/api/coach/message', async ({ request }) => {
     await delay(300);
     const body = await request.json() as { message: string };
     const data = buildSendMessageToCoachResponse({
@@ -31,25 +33,25 @@ export const coachHandlers = [
     return toHttpResponse(data);
   }),
 
-  http.post('http://*/api/coach/check-in/trigger', async () => {
+  http.post('*/api/coach/check-in/trigger', async () => {
     await delay(200);
-    const result = buildTriggerProactiveCheckInResponseRaw({}, { temperature: 0.1 });
+    const result = buildTriggerProactiveCheckInResponse();
     return toHttpResponse(result);
   }),
 
-  http.post('http://*/api/coach/check-in/respond', async () => {
+  http.post('*/api/coach/check-in/respond', async () => {
     await delay(250);
     const data = buildRespondToCheckInResponse();
     return toHttpResponse(data);
   }),
 
-  http.post('http://*/api/coach/check-in/dismiss', async () => {
+  http.post('*/api/coach/check-in/dismiss', async () => {
     await delay(150);
     const data = buildDismissCheckInResponse();
     return toHttpResponse(data);
   }),
 
-  http.post('http://*/api/coach/summary', async () => {
+  http.post('*/api/coach/summary', async () => {
     await delay(500);
     const data = buildGenerateWeeklySummaryResponse();
     return toHttpResponse(data);
@@ -61,17 +63,19 @@ export const coachHandlers = [
  */
 export const coachScenarios = {
   emptyHistory: [
-    http.get('http://*/api/coach/history', () => {
-      return HttpResponse.json({
+    http.get('*/api/coach/history', () => {
+      // Return empty stats and empty lists directly
+      // Or use fixture with success=false or overrides
+      return toHttpResponse({
         messages: [],
         pendingCheckIns: [],
-        stats: { totalMessages: 0, totalCheckIns: 0, actionsApplied: 0 },
+        stats: { totalMessages: 0, totalCheckIns: 0, actionsApplied: 0 }
       });
     }),
   ],
 
   withPendingCheckIn: [
-    http.get('http://*/api/coach/history', () => {
+    http.get('*/api/coach/history', () => {
       const data = buildGetCoachHistoryResponse({
         overrides: {
           pendingCheckIns: [
@@ -82,29 +86,30 @@ export const coachScenarios = {
               status: 'pending',
               type: 'proactive',
               createdAt: new Date().toISOString(),
+              actions: [],
             },
           ],
         },
       });
-      return HttpResponse.json(data);
+      return toHttpResponse(data);
     }),
   ],
 
   withMessages: [
-    http.get('http://*/api/coach/history', () => {
+    http.get('*/api/coach/history', () => {
       const data = buildGetCoachHistoryResponse(undefined, { seed: 300 });
-      return HttpResponse.json(data);
+      return toHttpResponse(data);
     }),
   ],
 
   networkError: [
-    http.get('http://*/api/coach/history', () => {
+    http.get('*/api/coach/history', () => {
       return HttpResponse.error();
     }),
   ],
 
   serverError: [
-    http.get('http://*/api/coach/history', () => {
+    http.get('*/api/coach/history', () => {
       return HttpResponse.json(
         { error: 'Internal server error' },
         { status: 500 }
@@ -113,14 +118,14 @@ export const coachScenarios = {
   ],
 
   slowResponse: [
-    http.get('http://*/api/coach/history', async () => {
+    http.get('*/api/coach/history', async () => {
       await delay(3000);
-      return HttpResponse.json(buildGetCoachHistoryResponse());
+      return toHttpResponse(buildGetCoachHistoryResponse());
     }),
   ],
 
   messageSendFails: [
-    http.post('http://*/api/coach/message', () => {
+    http.post('*/api/coach/message', () => {
       return HttpResponse.json(
         { error: 'Failed to send message' },
         { status: 400 }

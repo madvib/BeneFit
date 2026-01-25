@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { AlertCircle, PauseCircle } from 'lucide-react';
-import { fitnessPlan, workouts } from '@bene/react-api-client';
+import { useActivePlan, useUpcomingWorkouts, useGeneratePlan, useActivatePlan, usePausePlan, GeneratePlanRequest, ActivatePlanRequest } from '@bene/react-api-client';
 import {
   LoadingSpinner,
   ErrorPage,
@@ -23,12 +23,12 @@ import {
 import { ROUTES } from '@/lib/constants';
 
 export default function PlanClient() {
-  const activePlanQuery = fitnessPlan.useActivePlan();
-  const upcomingWorkoutsQuery = workouts.useUpcomingWorkouts({ query: {} });
+  const activePlanQuery = useActivePlan();
+  const upcomingWorkoutsQuery = useUpcomingWorkouts({ query: {} });
 
-  const generatePlanMutation = fitnessPlan.useGeneratePlan();
-  const activatePlanMutation = fitnessPlan.useActivatePlan();
-  const pausePlanMutation = fitnessPlan.usePausePlan();
+  const generatePlanMutation = useGeneratePlan();
+  const activatePlanMutation = useActivatePlan();
+  const pausePlanMutation = usePausePlan();
 
   const activePlanData = activePlanQuery.data;
   const isLoading = activePlanQuery.isLoading || upcomingWorkoutsQuery.isLoading;
@@ -45,15 +45,21 @@ export default function PlanClient() {
   // Sync selected week with current week when plan loads
   React.useEffect(() => {
     if (activePlanData?.plan?.currentWeek) {
-      setSelectedWeek(activePlanData.plan.currentWeek);
+      // Defensive check for potential object return from fixture
+      const currentWeek = activePlanData.plan.currentWeek;
+      const weekNumber = typeof currentWeek === 'object' 
+        ? (currentWeek as any).weekNumber || 1 
+        : Number(currentWeek);
+        
+      setSelectedWeek(weekNumber);
     }
   }, [activePlanData?.plan?.currentWeek]);
 
-  const handleGeneratePlan = async (request: fitnessPlan.GeneratePlanRequest) => {
+  const handleGeneratePlan = async (request: GeneratePlanRequest) => {
     await generatePlanMutation.mutateAsync(request);
   };
 
-  const handleActivatePlan = async (request: fitnessPlan.ActivatePlanRequest) => {
+  const handleActivatePlan = async (request: ActivatePlanRequest) => {
     await activatePlanMutation.mutateAsync(request);
     // Reset the generated plan by resetting the mutation
     generatePlanMutation.reset();
@@ -103,7 +109,7 @@ export default function PlanClient() {
     );
   }
 
-  if (!activePlanData?.hasPlan || !activePlanData.plan || showNewProgramFlow) {
+  if (!activePlanData?.plan || showNewProgramFlow) {
     return (
       <PlanOnboarding
         onGenerate={handleGeneratePlan}

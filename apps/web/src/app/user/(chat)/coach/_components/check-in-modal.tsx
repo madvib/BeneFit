@@ -3,7 +3,7 @@
 import { Badge, Button, IconBox, Modal, typography, useAppForm } from '@/lib/components';
 import { MessageSquare, Sparkles } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
-import { CheckInFormSchema } from '@bene/shared';
+import { coachSchemas } from '@bene/react-api-client';
 
 // TODO use domain schema for this?
 interface CheckIn {
@@ -26,13 +26,13 @@ export default function CheckInModal({
   onRespond,
   onDismiss,
   isLoading,
-}: CheckInModalProps) {
+}: Readonly<CheckInModalProps>) {
   const form = useAppForm({
     defaultValues: {
       response: '',
     },
     validators: {
-      onDynamic: CheckInFormSchema,
+      onDynamic: coachSchemas.CheckInFormSchema,
     },
     validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {

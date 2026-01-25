@@ -1,11 +1,11 @@
 'use client';
 
 import { Button, Card, DateDisplay, GarminLogo, StravaLogo, typography } from '@/lib/components';
-import { integrations } from '@bene/react-api-client';
+import { ConnectedService } from '@bene/react-api-client';
 import { CheckCircle2, RefreshCw, X, ArrowRight } from 'lucide-react';
 
 interface ServiceCardProps {
-  service: integrations.ConnectedService;
+  service: ConnectedService;
   onDisconnect: (_id: string) => void;
   onSync: (_id: string) => void;
   isSyncing: boolean;

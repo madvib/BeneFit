@@ -13,10 +13,10 @@ import {
   Layers,
   type LucideIcon,
 } from 'lucide-react';
-import type { WorkoutTemplate, Exercise } from '@bene/shared';
+import type { FitnessPlanWorkout as Workout, Exercise } from '@bene/react-api-client';
 
 interface WorkoutDetailSheetProps {
-  readonly workout: WorkoutTemplate | null;
+  readonly workout: Workout | null;
   readonly open: boolean;
   readonly onOpenChange: (_open: boolean) => void;
 }
@@ -52,7 +52,7 @@ export function WorkoutDetailSheet({
 
 // --- Sub-components ---
 
-function HeaderBadges({ workout }: { readonly workout: WorkoutTemplate }) {
+function HeaderBadges({ workout }: { readonly workout: Workout }) {
   const importanceStyle = ((importance) => {
     switch (importance) {
       case 'critical':
@@ -78,7 +78,7 @@ function HeaderBadges({ workout }: { readonly workout: WorkoutTemplate }) {
   );
 }
 
-function GoalsSection({ goals }: { readonly goals: WorkoutTemplate['goals'] }) {
+function GoalsSection({ goals }: { readonly goals: Workout['goals'] }) {
   if (!goals) return null;
 
   return (
@@ -125,7 +125,7 @@ function GoalCard({
   );
 }
 
-function ActivitiesSection({ activities }: { readonly activities: WorkoutTemplate['activities'] }) {
+function ActivitiesSection({ activities }: { readonly activities: Workout['activities'] }) {
   return (
     <div className="space-y-6">
       <SectionHeader icon={Layers} label="Workout Structure" />
@@ -138,7 +138,7 @@ function ActivitiesSection({ activities }: { readonly activities: WorkoutTemplat
   );
 }
 
-function ActivityCard({ activity }: { readonly activity: WorkoutTemplate['activities'][number] }) {
+function ActivityCard({ activity }: { readonly activity: Workout['activities'][number] }) {
   return (
     <Card className="border-border/40 overflow-hidden shadow-sm">
       <div className="bg-muted/30 border-border/40 flex items-center justify-between border-b px-5 py-3">
@@ -195,7 +195,7 @@ function ExerciseRow({ exercise }: { readonly exercise: Exercise }) {
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <ExerciseMetric icon={Dumbbell} label={`${exercise.sets} × ${exercise.reps}`} />
         {exercise.weight && <ExerciseMetric type="dot" label={`${exercise.weight}kg`} />}
-        {exercise.rest && <ExerciseMetric type="dot" label={`${exercise.rest}s`} />}
+        {!!(exercise.rest) && <ExerciseMetric type="dot" label={`${exercise.rest}s`} />}
       </div>
       {exercise.notes && (
         <div className="text-muted-foreground mt-2 flex items-start gap-2">
@@ -254,7 +254,7 @@ function CoachNotes({ notes }: { readonly notes?: string }) {
 function AlternativesSection({
   alternatives,
 }: {
-  readonly alternatives?: WorkoutTemplate['alternatives'];
+  readonly alternatives?: Workout['alternatives'];
 }) {
   if (!alternatives?.length) return null;
   return (
@@ -286,7 +286,7 @@ function AlternativesSection({
   );
 }
 
-function CompletionFooter({ status }: { readonly status: WorkoutTemplate['status'] }) {
+function CompletionFooter({ status }: { readonly status: Workout['status'] }) {
   if (status !== 'completed') return null;
   return (
     <div className="-mx-8 -mb-8 flex items-center justify-center gap-3 rounded-b-[32px] bg-emerald-500 p-4 text-white sm:-mx-10 sm:-mb-10">

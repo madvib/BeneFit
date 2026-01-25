@@ -1,22 +1,19 @@
-import { FITNESS_GOALS, SECONDARY_GOAL_CATEGORIES } from '@bene/shared';
-import { GOAL_UI_CONFIG, SECONDARY_GOAL_LABELS } from '@/lib/constants/training-ui';
+import { type SecondaryFitnessGoal, type PrimaryFitnessGoal } from '@bene/react-api-client';
+import { GOAL_UI_CONFIG, SECONDARY_GOAL_LABELS, CATEGORIZED_SECONDARY_GOALS } from '@/lib/constants/training-ui';
 import { typography } from '@/lib/components';
 
-// Backward compatibility exports if needed, but components should use config directly
-export const GOAL_METADATA = GOAL_UI_CONFIG;
-export { SECONDARY_GOAL_LABELS };
 
 interface GoalGridProps {
-  selected: string;
-  onChange: (_value: string) => void;
+  selected: PrimaryFitnessGoal;
+  onChange: (_value: PrimaryFitnessGoal) => void;
   isLoading?: boolean;
 }
 
-export function PrimaryGoalGrid({ selected, onChange, isLoading }: GoalGridProps) {
+export function PrimaryGoalGrid({ selected, onChange, isLoading }: Readonly<GoalGridProps>) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {FITNESS_GOALS.map((goalValue) => {
-        const meta = GOAL_METADATA[goalValue];
+      {(Object.keys(GOAL_UI_CONFIG) as PrimaryFitnessGoal[]).map((goalValue) => {
+        const meta = GOAL_UI_CONFIG[goalValue];
         if (!meta) return null;
         const Icon = meta.icon;
         const isSelected = selected === goalValue;
@@ -54,36 +51,30 @@ export function PrimaryGoalGrid({ selected, onChange, isLoading }: GoalGridProps
 }
 
 interface SecondaryGoalsProps {
-  selected: string[];
-  onChange: (_value: string[]) => void;
+  selected: SecondaryFitnessGoal[];
+  onChange: (_value: SecondaryFitnessGoal[]) => void;
   isLoading?: boolean;
 }
 
-export function SecondaryGoalsList({ selected, onChange, isLoading }: SecondaryGoalsProps) {
-  const toggleGoal = (val: string) => {
+export function SecondaryGoalsList({ selected, onChange, isLoading }: Readonly<SecondaryGoalsProps>) {
+  const toggleGoal = (val: SecondaryFitnessGoal) => {
     const newValues = selected.includes(val)
       ? selected.filter((v) => v !== val)
       : [...selected, val];
     onChange(newValues);
   };
 
-  const formatLabel = (val: string) => {
-    return (
-      SECONDARY_GOAL_LABELS[val] ||
-      val
-        .split('_')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ')
-    );
+  const formatLabel = (val: SecondaryFitnessGoal) => {
+    return SECONDARY_GOAL_LABELS[val];
   };
 
   return (
     <div className="space-y-6">
-      {Object.entries(SECONDARY_GOAL_CATEGORIES).map(([category, goals]) => (
+      {CATEGORIZED_SECONDARY_GOALS.map(({ category, goals }) => (
         <div key={category} className="space-y-3">
           <h4 className={`${typography.labelSm} text-muted-foreground`}>{category}</h4>
           <div className="flex flex-wrap gap-2">
-            {goals.map((goalValue) => (
+            {(goals as readonly SecondaryFitnessGoal[]).map((goalValue) => (
               <button
                 key={goalValue}
                 type="button"

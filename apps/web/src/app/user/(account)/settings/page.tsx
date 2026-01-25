@@ -1,7 +1,7 @@
 'use client';
 
 import { AccountSettingsForm, ErrorPage, FitnessGoalsForm, FitnessPreferences, LoadingSpinner, PageHeader, SectionHeader, TrainingConstraintsForm } from '@/lib/components';
-import { profile, authClient } from '@bene/react-api-client';
+import { useUpdatePreferences, useUpdateGoals, useUpdateConstraints, useProfile, GetProfileResponse, authClient } from '@bene/react-api-client';
 import {
   NotificationPreferences,
   PrivacySettings,
@@ -11,11 +11,11 @@ import { ROUTES } from '@/lib/constants';
 function SettingsContent({
   userProfile,
 }: {
-  userProfile: NonNullable<profile.GetProfileResponse>;
+  userProfile: NonNullable<GetProfileResponse>;
 }) {
-  const updatePreferencesMutation = profile.useUpdatePreferences();
-  const updateGoalsMutation = profile.useUpdateGoals();
-  const updateConstraintsMutation = profile.useUpdateConstraints();
+  const updatePreferencesMutation = useUpdatePreferences();
+  const updateGoalsMutation = useUpdateGoals();
+  const updateConstraintsMutation = useUpdateConstraints();
   const { data: session } = authClient.useSession();
 
   const preferences = userProfile.preferences;
@@ -164,7 +164,7 @@ function SettingsContent({
 }
 
 export default function SettingsClient() {
-  const profileQuery = profile.useProfile();
+  const profileQuery = useProfile();
 
   if (profileQuery.isLoading) {
     return <LoadingSpinner text="Loading settings..." variant="screen" />;

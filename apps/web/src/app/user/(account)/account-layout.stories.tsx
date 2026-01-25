@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fixtures } from '@bene/react-api-client';
+import { profileScenarios, integrationScenarios } from '@bene/react-api-client/test';
+import { useProfile, useConnectedServices, useUserStats } from '@bene/react-api-client';
 import ConnectionsView from './connections/connections-view';
 import BillingPage from './billing/page'; 
 import ProfileView from './profile/profile-view';
@@ -7,13 +8,8 @@ import SettingsClient from './settings/page';
 import NotificationsPage from './notifications/page';
 import { AccountHeader, AccountSidebar, OAuthProviderList, PageContainer, PageHeader, PersonalInfoForm, SecurityForm, SessionInfo } from '@/lib/components';
 
-// Generate consistent fixtures with seeds
-const mockUserProfile = fixtures.createGetProfileResponse(undefined, { seed: 200 });
-const mockUserStats = fixtures.createGetUserStatsResponse(undefined, { seed: 201 });
-const mockConnectedServices = fixtures.createGetConnectedServicesResponse(undefined, { seed: 202 });
-
 // Mock AccountLayout
-function AccountLayoutMock({ children }: { children: React.ReactNode }) {
+function AccountLayoutMock({ children }: Readonly<{ children: React.ReactNode }>) {
   // Use padding-top to account for fixed header using the CSS variable
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -43,10 +39,16 @@ function AccountLayoutMock({ children }: { children: React.ReactNode }) {
 }
 
 const meta: Meta = {
-  title: 'Features/Account', // Simplified title as requested
+  title: 'Features/Account', 
   component: AccountLayoutMock,
   parameters: {
     layout: 'fullscreen',
+    msw: {
+      handlers: [
+        ...profileScenarios.default,
+        ...integrationScenarios.default,
+      ],
+    },
   },
   decorators: []
 };
@@ -101,44 +103,99 @@ export const Billing: StoryObj = {
 };
 
 export const Connections: StoryObj = {
-    parameters: {
-      nextjs: {
-          appDirectory: true,
-          navigation: {
-              pathname: '/user/connections',
-          },
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/user/connections',
       },
+    },
   },
-  render: () => (
-    <AccountLayoutMock>
+  render: () => {
+    const { data } = useConnectedServices();
+    return (
+      <AccountLayoutMock>
         <div className="max-w-4xl">
-            <ConnectionsView
-                connectedServices={mockConnectedServices.services}
-                onDisconnect={async () => {}}
-                onSync={async () => {}}
-                syncingServiceId={null}
-            />
+          <ConnectionsView
+            connectedServices={data?.services ?? []}
+            onDisconnect={async () => {}}
+            onSync={async () => {}}
+            syncingServiceId={null}
+          />
         </div>
-    </AccountLayoutMock>
-  ),
+      </AccountLayoutMock>
+    );
+  },
+};
+
+export const ConnectionsEmpty: StoryObj = {
+  name: 'Connections (Empty)',
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/user/connections',
+      },
+    },
+    msw: {
+      handlers: [
+        ...integrationScenarios.empty,
+      ],
+    },
+  },
+  render: () => {
+    const { data } = useConnectedServices();
+    return (
+      <AccountLayoutMock>
+        <div className="max-w-4xl">
+          <ConnectionsView
+            connectedServices={data?.services ?? []}
+            onDisconnect={async () => {}}
+            onSync={async () => {}}
+            syncingServiceId={null}
+          />
+        </div>
+      </AccountLayoutMock>
+    );
+  },
 };
 
 export const Profile: StoryObj = {
-    parameters: {
-      nextjs: {
-          appDirectory: true,
-          navigation: {
-              pathname: '/user/profile',
-          },
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/user/profile',
       },
+    },
   },
-  render: () => (
-    <AccountLayoutMock>
+  render: () => {
+    const profileQuery = useProfile();
+    const statsQuery = useUserStats();
+
+    if (!profileQuery.data || !statsQuery.data) return <div>Loading profile...</div>;
+
+    return (
+      <AccountLayoutMock>
         <div className="max-w-4xl">
-            <ProfileView userProfile={mockUserProfile} userStats={mockUserStats} />
+          <ProfileView userProfile={profileQuery.data} userStats={statsQuery.data} />
         </div>
-    </AccountLayoutMock>
-  ),
+      </AccountLayoutMock>
+    );
+  },
+};
+
+export const ProfileFailure: StoryObj = {
+    name: 'Profile (Load Failure)',
+    render: () => (
+        <AccountLayoutMock>
+            <div className="max-w-4xl">
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
+                    Failed to load profile data. Please try again later.
+                </div>
+            </div>
+        </AccountLayoutMock>
+    ),
 };
 
 export const Settings: StoryObj = {

@@ -2,7 +2,7 @@
 
 import { Badge, IconBox, typography } from '@/lib/components';
 import { Dumbbell, Info } from 'lucide-react';
-import type { Exercise } from '@bene/shared';
+import type { Exercise } from '@bene/react-api-client';
 import {SetTracker} from './set-tracker';
 
 interface SetPerformanceData {

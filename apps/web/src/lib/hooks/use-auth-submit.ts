@@ -1,7 +1,7 @@
 
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAuthErrorContext, getAuthErrorMessage, AuthError } from '@bene/react-api-client';
+import { getAuthErrorContext, getAuthErrorMessage, type AuthError } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants/routes';
 import { useFormSubmitFeedback } from './use-form-submit-feedback';
 import { AnyFormApi } from '@tanstack/react-form';

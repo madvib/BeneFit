@@ -4,17 +4,17 @@ import { onboardingFormOpts } from './form-options';
 import { Label, typography, withForm } from '@/lib/components';
 
 // Use indexed access type directly in component props
-// type Equipment = (typeof EQUIPMENT_OPTIONS)[number];
+type Equipment = (typeof EQUIPMENT_OPTIONS)[number];
 
 function EquipmentButton({
   equipment,
   selectedValues,
   onChange,
-}: {
-  equipment: (typeof EQUIPMENT_OPTIONS)[number];
-  selectedValues: (typeof EQUIPMENT_OPTIONS)[number][];
-  onChange: (_val: (typeof EQUIPMENT_OPTIONS)[number][]) => void;
-}) {
+}: Readonly<{
+  equipment: Equipment;
+  selectedValues: Equipment[];
+  onChange: (_val: Equipment[]) => void;
+}>) {
   const isSelected = selectedValues.includes(equipment);
 
   const handleClick = () => {

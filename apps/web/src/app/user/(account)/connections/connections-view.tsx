@@ -1,14 +1,14 @@
 'use client';
 
 import { EmptyState, OAuthButton, PageHeader, typography } from '@/lib/components';
-import { integrations } from '@bene/react-api-client';
+import { ConnectedService } from '@bene/react-api-client';
 import { Share2, CheckCircle } from 'lucide-react';
 import { ServiceCard } from './_components';
 
 import { AVAILABLE_SERVICES } from '@/lib/constants/services';
 
 interface ConnectionsViewProps {
-  connectedServices: integrations.ConnectedService[];
+  connectedServices: ConnectedService[];
   onDisconnect: (_id: string) => Promise<void>;
   onSync: (_serviceId: string) => Promise<void>;
   syncingServiceId: string | null;
@@ -34,7 +34,7 @@ export default function ConnectionsView({
       />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Connected Services - Left Column (Larger) */}
+        {/* Connected Services - Left Column (Larger) */}s
         <div className="space-y-4 lg:col-span-2">
           <h3 className={typography.h3}>Connected Services</h3>
           <div className="flex flex-col gap-4">

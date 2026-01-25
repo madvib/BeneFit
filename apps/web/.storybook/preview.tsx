@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../src/lib/components/theme/theme-provider';
 import { UIProvider } from '../src/lib/providers/ui-context';
 import { initialize, mswLoader } from 'msw-storybook-addon';
-import { handlers } from '@bene/react-api-client/src/test';
+import { handlers } from '@bene/react-api-client/test';
 import '../src/app/globals.css';
 
 // Initialize MSW with default handlers for all stories

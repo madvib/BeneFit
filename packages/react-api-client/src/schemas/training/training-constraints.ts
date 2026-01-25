@@ -16,4 +16,4 @@ export const UpdateTrainingConstraintsFormSchema = z.object({
   })).optional(),
 });
 
-export type UpdateTrainingConstraintsFormValues = z.infer<typeof UpdateTrainingConstraintsFormSchema>;
+export type UpdateTrainingConstraintsFormValues = z.input<typeof UpdateTrainingConstraintsFormSchema>;

@@ -13,33 +13,64 @@ export function toHttpResponse<T>(data: T | Result<T>): HttpResponse<any> {
     return HttpResponse.json(data as any);
   }
 
-  // Strict check for Result-like structure
-  // Must have isSuccess/isFailure as OWN properties or getters, AND either .serialize method or .value property
-  const hasSuccess = 'isSuccess' in data;
-  const hasFailure = 'isFailure' in data;
+  // Robust check for Result-like structure
+  // It might be a class instance or a serialized object
+  const asAny = data as any;
+  const isSuccess = asAny.isSuccess === true;
+  const isFailure = asAny.isFailure === true;
 
-  if (hasSuccess && hasFailure) {
-    // If it's a Result class instance, it has a .serialize() method
-    const isInstance = typeof (data as any).serialize === 'function';
-    const serialized = isInstance ? (data as any).serialize() : data as any;
-
-    // Check if it's explicitly a failure
-    if (serialized.isFailure === true) {
-      const error = serialized.errorMessage || 'Unknown error';
-      return HttpResponse.json(
-        { error },
-        { status: 400 }
-      );
-    }
-
-    // Check if it's explicitly a success with a value
-    if (serialized.isSuccess === true && 'value' in serialized) {
-      return HttpResponse.json(serialized.value);
-    }
+  // If we can't determine it's a result, return as is
+  if (!isSuccess && !isFailure) {
+    return HttpResponse.json(data as any);
   }
 
-  // Not a Result, or success without 'value' field (not a standard handled Result)
-  // Just return as JSON
+  // Handle Result instance or serialized structure
+  if (isFailure) {
+    // Try to get error message from .error, .errorMessage or serialized structure
+    let errorMessage = 'Unknown error';
+
+    if (typeof asAny.serialize === 'function') {
+      const serialized = asAny.serialize();
+      errorMessage = serialized.errorMessage || errorMessage;
+    } else if (asAny.errorMessage) {
+      errorMessage = asAny.errorMessage;
+    } else if (asAny.error) {
+      // If error is an object/array, we might want to flatten it or just stringify
+      errorMessage = Array.isArray(asAny.error)
+        ? asAny.error.map((e: any) => e.message || String(e)).join(', ')
+        : (asAny.error.message || String(asAny.error));
+    }
+
+    return HttpResponse.json(
+      { error: errorMessage },
+      { status: 400 }
+    );
+  }
+
+  // Handle Success
+  if (isSuccess) {
+    // If it's a class instance, it might have a getter for value
+    // Or if it's serialized, it acts as a plain object
+
+    // 1. Try .value getter/property (Result class usually has this)
+    if ('value' in asAny) {
+      return HttpResponse.json(asAny.value);
+    }
+
+    // 2. Try .serialize().value
+    if (typeof asAny.serialize === 'function') {
+      const serialized = asAny.serialize();
+      if ('value' in serialized) {
+        return HttpResponse.json(serialized.value);
+      }
+    }
+
+    // 3. Fallback: if it's success but we can't find value, maybe it's void?
+    // Return empty object or null?
+    // If original data WAS the value but happened to have isSuccess=true property? Unlikely.
+    return HttpResponse.json(null);
+  }
+
   return HttpResponse.json(data as any);
 }
 

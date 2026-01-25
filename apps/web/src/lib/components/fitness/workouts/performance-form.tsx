@@ -2,7 +2,7 @@
 
 import { Share2, ThumbsUp, PenLine, Heart } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
-import type { DailyWorkout } from '@bene/shared';
+import type { DailyWorkout } from '@bene/react-api-client';
 import { Button, RPEPicker, typography, useAppForm } from '@/lib/components';
 
 export interface PerformanceFormData {
@@ -26,7 +26,7 @@ export function PerformanceForm({ workout, onSubmit, isLoading }: Readonly<Perfo
     defaultValues: {
       performance: {
         perceivedExertion: 5,
-        durationMinutes: workout?.durationMinutes || 30,
+        durationMinutes: workout?.estimatedDuration || 30,
         notes: '',
       },
       shareToFeed: true,

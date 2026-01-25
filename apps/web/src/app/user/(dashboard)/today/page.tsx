@@ -1,14 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { workouts, profile } from '@bene/react-api-client';
+import { useTodaysWorkout, useStartWorkout, useSkipWorkout, useProfile } from '@bene/react-api-client';
 import TodayView from './_components/today-view';
 
 export default function TodaysWorkoutPage() {
-  const todaysWorkoutQuery = workouts.useTodaysWorkout();
-  const profileQuery = profile.useProfile();
-  const startWorkoutMutation = workouts.useStartWorkout();
-  const skipWorkoutMutation = workouts.useSkipWorkout();
+  const todaysWorkoutQuery = useTodaysWorkout();
+  const profileQuery = useProfile();
+  const startWorkoutMutation = useStartWorkout();
+  const skipWorkoutMutation = useSkipWorkout();
 
   const todaysWorkoutData = todaysWorkoutQuery.data;
   // TODO: Fix type mismatch. API returns `workout` but UI expects `workoutId`.
@@ -32,21 +32,21 @@ export default function TodaysWorkoutPage() {
   const router = useRouter();
 
   const handleStartWorkout = async () => {
-    if (todaysWorkout?.workoutId && userProfile) {
+    if (todaysWorkout?.id && userProfile) {
       await startWorkoutMutation.mutateAsync({
-        param: { sessionId: todaysWorkout.workoutId },
+        param: { sessionId: todaysWorkout.id },
         json: {},
       });
-      router.push(`/user/workout/${todaysWorkout.workoutId}`);
+      router.push(`/user/workout/${todaysWorkout.id}`);
     }
   };
 
   const handleSkipWorkout = async (reason: string) => {
-    if (todaysWorkout?.workoutId) {
+    if (todaysWorkout?.id) {
       await skipWorkoutMutation.mutateAsync({
         json: {
           planId: todaysWorkout.planId,
-          workoutId: todaysWorkout.workoutId,
+          workoutId: todaysWorkout.id,
           reason,
         },
       });

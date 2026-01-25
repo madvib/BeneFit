@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronRight, Trophy } from 'lucide-react';
-import type { WorkoutSession } from '@bene/shared';
+import type { WorkoutSession } from '@bene/react-api-client';
 import { Button, typography } from '@/lib/components';
 import {SessionHeader} from './_components/session-header';
 import {ActivityPhase }from './_components/activity-phase';
@@ -91,8 +91,7 @@ export default function SessionView({ session, onComplete, onAbort }: Readonly<S
   return (
     <div className="bg-background min-h-screen pb-40">
       <SessionHeader
-        title={session.workoutType}
-        workoutType="Performance"
+        session={session}
         elapsedSeconds={elapsedSeconds}
         currentStep={completedActivities.length}
         totalSteps={totalPhases}

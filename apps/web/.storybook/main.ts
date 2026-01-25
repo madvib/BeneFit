@@ -5,11 +5,12 @@ import type { StorybookConfig } from '@storybook/nextjs-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
-  addons: ['@storybook/addon-themes'],
+  addons: ['@storybook/addon-themes', '@storybook/addon-essentials', 'msw-storybook-addon'],
   framework: {
     name: getAbsolutePath('@storybook/nextjs-vite'),
     options: {},
   },
+  staticDirs: ['../public']
 };
 
 function getAbsolutePath(value: string): string {

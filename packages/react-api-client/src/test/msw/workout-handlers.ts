@@ -11,44 +11,74 @@ import {
 } from '../../fixtures/training.js';
 import { toHttpResponse } from './utils.js';
 
+// Update handlers to be resilient to base URL variations
 export const workoutHandlers = [
-  http.get('http://*/api/workouts/today', async () => {
+  http.get('*/api/workouts/today', async () => {
     await delay(100);
     return toHttpResponse(buildGetTodaysWorkoutResponse());
   }),
 
-  http.get('http://*/api/workouts/upcoming', async () => {
-    await delay(150);
+  http.get('*/api/workouts/upcoming', async () => {
+    await delay(100);
     return toHttpResponse(buildGetUpcomingWorkoutsResponse());
   }),
 
-  http.get('http://*/api/workouts/history', async () => {
-    await delay(200);
+  http.get('*/api/workouts/history', async () => {
+    await delay(100);
     return toHttpResponse(buildGetWorkoutHistoryResponse());
   }),
 
-  http.post('http://*/api/workouts/skip', async () => {
-    await delay(100);
+  http.post('*/api/workouts/skip', async () => {
+    await delay(200);
     return toHttpResponse(buildSkipWorkoutResponse());
   }),
 
-  http.post('http://*/api/workouts/:sessionId/start', async () => {
+  http.post('*/api/workouts/:sessionId/start', async () => {
     await delay(200);
     return toHttpResponse(buildStartWorkoutResponse());
   }),
 
-  http.post('http://*/api/workouts/:sessionId/complete', async () => {
-    await delay(300);
+  http.post('*/api/workouts/:sessionId/complete', async () => {
+    await delay(400);
     return toHttpResponse(buildCompleteWorkoutResponse());
   }),
 
-  http.post('http://*/api/workouts/:sessionId/join', async () => {
-    await delay(250);
+  http.post('*/api/workouts/:sessionId/join', async () => {
+    await delay(300);
     return toHttpResponse(buildJoinMultiplayerWorkoutResponse());
   }),
 
-  http.post('http://*/api/workouts/:sessionId/reaction', async () => {
-    await delay(50);
+  http.post('*/api/workouts/:sessionId/reaction', async () => {
+    await delay(100);
     return toHttpResponse(buildAddWorkoutReactionResponse());
   }),
 ];
+
+export const workoutScenarios = {
+  default: workoutHandlers,
+
+  loading: [
+    http.get('*/api/workouts/today', async () => {
+      await delay('infinite');
+      return toHttpResponse(buildGetTodaysWorkoutResponse());
+    }),
+    http.get('*/api/workouts/upcoming', async () => {
+      await delay('infinite');
+      return toHttpResponse(buildGetUpcomingWorkoutsResponse());
+    }),
+  ],
+
+  error: [
+    http.get('*/api/workouts/today', async () => {
+      await delay(100);
+      return toHttpResponse(buildGetTodaysWorkoutResponse({ success: false }));
+    }),
+  ],
+
+  emptyHistory: [
+    http.get('*/api/workouts/history', async () => {
+      await delay(100);
+      return toHttpResponse(buildGetWorkoutHistoryResponse({ success: true, overrides: { workouts: [], total: 0 } }));
+    }),
+  ],
+};
