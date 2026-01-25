@@ -36,10 +36,14 @@ export * from './integrations.js';
 import * as coach from './coach.js';
 import * as training from './training.js';
 import * as integrations from './integrations.js';
+import * as explore from './explore.js';
 
 export const fixtures = {
   coach,
   training,
   integrations,
+  explore,
 };
+
+export * from './explore.js';
 

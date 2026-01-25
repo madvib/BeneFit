@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { Result } from '@bene/shared';
 import {
   buildGetCoachHistoryResponse as _buildGetCoachHistoryResponse,
   buildTriggerProactiveCheckInResponse as _buildTriggerProactiveCheckInResponse,
@@ -7,6 +8,14 @@ import {
   buildDismissCheckInResponse as _buildDismissCheckInResponse,
   buildRespondToCheckInResponse as _buildRespondToCheckInResponse,
 } from '@bene/coach-domain/fixtures';
+import type {
+  GetCoachHistoryResponse,
+  TriggerProactiveCheckInResponse,
+  SendMessageToCoachResponse,
+  GenerateWeeklySummaryResponse,
+  DismissCheckInResponse,
+  RespondToCheckInResponse,
+} from '@bene/coach-domain';
 import { type FixtureOptions } from './utils.js';
 
 /**
@@ -23,7 +32,7 @@ function applySeed(options?: FixtureOptions) {
 export function buildGetCoachHistoryResponse(
   options: Parameters<typeof _buildGetCoachHistoryResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<GetCoachHistoryResponse> {
   applySeed(fixtureOptions);
   return _buildGetCoachHistoryResponse(options);
 }
@@ -31,7 +40,7 @@ export function buildGetCoachHistoryResponse(
 export function buildTriggerProactiveCheckInResponse(
   options: Parameters<typeof _buildTriggerProactiveCheckInResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<TriggerProactiveCheckInResponse> {
   applySeed(fixtureOptions);
   return _buildTriggerProactiveCheckInResponse(options);
 }
@@ -39,7 +48,7 @@ export function buildTriggerProactiveCheckInResponse(
 export function buildSendMessageToCoachResponse(
   options: Parameters<typeof _buildSendMessageToCoachResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<SendMessageToCoachResponse> {
   applySeed(fixtureOptions);
   return _buildSendMessageToCoachResponse(options);
 }
@@ -47,7 +56,7 @@ export function buildSendMessageToCoachResponse(
 export function buildGenerateWeeklySummaryResponse(
   options: Parameters<typeof _buildGenerateWeeklySummaryResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<GenerateWeeklySummaryResponse> {
   applySeed(fixtureOptions);
   return _buildGenerateWeeklySummaryResponse(options);
 }
@@ -55,7 +64,7 @@ export function buildGenerateWeeklySummaryResponse(
 export function buildDismissCheckInResponse(
   options: Parameters<typeof _buildDismissCheckInResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<DismissCheckInResponse> {
   applySeed(fixtureOptions);
   return _buildDismissCheckInResponse(options);
 }
@@ -63,16 +72,9 @@ export function buildDismissCheckInResponse(
 export function buildRespondToCheckInResponse(
   options: Parameters<typeof _buildRespondToCheckInResponse>[0] = {},
   fixtureOptions?: FixtureOptions
-) {
+): Result<RespondToCheckInResponse> {
   applySeed(fixtureOptions);
   return _buildRespondToCheckInResponse(options);
 }
 
-/**
- * Re-export raw builders for advanced usage (return Result<T>)
- * @deprecated Use the standard builders instead as they now return Result<T>
- */
-export {
-  _buildGetCoachHistoryResponse as buildGetCoachHistoryResponseRaw,
-  _buildTriggerProactiveCheckInResponse as buildTriggerProactiveCheckInResponseRaw,
-};
+

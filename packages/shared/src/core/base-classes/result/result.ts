@@ -42,6 +42,9 @@ export class Result<T, E = Error | Error[]> {
       errorMessage: this.errorMessage, // Safe to call here since isFailure is true
     };
   }
+  toJSON(): SerializedResult<T> {
+    return this.serialize();
+  }
   get value(): T {
     if (!this.isSuccess) {
       throw new Error('Cannot get value from failed result');

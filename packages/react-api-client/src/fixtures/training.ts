@@ -19,6 +19,8 @@ import {
   buildCompleteWorkoutResponse as _buildCompleteWorkoutResponse,
   buildJoinMultiplayerWorkoutResponse as _buildJoinMultiplayerWorkoutResponse,
   buildAddWorkoutReactionResponse as _buildAddWorkoutReactionResponse,
+  createTrainingConstraintsFixture,
+  createWorkoutSessionFixture,
 } from '@bene/training-application/fixtures';
 import { type FixtureOptions } from './utils.js';
 
@@ -183,4 +185,21 @@ export function buildAddWorkoutReactionResponse(
 ) {
   applySeed(fixtureOptions);
   return _buildAddWorkoutReactionResponse(options);
+}
+
+export function buildTrainingConstraintsResponse(
+  options: Parameters<typeof createTrainingConstraintsFixture>[0] = {},
+  fixtureOptions?: FixtureOptions
+) {
+  applySeed(fixtureOptions);
+  return createTrainingConstraintsFixture(options);
+}
+
+
+export function buildWorkoutSessionResponse(
+  options: Parameters<typeof createWorkoutSessionFixture>[0] = {},
+  fixtureOptions?: FixtureOptions
+) {
+  applySeed(fixtureOptions);
+  return createWorkoutSessionFixture(options);
 }

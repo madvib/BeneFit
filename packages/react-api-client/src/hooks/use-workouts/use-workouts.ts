@@ -134,3 +134,19 @@ export function useAddWorkoutReaction() {
     },
   });
 }
+
+// Stub implementation until streaming is ready
+import { buildWorkoutSessionResponse } from '../../fixtures/training';
+
+export function useWorkoutSession(sessionId: string) {
+  // TODO: Replace with actual implementation (likely streaming/ws)
+  const session = buildWorkoutSessionResponse({
+    id: sessionId,
+  });
+
+  return {
+    data: session,
+    isLoading: false,
+    isError: false,
+  };
+}

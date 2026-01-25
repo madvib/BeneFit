@@ -7,7 +7,6 @@ export type {
 export {
   GeneratePlanFromGoalsRequestSchema,
 } from './use-cases/generate-plan-from-goals/generate-plan-from-goals.js';
-export { buildGeneratePlanFromGoalsResponse } from './use-cases/generate-plan-from-goals/test/generate-plan-from-goals.fixture.js';
 
 
 export { ActivatePlanUseCase } from './use-cases/activate-plan/activate-plan.js';
@@ -18,7 +17,6 @@ export type {
 export {
   ActivatePlanRequestSchema,
 } from './use-cases/activate-plan/activate-plan.js';
-export { buildActivatePlanResponse } from './use-cases/activate-plan/test/activate-plan.fixture.js';
 
 
 export { GetTodaysWorkoutUseCase } from './use-cases/get-todays-workout/get-todays-workout.js';
@@ -29,7 +27,6 @@ export type {
 export {
   GetTodaysWorkoutRequestSchema,
 } from './use-cases/get-todays-workout/get-todays-workout.js';
-export { buildGetTodaysWorkoutResponse } from './use-cases/get-todays-workout/test/get-todays-workout.fixture.js';
 
 export { AdjustPlanBasedOnFeedbackUseCase } from './use-cases/adjust-plan-based-on-feedback/adjust-plan-based-on-feedback.js';
 export type {
@@ -39,7 +36,6 @@ export type {
 export {
   AdjustPlanBasedOnFeedbackRequestSchema,
 } from './use-cases/adjust-plan-based-on-feedback/adjust-plan-based-on-feedback.js';
-export { buildAdjustPlanBasedOnFeedbackResponse } from './use-cases/adjust-plan-based-on-feedback/test/adjust-plan-based-on-feedback.fixture.js';
 
 export { PausePlanUseCase } from './use-cases/pause-plan/pause-plan.js';
 export type {
@@ -49,7 +45,6 @@ export type {
 export {
   PausePlanRequestSchema,
 } from './use-cases/pause-plan/pause-plan.js';
-export { buildPausePlanResponse } from './use-cases/pause-plan/test/pause-plan.fixture.js';
 
 export { GetUpcomingWorkoutsUseCase } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
 export type {
@@ -59,7 +54,6 @@ export type {
 export {
   GetUpcomingWorkoutsRequestSchema,
 } from './use-cases/get-upcoming-workouts/get-upcoming-workouts.js';
-export { buildGetUpcomingWorkoutsResponse } from './use-cases/get-upcoming-workouts/test/get-upcoming-workouts.fixture.js';
 
 export { GetCurrentPlanUseCase } from './use-cases/get-current-plan/get-current-plan.js';
 export type {
@@ -69,7 +63,6 @@ export type {
 export {
   GetCurrentPlanRequestSchema
 } from './use-cases/get-current-plan/get-current-plan.js';
-export { buildGetCurrentPlanResponse } from './use-cases/get-current-plan/test/get-current-plan.fixture.js';
 
 
 // Profile module exports
@@ -83,7 +76,6 @@ export type {
 export {
   CreateUserProfileRequestSchema,
 } from './use-cases/create-user-profile/create-user-profile.js';
-export { buildCreateUserProfileResponse } from './use-cases/create-user-profile/test/create-user-profile.fixture.js';
 
 export { UpdateFitnessGoalsUseCase } from './use-cases/update-fitness-goals/update-fitness-goals.js';
 export type {
@@ -93,7 +85,6 @@ export type {
 export {
   UpdateFitnessGoalsRequestSchema,
 } from './use-cases/update-fitness-goals/update-fitness-goals.js';
-export { buildUpdateFitnessGoalsResponse } from './use-cases/update-fitness-goals/test/update-fitness-goals.fixture.js';
 
 export { UpdateTrainingConstraintsUseCase } from './use-cases/update-training-constraints/update-training-constraints.js';
 export type {
@@ -103,7 +94,6 @@ export type {
 export {
   UpdateTrainingConstraintsRequestSchema,
 } from './use-cases/update-training-constraints/update-training-constraints.js';
-export { buildUpdateTrainingConstraintsResponse } from './use-cases/update-training-constraints/test/update-training-constraints.fixture.js';
 
 export { UpdatePreferencesUseCase } from './use-cases/update-preferences/update-preferences.js';
 export type {
@@ -113,7 +103,6 @@ export type {
 export {
   UpdatePreferencesRequestSchema,
 } from './use-cases/update-preferences/update-preferences.js';
-export { buildUpdatePreferencesResponse } from './use-cases/update-preferences/test/update-preferences.fixture.js';
 
 export { GetUserStatsUseCase } from './use-cases/get-user-stats/get-user-stats.js';
 export type {
@@ -123,7 +112,6 @@ export type {
 export {
   GetUserStatsRequestSchema,
 } from './use-cases/get-user-stats/get-user-stats.js';
-export { buildGetUserStatsResponse } from './use-cases/get-user-stats/test/get-user-stats.fixture.js';
 
 export { GetProfileUseCase } from './use-cases/get-profile/get-profile.js';
 export type {
@@ -133,7 +121,6 @@ export type {
 export {
   GetProfileRequestSchema,
 } from './use-cases/get-profile/get-profile.js';
-export { buildGetProfileResponse } from './use-cases/get-profile/test/get-profile.fixture.js';
 
 
 export { SkipWorkoutUseCase } from './use-cases/skip-workout/skip-workout.js';
@@ -144,7 +131,6 @@ export type {
 export {
   SkipWorkoutRequestSchema,
 } from './use-cases/skip-workout/skip-workout.js';
-export { buildSkipWorkoutResponse } from './use-cases/skip-workout/test/skip-workout.fixture.js';
 
 export { AddWorkoutReactionUseCase } from './use-cases/add-workout-reaction/add-workout-reaction.js';
 export type {
@@ -154,7 +140,6 @@ export type {
 export {
   AddWorkoutReactionRequestSchema,
 } from './use-cases/add-workout-reaction/add-workout-reaction.js';
-export { buildAddWorkoutReactionResponse } from './use-cases/add-workout-reaction/test/add-workout-reaction.fixture.js';
 
 export { CompleteWorkoutUseCase } from './use-cases/complete-workout/complete-workout.js';
 export type {
@@ -164,7 +149,6 @@ export type {
 export {
   CompleteWorkoutRequestSchema,
 } from './use-cases/complete-workout/complete-workout.js';
-export { buildCompleteWorkoutResponse } from './use-cases/complete-workout/test/complete-workout.fixture.js';
 
 export { GetWorkoutHistoryUseCase } from './use-cases/get-workout-history/get-workout-history.js';
 export type {
@@ -174,7 +158,6 @@ export type {
 export {
   GetWorkoutHistoryRequestSchema,
 } from './use-cases/get-workout-history/get-workout-history.js';
-export { buildGetWorkoutHistoryResponse } from './use-cases/get-workout-history/test/get-workout-history.fixture.js';
 
 export { JoinMultiplayerWorkoutUseCase } from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
 export type {
@@ -184,7 +167,6 @@ export type {
 export {
   JoinMultiplayerWorkoutRequestSchema,
 } from './use-cases/join-multiplayer-workout/join-multiplayer-workout.js';
-export { buildJoinMultiplayerWorkoutResponse } from './use-cases/join-multiplayer-workout/test/join-multiplayer-workout.fixture.js';
 
 export { StartWorkoutUseCase } from './use-cases/start-workout/start-workout.js';
 export type {
@@ -194,7 +176,6 @@ export type {
 export {
   StartWorkoutRequestSchema,
 } from './use-cases/start-workout/start-workout.js';
-export { buildStartWorkoutResponse } from './use-cases/start-workout/test/start-workout.fixture.js';
 
 // Events
 export * from './events/index.js';

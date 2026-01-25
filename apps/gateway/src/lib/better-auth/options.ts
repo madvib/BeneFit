@@ -35,6 +35,9 @@ export const betterAuthOptions: BetterAuthOptions = {
 
   // Advanced Security
   advanced: {
+    database: {
+      generateId: 'uuid'
+    },
     cookiePrefix: 'bene',
     crossSubDomainCookies: {
       enabled: false, // Enable if using subdomains

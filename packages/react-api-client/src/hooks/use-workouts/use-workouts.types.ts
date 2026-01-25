@@ -22,6 +22,9 @@ export type ActivityPerformance = WorkoutPerformance['activities'][number];
 export type ExercisePerformance = NonNullable<ActivityPerformance['exercises']>[number];
 
 export type SessionState = WorkoutSession['state'];
+export type SessionFeedItem = WorkoutSession['activityFeed'][number];
+export type LiveActivityProgress = WorkoutSession['liveProgress'];
+export type SessionParticipant = WorkoutSession['participants'][number];
 export type WorkoutType = WorkoutSession['workoutType'];
 export type HeartRateData = NonNullable<WorkoutPerformance['heartRate']>;
 export type DifficultyRating = WorkoutPerformance['difficultyRating'];

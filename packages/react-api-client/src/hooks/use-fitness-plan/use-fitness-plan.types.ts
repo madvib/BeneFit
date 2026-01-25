@@ -10,4 +10,4 @@ export type FitnessPlanWorkoutImportance = FitnessPlanWorkout['importance'];
 export type FitnessPlanGoal = FitnessPlanWorkout['goals'];
 
 export type FitnessPlanPreview = GeneratePlanResponse['preview'];
-export type FitnessPlanPreviewWeek = FitnessPlanPreview['weeks'][number];
+

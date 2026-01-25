@@ -21,6 +21,10 @@ export * from './use-cases/add-workout-reaction/test/add-workout-reaction.fixtur
 // Use case response builders - Profile
 export * from './use-cases/get-profile/test/get-profile.fixture.js';
 export * from './use-cases/get-user-stats/test/get-user-stats.fixture.js';
+export * from './use-cases/create-user-profile/test/create-user-profile.fixture.js';
+export * from './use-cases/update-fitness-goals/test/update-fitness-goals.fixture.js';
+export * from './use-cases/update-preferences/test/update-preferences.fixture.js';
+export * from './use-cases/update-training-constraints/test/update-training-constraints.fixture.js';
 
 // Core entity fixtures (re-exported for direct access)
 export * from '@bene/training-core/fixtures';

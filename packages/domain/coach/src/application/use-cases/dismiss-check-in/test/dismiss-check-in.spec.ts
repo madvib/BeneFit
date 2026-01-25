@@ -4,7 +4,7 @@ import { EventBus, Result } from '@bene/shared';
 import { createCoachConversationFixture, createCheckInFixture } from '@/fixtures.js';
 import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
 
-import { DismissCheckInUseCase } from './dismiss-check-in.js';
+import { DismissCheckInUseCase } from '../dismiss-check-in.js';
 
 // Mock repositories and services
 const mockConversationRepository = {
