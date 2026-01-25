@@ -8,7 +8,7 @@ export const buildGetExploreDataResponse = () => ({
 });
 
 export const exploreHandlers = [
-  http.get('http://*/api/explore', async () => {
+  http.get('*/api/explore', async () => {
     await delay(200);
     return toHttpResponse(buildGetExploreDataResponse());
   }),
@@ -17,7 +17,7 @@ export const exploreHandlers = [
 export const exploreScenarios = {
   default: exploreHandlers,
   empty: [
-    http.get('http://*/api/explore', async () => {
+    http.get('*/api/explore', async () => {
       await delay(200);
       return toHttpResponse({ events: [], featuredTeams: [] });
     }),

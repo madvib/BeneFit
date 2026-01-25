@@ -5,7 +5,33 @@ import { type UserStats } from '@bene/react-api-client';
 import { safeFormatDate } from '@/lib/utils';
 import { Card, CountUp, IconBox, MetricCard, SpotlightCard, typography } from '@/lib/components';
 
-export function StatisticsSection({ stats }: { stats: UserStats }) {
+/**
+ stats: {
+    streakActive: boolean;
+    daysSinceLastWorkout: number | null;
+    averageWorkoutDuration: number;
+    averageVolumePerWorkout: number;
+    achievementsCount: number;
+    readonly totalWorkouts: number;
+    readonly totalVolume: number;
+    readonly totalMinutes: number;
+    readonly currentStreak: number;
+    readonly longestStreak: number;
+    readonly lastWorkoutDate?: string | undefined;
+    readonly achievements: {
+        id: string;
+        type: "first_workout" | "streak_7" | "streak_30" | "pr_strength" | "pr_distance" | "ten_workouts" | "fifty_workouts" | "100_workouts" | "plan_completed";
+        name: string;
+        description: string;
+        earnedAt: string;
+        iconUrl?: string | undefined;
+    }[];
+    readonly firstWorkoutDate: string;
+    readonly joinedAt: string;
+ */
+
+
+export function StatisticsSection({ stats }: Readonly<{ stats: UserStats }>) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

@@ -1,48 +1,93 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import * as fixtures from '@bene/react-api-client/fixtures';
-import { getActivityStatusConfig } from '@/lib/constants/training-ui';
+import { getActivityStatusConfig } from '@/lib/constants';
 import { Badge } from '@/lib/components';
+import {  ScheduledWorkoutView, CompletedWorkoutView, RPEPicker, SkipWorkoutModal } from './index';
 import { typography } from '../theme/typography/typography';
-import {
-  WorkoutSummary,
-  SkipWorkoutModal,
-  RPEPicker,
-  WorkoutDetailSheet,
-  PerformanceForm,
-} from './index';
 
-
-// TODO we need CLEAR workout types. TEMPLATE, UPCOMING, COMPLETED
-const mockTemplateResult = fixtures.buildGetTodaysWorkoutResponse(undefined, { seed: 102 });
-const mockWorkoutTemplate = mockTemplateResult.isSuccess ? (mockTemplateResult.value.workout ?? null) : null;
-
+// --- PURE FIXTURE DATA ---
+// We use high-fidelity fixtures directly from the API client to avoid hardcoded boilerplate.
+const todayWorkout = fixtures.buildGetTodaysWorkoutResponse({ success: true, seed: 101 }).value?.workout;
+const historyData = fixtures.buildGetWorkoutHistoryResponse({ seed: 202 }).value;
+const completedWorkout = historyData?.workouts?.[0];
 
 const meta: Meta = {
   title: 'Components/Fitness/Workouts',
   parameters: {
     layout: 'padded',
   },
+  decorators: [(Story) => <div className="bg-background min-h-screen p-8"><Story /></div>],
 };
 
 export default meta;
 
-export const WorkoutDisplay: StoryObj = {
-  name: 'Workout Display',
-  render: () => {
-    if (!mockWorkoutTemplate) return <div>No workout data available</div>;
-    return (
-      <div className="max-w-2xl">
-        <WorkoutSummary workout={mockWorkoutTemplate} />
-      </div>
-    );
+// --- SCHEDULED STORIES ---
+
+export const ScheduledDashboard: StoryObj<typeof ScheduledWorkoutView> = {
+  name: 'Scheduled / Dashboard',
+  render: (args) => <ScheduledWorkoutView {...args} />,
+  args: {
+    workout: todayWorkout!,
+    onStart: () => alert('Start Session'),
+    onSkip: () => alert('Reschedule'),
+    layout: 'dashboard',
   },
 };
+
+export const ScheduledModal: StoryObj<typeof ScheduledWorkoutView> = {
+  name: 'Scheduled / Modal',
+  render: (args) => <ScheduledWorkoutView {...args} />,
+  args: {
+    workout: todayWorkout!,
+    onStart: () => alert('Start Session'),
+    layout: 'modal',
+    isOpen: true,
+    onClose: () => alert('Close Modal'),
+  },
+};
+
+export const ScheduledInline: StoryObj<typeof ScheduledWorkoutView> = {
+  name: 'Scheduled / Inline',
+  render: (args) => (
+    <div className="max-w-[500px] mx-auto">
+       <ScheduledWorkoutView {...args} />
+    </div>
+  ),
+  args: {
+    workout: todayWorkout!,
+    onStart: () => alert('Start Session'),
+    layout: 'inline',
+  },
+};
+
+// --- COMPLETED STORIES ---
+
+export const CompletedHistory: StoryObj<typeof CompletedWorkoutView> = {
+  name: 'Completed / Dashboard',
+  render: (args) => <CompletedWorkoutView {...args} />,
+  args: {
+    workout: completedWorkout!,
+  },
+};
+
+export const CompletedModal: StoryObj<typeof CompletedWorkoutView> = {
+  name: 'Completed / Modal',
+  render: (args) => <CompletedWorkoutView {...args} />,
+  args: {
+    variant: 'modal',
+    isOpen: true,
+    onClose: () => alert('Close Modal'),
+    workout: completedWorkout!,
+  }
+};
+
+// --- UTILITY STORIES ---
 
 export const SkipModal: StoryObj<typeof SkipWorkoutModal> = {
   name: 'Skip Workout Modal',
   render: () => (
-    <div className="bg-accent/20 flex h-150 w-full items-center justify-center p-8">
+    <div className="bg-accent/20 flex h-150 w-full items-center justify-center rounded-3xl p-8">
       <SkipWorkoutModal
         isOpen={true}
         onClose={() => console.log('Close')}
@@ -51,33 +96,6 @@ export const SkipModal: StoryObj<typeof SkipWorkoutModal> = {
       />
     </div>
   ),
-};
-
-export const WorkoutDetailSheetStory: StoryObj<typeof WorkoutDetailSheet> = {
-  name: 'Workout Detail Sheet',
-  render: () => (
-    <WorkoutDetailSheet
-      workout={mockWorkoutTemplate}
-      open={true}
-      onOpenChange={() => console.log('Open Change')}
-    />
-  ),
-};
-
-export const PerformanceFormStory: StoryObj<typeof PerformanceForm> = {
-  name: 'Performance Form',
-  render: () => {
-    if (!mockWorkoutTemplate) return <div>No workout data</div>;
-    return (
-      <div className="max-w-md p-4">
-        <PerformanceForm
-          workout={mockWorkoutTemplate}
-          onSubmit={(data) => console.log('Submit', data)}
-          isLoading={false}
-        />
-      </div>
-    );
-  },
 };
 
 export const Badges: StoryObj = {
@@ -111,4 +129,3 @@ export const RpeSelection: StoryObj = {
     );
   },
 };
-

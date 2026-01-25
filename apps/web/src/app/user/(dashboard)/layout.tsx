@@ -4,7 +4,7 @@ interface UserLayoutProperties {
   children: React.ReactNode;
 }
 
-export default function UserLayout({ children }: UserLayoutProperties) {
+export default function UserLayout({ children }: Readonly<UserLayoutProperties>) {
   return (
     <PageContainer variant="fullViewport" className="flex h-screen flex-col">
       <UnifiedHeader variant="application" />

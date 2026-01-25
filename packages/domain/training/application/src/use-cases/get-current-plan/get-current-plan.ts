@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Result, BaseUseCase } from '@bene/shared';
+import { Result, BaseUseCase, EntityNotFoundError } from '@bene/shared';
 import type { FitnessPlanView } from '@bene/training-core';
 import { toFitnessPlanView } from '@bene/training-core';
 import { FitnessPlanRepository } from '../../repositories/fitness-plan-repository.js';
@@ -19,7 +19,8 @@ export type GetCurrentPlanRequest = z.infer<typeof GetCurrentPlanRequestSchema>;
 // ============================================
 
 export interface GetCurrentPlanResponse {
-  plan: FitnessPlanView;
+  plan: FitnessPlanView | null;
+  hasActivePlan: boolean;
 }
 
 // ============================================
@@ -41,16 +42,26 @@ export class GetCurrentPlanUseCase extends BaseUseCase<
     const planResult = await this.planRepository.findActiveByUserId(request.userId);
 
     if (planResult.isFailure) {
-      console.log(`[GetCurrentPlan] No active plan found for user ${ request.userId }. Reason: ${ planResult.error }`);
-      return Result.fail(new Error('No active plan found'));
+      const error = planResult.error;
+
+      // Only treat "Not Found" as a valid empty state
+      // All other errors (DB connection, timeouts, etc.) should fail hard
+      if (error instanceof EntityNotFoundError) {
+        return Result.ok({
+          plan: null,
+          hasActivePlan: false,
+        });
+      }
+
+      return Result.fail(error);
     }
 
     const plan = planResult.value;
-    console.log(`[GetCurrentPlan] Found active plan ${ plan.id } for user ${ request.userId }`);
 
     // 2. Convert to view model
     return Result.ok({
       plan: toFitnessPlanView(plan),
+      hasActivePlan: true,
     });
   }
 }

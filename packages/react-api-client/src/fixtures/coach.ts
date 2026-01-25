@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { Result } from '@bene/shared';
 import {
   buildGetCoachHistoryResponse as _buildGetCoachHistoryResponse,
@@ -16,64 +15,48 @@ import type {
   DismissCheckInResponse,
   RespondToCheckInResponse,
 } from '@bene/coach-domain';
-import { type FixtureOptions } from './utils.js';
+import { type WithSeed, applySeed } from './utils.js';
 
-/**
- * Coach HTTP response builders
- * Unwrap domain Result<T> fixtures into HTTP-ready response data
- */
-
-function applySeed(options?: FixtureOptions) {
-  if (options?.seed !== undefined) {
-    faker.seed(options.seed);
-  }
-}
 
 export function buildGetCoachHistoryResponse(
-  options: Parameters<typeof _buildGetCoachHistoryResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildGetCoachHistoryResponse>[0]> = {}
 ): Result<GetCoachHistoryResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildGetCoachHistoryResponse(options);
 }
 
 export function buildTriggerProactiveCheckInResponse(
-  options: Parameters<typeof _buildTriggerProactiveCheckInResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildTriggerProactiveCheckInResponse>[0]> = {}
 ): Result<TriggerProactiveCheckInResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildTriggerProactiveCheckInResponse(options);
 }
 
 export function buildSendMessageToCoachResponse(
-  options: Parameters<typeof _buildSendMessageToCoachResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildSendMessageToCoachResponse>[0]> = {}
 ): Result<SendMessageToCoachResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildSendMessageToCoachResponse(options);
 }
 
 export function buildGenerateWeeklySummaryResponse(
-  options: Parameters<typeof _buildGenerateWeeklySummaryResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildGenerateWeeklySummaryResponse>[0]> = {}
 ): Result<GenerateWeeklySummaryResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildGenerateWeeklySummaryResponse(options);
 }
 
 export function buildDismissCheckInResponse(
-  options: Parameters<typeof _buildDismissCheckInResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildDismissCheckInResponse>[0]> = {}
 ): Result<DismissCheckInResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildDismissCheckInResponse(options);
 }
 
 export function buildRespondToCheckInResponse(
-  options: Parameters<typeof _buildRespondToCheckInResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildRespondToCheckInResponse>[0]> = {}
 ): Result<RespondToCheckInResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildRespondToCheckInResponse(options);
 }
 

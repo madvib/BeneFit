@@ -73,6 +73,10 @@ export const workoutScenarios = {
       await delay(100);
       return toHttpResponse(buildGetTodaysWorkoutResponse({ success: false }));
     }),
+    http.get('*/api/workouts/history', async () => {
+      await delay(100);
+      return toHttpResponse(buildGetWorkoutHistoryResponse({ success: false }));
+    }),
   ],
 
   emptyHistory: [

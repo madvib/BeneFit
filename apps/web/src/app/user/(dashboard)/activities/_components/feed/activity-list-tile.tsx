@@ -30,7 +30,7 @@ interface ActivityListTileProps {
   onDelete?: () => void;
 }
 
-export default function ActivityListTile({ workout, onClick, onDelete }: ActivityListTileProps) {
+export default function ActivityListTile({ workout, onClick, onDelete }: Readonly<ActivityListTileProps>) {
   const details = getHistoryItemDetails(workout);
   const activityConfig = getActivityTypeConfig(workout.workoutType);
   const statusConfig = getActivityStatusConfig(details.status);

@@ -11,6 +11,7 @@ export type SerializedResult<T> =
     isSuccess: false;
     isFailure: true;
     errorMessage: string;
+    errorCode?: string;
   };
 
 export class Result<T, E = Error | Error[]> {
@@ -36,10 +37,15 @@ export class Result<T, E = Error | Error[]> {
       };
     }
 
+    // safer casting or property check
+    const error: any = this._error;
+    const errorCode = error?.code || error?.errorCode;
+
     return {
       isSuccess: false,
       isFailure: true,
       errorMessage: this.errorMessage, // Safe to call here since isFailure is true
+      errorCode: typeof errorCode === 'string' ? errorCode : undefined,
     };
   }
   toJSON(): SerializedResult<T> {

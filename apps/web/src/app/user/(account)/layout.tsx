@@ -1,17 +1,17 @@
 'use client';
 
-import { AccountHeader, AccountSidebar } from '@/lib/components';
+import { AccountHeader, AccountSidebar, PageContainer } from '@/lib/components';
 import { useState } from 'react';
 
 interface AccountLayoutProperties {
   children: React.ReactNode;
 }
 
-export default function AccountLayout({ children }: AccountLayoutProperties) {
+export default function AccountLayout({ children }: Readonly<AccountLayoutProperties>) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex h-screen flex-col">
+    <PageContainer variant="fullViewport" className="flex h-screen flex-col">
       <AccountHeader onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
@@ -36,6 +36,6 @@ export default function AccountLayout({ children }: AccountLayoutProperties) {
           <div className="mx-auto max-w-4xl">{children}</div>
         </main>
       </div>
-    </div>
+    </PageContainer>
   );
 }

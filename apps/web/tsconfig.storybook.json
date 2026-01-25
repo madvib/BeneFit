@@ -40,7 +40,7 @@
     "src/**/*.jsx",
     ".storybook/*.js",
     ".storybook/*.ts",
-    ".storybook/*.tsx"
+    ".storybook/*.tsx",
   ],
   "files": [
     "../../node_modules/@nx/react/typings/styled-jsx.d.ts",

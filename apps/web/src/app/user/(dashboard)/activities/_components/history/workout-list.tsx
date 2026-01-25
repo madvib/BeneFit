@@ -12,7 +12,7 @@ interface WorkoutListProps {
   emptyMessage?: string;
 }
 
-export default function WorkoutList(data: WorkoutListProps) {
+export default function WorkoutList(data: Readonly<WorkoutListProps>) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 

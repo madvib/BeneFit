@@ -5,6 +5,7 @@ import { ConnectedService } from '@bene/react-api-client';
 import { Share2, CheckCircle } from 'lucide-react';
 import { ServiceCard } from './_components';
 
+// TODO from shared
 import { AVAILABLE_SERVICES } from '@/lib/constants/services';
 
 interface ConnectionsViewProps {
@@ -19,7 +20,7 @@ export default function ConnectionsView({
   onDisconnect,
   onSync,
   syncingServiceId,
-}: ConnectionsViewProps) {
+}: Readonly<ConnectionsViewProps>) {
   // Filter available services to only show those not already connected
   const connectedServiceTypes = new Set(connectedServices.map((s) => s.serviceType));
   const availableServices = AVAILABLE_SERVICES.filter(
@@ -34,7 +35,7 @@ export default function ConnectionsView({
       />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Connected Services - Left Column (Larger) */}s
+        {/* Connected Services - Left Column (Larger) */}
         <div className="space-y-4 lg:col-span-2">
           <h3 className={typography.h3}>Connected Services</h3>
           <div className="flex flex-col gap-4">

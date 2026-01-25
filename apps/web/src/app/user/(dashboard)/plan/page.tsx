@@ -18,8 +18,8 @@ import {
   WeeklySchedule,
   PlanOnboarding,
   PlanPreview,
-  WorkoutDetailModal,
 } from './_components';
+import { ScheduledWorkoutView } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export default function PlanClient() {
@@ -45,11 +45,7 @@ export default function PlanClient() {
   // Sync selected week with current week when plan loads
   React.useEffect(() => {
     if (activePlanData?.plan?.currentWeek) {
-      // Defensive check for potential object return from fixture
-      const currentWeek = activePlanData.plan.currentWeek;
-      const weekNumber = typeof currentWeek === 'object' 
-        ? (currentWeek as any).weekNumber || 1 
-        : Number(currentWeek);
+      const weekNumber = activePlanData.plan.currentWeek?.weekNumber || 1;
         
       setSelectedWeek(weekNumber);
     }
@@ -228,27 +224,24 @@ export default function PlanClient() {
         actions={renderActions()}
       />
 
-      <WorkoutDetailModal
-        isOpen={!!selectedWorkoutId}
-        onClose={() => setSelectedWorkoutId(null)}
-        workout={selectedWorkout}
-        onStart={(id) => {
-          // TODO: this is a real app...
-          // Navigate to workout session or start endpoint
-          // For now, we'll assume navigation to workout page which handles starting
-          // In a real app, we might call startWorkoutMutation here first
-          // router.push(`/user/workout/${id}`);
-          // Since I don't have router here, let's assume valid navigation for now:
-          globalThis.location.href = `/user/workout/${id}`;
-        }}
-        onSkip={async (id) => {
-          // Call skip mutation
-          // Assuming we have useSkipWorkout hook available in this component or parent
-          // For simplicity in this step, let's log - but ideally should wire up useSkipWorkout
-          console.log('Skipping workout', id);
-          // TODO: Integrate actual skip mutation
-        }}
-      />
+      {selectedWorkout && (
+        <ScheduledWorkoutView
+          isOpen={!!selectedWorkoutId}
+          onClose={() => setSelectedWorkoutId(null)}
+          workout={selectedWorkout}
+          layout="modal"
+          onStart={() => {
+            if (selectedWorkoutId) {
+              globalThis.location.href = `/user/workout/${selectedWorkoutId}`;
+            }
+          }}
+          onSkip={() => {
+            if (selectedWorkoutId) {
+              console.log('Skipping workout', selectedWorkoutId);
+            }
+          }}
+        />
+      )}
     </>
   );
 }

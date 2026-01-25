@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useTodaysWorkout, useStartWorkout, useSkipWorkout, useProfile } from '@bene/react-api-client';
 import TodayView from './_components/today-view';
+import { ErrorPage, LoadingSpinner } from '@/lib/components';
 
 export default function TodaysWorkoutPage() {
   const todaysWorkoutQuery = useTodaysWorkout();
@@ -54,15 +55,25 @@ export default function TodaysWorkoutPage() {
       // For now, parent might re-fetch or invalidation happens globally
     }
   };
+  if (isLoading && !todaysWorkout) {
+    return <LoadingSpinner variant="screen" text="Preparing your session..." />;
+  }
+
+  if (error) {
+    return (
+      <ErrorPage
+        title="Connection Issue"
+        message="Unable to retrieve your training plan for today."
+        error={error as Error}
+      />
+    );
+  }
 
   return (
     <TodayView
       todaysWorkout={todaysWorkout}
-      isLoading={isLoading}
-      error={error}
       onStartWorkout={handleStartWorkout}
       onSkipWorkout={handleSkipWorkout}
-      isStarting={startWorkoutMutation.isPending}
       isSkipping={skipWorkoutMutation.isPending}
     />
   );

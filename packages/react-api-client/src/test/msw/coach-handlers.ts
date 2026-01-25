@@ -17,7 +17,7 @@ import { toHttpResponse } from './utils.js';
 export const coachHandlers = [
   http.get('*/api/coach/history', async () => {
     await delay(100);
-    const data = buildGetCoachHistoryResponse(undefined, { seed: 100 });
+    const data = buildGetCoachHistoryResponse({ seed: 100 });
     return toHttpResponse(data);
   }),
 
@@ -66,11 +66,14 @@ export const coachScenarios = {
     http.get('*/api/coach/history', () => {
       // Return empty stats and empty lists directly
       // Or use fixture with success=false or overrides
-      return toHttpResponse({
-        messages: [],
-        pendingCheckIns: [],
-        stats: { totalMessages: 0, totalCheckIns: 0, actionsApplied: 0 }
+      const data = buildGetCoachHistoryResponse({
+        overrides: {
+          messages: [],
+          pendingCheckIns: [],
+          stats: { totalMessages: 0, totalCheckIns: 0, actionsApplied: 0 }
+        }
       });
+      return toHttpResponse(data);
     }),
   ],
 
@@ -97,7 +100,7 @@ export const coachScenarios = {
 
   withMessages: [
     http.get('*/api/coach/history', () => {
-      const data = buildGetCoachHistoryResponse(undefined, { seed: 300 });
+      const data = buildGetCoachHistoryResponse({ seed: 300 });
       return toHttpResponse(data);
     }),
   ],

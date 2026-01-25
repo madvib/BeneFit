@@ -13,7 +13,8 @@ import {
   typography,
 } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
-import { ActivityFeedView, WorkoutHistoryDetailModal } from './_components';
+import { ActivityFeedView } from './_components';
+import { CompletedWorkoutView } from '@/lib/components';
 
 export default function ActivityFeedPage() {
   const [selectedWorkout, setSelectedWorkout] = useState<CompletedWorkout | null>(null);
@@ -63,7 +64,9 @@ export default function ActivityFeedPage() {
         headerClassName="border-b border-border"
       >
         <div className="space-y-4">
-          {[
+                {/* TODO replace*/}
+
+                 {[
             { label: 'Running', value: 45, color: 'bg-blue-500' },
             { label: 'Strength', value: 30, color: 'bg-green-500' },
             { label: 'Yoga', value: 15, color: 'bg-purple-500' },
@@ -122,11 +125,14 @@ export default function ActivityFeedPage() {
             onSelectWorkout={setSelectedWorkout}
           />
 
-          <WorkoutHistoryDetailModal
-            isOpen={!!selectedWorkout}
-            onClose={() => setSelectedWorkout(null)}
-            workout={selectedWorkout}
-          />
+          {selectedWorkout && (
+            <CompletedWorkoutView
+              isOpen={!!selectedWorkout}
+              onClose={() => setSelectedWorkout(null)}
+              workout={selectedWorkout}
+              variant="modal"
+            />
+          )}
         </>
       }
       actions={renderSidebar()}

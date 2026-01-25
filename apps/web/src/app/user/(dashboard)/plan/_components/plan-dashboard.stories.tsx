@@ -1,19 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { workoutScenarios, fitnessPlanScenarios } from '@bene/react-api-client/test';
-import { Carousel, WorkoutDetailSheet } from '@/lib/components';
+import { workoutScenarios, fitnessPlanScenarios, profileScenarios } from '@bene/react-api-client/test';
+import { Carousel, LoadingSpinner,ScheduledWorkoutView } from '@/lib/components';
 import { PlanOverview, QuickActions, WeeklySchedule, PlanOnboarding, PlanPreview } from './index';
 import { useActivePlan, useGeneratePlan, useTodaysWorkout } from '@bene/react-api-client';
 import PlanPage from '../page';
 
-const meta: Meta = {
+const meta: Meta<typeof PlanPage> = {
   title: 'Features/Fitness Plan',
+  component: PlanPage,
   parameters: {
     layout: 'fullscreen',
     msw: {
       handlers: [
         ...fitnessPlanScenarios.default,
         ...workoutScenarios.default,
+        ...profileScenarios.default,
       ],
     },
   },
@@ -26,32 +28,32 @@ export default meta;
  * Data is fetched via hooks and mocked by MSW.
  * No 'any' casts needed as hooks return correct types.
  */
-export const FullPage: StoryObj = {
+export const FullPage: StoryObj<typeof PlanPage> = {
   render: () => <PlanPage />,
 };
 
-export const LoadingState: StoryObj = {
+export const LoadingState: StoryObj<typeof PlanPage> = {
   parameters: {
     msw: {
-      handlers: [...fitnessPlanScenarios.loading],
+      handlers: [...fitnessPlanScenarios.loading, ...profileScenarios.default],
     },
   },
   render: () => <PlanPage />,
 };
 
-export const ErrorState: StoryObj = {
+export const ErrorState: StoryObj<typeof PlanPage> = {
   parameters: {
     msw: {
-      handlers: [...fitnessPlanScenarios.error],
+      handlers: [...fitnessPlanScenarios.error, ...profileScenarios.default],
     },
   },
   render: () => <PlanPage />,
 };
 
-export const EmptyStatePage: StoryObj = {
+export const EmptyStatePage: StoryObj<typeof PlanPage> = {
   parameters: {
     msw: {
-      handlers: [...fitnessPlanScenarios.noActivePlan],
+      handlers: [...fitnessPlanScenarios.noActivePlan, ...profileScenarios.default],
     },
   },
   render: () => <PlanPage />,
@@ -79,15 +81,15 @@ export const PlanOverviewShowcase: StoryObj = {
 export const WeeklyScheduleInteractive: StoryObj = {
   name: 'Weekly Schedule Interactive',
   render: () => {
-    const { data } = useActivePlan();
+    const { data, isLoading } = useActivePlan();
     const [selectedWeek, setSelectedWeek] = useState(1);
     
-    if (!data?.plan) return <div>Loading schedule...</div>;
+    if (isLoading) return <LoadingSpinner variant="screen" text="Loading schedule..." />;
 
     return (
       <div className="max-w-4xl p-6">
         <WeeklySchedule
-          plan={data.plan}
+          plan={data?.plan}
           selectedWeek={selectedWeek}
           onWeekChange={setSelectedWeek}
           onWorkoutClick={(id) => alert(`Workout ${id} clicked`)}
@@ -124,14 +126,15 @@ export const Onboarding: StoryObj = {
 };
 
 export const WorkoutDetailModalStory: StoryObj = {
-  name: 'Workout Detail Sheet',
+  name: 'Workout Detail Modal',
   render: () => {
     const { data } = useTodaysWorkout();
     return (
-      <WorkoutDetailSheet 
-        workout={data?.workout ?? null} 
-        open={true} 
-        onOpenChange={() => {}} 
+      <ScheduledWorkoutView 
+        workout={data?.workout} 
+        layout="modal"
+        isOpen={true} 
+        onClose={() => {}} 
       />
     );
   },

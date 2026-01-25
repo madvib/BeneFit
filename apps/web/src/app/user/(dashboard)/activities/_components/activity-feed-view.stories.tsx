@@ -1,14 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
 import { workoutScenarios, profileScenarios } from '@bene/react-api-client/test';
-import { useWorkoutHistory, useProfile } from '@bene/react-api-client';
-import type { CompletedWorkout } from '@bene/react-api-client';
-import { ActivityFeedView } from './feed/activity-feed-view';
-import { WorkoutHistoryDetailModal } from './history/workout-history-detail-modal';
+import ActivityFeedPage from '../page';
 
-const meta: Meta<typeof ActivityFeedView> = {
+const meta: Meta<typeof ActivityFeedPage> = {
   title: 'Features/Activities',
-  component: ActivityFeedView,
+  component: ActivityFeedPage,
   parameters: {
     layout: 'fullscreen',
     msw: {
@@ -23,66 +19,33 @@ const meta: Meta<typeof ActivityFeedView> = {
 export default meta;
 
 
-const InteractiveFeed = ({ 
-  defaultTab = 'feed',
-  isError = false
-}: { 
-  defaultTab?: 'feed' | 'history',
-  isError?: boolean
-}) => {
-  const [selectedWorkout, setSelectedWorkout] = useState<CompletedWorkout | null>(null);
-  const workoutQuery = useWorkoutHistory({ query: {} });
-  const profileQuery = useProfile();
+// No custom render needed as ActivityFeedPage handles everything
 
-  if (isError || workoutQuery.isError) {
-    return (
-      <div className="mx-auto max-w-xl py-8">
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
-          Failed to load activities.
-        </div>
-      </div>
-    );
-  }
-
-  if (workoutQuery.isLoading || profileQuery.isLoading) {
-      return <div className="mx-auto max-w-xl py-8">Loading activities...</div>;
-  }
-
-  return (
-    <>
-      <div className="mx-auto max-w-xl py-8">
-        <ActivityFeedView
-          defaultTab={defaultTab}
-          workouts={workoutQuery.data?.workouts ?? []}
-          onSelectWorkout={setSelectedWorkout}
-          userProfile={profileQuery.data ?? { displayName: 'User' }}
-        />
-      </div>
-      <WorkoutHistoryDetailModal
-        isOpen={!!selectedWorkout}
-        onClose={() => setSelectedWorkout(null)}
-        workout={selectedWorkout}
-      />
-    </>
-  );
+export const Default: StoryObj<typeof ActivityFeedPage> = {
+  render: () => <ActivityFeedPage />,
 };
 
-export const Default: StoryObj<typeof ActivityFeedView> = {
-  render: () => <InteractiveFeed />,
-};
-
-export const Empty: StoryObj<typeof ActivityFeedView> = {
+export const Empty: StoryObj<typeof ActivityFeedPage> = {
   parameters: {
     msw: {
       handlers: [
         ...workoutScenarios.emptyHistory,
+        ...profileScenarios.default,
       ],
     },
   },
-  render: () => <InteractiveFeed />,
+  render: () => <ActivityFeedPage />,
 };
 
-export const LoadError: StoryObj<typeof ActivityFeedView> = {
-  render: () => <InteractiveFeed isError={true} />,
+export const LoadError: StoryObj<typeof ActivityFeedPage> = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...workoutScenarios.error,
+        ...profileScenarios.default,
+      ],
+    },
+  },
+  render: () => <ActivityFeedPage />,
 };
 

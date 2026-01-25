@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { Result } from '@bene/shared';
 import {
   buildConnectServiceResponse as _buildConnectServiceResponse,
@@ -12,47 +11,37 @@ import type {
   GetConnectedServicesResponse,
   SyncServiceDataResponse,
 } from '@bene/integrations-domain';
-import { type FixtureOptions } from './utils.js';
+import { type WithSeed, applySeed } from './utils.js';
 
 /**
  * Integrations HTTP response builders
  * Simple wrappers that add seed control to domain fixtures
  */
 
-function applySeed(options?: FixtureOptions) {
-  if (options?.seed !== undefined) {
-    faker.seed(options.seed);
-  }
-}
-
 export function buildConnectServiceResponse(
-  options: Parameters<typeof _buildConnectServiceResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildConnectServiceResponse>[0]> = {}
 ): Result<ConnectServiceResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildConnectServiceResponse(options);
 }
 
 export function buildDisconnectServiceResponse(
-  options: Parameters<typeof _buildDisconnectServiceResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildDisconnectServiceResponse>[0]> = {}
 ): Result<DisconnectServiceResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildDisconnectServiceResponse(options);
 }
 
 export function buildGetConnectedServicesResponse(
-  options: Parameters<typeof _buildGetConnectedServicesResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildGetConnectedServicesResponse>[0]> = {}
 ): Result<GetConnectedServicesResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildGetConnectedServicesResponse(options);
 }
 
 export function buildSyncServiceDataResponse(
-  options: Parameters<typeof _buildSyncServiceDataResponse>[0] = {},
-  fixtureOptions?: FixtureOptions
+  options: WithSeed<Parameters<typeof _buildSyncServiceDataResponse>[0]> = {}
 ): Result<SyncServiceDataResponse> {
-  applySeed(fixtureOptions);
+  applySeed(options);
   return _buildSyncServiceDataResponse(options);
 }

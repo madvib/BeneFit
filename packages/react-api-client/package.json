@@ -41,6 +41,7 @@
     "targets": {
       "build": {
         "dependsOn": [
+          "@bene/gateway:build-client",
           "default"
         ],
         "parallel": false

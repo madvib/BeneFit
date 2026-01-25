@@ -82,7 +82,7 @@ export const FitnessPreferencesStory: StoryObj<typeof FitnessPreferences> = {
 export const TrainingConstraints: StoryObj<typeof TrainingConstraintsForm> = {
   name: 'Training Constraints (Default)',
   render: () => {
-    const mockConstraints = fixtures.buildTrainingConstraintsResponse(undefined, { seed: 500 });
+    const mockConstraints = fixtures.buildTrainingConstraintsResponse({ seed: 500 });
     return (
       <div className="max-w-xl p-4">
         <TrainingConstraintsForm

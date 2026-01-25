@@ -5,6 +5,7 @@ class ApiError extends Error {
     public status: number,
     public statusText: string,
     message: string,
+    public code?: string,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -26,13 +27,15 @@ export const client = createClient(import.meta.env.VITE_API_BASE_URL, {
         console.error('Unauthorized access - redirect to login if needed');
       }
 
-      const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+      const body = await res.json().catch(() => null);
+      const isObject = typeof body === 'object' && body !== null;
+      const message = isObject && 'error' in body ? body.error : `Request failed with status ${ res.status }`;
+
       throw new ApiError(
         res.status,
         res.statusText,
-        typeof error === 'object' && error !== null && 'error' in error
-          ? (error as { error: string }).error
-          : `Request failed with status ${ res.status }`,
+        String(message),
+        isObject && 'code' in body ? body.code : undefined
       );
     }
 

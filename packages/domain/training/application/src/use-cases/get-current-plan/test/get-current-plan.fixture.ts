@@ -27,6 +27,7 @@ export function buildGetCurrentPlanResponse(
   // 3. Apply any overrides and return
   return Result.ok({
     plan: planView,
+    hasActivePlan: true,
     ...overrides,
   });
 }

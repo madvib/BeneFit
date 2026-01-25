@@ -56,7 +56,12 @@ export const fitnessPlanScenarios = {
   noActivePlan: [
     http.get('*/api/fitness-plan/active', async () => {
       await delay(100);
-      return toHttpResponse(buildGetCurrentPlanResponse({ success: false, errorMessage: 'No active plan found' }));
+      return toHttpResponse(buildGetCurrentPlanResponse({
+        overrides: {
+          plan: null,
+          hasActivePlan: false
+        }
+      }));
     }),
   ],
 };

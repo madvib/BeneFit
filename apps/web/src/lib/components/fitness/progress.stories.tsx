@@ -7,7 +7,7 @@ import {
 } from './index';
 
 // Generate consistent user stats with seed
-const mockUserStats = fixtures.buildGetUserStatsResponse(undefined, { seed: 500 });
+const mockUserStats = fixtures.buildGetUserStatsResponse({ seed: 500 });
 
 const meta: Meta = {
   title: 'Components/Fitness/Progress',
