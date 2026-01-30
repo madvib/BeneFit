@@ -1,7 +1,7 @@
-'use client';
+
 
 import { Button, Stepper, typography, useAppForm } from '@/lib/components';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@tanstack/react-router';
 import { Activity, Target, User, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useCreateProfile } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants';
@@ -29,7 +29,12 @@ const STEPS = [
   },
 ] as const;
 
-export function OnboardingStepper() {
+interface OnboardingStepperProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function OnboardingStepper({ isOpen, onClose }: Readonly<OnboardingStepperProps>) {
   const router = useRouter();
   const { currentStepIndex, direction, isFirstStep, isLastStep, handleNext, handleBack } =
     useStepper(STEPS.length);
@@ -77,7 +82,7 @@ export function OnboardingStepper() {
           },
         });
 
-        router.push(ROUTES.USER.PLAN);
+        router.navigate({ to: ROUTES.USER.PLAN });
       } catch (error) {
         console.error('Failed to create profile', error);
       }
@@ -88,7 +93,11 @@ export function OnboardingStepper() {
   if (!currentStep) return null;
 
   const handleSkip = () => {
-    router.push(ROUTES.USER.ACTIVITIES);
+    if (onClose) {
+      onClose();
+    } else {
+      router.navigate({ to: ROUTES.USER.ACTIVITIES });
+    }
   };
 
   return (
@@ -98,6 +107,7 @@ export function OnboardingStepper() {
         steps={STEPS}
         currentStepIndex={currentStepIndex}
         direction={direction}
+        isOpen={isOpen}
         onClose={handleSkip}
         footer={
           <div className="flex w-full items-center justify-between p-6">

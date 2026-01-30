@@ -1,5 +1,5 @@
 import { HeartPulse } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 export const BeneLogo = ({
   hideLabelOnMobile = false,
   href = '/',
@@ -7,7 +7,7 @@ export const BeneLogo = ({
   hideLabelOnMobile?: boolean;
   href?: string;
 }) => (
-  <Link href={href} className="group flex items-center gap-2.5">
+  <Link to={href} className="group flex items-center gap-2.5">
     <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg shadow-sm transition-transform group-hover:scale-105">
       <HeartPulse size={20} />
     </div>

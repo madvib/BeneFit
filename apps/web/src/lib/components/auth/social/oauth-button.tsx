@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Button } from '@/lib/components';
 import { useState } from 'react';

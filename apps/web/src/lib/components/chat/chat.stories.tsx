@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { MessageSquare, Settings, Bot, AlertCircle } from 'lucide-react';
 import { ChatList, ChatLayout, ChatSidebar, ChatInput, ChatMessage, ChatHeader } from './index';
-import { useState } from 'react';
 import { Button, typography } from '@/lib/components';
 
 const meta: Meta = {

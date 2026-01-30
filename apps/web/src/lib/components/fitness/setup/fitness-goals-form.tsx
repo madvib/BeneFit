@@ -1,12 +1,12 @@
-'use client';
+
 import { PrimaryGoalGrid, SecondaryGoalsList, typography, useAppForm } from '@/lib/components';
 import { revalidateLogic } from '@tanstack/react-form';
-import { type PrimaryFitnessGoal, trainingSchemas } from '@bene/react-api-client';
+import { type SecondaryFitnessGoal,type PrimaryFitnessGoal, trainingSchemas } from '@bene/react-api-client';
 
 interface FitnessGoalsFormProps {
   initialPrimary: PrimaryFitnessGoal;
-  initialSecondary: string[];
-  onSave: (_goals: { primary: PrimaryFitnessGoal; secondary: string[] }) => Promise<void>;
+  initialSecondary: SecondaryFitnessGoal[];
+  onSave: (_goals: { primary: PrimaryFitnessGoal; secondary: SecondaryFitnessGoal[] }) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -40,7 +40,7 @@ export function FitnessGoalsForm({
               <div>
                 <label className={`${typography.h4} mb-3 block`}>Primary Goal</label>
                 <PrimaryGoalGrid
-                  selected={field.state.value}
+                  selected={field.state.value as PrimaryFitnessGoal}
                   onChange={field.handleChange}
                   isLoading={isLoading}
                 />
@@ -59,7 +59,7 @@ export function FitnessGoalsForm({
               <div>
                 <label className={`${typography.h4} mb-3 block`}>Secondary Goals</label>
                 <SecondaryGoalsList
-                  selected={field.state.value || []}
+                  selected={(field.state.value)}
                   onChange={field.handleChange}
                   isLoading={isLoading}
                 />

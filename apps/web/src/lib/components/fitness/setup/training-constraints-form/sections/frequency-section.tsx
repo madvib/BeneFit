@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Calendar } from 'lucide-react';
 import { WEEK_DAYS } from '@bene/shared';

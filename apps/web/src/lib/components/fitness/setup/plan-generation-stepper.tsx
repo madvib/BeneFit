@@ -1,4 +1,4 @@
-'use client';
+
 
 import { useState } from 'react';
 import { Target, Dumbbell, Calendar, ArrowRight, ArrowLeft } from 'lucide-react';

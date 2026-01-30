@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Card, typography } from '@/lib/components';
 import { useState } from 'react';

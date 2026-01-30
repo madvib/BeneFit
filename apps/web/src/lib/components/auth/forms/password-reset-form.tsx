@@ -1,13 +1,11 @@
-'use client';
-
+import { Link } from '@tanstack/react-router';
 import { revalidateLogic } from '@tanstack/react-form';
 import { authClient, authSchemas } from '@bene/react-api-client';
 import { useAppForm, FormSuccessMessage, typography } from '@/lib/components';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
-import { ROUTES } from '@/lib/constants';
-import Link from 'next/link';
+import { MODALS } from '@/lib/constants';
 
-export function PasswordResetForm({ isModal = false }) {
+export function PasswordResetForm() {
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -19,7 +17,7 @@ export function PasswordResetForm({ isModal = false }) {
     onSubmit: async ({ value }) => {
       await authClient.requestPasswordReset({
         email: value.email,
-        redirectTo: `${globalThis.location.origin}${ROUTES.AUTH.UPDATE_PASSWORD}`,
+        redirectTo: `${globalThis.location.origin}/?m=${MODALS.UPDATE_PASSWORD}`,
         fetchOptions: {
           onError(ctx) {
             authSubmit.onAuthError(ctx.error);
@@ -50,7 +48,8 @@ export function PasswordResetForm({ isModal = false }) {
         <div className={`${typography.muted} mt-4 text-center`}>
           Remember your password?{' '}
           <Link
-            href={isModal ? ROUTES.MODAL.LOGIN : ROUTES.AUTH.LOGIN}
+            to="."
+            search={(prev: any) => ({ ...prev, m: MODALS.LOGIN })}
             replace
             className={`${typography.small} text-primary hover:underline`}
           >

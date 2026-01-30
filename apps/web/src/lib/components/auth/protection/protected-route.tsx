@@ -1,9 +1,9 @@
-'use client';
-import { LoadingSpinner } from '@/lib/components';
-import { authClient } from '@bene/react-api-client';
-import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { useRouter, useLocation } from '@tanstack/react-router';
+import { authClient } from '@bene/react-api-client';
 import { ROUTES, buildRoute } from '@/lib/constants';
+import { LoadingSpinner, Modal } from '@/lib/components';
+import { ConfirmEmailNotice } from '@/lib/components/auth/confirm-email-notice';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const hasChecked = useRef(false);
 
   const isAuthenticated = !!session?.user;
@@ -41,16 +41,16 @@ export function ProtectedRoute({
     // Not authenticated - redirect to login with return URL
     if (!isAuthenticated) {
       const returnUrl = encodeURIComponent(pathname);
-      router.replace(buildRoute(redirectTo, { next: returnUrl }));
+      router.navigate({ to: buildRoute(redirectTo, { next: returnUrl }), replace: true });
       return;
     }
 
     // Authenticated but email not verified (if required)
-    if (requireEmailVerified && !isEmailVerified) {
-      const email = session?.user?.email;
-      router.replace(buildRoute(ROUTES.AUTH.CONFIRM_EMAIL, { email: email || '' }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // We handle this in the render phase now with a modal
+    // if (requireEmailVerified && !isEmailVerified) {
+    //   const email = session?.user?.email;
+    //   router.navigate({ to: buildRoute(ROUTES.AUTH.CONFIRM_EMAIL, { email: email || '' }), replace: true });
+    // }
   }, [isPending]); // Only depend on loading state
 
   // Show loading state
@@ -65,7 +65,14 @@ export function ProtectedRoute({
 
   // Email verification required but not verified
   if (requireEmailVerified && !isEmailVerified) {
-    return null;
+    return (
+      <Modal isOpen={true} onClose={() => router.navigate({ to: ROUTES.HOME })} size="sm" unstyled>
+         <ConfirmEmailNotice 
+            email={session?.user?.email} 
+            onClose={() => router.navigate({ to: ROUTES.HOME })} 
+         />
+      </Modal>
+    );
   }
 
   // Authenticated and verified (if required) - show protected content

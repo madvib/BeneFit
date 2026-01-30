@@ -1,21 +1,32 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { devtools } from '@tanstack/devtools-vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
+import { cloudflare } from '@cloudflare/vite-plugin';
+import path from 'path';
 
-export default defineConfig(() => ({
+const config = defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/apps/web',
-
-  plugins: [nxViteTsPaths(), react()],
+  cacheDir: '../../node_modules/.vite/apps/web-start',
+  server: { port: 3000, cors: false },
+  plugins: [
+    devtools(),
+    cloudflare({
+      viteEnvironment: { name: 'ssr' },
+      persistState: { path: '../../.wrangler/state' },
+    }),
+    viteTsConfigPaths(),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+  ],
   resolve: {
-    conditions: ['development', 'import', 'module', 'browser', 'default'],
-  },
-  optimizeDeps: {
-    exclude: ['@bene/*']
-  },
-  test: {
-    environment: 'happy-dom',
-    setupFiles: ['./test/setup.ts'],
-    globals: true,
-  },
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  }
 }));
+
+export default config;

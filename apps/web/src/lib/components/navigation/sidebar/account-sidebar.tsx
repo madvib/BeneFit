@@ -1,14 +1,14 @@
-'use client';
-import { Button, HEADER_CONFIG, LogoutButton, typography } from '@/lib/components';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+
+import { Button, HEADER_CONFIG, typography } from '@/lib/components';
+import { LogoutButton } from '@/lib/components/auth/actions/logout-button/logout-button';
+import { Link, useLocation } from '@tanstack/react-router';
 
 interface AccountSidebarProps {
   className?: string;
 }
 
 export const AccountSidebar = ({ className }: AccountSidebarProps) => {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   return (
     <div className={`bg-muted/10 flex h-full flex-col ${className || ''}`}>
@@ -24,7 +24,7 @@ export const AccountSidebar = ({ className }: AccountSidebarProps) => {
             (item.href !== '/user/account' && pathname.startsWith(`${item.href}/`));
 
           return (
-            <Link key={item.href} href={item.href} prefetch={false} className="block">
+            <Link key={item.href} to={item.href}  className="block">
               <Button
                 variant="ghost"
                 className={`w-full justify-start px-3 py-2 text-left ${

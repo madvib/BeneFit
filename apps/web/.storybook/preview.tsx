@@ -1,11 +1,18 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Preview } from '@storybook/react';
 import { withThemeByClassName } from '@storybook/addon-themes';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '../src/lib/components/theme/theme-provider';
-import { UIProvider } from '../src/lib/providers/ui-context';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { handlers } from '@bene/react-api-client/test';
-import '../src/app/globals.css';
+import { ThemeProvider } from '../src/lib/providers/theme-provider';
+import { UIProvider } from '../src/lib/providers/ui-context';
+import '../src/styles.css';
+import {
+  createMemoryHistory,
+  createRouter,
+  RouterProvider,
+  createRootRoute,
+} from '@tanstack/react-router';
+import { useMemo } from 'react';
 
 // Initialize MSW with default handlers for all stories
 initialize({
@@ -23,9 +30,6 @@ const queryClient = new QueryClient({
 
 const preview: Preview = {
   parameters: {
-    nextjs: {
-      appDirectory: true,
-    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -53,15 +57,27 @@ const preview: Preview = {
       },
       defaultTheme: 'light',
     }),
-    (Story) => (
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <UIProvider>
-          <QueryClientProvider client={queryClient}>
-            <Story />
-          </QueryClientProvider>
-        </UIProvider>
-      </ThemeProvider>
-    ),
+    (Story) => {
+      const router = useMemo(() => {
+        const rootRoute = createRootRoute({
+          component: () => <Story />,
+        });
+        return createRouter({
+          routeTree: rootRoute,
+          history: createMemoryHistory(),
+        });
+      }, []);
+
+      return (
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <UIProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </UIProvider>
+        </ThemeProvider>
+      );
+    },
   ],
 };
 

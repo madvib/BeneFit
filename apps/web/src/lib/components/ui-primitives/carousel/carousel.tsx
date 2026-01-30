@@ -1,4 +1,4 @@
-'use client'
+''
 import { typography } from '@/lib/components';
 import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

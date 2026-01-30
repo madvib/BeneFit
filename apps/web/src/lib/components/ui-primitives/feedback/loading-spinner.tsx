@@ -1,4 +1,4 @@
-'use client';
+
 import { cva, type VariantProps } from 'class-variance-authority';
 import { forwardRef } from 'react';
 import { ShinyText } from '../text/shiny-text';

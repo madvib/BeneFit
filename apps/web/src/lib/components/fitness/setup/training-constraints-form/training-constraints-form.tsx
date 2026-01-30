@@ -1,4 +1,4 @@
-'use client';
+
 
 import { type UpdateTrainingConstraintsFormValues } from '@bene/react-api-client';
 import { useAppForm } from '@/lib/components';
@@ -18,7 +18,6 @@ interface TrainingConstraintsFormProps {
 export function TrainingConstraintsForm({
   initialConstraints,
   onSave,
-  isLoading,
 }: Readonly<TrainingConstraintsFormProps>) {
   const form = useAppForm({
     ...trainingConstraintsFormOptions,
@@ -39,19 +38,19 @@ export function TrainingConstraintsForm({
         <div className="space-y-12">
           {/* Schedule & Timing Group */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8">
-            <FrequencySection form={form} isLoading={isLoading} />
-            <DurationSection form={form} isLoading={isLoading} />
+            <FrequencySection form={form} />
+            <DurationSection form={form} />
           </div>
 
           <hr className="border-border/30" />
 
           {/* Environment & Equipment Group */}
-          <EquipmentSection form={form} isLoading={isLoading} />
+          <EquipmentSection form={form} />
 
           <hr className="border-border/30" />
 
           {/* Physical State Group */}
-          <InjurySection form={form} isLoading={isLoading} />
+          <InjurySection form={form} />
 
           <form.SubmissionError />
           

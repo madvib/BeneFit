@@ -1,12 +1,11 @@
-'use client';
-
 import { FormSuccessMessage } from '@/lib/components';
 import { revalidateLogic } from '@tanstack/react-form';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import { authClient, authSchemas } from '@bene/react-api-client';
-import { ROUTES, buildRoute } from '@/lib/constants';
+import { ROUTES, MODALS } from '@/lib/constants';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
-import { useAppForm, OAuthButton, typography } from '@/lib/components';
+import { useAppForm, typography } from '@/lib/components';
+import { OAuthButton } from '@/lib/components/auth/social/oauth-button';
 
 export function SignupForm({ isModalRoute = false }) {
   const form = useAppForm({
@@ -41,7 +40,7 @@ export function SignupForm({ isModalRoute = false }) {
               authSubmit.onAuthSuccess({
                 message:
                   'Account created successfully! Please check your email to verify your account.',
-                redirectTo: buildRoute(ROUTES.AUTH.CONFIRM_EMAIL, { email: value.email }),
+                redirectTo: `/?m=${MODALS.CONFIRM_EMAIL}&email=${encodeURIComponent(value.email)}`,
               });
             } else {
               // Email verification not required or already verified
@@ -116,7 +115,8 @@ export function SignupForm({ isModalRoute = false }) {
         <div className={`${typography.muted} mt-6 text-center`}>
           Already have an account?{' '}
           <Link
-            href={isModalRoute ? ROUTES.MODAL.LOGIN : ROUTES.AUTH.LOGIN}
+            to={isModalRoute ? '.' : ROUTES.AUTH.LOGIN}
+            search={isModalRoute ? (prev: any) => ({ ...prev, m: 'login' }) : undefined}
             className={`${typography.small} text-primary hover:underline`}
             replace
           >

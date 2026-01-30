@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Button, typography } from '@/lib/components';
 import * as React from 'react';
@@ -12,7 +12,7 @@ import {
   ShieldAlert,
   XCircle,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@tanstack/react-router';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const getSeverityColor = (severity?: string | null): string => {
@@ -70,9 +70,9 @@ export function ErrorDisplay({
 
   const handleBack = React.useCallback(() => {
     if (backHref) {
-      router.push(backHref);
+      router.navigate({ to: backHref });
     } else {
-      router.back();
+      router.history.back();
     }
   }, [backHref, router]);
 

@@ -1,7 +1,5 @@
-'use client';
-
 import React, { useRef, useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useTheme } from 'tanstack-theme-kit';
 import { useHydrated } from '@/lib/hooks/use-hydrated';
 
 interface Position {

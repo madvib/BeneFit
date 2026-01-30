@@ -1,8 +1,8 @@
-'use client';
+
 
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
-import { useTheme } from 'next-themes';
+import { useTheme } from 'tanstack-theme-kit';
 
 const VERT = `#version 300 es
 in vec2 position;
@@ -142,15 +142,33 @@ export function Aurora(props: AuroraProps) {
     amplitude = 1,
     blend = 0.5,
   } = props;
-  const propsRef = useRef<AuroraProps>(props);
-  propsRef.current = props;
-  const { resolvedTheme } = useTheme();
-
-  // If colorStops is provided directly, use that; otherwise, use theme-based colors
-  const currentColorStops =
-    colorStops || (resolvedTheme === 'dark' ? darkColorStops : lightColorStops);
-
+    const propsRef = useRef<AuroraProps>(props);
+  // Ref for the program to be accessible in the update loop
+  const programRef = useRef<Program | undefined>(undefined);
+  const rendererRef = useRef<Renderer | undefined>(undefined);
+  const meshRef = useRef<Mesh | undefined>(undefined);
+const { theme } = useTheme();
   const ctnDom = useRef<HTMLDivElement>(null);
+  // Update propsRef when props change
+  useEffect(() => {
+    propsRef.current = props;
+  });
+
+  // Effect to handle theme changes and update uniforms without rebuilding context
+  useEffect(() => {
+    if (programRef.current) {
+        const isDark = theme === 'dark';
+        programRef.current.uniforms.uDarkMode.value = isDark ? 1 : 0;
+        
+        // Update color stops based on new theme
+        const newStops = colorStops || (isDark ? darkColorStops : lightColorStops);
+        const stopsArray = newStops.map((hex) => {
+          const c = new Color(hex);
+          return [c.r, c.g, c.b];
+        });
+        programRef.current.uniforms.uColorStops.value = stopsArray;
+    }
+  }, [theme, colorStops, darkColorStops, lightColorStops]);
 
   useEffect(() => {
     const ctn = ctnDom.current;
@@ -161,14 +179,12 @@ export function Aurora(props: AuroraProps) {
       premultipliedAlpha: true,
       antialias: true,
     });
+    rendererRef.current = renderer;
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.canvas.style.backgroundColor = 'transparent';
-
-    // eslint-disable-next-line prefer-const
-    let program: Program | undefined;
 
     function resize(entries?: ResizeObserverEntry[]) {
       if (!ctn) return;
@@ -181,8 +197,8 @@ export function Aurora(props: AuroraProps) {
         height = ctn.offsetHeight;
       }
       renderer.setSize(width, height);
-      if (program) {
-        program.uniforms.uResolution.value = [width, height];
+      if (programRef.current) {
+        programRef.current.uniforms.uResolution.value = [width, height];
       }
     }
 
@@ -194,13 +210,14 @@ export function Aurora(props: AuroraProps) {
       delete geometry.attributes.uv;
     }
 
-    // Use the initial color stops based on the current theme
-    const initialColorStopsArray = currentColorStops.map((hex) => {
+    // Initial color setup
+    const initialStops = colorStops || (theme === 'dark' ? darkColorStops : lightColorStops);
+    const initialColorStopsArray = initialStops.map((hex) => {
       const c = new Color(hex);
       return [c.r, c.g, c.b];
     });
 
-    program = new Program(gl, {
+    const program = new Program(gl, {
       vertex: VERT,
       fragment: FRAG,
       uniforms: {
@@ -208,30 +225,26 @@ export function Aurora(props: AuroraProps) {
         uAmplitude: { value: amplitude },
         uColorStops: { value: initialColorStopsArray },
         uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
-        uDarkMode: { value: resolvedTheme === 'dark' },
+        uDarkMode: { value: theme === 'dark' ? 1 : 0 },
         uBlend: { value: blend },
       },
     });
+    programRef.current = program;
 
     const mesh = new Mesh(gl, { geometry, program });
+    meshRef.current = mesh;
     ctn.append(gl.canvas);
 
     let animateId = 0;
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1 } = propsRef.current;
-      if (program) {
-        program.uniforms.uTime.value = time * speed * 0.1;
-        program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1;
-        program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
-        program.uniforms.uDarkMode.value = resolvedTheme === 'dark' ? 1 : 0;
-        // Get the color stops from props, falling back to the theme-based ones
-        const stops = propsRef.current.colorStops || currentColorStops;
-
-        program.uniforms.uColorStops.value = stops.map((hex: string) => {
-          const c = new Color(hex);
-          return [c.r, c.g, c.b];
-        });
+      if (programRef.current) {
+        programRef.current.uniforms.uTime.value = time * speed * 0.1;
+        programRef.current.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1;
+        programRef.current.uniforms.uBlend.value = propsRef.current.blend ?? blend;
+        // Note: uDarkMode and uColorStops are handled by the other useEffect
+        
         renderer.render({ scene: mesh });
       }
     };
@@ -247,7 +260,8 @@ export function Aurora(props: AuroraProps) {
       }
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, [currentColorStops, amplitude, blend, resolvedTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amplitude, blend]); // Removed theme and color dependencies from here to prevent rebuilds
 
-  return <div ref={ctnDom} className="absolute inset-0 z-0 h-full w-full" />;
+  return <div ref={ctnDom} className="pointer-events-none absolute inset-0 z-0 h-full w-full" />;
 }

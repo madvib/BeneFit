@@ -1,4 +1,4 @@
-'use client';
+
 
 import { useState } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
@@ -14,7 +14,7 @@ const SEVERITY_VARIANTS: Record<string, 'error' | 'warning' | 'outline'> = {
 
 export const InjurySection = withForm({
   ...trainingConstraintsFormOptions,
-  render: ({ form, ...props }) => {
+  render: function Render({ form, ...props }) {
     const { isLoading } = props as { isLoading?: boolean };
     const [injuryForm, setInjuryForm] = useState({
       bodyPart: '',

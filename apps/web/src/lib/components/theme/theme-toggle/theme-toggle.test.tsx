@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeToggle } from './theme-toggle';
-import { useTheme } from 'next-themes';
+import { useTheme } from 'tanstack-theme-kit';
 
 // Mock the useTheme hook
-vi.mock('next-themes', () => ({
+vi.mock('tanstack-theme-kit', () => ({
   useTheme: vi.fn(),
 }));
 

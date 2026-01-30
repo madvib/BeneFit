@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Badge, Button, Modal, typography } from '@/lib/components';
 import { AlertCircle, Clock, BrainCircuit, BatteryPlus, Activity } from 'lucide-react';

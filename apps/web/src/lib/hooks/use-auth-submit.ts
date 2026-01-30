@@ -1,6 +1,5 @@
-
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from '@tanstack/react-router';
 import { getAuthErrorContext, getAuthErrorMessage, type AuthError } from '@bene/react-api-client';
 import { ROUTES } from '@/lib/constants/routes';
 import { useFormSubmitFeedback } from './use-form-submit-feedback';
@@ -9,7 +8,7 @@ import { SubmitErrorResolution } from '../components';
 
 
 export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const feedback = useFormSubmitFeedback(formApi);
 
   const onAuthError = useCallback(
@@ -25,14 +24,14 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
       if (context.showSignupLink) {
         resolutions.push({
           message: "Don't have an account?",
-          actions: [{ label: 'Sign up here', action: () => router.push(ROUTES.AUTH.SIGNUP) }],
+          actions: [{ label: 'Sign up here', action: () => navigate({ to: ROUTES.AUTH.SIGNUP }) }],
         });
       }
 
       if (context.showLoginLink) {
         resolutions.push({
           message: 'Already have an account?',
-          actions: [{ label: 'Log in here', action: () => router.push(ROUTES.AUTH.LOGIN) }],
+          actions: [{ label: 'Log in here', action: () => navigate({ to: ROUTES.AUTH.LOGIN }) }],
         });
       }
 
@@ -42,7 +41,7 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
           actions: [
             {
               label: 'Reset your password',
-              action: () => router.push(ROUTES.AUTH.PASSWORD_RESET),
+              action: () => navigate({ to: ROUTES.AUTH.PASSWORD_RESET }),
             },
           ],
         });
@@ -53,12 +52,12 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
 
       // auth side effects
       if (context.requiresEmailVerification) {
-        router.replace(ROUTES.AUTH.CONFIRM_EMAIL);
+        navigate({ to: ROUTES.AUTH.CONFIRM_EMAIL, replace: true });
       } else if (context.requiresReauth) {
-        router.replace(ROUTES.AUTH.LOGIN);
+        navigate({ to: ROUTES.AUTH.LOGIN, replace: true });
       }
     },
-    [feedback, router],
+    [feedback, navigate],
   );
 
   const onAuthSuccess = useCallback(
@@ -66,10 +65,10 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
       feedback.submitSuccess(options?.message);
 
       if (options?.redirectTo) {
-        router.replace(options.redirectTo);
+        navigate({ to: options.redirectTo, replace: true });
       }
     },
-    [feedback, router],
+    [feedback, navigate],
   );
 
   return {

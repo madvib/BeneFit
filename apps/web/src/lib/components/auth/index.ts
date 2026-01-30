@@ -20,3 +20,8 @@ export * from './social/oauth-provider-list';
 
 // Actions
 export { LogoutButton } from './actions/logout-button/logout-button';
+
+// Modals & Notices
+export { AuthModals } from './auth-modals';
+export { VerifyEmail } from './verify-email';
+export { ConfirmEmailNotice } from './confirm-email-notice';

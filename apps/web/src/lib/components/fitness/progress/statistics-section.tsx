@@ -1,5 +1,3 @@
-'use client';
-
 import { Award, Flame, TrendingUp, Clock, Dumbbell, Zap } from 'lucide-react';
 import { type UserStats } from '@bene/react-api-client';
 import { safeFormatDate } from '@/lib/utils';

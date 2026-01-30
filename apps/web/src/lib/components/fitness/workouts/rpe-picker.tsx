@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Slider, typography } from '@/lib/components';
 import { useRPE } from '@/lib/hooks/_draft/use-rpe';
@@ -21,7 +21,7 @@ export function RPEPicker({ value, onChange, disabled, className }: RPEPickerPro
     if (t === 1) return 'Min';
     if (t === 5) return 'Medium';
     if (t === 10) return 'Max';
-    return '';
+    return 
   };
 
   return (

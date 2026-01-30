@@ -49,10 +49,7 @@ export const Showcase: Story = {
             <h3 className="text-lg font-medium text-muted-foreground">Full / DateTime</h3>
             <DateDisplay date={today} format="datetime" className="text-2xl font-bold" />
         </div>
-        <div className="flex flex-col items-center gap-4 p-8">
-            <h3 className="text-lg font-medium text-muted-foreground">Relative</h3>
-            <DateDisplay date={new Date(Date.now() - 1000 * 60 * 5)} format="relative" className="text-2xl font-bold" />
-        </div>
+
       </Carousel>
     );
   }

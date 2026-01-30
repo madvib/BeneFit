@@ -1,5 +1,3 @@
-'use client';
-
 import { ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button, IconBox, Modal, typography } from '@/lib/components';

@@ -1,9 +1,8 @@
-'use client';
+
 
 import { ReactNode, useEffect, useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useUI } from '@/lib/providers/ui-context';
 import { ConfirmationModal } from './confirmation-modal';
 import { Button, typography } from '@/lib/components';
@@ -53,7 +52,6 @@ export function Modal({
   unstyled = false,
   onCloseConfirm,
 }: Readonly<ModalProps>) {
-  const router = useRouter();
   const { setIsModalOpen } = useUI();
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
@@ -65,10 +63,8 @@ export function Modal({
       setIsConfirmationOpen(true);
     } else if (onClose) {
       onClose();
-    } else if (isRoute) {
-      router.back();
     }
-  }, [onClose, isRoute, router, onCloseConfirm]);
+  }, [onClose, onCloseConfirm]);
 
   const handleConfirmClose = useCallback(() => {
     if (onClose) {
@@ -129,7 +125,7 @@ export function Modal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`bg-background border-border relative z-50 flex h-full w-full flex-col overflow-hidden border shadow-2xl ring-1 ring-white/10 transition-all sm:h-auto sm:rounded-4xl ${SIZE_CLASSES[size]} ${containerClassName || ''}`}
+            className={`bg-background border-border relative z-50 flex h-full w-full flex-col overflow-hidden border shadow-2xl ring-1 ring-white/10 sm:h-auto sm:rounded-4xl ${SIZE_CLASSES[size]} ${containerClassName || ''}`}
           >
             {/* Header */}
             {showCloseButton && (

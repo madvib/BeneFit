@@ -1,7 +1,9 @@
-'use client';
+
 import { useState, useRef, useEffect } from 'react';
 import { CircleUser, ChevronDown } from 'lucide-react';
-import { Dropdown, LogoutButton, ThemeToggle, typography } from '@/lib/components';
+import { Dropdown, typography } from '@/lib/components';
+import { LogoutButton } from '@/lib/components/auth/actions/logout-button/logout-button';
+import { ThemeToggle } from '@/lib/components/theme/theme-toggle/theme-toggle';
 import { NavigationLinks } from '../../links/navigation-links';
 interface UserAccountMenuProps {
   isLoggedIn: boolean;

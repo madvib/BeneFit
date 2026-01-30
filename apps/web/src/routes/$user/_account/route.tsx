@@ -1,0 +1,42 @@
+import { useState } from 'react';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { AccountHeader, AccountSidebar, PageContainer } from '@/lib/components';
+
+export const Route = createFileRoute('/$user/_account')({
+  component: AccountLayout,
+});
+
+function AccountLayout() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <PageContainer variant="fullViewport" className="flex h-screen flex-col">
+      <AccountHeader onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar */}
+        <aside className="hidden w-64 shrink-0 border-r md:block">
+          <AccountSidebar className="h-full" />
+        </aside>
+
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-50 flex md:hidden">
+            <div
+              className="bg-background/80 absolute inset-0 backdrop-blur-sm"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <div className="bg-background relative w-64 border-r shadow-xl">
+              <AccountSidebar className="h-full" />
+            </div>
+          </div>
+        )}
+
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+          <div className="mx-auto max-w-4xl">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </PageContainer>
+  );
+}

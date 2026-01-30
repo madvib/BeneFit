@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LogoutButton } from './logout-button';
 
-// Mock next/navigation
-vi.mock('next/navigation', () => ({
+// Mock @tanstack/react-router
+vi.mock('@tanstack/react-router', () => ({
   useRouter: () => ({
-    replace: vi.fn(),
+    navigate: vi.fn(),
   }),
 }));
 

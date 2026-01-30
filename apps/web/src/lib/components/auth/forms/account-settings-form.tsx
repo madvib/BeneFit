@@ -1,4 +1,4 @@
-'use client';
+
 
 import { typography, useAppForm } from '@/lib/components';
 import { revalidateLogic } from '@tanstack/react-form';

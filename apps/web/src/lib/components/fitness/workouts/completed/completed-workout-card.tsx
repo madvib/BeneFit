@@ -1,6 +1,4 @@
-'use client';
-
-import { Badge, Button, IconBox, typography } from '@/lib/components';
+import {  Button, IconBox, typography } from '@/lib/components';
 import { CheckCircle2, Clock, Dumbbell, Activity, LucideIcon } from 'lucide-react';
 import type { CompletedWorkout } from '@bene/react-api-client';
 

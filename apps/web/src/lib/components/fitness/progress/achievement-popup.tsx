@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Badge, Button, Modal, typography } from '@/lib/components';
 import { Award, Trophy, Star } from 'lucide-react';

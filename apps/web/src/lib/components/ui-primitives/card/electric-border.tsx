@@ -1,4 +1,4 @@
-'use client';
+
 
 import React, { useEffect, useRef, useCallback, CSSProperties, ReactNode } from 'react';
 

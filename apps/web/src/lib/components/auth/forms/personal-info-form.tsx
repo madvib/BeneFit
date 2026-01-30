@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Button, FormSuccessMessage, typography, useAppForm } from '@/lib/components';
 import { useState } from 'react';

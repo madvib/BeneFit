@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Share2, ThumbsUp, PenLine, Heart } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Badge, Card, typography } from '@/lib/components';
 import { 

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Button, typography } from '@/lib/components';
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Badge, Button, IconBox, typography } from '@/lib/components';
 import { Play, Clock, Zap, CheckCircle2, ChevronRight, LucideIcon } from 'lucide-react';

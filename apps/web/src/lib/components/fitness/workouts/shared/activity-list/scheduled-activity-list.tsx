@@ -1,4 +1,4 @@
-'use client';
+
 
 import { typography } from '@/lib/components';
 import { 

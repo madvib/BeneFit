@@ -1,4 +1,4 @@
-'use client';
+
 
 import { MetricCard } from '@/lib/components';
 import { LucideIcon } from 'lucide-react';

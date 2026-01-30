@@ -4,6 +4,7 @@ packages:
   - 'tools/*'
 catalog:
   '@tanstack/react-query': '5.90.12'
+  '@tanstack/react-form': '1.28.0'
   'better-auth': '1.4.17'
   agents: '0.3.6'
   drizzle-orm: '0.45.1'

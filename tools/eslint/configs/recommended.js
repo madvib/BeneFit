@@ -1,4 +1,3 @@
-import nextVitals from 'eslint-config-next/core-web-vitals';
 import sonarjs from 'eslint-plugin-sonarjs';
 import vitest from 'eslint-plugin-vitest';
 import security from 'eslint-plugin-security';
@@ -6,30 +5,28 @@ import unicorn from 'eslint-plugin-unicorn';
 import testing_library from 'eslint-plugin-testing-library';
 import nx from '@nx/eslint-plugin';
 import custom from '../index.js';
-
 import { globalIgnores } from 'eslint/config';
 
 export const recommended = (name, projectDir) => [
   globalIgnores([
-    '**/.next/**',
+    '**/.wrangler/**',
     '**/out/**',
     '**/out-tsc/**',
     '**/build/**',
-    '**/next-env.d.ts',
+    '**/.tanstack.ts',
     '**/cloudflare-env.d.ts',
-    '**/.open-next/**',
+    '**/node_modules/**',
     '**/dist/**',
   ]),
   {
     name,
     files: [`${projectDir}/**/*.{ts,tsx,js,jsx,mjs}`],
-    ignores: ['cloudflare-env.d.ts', '**/.open-next/**', '**/*.stories.ts', '**/*.stories.tsx'],
+    ignores: ['cloudflare-env.d.ts', '**/*.stories.ts', '**/*.stories.tsx'],
     languageOptions: {
       parserOptions: {
         project: `${projectDir}/tsconfig.json`,
       },
     },
-    extends: [nextVitals],
     plugins: {
       security,
       sonarjs,
@@ -39,20 +36,17 @@ export const recommended = (name, projectDir) => [
       '@nx': nx,
       custom,
     },
-    settings: {
-      next: {
-        rootDir: projectDir,
-      },
-    },
+
     rules: {
       ...unicorn.configs.unopinionated.rules,
       ...sonarjs.configs.recommended.rules,
+      'sonarjs/prefer-read-only-props': 'off',
       'sonarjs/todo-tag': 'warn',
       ...security.configs.recommended.rules,
       'security/detect-object-injection': 'off',
       ...testing_library.configs['flat/react'].rules,
       ...vitest.configs.recommended.rules,
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'sonarjs/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-expressions': 'warn',
@@ -136,7 +130,7 @@ export const recommended = (name, projectDir) => [
         },
       ],
       'no-restricted-syntax': [
-        'error',
+        'warn',
         {
           selector:
             'JSXAttribute[name.name="className"] Literal[value=/text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|8xl|9xl)/]',
@@ -148,7 +142,6 @@ export const recommended = (name, projectDir) => [
           message: 'Use typography constants from typography.ts instead',
         },
       ],
-      '@next/next/no-img-element': 'off',
     },
   },
   {

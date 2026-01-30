@@ -1,7 +1,7 @@
-'use client';
+
 
 import { Bell, Menu, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import {
   Button,
   BeneLogo,
@@ -31,7 +31,7 @@ export function AccountHeader({
       </HeaderLeft>
 
       <HeaderRight>
-        <Link href={ROUTES.USER.ACTIVITIES} prefetch={false}>
+        <Link to={ROUTES.USER.ACTIVITIES} preload={false}>
           <Button variant="outline" size="sm" className="gap-2">
             <ArrowLeft size={16} />
             Back to App

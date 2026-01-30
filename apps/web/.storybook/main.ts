@@ -1,20 +1,20 @@
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-import type { StorybookConfig } from '@storybook/nextjs-vite';
+import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
-  addons: ['@storybook/addon-themes', '@storybook/addon-essentials', 'msw-storybook-addon'],
+  addons: ['@storybook/addon-themes', 'msw-storybook-addon'],
   framework: {
-    name: getAbsolutePath('@storybook/nextjs-vite'),
+    name: getAbsolutePath('@storybook/react-vite'),
     options: {},
   },
-  staticDirs: ['../public']
+  staticDirs: ['../public'],
 };
 
 function getAbsolutePath(value: string): string {
-  return path.dirname(fileURLToPath(import.meta.resolve(`${ value }/package.json`)));
+  return path.dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
 }
 
 export default config;

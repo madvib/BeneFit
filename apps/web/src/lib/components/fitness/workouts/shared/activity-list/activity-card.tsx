@@ -1,12 +1,10 @@
-'use client';
-
-import { Badge, Card, typography } from '@/lib/components';
+import { useState } from 'react';
 import { 
   ChevronRight, 
   ChevronDown,
   CheckCircle2,
 } from 'lucide-react';
-import { useState } from 'react';
+import { Badge, Card, typography } from '@/lib/components';
 import { getActivityTypeConfig } from '@/lib/constants/training-ui';
 
 interface ActivityCardProps {
@@ -48,14 +46,20 @@ export function ActivityCard({
         className={`bg-muted/30 border-border/40 flex items-center justify-between border-b px-5 py-4 ${isCompleted ? 'bg-success/5' : ''} ${isCollapsible ? 'cursor-pointer hover:bg-muted/50 transition-colors' : ''}`}
       >
         <div className="flex items-center gap-3">
-          {isCompleted ? (
-            <CheckCircle2 size={20} className="text-success" />
-          ) : isCollapsible ? (
-             isExpanded ? <ChevronDown size={20} className="opacity-50" /> : <ChevronRight size={20} className="opacity-50" />
-          ) : (
-            <Icon size={20} className={`${typeConfig.iconClass} opacity-70`} />
-          )}
-          <p className={`${typography.h4} font-bold capitalize tracking-tight`}>{name}</p>
+{(() => {
+    if (isCompleted) {
+        return <CheckCircle2 size={20} className="text-success" />;
+    }
+    if (isCollapsible) {
+        return isExpanded ? (
+            <ChevronDown size={20} className="opacity-50" />
+        ) : (
+            <ChevronRight size={20} className="opacity-50" />
+        );
+    }
+    return <Icon size={20} className={`${typeConfig.iconClass} opacity-70`} />;
+})()}
+<p className={`${typography.h4} font-bold capitalize tracking-tight`}>{name}</p>
         </div>
         <div className="flex items-center gap-2">
             {duration && (

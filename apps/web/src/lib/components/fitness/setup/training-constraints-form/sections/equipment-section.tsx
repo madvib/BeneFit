@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Dumbbell } from 'lucide-react';
 import { CategorizedEquipmentSelection, typography, withForm } from '@/lib/components';

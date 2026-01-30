@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import { HEADER_CONFIG, type NavItem } from '@/lib/components';
 
 export function NavigationLinks({
@@ -26,7 +26,7 @@ export function NavigationLinks({
   return items()
     .filter((link) => !link.disabled)
     .map((link) => (
-      <Link key={link.href} href={link.href} className={linkClass}>
+      <Link key={link.href} to={link.href} className={linkClass}>
         {link.label}
       </Link>
     ));

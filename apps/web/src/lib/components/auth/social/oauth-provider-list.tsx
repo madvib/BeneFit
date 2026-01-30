@@ -1,9 +1,7 @@
-'use client';
-
+import { authClient } from '@bene/react-api-client';
 import { Button, IconBox, LoadingSpinner, OAuthButton, typography } from '@/lib/components';
 import { useState, useEffect } from 'react';
 import { Check, ExternalLink } from 'lucide-react';
-import { authClient } from '@bene/react-api-client';
 
 export function OAuthProviderList() {
   const [providers, setProviders] = useState<string[]>([]);

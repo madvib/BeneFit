@@ -1,4 +1,4 @@
-'use client';
+
 import { createFormHookContexts, createFormHook } from '@tanstack/react-form';
 import { ControlledInput } from './controlled-input';
 import { Root } from './form-root';

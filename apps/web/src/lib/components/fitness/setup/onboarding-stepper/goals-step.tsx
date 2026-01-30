@@ -1,3 +1,4 @@
+import { SecondaryFitnessGoal } from '@bene/react-api-client';
 import { onboardingFormOpts } from './form-options';
 import { PrimaryGoalGrid, SecondaryGoalsList, typography, withForm } from '@/lib/components';
 
@@ -24,7 +25,7 @@ export const GoalsStep = withForm({
             <>
               <h3 className={`${typography.h3} mb-6`}>Secondary Goals</h3>
               <SecondaryGoalsList
-                selected={field.state.value || []}
+                selected={field.state.value as SecondaryFitnessGoal[]}
                 onChange={field.handleChange}
               />
             </>

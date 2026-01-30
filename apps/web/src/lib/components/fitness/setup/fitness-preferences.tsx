@@ -1,4 +1,4 @@
-'use client';
+
 
 
 import { Card, Select, typography } from '@/lib/components';

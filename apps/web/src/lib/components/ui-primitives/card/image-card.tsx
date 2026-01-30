@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { Image } from "@unpic/react";
 
 interface ImageCardProps {
   src: string;
@@ -7,7 +7,8 @@ interface ImageCardProps {
   height: number;
 }
 
-export function ImageCard({ src, alt, width, height }: ImageCardProps) {
+export function
+  ImageCard({ src, alt, width, height }: ImageCardProps) {
   return (
     <div className="w-full max-w-2xl flex-1">
       <div className="border-accent relative transform overflow-hidden rounded-2xl border shadow-xl transition-transform duration-300 hover:scale-[1.02]">

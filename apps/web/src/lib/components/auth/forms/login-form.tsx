@@ -1,16 +1,13 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearch, Link } from '@tanstack/react-router';
 import { revalidateLogic } from '@tanstack/react-form';
 import { authClient, authSchemas } from '@bene/react-api-client';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES, MODALS } from '@/lib/constants';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { useAppForm, typography, OAuthButton } from '@/lib/components';
 
 export function LoginForm({ isModalRoute = false }) {
-  const searchParameters = useSearchParams();
-  const next = searchParameters.get('next') ?? ROUTES.USER.ACTIVITIES;
+  const search = useSearch({ strict: false });
+  const next = search?.next ?? ROUTES.USER.ACTIVITIES;
 
   const form = useAppForm({
     defaultValues: {
@@ -66,7 +63,7 @@ export function LoginForm({ isModalRoute = false }) {
         <OAuthButton provider="google" />
         <div className={`${typography.muted} text-center`}>
           <Link
-            href={isModalRoute ? ROUTES.MODAL.PASSWORD_RESET : ROUTES.AUTH.PASSWORD_RESET}
+            search={(prev: any) => ({ ...prev, m: MODALS.RESET_PASSWORD })}
             replace
             className={`${typography.small} text-primary hover:underline`}
           >

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Badge, Button, IconBox, typography, Card, MetricCard } from '@/lib/components';
 import { Play, Dumbbell, Star, SkipForward, Info, Zap, LucideIcon, Calendar } from 'lucide-react';
@@ -93,7 +93,7 @@ export function ScheduledWorkoutDashboard({
                   <Dumbbell className="text-primary" size={28} /> Session Flow
                </h3>
                <span className={`${typography.mutedXs} font-bold opacity-60`}>
-                 {workout.estimatedDuration} MIN TOTAL
+                 {Math.round((workout.estimatedDuration || 0) / 60)} MIN TOTAL
                </span>
             </div>
             <ScheduledActivityList activities={workout.activities || []} isCollapsible={true} />

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { FormSuccessMessage, useAppForm } from '@/lib/components';
 import { authClient, authSchemas } from '@bene/react-api-client';

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { Clock } from 'lucide-react';
 import { typography, withForm } from '@/lib/components';
