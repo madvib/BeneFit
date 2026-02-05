@@ -16,6 +16,7 @@ const config = defineConfig(() => ({
     cloudflare({
       viteEnvironment: { name: 'ssr' },
       persistState: { path: '../../.wrangler/state' },
+      // auxiliaryWorkers: [{ configPath: '../gateway/wrangler.jsonc' }],
     }),
     viteTsConfigPaths(),
     tailwindcss(),
@@ -26,7 +27,7 @@ const config = defineConfig(() => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-  }
+  },
 }));
 
 export default config;

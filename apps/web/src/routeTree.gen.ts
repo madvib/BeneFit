@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as UserRouteRouteImport } from './routes/$user/route'
@@ -33,11 +32,6 @@ import { Route as UserAccountConnectionsRouteImport } from './routes/$user/_acco
 import { Route as UserAccountBillingRouteImport } from './routes/$user/_account/billing'
 import { Route as UserAccountAccountRouteImport } from './routes/$user/_account/account'
 
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const marketingRouteRoute = marketingRouteRouteImport.update({
   id: '/(marketing)',
   getParentRoute: () => rootRouteImport,
@@ -147,7 +141,6 @@ const UserAccountAccountRoute = UserAccountAccountRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/$user': typeof UserDashboardRouteRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/callback': typeof authCallbackRoute
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
@@ -167,7 +160,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/$user': typeof UserDashboardRouteRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/callback': typeof authCallbackRoute
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
@@ -190,7 +182,6 @@ export interface FileRoutesById {
   '/$user': typeof UserRouteRouteWithChildren
   '/(auth)': typeof authRouteRouteWithChildren
   '/(marketing)': typeof marketingRouteRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/$user/_account': typeof UserAccountRouteRouteWithChildren
   '/$user/_chat': typeof UserChatRouteRouteWithChildren
   '/$user/_dashboard': typeof UserDashboardRouteRouteWithChildren
@@ -215,7 +206,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/$user'
-    | '/onboarding'
     | '/callback'
     | '/login'
     | '/signup'
@@ -235,7 +225,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$user'
-    | '/onboarding'
     | '/callback'
     | '/login'
     | '/signup'
@@ -257,7 +246,6 @@ export interface FileRouteTypes {
     | '/$user'
     | '/(auth)'
     | '/(marketing)'
-    | '/onboarding'
     | '/$user/_account'
     | '/$user/_chat'
     | '/$user/_dashboard'
@@ -283,18 +271,10 @@ export interface RootRouteChildren {
   UserRouteRoute: typeof UserRouteRouteWithChildren
   authRouteRoute: typeof authRouteRouteWithChildren
   marketingRouteRoute: typeof marketingRouteRouteWithChildren
-  OnboardingRoute: typeof OnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(marketing)': {
       id: '/(marketing)'
       path: ''
@@ -552,7 +532,6 @@ const rootRouteChildren: RootRouteChildren = {
   UserRouteRoute: UserRouteRouteWithChildren,
   authRouteRoute: authRouteRouteWithChildren,
   marketingRouteRoute: marketingRouteRouteWithChildren,
-  OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -6,7 +6,7 @@ const pageContainerVariants = cva('w-full font-sans', {
       default: 'px-2 pt-[var(--header-height)] md:px-6',
       noPadding: 'bg-background text-foreground pt-[var(--header-height)]',
       fullViewport:
-        'p-0 pt-[var(--header-height)] sm:px-6 flex flex-col min-h-[calc(100vh-var(--header-height))]',
+        'p-0 pt-[var(--header-height)] flex flex-col min-h-[calc(100vh-var(--header-height))]',
     },
   },
   defaultVariants: {

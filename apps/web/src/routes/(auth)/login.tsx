@@ -8,7 +8,7 @@ export const Route = createFileRoute('/(auth)/login')({
 
 function LoginPage() {
   return (
-    <div className="flex h-screen w-full overflow-hidden pt-16">
+    <div className="flex h-screen w-full overflow-hidden">
       {/* Left Section: Marketing/Branding */}
       <div className="relative hidden w-1/2 flex-col justify-center p-12 md:flex">
         {/* Background Gradient Layer */}

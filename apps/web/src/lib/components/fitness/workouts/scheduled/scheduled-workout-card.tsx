@@ -28,7 +28,7 @@ export function ScheduledWorkoutCard({
   const isSkipped = status === 'skipped';
 
   return (
-    <div className={`group relative overflow-hidden bg-card/40 border border-border/40 rounded-3xl p-6 hover:border-primary/50 transition-all hover:shadow-lg backdrop-blur-sm flex flex-col justify-between ${isInline ? '' : 'h-full'} ${isCompleted ? 'bg-primary/5 border-primary/20' : ''} ${isSkipped ? 'bg-accent/30 opacity-60 grayscale' : ''}`}>
+    <div className={`group relative w-full overflow-hidden bg-card/40 border border-border/40 rounded-3xl p-6 hover:border-primary/50 transition-all hover:shadow-lg backdrop-blur-sm flex flex-col justify-between ${isInline ? '' : 'h-full'} ${isCompleted ? 'bg-primary/5 border-primary/20' : ''} ${isSkipped ? 'bg-accent/30 opacity-60 grayscale' : ''}`}>
       {/* Status Overlay for Completed */}
       {isCompleted && !isInline && (
         <div className="bg-primary/10 text-primary absolute -top-10 -right-10 flex h-24 w-24 items-end justify-start rounded-full p-4 transition-transform group-hover:scale-110">
@@ -46,7 +46,7 @@ export function ScheduledWorkoutCard({
                   {subHeader}
                 </p>
               )}
-              <h4 className={`${isInline ? typography.displayMd : typography.h4} capitalize tracking-tight ${isSkipped ? 'text-muted-foreground line-through' : ''}`}>
+              <h4 className={`${isInline ? typography.displayMd : typography.h4} capitalize tracking-tight break-words ${isSkipped ? 'text-muted-foreground line-through' : ''}`}>
                 {workout.title || workout.type}
               </h4>
               <div className="flex items-center gap-2 mt-1">
@@ -69,7 +69,7 @@ export function ScheduledWorkoutCard({
         {(workout.description || !isInline) && (
           <div className="space-y-3">
             {workout.description && (
-              <p className={`${typography.mutedXs} line-clamp-2 opacity-80 leading-relaxed`}>
+              <p className={`${typography.mutedXs} line-clamp-3 opacity-80 leading-relaxed break-words`}>
                 {workout.description}
               </p>
             )}

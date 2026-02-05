@@ -115,8 +115,8 @@ function ActivityFeedPage() {
     <DashboardShell
       overview={
         <>
-          <div className="mb-2 flex items-center justify-between">
-            <PageHeader title="My Activity" />
+          <div className="mb-4 flex flex-col items-center">
+            <PageHeader title="My Activity" className="text-center" />
           </div>
 
           <ActivityFeedView

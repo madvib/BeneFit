@@ -10,6 +10,8 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { ErrorPage } from '@/lib/components';
 import { AuthModals } from '@/lib/components/auth/auth-modals';
+import { PlanModals } from '@/lib/components/fitness/plan-modals';
+import { GeneratePlanRequest } from '@bene/react-api-client';
 import { Providers } from '@/lib/providers/providers';
 import appCss from '@/styles.css?url';
 import { DefaultCatchBoundary } from '../lib/components/DefaultCatchBoundary';
@@ -25,6 +27,7 @@ const rootSearchSchema = z.object({
       MODALS.UPDATE_PASSWORD,
       MODALS.CONFIRM_EMAIL,
       MODALS.VERIFY_EMAIL,
+      MODALS.GENERATE_PLAN,
     ])
     .optional(),
   next: z.string().optional(),
@@ -37,7 +40,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        charSet: 'utf-8',
+        charSet: 'utf8',
       },
       {
         name: 'viewport',
@@ -92,12 +95,8 @@ function RootComponent() {
   return (
     <RootDocument>
       <Outlet />
-      <AuthModals
-        activeModal={m}
-        email={email}
-        onClose={handleCloseModal}
-        onSwitch={handleSwitchModal}
-      />
+      <AuthModals activeModal={m} email={email} onSwitch={handleSwitchModal} />
+      <PlanModals activeModal={m} />
     </RootDocument>
   );
 }

@@ -8,7 +8,7 @@ export const Route = createFileRoute('/(auth)/signup')({
 
 function SignupPage() {
   return (
-    <div className="flex h-screen w-full flex-col pt-16 md:flex-row">
+    <div className="flex h-screen w-full flex-col md:flex-row">
       {/* Left Section: Marketing/Branding */}
       <div className="relative hidden w-full flex-col justify-center p-12 md:flex md:w-1/2">
         {/* Background Gradient Layer */}

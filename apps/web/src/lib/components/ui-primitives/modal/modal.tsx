@@ -1,11 +1,10 @@
-
-
 import { ReactNode, useEffect, useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useUI } from '@/lib/providers/ui-context';
-import { ConfirmationModal } from './confirmation-modal';
 import { Button, typography } from '@/lib/components';
+import { ConfirmationModal } from './confirmation-modal';
+import { useNavigate } from '@tanstack/react-router';
 
 interface ModalProps {
   isOpen?: boolean;
@@ -54,6 +53,7 @@ export function Modal({
 }: Readonly<ModalProps>) {
   const { setIsModalOpen } = useUI();
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Internal open state for hooks
   const effectiveOpen = isRoute ? true : isOpen;
@@ -61,8 +61,14 @@ export function Modal({
   const handleClose = useCallback(() => {
     if (onCloseConfirm) {
       setIsConfirmationOpen(true);
-    } else if (onClose) {
-      onClose();
+    } else {
+      navigate({
+        search: (prev) => ({ ...prev, m: undefined }),
+        replace: true,
+      });
+      if (onClose) {
+        onClose();
+      }
     }
   }, [onClose, onCloseConfirm]);
 
@@ -131,8 +137,9 @@ export function Modal({
             {showCloseButton && (
               <Button
                 variant="ghost"
+                size="icon"
                 onClick={handleClose}
-                className={`text-muted-foreground hover:text-foreground hover:bg-accent/50 z-10 rounded-full p-2 transition-all ${
+                className={`text-muted-foreground hover:text-foreground hover:bg-accent/50 z-10 transition-all ${
                   unstyled
                     ? 'absolute top-2 right-2 sm:top-3 sm:right-3'
                     : 'absolute top-4 right-4 sm:top-6 sm:right-6'

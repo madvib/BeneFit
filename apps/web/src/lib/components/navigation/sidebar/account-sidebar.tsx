@@ -44,7 +44,7 @@ export const AccountSidebar = ({ className }: AccountSidebarProps) => {
       <div className="border-muted/20 mt-auto border-t p-3">
         <LogoutButton
           variant="ghost"
-          className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
+          className="w-full justify-start text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
         />
       </div>
     </div>

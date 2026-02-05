@@ -6,7 +6,6 @@ import { useFormSubmitFeedback } from './use-form-submit-feedback';
 import { AnyFormApi } from '@tanstack/react-form';
 import { SubmitErrorResolution } from '../components';
 
-
 export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
   const navigate = useNavigate();
   const feedback = useFormSubmitFeedback(formApi);
@@ -24,7 +23,9 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
       if (context.showSignupLink) {
         resolutions.push({
           message: "Don't have an account?",
-          actions: [{ label: 'Sign up here', action: () => navigate({ to: ROUTES.AUTH.SIGNUP }) }],
+          actions: [
+            { label: 'Sign up here', action: () => navigate({ to: ROUTES.AUTH.SIGNUP }) },
+          ],
         });
       }
 
@@ -65,7 +66,10 @@ export function useAuthFormSubmit({ formApi }: { formApi: AnyFormApi }) {
       feedback.submitSuccess(options?.message);
 
       if (options?.redirectTo) {
-        navigate({ to: options.redirectTo, replace: true });
+        // Add a small delay to ensure auth state is updated
+        setTimeout(() => {
+          navigate({ to: options.redirectTo, replace: true });
+        }, 100);
       }
     },
     [feedback, navigate],

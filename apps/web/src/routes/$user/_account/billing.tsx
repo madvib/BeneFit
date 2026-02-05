@@ -12,6 +12,7 @@ function BillingPage() {
       <PageHeader
         title="Billing & Plans"
         description="Manage your subscription and payment methods"
+        align="left"
       />
 
       {/* Current Plan */}

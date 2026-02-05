@@ -1,5 +1,3 @@
-
-
 import { Badge, Button, Card, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Heart, MessageCircle, Filter, History as HistoryIcon, LayoutList } from 'lucide-react';
@@ -63,7 +61,7 @@ export function ActivityFeedView({
   // --- RENDERERS ---
 
   const renderTabs = () => (
-    <div className="bg-muted/30 mb-6 flex w-fit items-center gap-2 rounded-xl p-1">
+    <div className="bg-muted/30 mx-auto mb-6 flex w-fit items-center justify-center gap-2 rounded-xl p-1">
       {/*Buttons? */}
 
       <button
@@ -92,97 +90,99 @@ export function ActivityFeedView({
   );
 
   const renderFeed = () => (
-    <div className="animate-in fade-in space-y-3 duration-500">
-      {displayedFeedItems.map((item) => (
-        <Card
-          key={item.id}
-          className="group border-border bg-card hover:border-primary/30 transition-all hover:shadow-sm"
-          bodyClassName="p-4"
-        >
-          <div className="flex items-start gap-4">
-            {/* Avatar */}
-            <div
-              className={`${typography.small} flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${item.user.color}`}
-            >
-              {item.user.avatar}
-            </div>
-
-            {/* Content */}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between">
-                <p className={`${typography.small} truncate`}>
-                  {item.user.name} <span className={typography.muted}>{item.action}</span>
-                </p>
-                <span className={`${typography.xs} text-muted-foreground shrink-0`}>
-                  {item.time}
-                </span>
+    <div className="animate-in fade-in flex h-full flex-col overflow-hidden duration-500">
+      <div className="flex-1 space-y-3 overflow-y-auto">
+        {displayedFeedItems.map((item) => (
+          <Card
+            key={item.id}
+            className="group border-border bg-card hover:border-primary/30 transition-all hover:shadow-sm"
+            bodyClassName="p-4"
+          >
+            <div className="flex items-start gap-4">
+              {/* Avatar */}
+              <div
+                className={`${typography.small} flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white ${item.user.color}`}
+              >
+                {item.user.avatar}
               </div>
 
-              <p className={`${typography.small} text-foreground/90 mt-1`}>{item.content}</p>
-
-              {item.stats && (
-                <div className="mt-2 flex items-center gap-4">
-                  {Object.entries(item.stats).map(([key, value]) => (
-                    <Badge
-                      key={key}
-                      variant="accent"
-                      className={`${typography.xs} bg-accent/50 text-foreground`}
-                    >
-                      <span className="mr-1 tracking-wider uppercase opacity-70">{key}:</span>
-                      <span>{String(value)}</span>
-                    </Badge>
-                  ))}
+              {/* Content */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <p className={`${typography.small} truncate`}>
+                    {item.user.name} <span className={typography.muted}>{item.action}</span>
+                  </p>
+                  <span className={`${typography.xs} text-muted-foreground shrink-0`}>
+                    {item.time}
+                  </span>
                 </div>
-              )}
-            </div>
 
-            {/* Actions */}
-            <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground h-8 w-8 rounded-full hover:bg-red-500/10 hover:text-red-500"
-              >
-                <Heart size={16} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground h-8 w-8 rounded-full hover:bg-blue-500/10 hover:text-blue-500"
-              >
-                <MessageCircle size={16} />
-              </Button>
+                <p className={`${typography.small} text-foreground/90 mt-1`}>{item.content}</p>
+
+                {item.stats && (
+                  <div className="mt-2 flex items-center gap-4">
+                    {Object.entries(item.stats).map(([key, value]) => (
+                      <Badge
+                        key={key}
+                        variant="accent"
+                        className={`${typography.xs} bg-accent/50 text-foreground`}
+                      >
+                        <span className="mr-1 tracking-wider uppercase opacity-70">{key}:</span>
+                        <span>{String(value)}</span>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground h-8 w-8 rounded-full hover:bg-red-500/10 hover:text-red-500"
+                >
+                  <Heart size={16} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground h-8 w-8 rounded-full hover:bg-blue-500/10 hover:text-blue-500"
+                >
+                  <MessageCircle size={16} />
+                </Button>
+              </div>
             </div>
+          </Card>
+        ))}
+
+        {mappedFeedItems.length === 0 && (
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
+            <Filter size={32} className="mb-3 opacity-20" />
+            <p>No activity found.</p>
           </div>
-        </Card>
-      ))}
+        )}
 
-      {mappedFeedItems.length === 0 && (
-        <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
-          <Filter size={32} className="mb-3 opacity-20" />
-          <p>No activity found.</p>
-        </div>
-      )}
-
-      {mappedFeedItems.length > visibleCount && (
-        <Button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setVisibleCount((prev) => prev + 5);
-          }}
-          variant="dashed"
-          className={`${typography.small} h-auto w-full rounded-xl py-3`}
-        >
-          View More Activity
-        </Button>
-      )}
+        {mappedFeedItems.length > visibleCount && (
+          <Button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setVisibleCount((prev) => prev + 5);
+            }}
+            variant="dashed"
+            className={`${typography.small} h-auto w-full rounded-xl py-3`}
+          >
+            View More Activity
+          </Button>
+        )}
+      </div>
     </div>
   );
 
   const renderHistory = () => (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-bottom-4 flex h-full flex-col overflow-hidden duration-500">
       <WorkoutList
         workouts={workouts}
         onEdit={(id) => {

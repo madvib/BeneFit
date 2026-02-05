@@ -6,7 +6,6 @@
   "dependencies": {
     "@bene/react-api-client": "workspace:*",
     "@bene/shared": "workspace:*",
-    "@cloudflare/vite-plugin": "^1.21.2",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
@@ -36,7 +35,6 @@
     "web-vitals": "^5.1.0"
   },
    "nx": {
-
     "tags": [
       "scope:frontend",
       "type:app",

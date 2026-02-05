@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { AccountSettingsForm, ErrorPage, FitnessGoalsForm, FitnessPreferences, LoadingSpinner, PageHeader, SectionHeader, TrainingConstraintsForm } from '@/lib/components';
-import { useUpdatePreferences, useUpdateGoals, useUpdateConstraints, useProfile, GetProfileResponse, authClient } from '@bene/react-api-client';
+import { ErrorPage, FitnessGoalsForm, FitnessPreferences, LoadingSpinner, PageHeader, SectionHeader, TrainingConstraintsForm, Modal, typography } from '@/lib/components';
+import { useUpdatePreferences, useUpdateGoals, useUpdateConstraints, useProfile, GetProfileResponse, authClient, type UpdateGoalsRequest, type UpdateConstraintsRequest, type PrimaryFitnessGoal, type SecondaryFitnessGoal, type UpdateTrainingConstraintsFormValues } from '@bene/react-api-client';
 import {
-  NotificationPreferences,
   PrivacySettings,
 } from '@/lib/components/settings';
 import { ROUTES } from '@/lib/constants';
+import { SettingsCard } from './-components/settings-card';
+import { Target, Activity, Calendar, Clock, Dumbbell } from 'lucide-react';
 
 export const Route = createFileRoute('/$user/_account/settings')({
   component: SettingsClient,
@@ -19,8 +21,6 @@ function SettingsContent({
   const updatePreferencesMutation = useUpdatePreferences();
   const updateGoalsMutation = useUpdateGoals();
   const updateConstraintsMutation = useUpdateConstraints();
-  const { data: session } = authClient.useSession();
-
   const preferences = userProfile.preferences;
 
   const handlePrivacyChange = (updates: { privacy: Partial<typeof preferences.privacy> }) => {
@@ -54,69 +54,50 @@ function SettingsContent({
     });
   };
 
-  const handleSaveGoals = async (goals: any) => {
+  // Modal states
+  const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false);
+  const [isConstraintsModalOpen, setIsConstraintsModalOpen] = useState(false);
+
+  const handleSaveGoals = async (
+    goals: {
+      primary: PrimaryFitnessGoal;
+      secondary: SecondaryFitnessGoal[];
+    },
+  ) => {
     await updateGoalsMutation.mutateAsync({
       json: {
         goals: {
-          primary: goals.primary as any,
-          secondary: goals.secondary as any,
-          motivation: '',
-          successCriteria: [],
+          primary: goals.primary,
+          secondary: goals.secondary,
+          motivation: '', // This is hardcoded in the form, not passed from the form
+          successCriteria: [], // This is hardcoded in the form, not passed from the form
         },
       },
     });
+    setIsGoalsModalOpen(false);
   };
 
   const handleSaveConstraints = async (
-    constraints: any,
+    constraints: UpdateTrainingConstraintsFormValues,
   ) => {
     await updateConstraintsMutation.mutateAsync({
-      json: { constraints: constraints as any },
+      json: { constraints: constraints },
     });
+    setIsConstraintsModalOpen(false);
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <PageHeader
         title="Settings"
         description="Manage your profile, preferences, and training parameters."
+        align="left"
       />
 
-      <section>
-        <SectionHeader title="Account & Security" className="mb-4" />
-        <div className="space-y-4">
-          <AccountSettingsForm
-            initialName={userProfile.displayName}
-            initialEmail={session?.user?.email || ''}
-            onSave={async (data) => {
-              // TODO: Implement account update mutation
-              console.log('Update account:', data);
-            }}
-          />
-          <PrivacySettings
-            profileVisibility={preferences.privacy?.profileVisible ? 'Public' : 'Private'}
-            activitySharing={preferences.privacy?.workoutsPublic || false}
-            onProfileVisibilityChange={(value) =>
-              handlePrivacyChange({ privacy: { profileVisible: value === 'Public' } })
-            }
-            onActivitySharingChange={(checked) =>
-              handlePrivacyChange({ privacy: { workoutsPublic: checked } })
-            }
-          />
-        </div>
-      </section>
-
-      <section>
-        <SectionHeader title="Preferences" className="mb-4" />
-        <div className="space-y-4">
-          <NotificationPreferences
-            emailNotifications={true} // TODO: Add to schema
-            pushNotifications={false}
-            workoutReminders={true}
-            onEmailNotificationsChange={() => {}}
-            onPushNotificationsChange={() => {}}
-            onWorkoutRemindersChange={() => {}}
-          />
+      {/* Preferences Section - Keeping only what's not redundant */}
+      <section className="space-y-6">
+        <SectionHeader title="General Preferences" />
+        <div className="grid grid-cols-1 gap-6">
           <FitnessPreferences
             preferredUnits={(preferences.units as 'metric' | 'imperial') || 'metric'}
             goalFocus={
@@ -137,19 +118,91 @@ function SettingsContent({
               })
             }
           />
+          <PrivacySettings
+            profileVisibility={preferences.privacy?.profileVisible ? 'Public' : 'Private'}
+            activitySharing={preferences.privacy?.workoutsPublic || false}
+            onProfileVisibilityChange={(value) =>
+              handlePrivacyChange({ privacy: { profileVisible: value === 'Public' } })
+            }
+            onActivitySharingChange={(checked) =>
+              handlePrivacyChange({ privacy: { workoutsPublic: checked } })
+            }
+          />
         </div>
       </section>
 
-      <section>
-        <SectionHeader title="Training Profile" className="mb-4" />
-        <div className="space-y-4">
+      {/* Training Profile Section - New Card/Modal Layout */}
+      <section className="space-y-6">
+        <SectionHeader title="Training Profile" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <SettingsCard
+            title="Fitness Goals"
+            description="Your primary and secondary training objectives."
+            icon={Target}
+            onEdit={() => setIsGoalsModalOpen(true)}
+          >
+            <div className="flex flex-wrap gap-2">
+              <span className={`bg-primary/10 text-primary rounded-full px-3 py-1 font-semibold capitalize ${typography.xs}`}>
+                {userProfile.fitnessGoals?.primary || 'No primary goal'}
+              </span>
+              {(userProfile.fitnessGoals?.secondary as string[])?.map((goal) => (
+                <span key={goal} className={`bg-muted text-muted-foreground rounded-full px-3 py-1 font-medium capitalize ${typography.xs}`}>
+                  {goal}
+                </span>
+              ))}
+            </div>
+          </SettingsCard>
+
+          <SettingsCard
+            title="Training Constraints"
+            description="Available equipment, schedule, and limitations."
+            icon={Activity}
+            onEdit={() => setIsConstraintsModalOpen(true)}
+          >
+            <div className={`text-muted-foreground grid grid-cols-2 gap-y-2 ${typography.xs}`}>
+              <div className="flex items-center gap-2">
+                <Calendar size={12} />
+                <span>{userProfile.trainingConstraints?.availableDays?.length || 0} days/week</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={12} />
+                <span>{userProfile.trainingConstraints?.maxDuration || 45} mins</span>
+              </div>
+              <div className="flex items-center gap-2 col-span-2">
+                <Dumbbell size={12} />
+                <span className="truncate">
+                  {userProfile.trainingConstraints?.availableEquipment?.length || 0} items selected
+                </span>
+              </div>
+            </div>
+          </SettingsCard>
+        </div>
+      </section>
+
+      {/* Modals */}
+      <Modal
+        isOpen={isGoalsModalOpen}
+        onClose={() => setIsGoalsModalOpen(false)}
+        title="Edit Fitness Goals"
+        size="lg"
+      >
+        <div className="p-1">
           <FitnessGoalsForm
             initialPrimary={(userProfile.fitnessGoals?.primary as any) || 'strength'}
             initialSecondary={(userProfile.fitnessGoals?.secondary as any) || []}
             onSave={handleSaveGoals}
             isLoading={updateGoalsMutation.isPending}
           />
+        </div>
+      </Modal>
 
+      <Modal
+        isOpen={isConstraintsModalOpen}
+        onClose={() => setIsConstraintsModalOpen(false)}
+        title="Edit Training Constraints"
+        size="xl"
+      >
+        <div className="p-1">
           <TrainingConstraintsForm
             initialConstraints={
               userProfile.trainingConstraints || {
@@ -163,7 +216,7 @@ function SettingsContent({
             isLoading={updateConstraintsMutation.isPending}
           />
         </div>
-      </section>
+      </Modal>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function WorkoutList(data: Readonly<WorkoutListProps>) {
   }, [data.workouts, searchTerm, selectedFilter]);
 
   return (
-    <div className="bg-background border-muted flex h-full flex-col overflow-hidden rounded-xl border shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* List Container */}
       <div className="flex-1 overflow-y-auto">
         {filteredData.length === 0 ? (
@@ -54,14 +54,14 @@ export default function WorkoutList(data: Readonly<WorkoutListProps>) {
               // Ensure we only render completed workouts with the tile, or handle sessions differently
               // For now, based on user input, we assume the list is primarily for history/completed items.
               if ('recordedAt' in item) {
-                 return (
+                return (
                   <ActivityListTile
                     key={item.id}
                     workout={item}
                     onClick={() => data.onEdit && data.onEdit(item.id)}
                     onDelete={data.onDelete ? () => data.onDelete?.(item.id) : undefined}
                   />
-                 );
+                );
               }
               // Fallback for sessions if they appear? Or maybe just don't render them here?
               // The user said "this will only ever be completed activity", implying the data source is filtered.
@@ -72,7 +72,7 @@ export default function WorkoutList(data: Readonly<WorkoutListProps>) {
         )}
       </div>
       <div className="bg-muted/10 border-muted border-t px-6 py-3 text-center">
-      {/*TODO needs to load more*/ }
+        {/*TODO needs to load more*/}
         <Button
           variant="ghost"
           size="sm"

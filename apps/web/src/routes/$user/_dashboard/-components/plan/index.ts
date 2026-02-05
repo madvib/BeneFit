@@ -4,7 +4,6 @@ export { WeeklySchedule } from './dashboard/weekly-schedule';
 export { QuickActions } from './dashboard/quick-actions';
 
 export { PlanOnboarding } from './onboarding/plan-onboarding';
-export { GoalSelectionForm } from './onboarding/goal-selection-form';
 export { PlanSuggestions } from './onboarding/plan-suggestions';
 export { SuggestionsView } from './onboarding/suggestions-view';
 

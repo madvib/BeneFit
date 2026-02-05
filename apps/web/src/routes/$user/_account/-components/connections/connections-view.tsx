@@ -28,6 +28,7 @@ export default function ConnectionsView({
       <PageHeader
         title="Connections"
         description="Manage your connected services and integrations"
+        align="left"
       />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

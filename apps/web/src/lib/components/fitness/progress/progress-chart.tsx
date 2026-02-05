@@ -1,5 +1,3 @@
-
-
 import { Badge, Card, typography } from '@/lib/components';
 import { BarChart3, TrendingUp, Sparkles } from 'lucide-react';
 
@@ -23,7 +21,7 @@ export function ProgressChart({ data }: Readonly<{ data: { date: string; value: 
 
       {/* Chart Body */}
       <div className="px-6 pb-6">
-        <div className="bg-accent/30 flex h-56 items-end justify-between gap-3 rounded-2xl p-6 sm:gap-6">
+        <div className="bg-accent/30 flex h-56 items-end justify-between gap-2 rounded-2xl p-4 sm:gap-3 sm:p-6 md:gap-4">
           {data.map((point, index) => {
             const heightPercentage = (point.value / maxValue) * 100;
             const isZero = point.value === 0;
@@ -41,7 +39,7 @@ export function ProgressChart({ data }: Readonly<{ data: { date: string; value: 
                 </div>
 
                 {/* Bar Track */}
-                <div className="bg-background/50 border-border/50 relative flex h-full w-full max-w-8 items-end overflow-hidden rounded-xl border shadow-inner">
+                <div className="bg-background/50 border-border/50 relative flex h-full w-full max-w-6 items-end overflow-hidden rounded-xl border shadow-inner sm:max-w-8">
                   {/* Actual Bar */}
                   <div
                     className={`cubic-bezier(0.34, 1.56, 0.64, 1) w-full rounded-t-lg transition-all duration-700 ${

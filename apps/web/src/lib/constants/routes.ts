@@ -5,13 +5,13 @@ export const MODALS = {
   UPDATE_PASSWORD: 'update-password',
   CONFIRM_EMAIL: 'confirm-email',
   VERIFY_EMAIL: 'verify-email',
+  GENERATE_PLAN: 'generate-plan',
 };
 export const ROUTES = {
   // Public routes
   HOME: '/',
   ABOUT: '/about',
   FEATURES: '/features',
-  ONBOARDING: '/onboarding',
 
   // Auth routes (full page)
   AUTH: {

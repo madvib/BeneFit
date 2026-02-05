@@ -67,28 +67,32 @@ export function OAuthProviderList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-lg border p-4">
-        <div className="flex items-center gap-3">
-          <IconBox
-            icon={googleConnected ? Check : ExternalLink}
-            variant="muted"
-            size="md"
-            iconClassName={googleConnected ? 'text-green-500' : ''}
-          />
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-lg border p-5">
+        <div className="flex items-center gap-4 text-center sm:text-left">
           <div>
             <div className={`${typography.h4} capitalize`}>Google</div>
             <div className={`${typography.mutedXs} text-muted-foreground`}>
               {googleConnected ? 'Connected' : 'Not connected'}
             </div>
           </div>
+          <IconBox
+            icon={googleConnected ? Check : ExternalLink}
+            variant="muted"
+            size="sm"
+            iconClassName={googleConnected ? 'text-green-500' : ''}
+          />
         </div>
 
         {googleConnected ? (
-          <Button variant="outline" size="sm" onClick={() => unlinkProvider('google')}>
+          <Button
+            variant="outline"
+            onClick={() => unlinkProvider('google')}
+            className="w-full sm:w-auto px-8"
+          >
             Unlink
           </Button>
         ) : (
-          <OAuthButton provider="google" mode="link" text="Link" />
+          <OAuthButton provider="google" mode="link" text="Link" className="w-full sm:w-auto px-8" />
         )}
       </div>
     </div>

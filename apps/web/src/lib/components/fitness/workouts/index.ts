@@ -3,4 +3,4 @@ export * from './completed/completed-workout-view';
 export * from './performance-form';
 export * from './rest-day-view';
 export * from './skip-workout-modal';
-export * from './rpe-picker';
+export * from './intensity-slider';

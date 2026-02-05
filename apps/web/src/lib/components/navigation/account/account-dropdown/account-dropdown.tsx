@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { CircleUser, ChevronDown } from 'lucide-react';
 import { Dropdown, typography } from '@/lib/components';
@@ -10,7 +9,10 @@ interface UserAccountMenuProps {
   variant?: 'dropdown' | 'accordian';
 }
 
-export function UserAccountMenu({ isLoggedIn, variant = 'dropdown' }: Readonly<UserAccountMenuProps>) {
+export function UserAccountMenu({
+  isLoggedIn,
+  variant = 'dropdown',
+}: Readonly<UserAccountMenuProps>) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownReference = useRef<HTMLDivElement>(null);
 
@@ -68,7 +70,7 @@ export function UserAccountMenu({ isLoggedIn, variant = 'dropdown' }: Readonly<U
               <div className="w-full py-2">
                 <LogoutButton
                   variant="ghost"
-                  className={`${typography.p} text-foreground hover:bg-accent hover:text-accent-foreground block w-full px-4 py-2 text-left`}
+                  className="w-full justify-start px-4 py-2 text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
                 />
               </div>
             </div>
@@ -103,7 +105,7 @@ export function UserAccountMenu({ isLoggedIn, variant = 'dropdown' }: Readonly<U
               <div className="border-border/50 mt-1 border-t pt-2">
                 <LogoutButton
                   variant="ghost"
-                  className={`${typography.small} text-foreground hover:bg-accent hover:text-accent-foreground block w-full rounded-lg px-2 py-2 text-left`}
+                  className="w-full justify-start px-2 py-2 text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
                 />
               </div>
             </div>

@@ -5,10 +5,9 @@ import { ROUTES, MODALS } from '@/lib/constants';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { useAppForm, typography, OAuthButton } from '@/lib/components';
 
-export function LoginForm({ isModalRoute = false }) {
-  const search = useSearch({ strict: false });
+export function LoginForm() {
+    const search = useSearch({ strict: false });
   const next = search?.next ?? ROUTES.USER.ACTIVITIES;
-
   const form = useAppForm({
     defaultValues: {
       email: '',

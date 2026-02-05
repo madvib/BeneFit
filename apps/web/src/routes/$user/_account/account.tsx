@@ -26,25 +26,29 @@ function AccountClient() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader title="Account Settings" description="Manage your account settings" />
+    <div className="space-y-10">
+      <PageHeader title="Account Settings" description="Manage your account settings" align="left" />
 
-      <SessionInfo />
+      <div className="space-y-8">
+        {/* Personal Info Form */}
+        <PersonalInfoForm
+          initialData={{
+            name: data?.user?.name || '',
+            email: data?.user?.email || '',
+            emailVerified: data?.user?.emailVerified || false,
+          }}
+        />
 
-      {/* OAuth Providers */}
-      <OAuthProviderList />
+        {/* Security Form */}
+        <SecurityForm />
 
-      {/* Personal Info Form */}
-      <PersonalInfoForm
-        initialData={{
-          name: data?.user?.name || '',
-          email: data?.user?.email || '',
-          emailVerified: data?.user?.emailVerified || false,
-        }}
-      />
+        {/* OAuth Providers */}
+        <OAuthProviderList />
 
-      {/* Security Form */}
-      <SecurityForm />
+        <div className="pt-8 border-t">
+          <SessionInfo />
+        </div>
+      </div>
     </div>
   );
 }

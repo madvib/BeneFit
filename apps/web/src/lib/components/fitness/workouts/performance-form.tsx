@@ -3,7 +3,7 @@
 import { Share2, ThumbsUp, PenLine, Heart } from 'lucide-react';
 import { revalidateLogic } from '@tanstack/react-form';
 import type { DailyWorkout } from '@bene/react-api-client';
-import { Button, RPEPicker, typography, useAppForm } from '@/lib/components';
+import { Button, IntensitySlider, typography, useAppForm } from '@/lib/components';
 
 export interface PerformanceFormData {
   performance: {
@@ -49,7 +49,8 @@ export function PerformanceForm({ workout, onSubmit, isLoading }: Readonly<Perfo
             {/* RPE Selector */}
             <form.AppField name="performance.perceivedExertion">
               {(field) => (
-                <RPEPicker
+                <IntensitySlider
+                  variant='rpe'
                   value={field.state.value}
                   onChange={field.handleChange}
                   disabled={isLoading}

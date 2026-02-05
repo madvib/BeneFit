@@ -12,34 +12,33 @@ import { MODALS } from '@/lib/constants';
 interface AuthModalsProps {
   activeModal?: string;
   email?: string;
-  onClose: () => void;
   onSwitch: (_modal: string) => void;
 }
 
-export function AuthModals({ activeModal, email, onClose, onSwitch }: Readonly<AuthModalsProps>) {
+export function AuthModals({ activeModal, email, onSwitch }: Readonly<AuthModalsProps>) {
   return (
     <>
-      <Modal isOpen={activeModal === MODALS.LOGIN} onClose={onClose} size="sm" unstyled>
-        <LoginForm isModalRoute={true} />
+      <Modal isOpen={activeModal === MODALS.LOGIN} size="sm" unstyled>
+        <LoginForm />
       </Modal>
 
-      <Modal isOpen={activeModal === MODALS.SIGNUP} onClose={onClose} size="md" unstyled>
+      <Modal isOpen={activeModal === MODALS.SIGNUP} size="md" unstyled>
         <SignupForm isModalRoute={true} />
       </Modal>
 
-      <Modal isOpen={activeModal === MODALS.RESET_PASSWORD} onClose={onClose} size="sm" unstyled>
+      <Modal isOpen={activeModal === MODALS.RESET_PASSWORD} size="sm" unstyled>
         <PasswordResetForm />
       </Modal>
 
-      <Modal isOpen={activeModal === MODALS.UPDATE_PASSWORD} onClose={onClose} size="sm" unstyled>
+      <Modal isOpen={activeModal === MODALS.UPDATE_PASSWORD} size="sm" unstyled>
         <UpdatePasswordForm onPasswordUpdated={() => onSwitch(MODALS.LOGIN)} />
       </Modal>
 
-      <Modal isOpen={activeModal === MODALS.CONFIRM_EMAIL} onClose={onClose} size="sm" unstyled>
-        <ConfirmEmailNotice email={email} onClose={onClose} />
+      <Modal isOpen={activeModal === MODALS.CONFIRM_EMAIL} size="sm" unstyled>
+        <ConfirmEmailNotice email={email} />
       </Modal>
 
-      <Modal isOpen={activeModal === MODALS.VERIFY_EMAIL} onClose={onClose} size="sm" unstyled>
+      <Modal isOpen={activeModal === MODALS.VERIFY_EMAIL} size="sm" unstyled>
         <VerifyEmail />
       </Modal>
     </>
