@@ -1,22 +1,15 @@
 import { defineConfig } from 'vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
-import viteTsConfigPaths from 'vite-tsconfig-paths';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
 export default defineConfig({
   envDir: '../../',
   server: { cors: false, port: 8787 },
+  resolve: {
+    conditions: ['development', 'import', 'module', 'browser', 'default'],
+  },
   plugins: [
-    cloudflare({
-      auxiliaryWorkers: [
-        {
-          configPath: '../actors/user-hub/wrangler.jsonc',
-        },
-        {
-          configPath: '../actors/workout-session/wrangler.jsonc',
-        },
-      ],
-      persistState: { path: '../../.wrangler/state' },
-    }),
-    viteTsConfigPaths(),
+    nxViteTsPaths(),
     {
       name: 'sql-loader',
       transform(code, id) {
@@ -29,12 +22,16 @@ export default defineConfig({
         };
       },
     },
+    cloudflare({
+      auxiliaryWorkers: [
+        {
+          configPath: '../actors/user-hub/wrangler.jsonc',
+        },
+        {
+          configPath: '../actors/workout-session/wrangler.jsonc',
+        },
+      ],
+      persistState: { path: '../../.wrangler/state' },
+    }),
   ],
-  optimizeDeps: {
-    // Don't pre-bundle these - let them be bundled normally
-    exclude: ['cloudflare:*', '@bene/*'],
-    // Force these to be pre-bundled
-    include: ['better-auth', 'drizzle-orm', 'hono', 'zod'],
-    noDiscovery: true,
-  },
 });

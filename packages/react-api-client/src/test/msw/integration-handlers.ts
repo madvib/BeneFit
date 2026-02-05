@@ -1,4 +1,5 @@
 import { http, delay } from 'msw';
+import { Result } from '@bene/shared';
 import {
   buildGetConnectedServicesResponse,
   buildConnectServiceResponse,
@@ -49,7 +50,7 @@ export const integrationScenarios = {
   empty: [
     http.get('*/api/integrations/connected', async () => {
       await delay(100);
-      return toHttpResponse({ services: [] });
+      return toHttpResponse(Result.ok({ services: [] }));
     }),
   ]
 };

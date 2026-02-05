@@ -1,10 +1,15 @@
 import { z } from 'zod';
 import { Result, Unbrand, unwrapOrIssue, mapZodError } from '@bene/shared';
+import { CreateTrainingConstraintsSchema } from '@/shared/index.js';
 import {
   UserPreferencesSchema,
   CreateUserPreferencesSchema,
   UserStatsSchema,
   CreateUserStatsSchema,
+  CreateExperienceProfileSchema,
+  CreateFitnessGoalsSchema,
+  ExperienceProfileSchema,
+  FitnessGoalsSchema,
 } from '@/user-profile/value-objects/index.js';
 
 import { UserProfile, UserProfileSchema } from './user-profile.types.js';
@@ -60,11 +65,11 @@ export const CreateUserProfileSchema = UserProfileSchema.pick({
   bio: true,
   location: true,
   timezone: true,
-  experienceProfile: true,
-  fitnessGoals: true,
-  trainingConstraints: true,
 })
   .extend({
+    experienceProfile: CreateExperienceProfileSchema.optional(),
+    fitnessGoals: CreateFitnessGoalsSchema.optional(),
+    trainingConstraints: CreateTrainingConstraintsSchema.optional(),
     preferences: UserPreferencesSchema.optional(),
     stats: UserStatsSchema.optional(),
     createdAt: z.coerce.date<Date>().optional(),
@@ -76,6 +81,34 @@ export const CreateUserProfileSchema = UserProfileSchema.pick({
 
     const data = {
       ...input,
+      experienceProfile:
+        input.experienceProfile ||
+        CreateExperienceProfileSchema.parse({
+          level: 'beginner',
+          capabilities: {
+            canDoFullPushup: false,
+            canDoFullPullup: false,
+            canRunMile: false,
+            canSquatBelowParallel: false,
+          },
+        }),
+      fitnessGoals:
+        input.fitnessGoals ||
+        CreateFitnessGoalsSchema.parse({
+          primary: 'strength',
+          secondary: [],
+          motivation: 'Improve overall health',
+          successCriteria: [],
+        }),
+      trainingConstraints:
+        input.trainingConstraints ||
+        CreateTrainingConstraintsSchema.parse({
+          location: 'mixed',
+          availableDays: ['Monday', 'Wednesday', 'Friday'],
+          availableEquipment: [],
+          maxDuration: 60,
+          injuries: [],
+        }),
       preferences: input.preferences || CreateUserPreferencesSchema.parse({}),
       stats: input.stats || CreateUserStatsSchema.parse({ joinedAt: now }),
       createdAt: input.createdAt || now,

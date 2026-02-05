@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import {
   buildCreateUserProfileResponse as _buildCreateUserProfileResponse,
   buildUpdateFitnessGoalsResponse as _buildUpdateFitnessGoalsResponse,
@@ -20,7 +19,6 @@ import {
   buildJoinMultiplayerWorkoutResponse as _buildJoinMultiplayerWorkoutResponse,
   buildAddWorkoutReactionResponse as _buildAddWorkoutReactionResponse,
   createTrainingConstraintsFixture,
-  createWorkoutSessionFixture,
   createWorkoutSessionFixture,
 } from '@bene/training-application/fixtures';
 import { type WithSeed, applySeed } from './utils.js';

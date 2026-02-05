@@ -2,7 +2,7 @@ import { AgentClient } from 'agents/client';
 
 export class BenefitWebSocketClient {
   private client: AgentClient;
-  private listeners = new Map<string, Set<(data: any) => void>>();
+  private listeners = new Map<string, Set<(data: unknown) => void>>();
 
   constructor(agentName: string, agentId: string, token: string) {
     // AgentClient extends PartySocket

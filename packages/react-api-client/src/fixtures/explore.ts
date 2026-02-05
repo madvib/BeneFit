@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { Result } from '@bene/shared';
 
 export interface ExploreEvent {
   id: string;
@@ -36,4 +37,19 @@ export function createExploreTeamFixture(overrides?: Partial<ExploreTeam>): Expl
     image: faker.image.url(),
     ...overrides,
   };
+}
+
+export function buildGetExploreDataResponse(options: {
+  success?: boolean;
+  overrides?: Partial<{ events: ExploreEvent[]; featuredTeams: ExploreTeam[] }>
+} = {}): Result<{ events: ExploreEvent[]; featuredTeams: ExploreTeam[] }> {
+  if (options.success === false) {
+    return Result.fail(new Error('Failed to fetch explore data'));
+  }
+
+  return Result.ok({
+    events: Array.from({ length: 4 }).map(() => createExploreEventFixture()),
+    featuredTeams: Array.from({ length: 4 }).map(() => createExploreTeamFixture()),
+    ...options.overrides,
+  });
 }

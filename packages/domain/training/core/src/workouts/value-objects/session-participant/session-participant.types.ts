@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export const ParticipantRoleSchema = z.enum(['owner', 'participant', 'spectator']).readonly();
+export const ParticipantRoleSchema = z.enum(['owner', 'participant', 'spectator']);
 export type ParticipantRole = z.infer<typeof ParticipantRoleSchema>;
 
-export const ParticipantStatusSchema = z.enum(['active', 'paused', 'completed', 'left']).readonly();
+export const ParticipantStatusSchema = z.enum(['active', 'paused', 'completed', 'left']);
 export type ParticipantStatus = z.infer<typeof ParticipantStatusSchema>;
 
 /**

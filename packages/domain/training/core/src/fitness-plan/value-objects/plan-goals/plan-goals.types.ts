@@ -23,7 +23,6 @@ export const TargetMetricsSchema = z
     totalWorkouts: z.number().int().min(0).max(1000).optional(), // for consistency goals
     minStreakDays: z.number().int().min(0).max(365).optional(), // for habit building
   })
-  .readonly();
 
 export const PlanGoalsSchema = z
   .object({
@@ -32,11 +31,11 @@ export const PlanGoalsSchema = z
     targetMetrics: TargetMetricsSchema,
     targetDate: z.coerce.date<Date>().optional(),
   })
-  .readonly().brand<DomainBrandTag>();
+  .brand<DomainBrandTag>();
 
 
 export type TargetLiftWeight = z.infer<typeof TargetLiftWeightSchema>;
 export type TargetDuration = z.infer<typeof TargetDurationSchema>;
 export type TargetMetrics = z.infer<typeof TargetMetricsSchema>;
-export type PlanGoals = z.infer<typeof PlanGoalsSchema>;
+export type PlanGoals = Readonly<z.infer<typeof PlanGoalsSchema>>;
 

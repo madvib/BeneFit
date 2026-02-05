@@ -7,8 +7,8 @@ export const TemplateDurationSchema = z.discriminatedUnion('type', [
     min: z.number().int().min(1).max(52),
     max: z.number().int().min(1).max(52),
   }),
-]).readonly();
-export type TemplateDuration = z.infer<typeof TemplateDurationSchema>;
+]);
+export type TemplateDuration = Readonly<z.infer<typeof TemplateDurationSchema>>;
 
 export const TemplateFrequencySchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('fixed'), workoutsPerWeek: z.number().int().min(1).max(7) }),
@@ -17,29 +17,29 @@ export const TemplateFrequencySchema = z.discriminatedUnion('type', [
     min: z.number().int().min(1).max(7),
     max: z.number().int().min(1).max(7),
   }),
-]).readonly();
-export type TemplateFrequency = z.infer<typeof TemplateFrequencySchema>;
+]);
+export type TemplateFrequency = Readonly<z.infer<typeof TemplateFrequencySchema>>;
 
 export const WorkoutActivityTemplateSchema = z.object({
   activityType: z.enum(['warmup', 'main', 'cooldown']),
   template: z.string().min(1).max(1000),
   variables: z.record(z.string(), z.unknown()),
-}).readonly();
-export type WorkoutActivityTemplate = z.infer<typeof WorkoutActivityTemplateSchema>;
+});
+export type WorkoutActivityTemplate = Readonly<z.infer<typeof WorkoutActivityTemplateSchema>>;
 
 export const WorkoutDayTemplateSchema = z.object({
   dayOfWeek: z.number().int().min(0).max(6).optional(),
   type: z.enum(['strength', 'cardio', 'mobility', 'sport', 'rest']),
   durationMinutes: z.union([z.number().int().min(0), z.string()]),
   activities: z.array(WorkoutActivityTemplateSchema),
-}).readonly();
-export type WorkoutDayTemplate = z.infer<typeof WorkoutDayTemplateSchema>;
+});
+export type WorkoutDayTemplate = Readonly<z.infer<typeof WorkoutDayTemplateSchema>>;
 
 export const WeekTemplateSchema = z.object({
   weekNumber: z.union([z.number().int().min(1).max(52), z.literal('*')]),
   workouts: z.array(WorkoutDayTemplateSchema),
-}).readonly();
-export type WeekTemplate = z.infer<typeof WeekTemplateSchema>;
+});
+export type WeekTemplate = Readonly<z.infer<typeof WeekTemplateSchema>>;
 
 /**
  * 1. DEFINE PROPS SCHEMA

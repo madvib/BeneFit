@@ -10,24 +10,24 @@ export const GPSVerificationSchema = z.object({
   longitude: z.number().min(-180).max(180),
   accuracy: z.number().min(0).max(10000), // meters
   timestamp: z.coerce.date<Date>(),
-}).readonly();
-export type GPSVerification = z.infer<typeof GPSVerificationSchema>;
+});
+export type GPSVerification = Readonly<z.infer<typeof GPSVerificationSchema>>;
 
 export const GymCheckinVerificationSchema = z.object({
   gymId: z.uuid(),
   gymName: z.string().min(1).max(200),
   checkinTime: z.coerce.date<Date>(),
   checkoutTime: z.coerce.date<Date>().optional(),
-}).readonly();
-export type GymCheckinVerification = z.infer<typeof GymCheckinVerificationSchema>;
+});
+export type GymCheckinVerification = Readonly<z.infer<typeof GymCheckinVerificationSchema>>;
 
 export const WearableVerificationSchema = z.object({
   device: z.string().min(1).max(100),
   activityId: z.string().min(1).max(100),
   source: VerificationPlatformSchema,
   syncedAt: z.coerce.date<Date>(),
-}).readonly();
-export type WearableVerification = z.infer<typeof WearableVerificationSchema>;
+});
+export type WearableVerification = Readonly<z.infer<typeof WearableVerificationSchema>>;
 
 export const PhotoVerificationSchema = z.object({
   photoUrl: z.string().url(),
@@ -40,9 +40,9 @@ export const WitnessVerificationSchema = z.object({
   witnessUserId: z.uuid(),
   witnessName: z.string().min(1).max(100),
   verifiedAt: z.coerce.date<Date>(),
-}).readonly();
+});
 
-export type WitnessVerification = z.infer<typeof WitnessVerificationSchema>;
+export type WitnessVerification = Readonly<z.infer<typeof WitnessVerificationSchema>>;
 
 export const VerificationDataSchema = z.discriminatedUnion('method', [
   z.object({ method: z.literal('gps'), data: GPSVerificationSchema }),
@@ -51,8 +51,8 @@ export const VerificationDataSchema = z.discriminatedUnion('method', [
   z.object({ method: z.literal('photo'), data: PhotoVerificationSchema }),
   z.object({ method: z.literal('witness'), data: WitnessVerificationSchema }),
   z.object({ method: z.literal('manual'), data: z.null() }),
-]).readonly();
-export type VerificationData = z.infer<typeof VerificationDataSchema>;
+]);
+export type VerificationData = Readonly<z.infer<typeof VerificationDataSchema>>;
 
 export const WorkoutVerificationSchema = z.object({
   verified: z.boolean(),

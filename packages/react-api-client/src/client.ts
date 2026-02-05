@@ -20,25 +20,6 @@ export const client = createClient(import.meta.env.VITE_API_BASE_URL, {
       credentials: 'include', // Important for auth cookies
     });
 
-    // Global error handling
-    if (!res.ok) {
-      if (res.status === 401) {
-        // Handle unauthorized - maybe redirect to login
-        console.error('Unauthorized access - redirect to login if needed');
-      }
-
-      const body = await res.json().catch(() => null);
-      const isObject = typeof body === 'object' && body !== null;
-      const message = isObject && 'error' in body ? body.error : `Request failed with status ${ res.status }`;
-
-      throw new ApiError(
-        res.status,
-        res.statusText,
-        String(message),
-        isObject && 'code' in body ? body.code : undefined
-      );
-    }
-
     return res;
   },
 });

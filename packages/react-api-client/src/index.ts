@@ -22,6 +22,5 @@ export * from './hooks/use-workouts';
 export * from './hooks/use-integrations';
 export * from './hooks/use-session';
 export * from './hooks/use-websocket';
-export * from './hooks/use-explore/use-explore';
 export { useSession } from './hooks/use-session';
 

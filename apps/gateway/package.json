@@ -34,10 +34,6 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
-            "pnpm nx run @bene/training-core:build",
-            "pnpm nx run @bene/training-application:build",
-            "pnpm nx run @bene/coach-domain:build",
-            "pnpm nx run @bene/integrations-domain:build",
             "tsx {projectRoot}/scripts/build-client.ts"
           ],
           "parallel": false,
@@ -45,7 +41,10 @@
         },
         "outputs": [
           "{workspaceRoot}/packages/api-client/src/generated"
-        ]
+        ],
+        "cache": {
+          "enabled": true
+        } 
       },
       "test": {
         "executor": "@nx/vite:test",
@@ -61,8 +60,6 @@
       "layer:api",
       "runtime:worker"
     ]
-  },
-  "devDependencies": {
-    "@faker-js/faker": "^10.2.0"
   }
+
 }

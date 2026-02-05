@@ -104,6 +104,9 @@ describe('UserProfile Aggregate', () => {
         'createdAt',
         'updatedAt',
         'lastActiveAt',
+        'experienceProfile',
+        'fitnessGoals',
+        'trainingConstraints',
       ]);
 
       // Act
@@ -116,6 +119,16 @@ describe('UserProfile Aggregate', () => {
         expect(result.data.stats).toBeDefined();
         expect(result.data.stats.totalWorkouts).toBe(0); // Default value check
         expect(result.data.createdAt).toBeInstanceOf(Date);
+
+        // Assert defaults for new optional fields
+        expect(result.data.experienceProfile).toBeDefined();
+        expect(result.data.experienceProfile.level).toBe('beginner');
+
+        expect(result.data.fitnessGoals).toBeDefined();
+        expect(result.data.fitnessGoals.primary).toBe('strength');
+
+        expect(result.data.trainingConstraints).toBeDefined();
+        expect(result.data.trainingConstraints.location).toBe('mixed');
       }
     });
 

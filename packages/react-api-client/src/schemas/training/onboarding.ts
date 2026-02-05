@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FITNESS_GOALS, EQUIPMENT_OPTIONS, EXPERIENCE_LEVELS } from '@bene/shared';
+import { FITNESS_GOALS, EQUIPMENT_OPTIONS, EXPERIENCE_LEVELS, SECONDARY_GOALS } from '@bene/shared';
 
 /**
  * Onboarding form schema for initial profile creation.
@@ -12,7 +12,7 @@ export const OnboardingFormSchema = z.object({
   bio: z.string().optional(),
   experienceLevel: z.enum(EXPERIENCE_LEVELS),
   primaryGoal: z.enum(FITNESS_GOALS),
-  secondaryGoals: z.array(z.string()),
+  secondaryGoals: z.array(z.enum(SECONDARY_GOALS)),
   daysPerWeek: z.number().min(1).max(7),
   minutesPerWorkout: z.number().min(1),
   equipment: z.array(z.enum(EQUIPMENT_OPTIONS as unknown as [string, ...string[]])),

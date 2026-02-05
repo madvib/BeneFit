@@ -31,7 +31,6 @@ describe('Training Schemas Conformance', () => {
       displayName: v.displayName,
       timezone: 'UTC',
       experienceProfile: {
-        // @ts-expect-error - Conformance check
         level: v.experienceLevel,
         history: {
           previousPrograms: [],
@@ -47,7 +46,6 @@ describe('Training Schemas Conformance', () => {
         }
       },
       fitnessGoals: {
-        // @ts-expect-error - Conformance check
         primary: v.primaryGoal,
         secondary: v.secondaryGoals,
         motivation: '',
@@ -71,7 +69,6 @@ describe('Training Schemas Conformance', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _check = (v: UpdateFitnessGoalsFormValues): ApiGoals => ({
       ...v,
-      // @ts-expect-error - Mapping checks
       primary: v.primary,
       motivation: v.motivation || '',
       successCriteria: v.successCriteria || [],
@@ -84,7 +81,6 @@ describe('Training Schemas Conformance', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _check = (v: UpdateTrainingConstraintsFormValues): ApiConstraints => ({
       ...v,
-      // @ts-expect-error - Mapping checks
       preferredTime: v.preferredTime as any,
       injuries: v.injuries as any[]
     });

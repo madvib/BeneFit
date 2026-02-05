@@ -54,6 +54,5 @@ export const WorkoutGoalsSchema = z
     volume: VolumeGoalSchema.optional(),
     completionCriteria: CompletionCriteriaSchema,
   })
-  .readonly();
 
-export type WorkoutGoals = z.infer<typeof WorkoutGoalsSchema>;
+export type WorkoutGoals = Readonly<z.infer<typeof WorkoutGoalsSchema>>;

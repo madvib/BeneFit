@@ -1,8 +1,11 @@
 import type { ApiSuccessResponse } from './types';
 
-export async function fetchApi<TRoute extends (...args: any[]) => any>(
+export async function fetchApi<
+  TArgs extends unknown[],
+  TRoute extends (...args: TArgs) => Promise<Response>
+>(
   route: TRoute,
-  ...args: Parameters<TRoute>
+  ...args: TArgs
 ): Promise<ApiSuccessResponse<TRoute>> {
   const res = await route(...args);
 

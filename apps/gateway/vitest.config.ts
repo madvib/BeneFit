@@ -1,10 +1,15 @@
-import { defineConfig } from 'vitest/config';
+import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
 import path from 'path';
 
-export default defineConfig({
+export default defineWorkersConfig({
   test: {
     globals: true,
     environment: 'node',
+    workers: {
+      wrangler: {
+        configPath: './wrangler.jsonc',
+      },
+    },
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', '__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       provider: 'v8',

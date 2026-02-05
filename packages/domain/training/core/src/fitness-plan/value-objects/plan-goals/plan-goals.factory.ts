@@ -66,7 +66,7 @@ export function planGoalsFromPersistence(data: Unbrand<PlanGoals>): Result<PlanG
  * 
  * Infer input type with: z.input<typeof CreatePlanGoalsSchema>
  */
-export const CreatePlanGoalsSchema: z.ZodType<PlanGoals> = PlanGoalsSchema.unwrap().transform((input, ctx) => {
+export const CreatePlanGoalsSchema: z.ZodType<PlanGoals> = PlanGoalsSchema.transform((input, ctx) => {
   const validationResult = validateAndBrand(input);
   return unwrapOrIssue(validationResult, ctx);
 });

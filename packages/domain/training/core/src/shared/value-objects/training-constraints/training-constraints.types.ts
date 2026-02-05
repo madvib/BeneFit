@@ -24,8 +24,7 @@ export const InjuryPropsSchema = z
     notes: z.string().max(500).optional(),
     reportedDate: z.coerce.date<Date>(),
   })
-  .readonly();
-export type Injury = z.infer<typeof InjuryPropsSchema>;
+export type Injury = Readonly<z.infer<typeof InjuryPropsSchema>>;
 
 export const TrainingConstraintsSchema = z
   .object({

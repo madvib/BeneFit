@@ -1,5 +1,5 @@
 import { createAuthClient } from 'better-auth/react';
-import type { Session } from 'better-auth/types';
+import type { Session, InferClientAPI } from 'better-auth/types';
 
 // Type definitions for Better Auth
 export type AuthSession = Session;
@@ -30,9 +30,10 @@ export const authClient = createAuthClient({
 
 // 2. Export Helper Types
 // Extract the error codes object type for type safety
-export type AuthErrorCode = keyof typeof authClient.$ERROR_CODES;
+export type AuthErrorCode = keyof ReturnType<typeof createAuthClient>["$ERROR_CODES"];
 
 export interface AuthErrorContext {
+  message?: string;
   showSignupLink?: boolean;
   showLoginLink?: boolean;
   showPasswordResetLink?: boolean;
@@ -44,64 +45,63 @@ export interface AuthErrorContext {
 
 const AUTH_ERROR_METADATA: Record<AuthErrorCode, AuthErrorContext> = {
   // Password errors
-  PASSWORD_TOO_LONG: { showPasswordRequirements: true },
-  PASSWORD_TOO_SHORT: { showPasswordRequirements: true },
+  PASSWORD_TOO_LONG: { showPasswordRequirements: true, message: 'Password is too long.' },
+  PASSWORD_TOO_SHORT: { showPasswordRequirements: true, message: 'Password is too short.' },
 
   // User not found
-  ACCOUNT_NOT_FOUND: { showSignupLink: true },
-  USER_NOT_FOUND: { showSignupLink: true },
-  CREDENTIAL_ACCOUNT_NOT_FOUND: { showSignupLink: true },
-  USER_EMAIL_NOT_FOUND: { showSignupLink: true },
+  ACCOUNT_NOT_FOUND: { showSignupLink: true, message: 'An account with this email was not found.' },
+  USER_NOT_FOUND: { showSignupLink: true, message: 'The specified user was not found.' },
+  CREDENTIAL_ACCOUNT_NOT_FOUND: { showSignupLink: true, message: 'No password-based account found for this email.' },
+  USER_EMAIL_NOT_FOUND: { showSignupLink: true, message: 'Email address not found.' },
 
   // Email verification
-  EMAIL_NOT_VERIFIED: { requiresEmailVerification: true },
+  EMAIL_NOT_VERIFIED: { requiresEmailVerification: true, message: 'Please verify your email address to continue.' },
 
   // User already exists
-  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: { showLoginLink: true, showPasswordResetLink: true },
-  USER_ALREADY_EXISTS: { showLoginLink: true, showPasswordResetLink: true },
-  USER_ALREADY_HAS_PASSWORD: { showLoginLink: true, showPasswordResetLink: true },
+  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: { showLoginLink: true, showPasswordResetLink: true, message: 'An account with this email already exists.' },
+  USER_ALREADY_EXISTS: { showLoginLink: true, showPasswordResetLink: true, message: 'An account with this email already exists.' },
+  USER_ALREADY_HAS_PASSWORD: { showLoginLink: true, showPasswordResetLink: true, message: 'This account already has a password set.' },
 
   // Session expired
-  SESSION_EXPIRED: { requiresReauth: true },
+  SESSION_EXPIRED: { requiresReauth: true, message: 'Your session has expired. Please log in again.' },
 
   // Invalid credentials
-  INVALID_EMAIL: { showSignupLink: true, showPasswordResetLink: true },
-  INVALID_EMAIL_OR_PASSWORD: { showSignupLink: true, showPasswordResetLink: true },
-  INVALID_PASSWORD: { showSignupLink: true, showPasswordResetLink: true },
+  INVALID_EMAIL: { showSignupLink: true, showPasswordResetLink: true, message: 'The email address provided is invalid.' },
+  INVALID_EMAIL_OR_PASSWORD: { showSignupLink: true, showPasswordResetLink: true, message: 'The email or password you entered is incorrect.' },
+  INVALID_PASSWORD: { showSignupLink: true, showPasswordResetLink: true, message: 'The password you entered is incorrect.' },
 
   // Network/server errors
-  FAILED_TO_CREATE_SESSION: { isRetryable: true },
-  FAILED_TO_CREATE_USER: { isRetryable: true },
-  FAILED_TO_GET_SESSION: { isRetryable: true },
+  FAILED_TO_CREATE_SESSION: { isRetryable: true, message: 'Could not start your session. Please try again.' },
+  FAILED_TO_CREATE_USER: { isRetryable: true, message: 'Failed to create your account. Please try again.' },
+  FAILED_TO_GET_SESSION: { isRetryable: true, message: 'Failed to retrieve your session data.' },
   FAILED_TO_GET_USER_INFO: { isRetryable: true },
   FAILED_TO_UNLINK_LAST_ACCOUNT: { isRetryable: true },
-  FAILED_TO_UPDATE_USER: { isRetryable: true },
+  FAILED_TO_UPDATE_USER: { isRetryable: true, message: 'Failed to update your profile. Please try again.' },
 
   // Other errors
-  EMAIL_CAN_NOT_BE_UPDATED: {},
+  EMAIL_CAN_NOT_BE_UPDATED: { message: 'Email address cannot be changed at this time.' },
   ID_TOKEN_NOT_SUPPORTED: {},
-  INVALID_TOKEN: {},
+  INVALID_TOKEN: { message: 'The provided token is invalid or has expired.' },
   PROVIDER_NOT_FOUND: {},
-  SOCIAL_ACCOUNT_ALREADY_LINKED: {},
-  CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: {},
+  SOCIAL_ACCOUNT_ALREADY_LINKED: { message: 'This social account is already linked to another user.' },
+  CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: { message: 'Login blocked due to cross-site navigation.' },
   VERIFICATION_EMAIL_NOT_ENABLED: {},
-  EMAIL_ALREADY_VERIFIED: {},
-  EMAIL_MISMATCH: {},
-  MISSING_FIELD: {},
-  VALIDATION_ERROR: {},
+  EMAIL_ALREADY_VERIFIED: { message: 'This email address is already verified.' },
+  EMAIL_MISMATCH: { message: 'The emails provided do not match.' },
+  MISSING_FIELD: { message: 'A required field is missing.' },
+  VALIDATION_ERROR: { message: 'One or more fields failed validation.' },
   ASYNC_VALIDATION_NOT_SUPPORTED: {},
-  SESSION_NOT_FRESH: {},
+  SESSION_NOT_FRESH: { requiresReauth: true, message: 'For security, please re-authenticate to complete this action.' },
   CALLBACK_URL_REQUIRED: {},
-  FAILED_TO_CREATE_VERIFICATION: {},
+  FAILED_TO_CREATE_VERIFICATION: { isRetryable: true },
   MISSING_OR_NULL_ORIGIN: {},
-  LINKED_ACCOUNT_ALREADY_EXISTS: {},
+  LINKED_ACCOUNT_ALREADY_EXISTS: { message: 'This account is already linked.' },
   INVALID_REDIRECT_URL: {},
   INVALID_ORIGIN: {},
   INVALID_NEW_USER_CALLBACK_URL: {},
   INVALID_ERROR_CALLBACK_URL: {},
   INVALID_CALLBACK_URL: {},
   FIELD_NOT_ALLOWED: {}
-
 } as const;
 
 const AUTH_ERROR_CODE_SET = new Set<AuthErrorCode>(
@@ -124,17 +124,12 @@ export function getAuthErrorContext(errorCode: string): AuthErrorContext {
 export function getAuthErrorMessage(code: string | undefined | null): string {
   if (!code) return 'An unknown error occurred.';
 
-  // We can map specific codes to user-friendly messages here
-  // For now, we'll format the code nicely, but this grows as we need translations
-  const messages: Record<string, string> = {
-    INVALID_CREDENTIALS: 'The email or password you entered is incorrect.',
-    USER_ALREADY_EXISTS: 'An account with this email already exists.',
-    SESSION_EXPIRED: 'Your session has expired. Please log in again.',
-    FAILED_TO_CREATE_SESSION: 'Could not start your session. Please try again.',
-    EMAIL_NOT_VERIFIED: 'Please verify your email address to continue.',
-  };
+  // Normalize code (better-auth codes are usually uppercase)
+  const normalizedCode = code.toUpperCase();
 
-  return messages[code] || messages[code.toUpperCase()] || formatErrorCode(code);
+  // 1. Try to get message from metadata
+  return getAuthErrorContext(normalizedCode).message;
+
 }
 
 function formatErrorCode(code: string): string {

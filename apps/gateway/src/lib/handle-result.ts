@@ -63,7 +63,7 @@ export function handleResult<T>(
 function mapErrorToStatus(error: string, code?: string): ContentfulStatusCode {
   // 1. Prefer explicit error code mapping
   if (code && code in ERROR_CODE_MAP) {
-    return ERROR_CODE_MAP[code];
+    return ERROR_CODE_MAP[code as keyof typeof ERROR_CODE_MAP];
   }
 
   // 2. Fallback to string matching (Legacy support)

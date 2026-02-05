@@ -48,7 +48,7 @@ export const recommended = (name, projectDir) => [
       ...vitest.configs.recommended.rules,
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'sonarjs/no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       '@typescript-eslint/no-unused-expressions': 'warn',
       '@nx/enforce-module-boundaries': [
         'error',
