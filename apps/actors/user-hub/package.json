@@ -1,0 +1,30 @@
+{
+  "name": "@bene/user-hub",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "schema:generate": "drizzle-kit generate --driver=durable-sqlite --schema=src/data/schema/**/*.ts --out=migrations --dialect=sqlite",
+    "db:studio": "drizzle-kit studio --config=drizzle.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "agents": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:infrastructure",
+      "runtime:durable-object"
+    ]
+  }
+}

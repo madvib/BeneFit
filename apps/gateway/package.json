@@ -1,0 +1,65 @@
+{
+  "name": "@bene/gateway",
+  "type": "module",
+  "exports": {
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    }
+  },
+  "scripts": {
+    "auth:schema": "pnpm dlx @better-auth/cli generate --config src/lib/better-auth/auth.ts --output src/lib/better-auth/schema.ts",
+    "user_auth:generate": "drizzle-kit generate --config=drizzle-user-auth.config.ts",
+    "user_auth:migrate:local": "wrangler d1 migrations apply DB_USER_AUTH --local --config wrangler.jsonc --persist-to ../../.wrangler/state",
+    "user_auth:migrate:staging": "wrangler d1 migrations apply DB_USER_AUTH --env staging --config wrangler.jsonc",
+    "user_auth:migrate:prod": "wrangler d1 migrations apply DB_USER_AUTH --env production --config wrangler.jsonc",
+    "user_auth:studio": "drizzle-kit studio --config=drizzle-user-auth.config.ts",
+    "user_auth:seed": "tsx src/lib/better-auth/seed_user_auth.ts"
+  },
+  "dependencies": {
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*",
+    "@bene/shared": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "@hono/zod-validator": "0.7.5",
+    "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
+    "hono": "^4.10.8",
+    "zod": "catalog:"
+  },
+  "nx": {
+    "targets": {
+      "build-client": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "tsx {projectRoot}/scripts/build-client.ts"
+          ],
+          "parallel": false,
+          "cwd": "{workspaceRoot}"
+        },
+        "outputs": [
+          "{workspaceRoot}/packages/api-client/src/generated"
+        ],
+        "cache": {
+          "enabled": true
+        } 
+      },
+      "test": {
+        "executor": "@nx/vite:test",
+        "options": {
+          "passWithNoTests": true,
+          "reportsDirectory": "../../coverage/apps/gateway"
+        }
+      }
+    },
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:api",
+      "runtime:worker"
+    ]
+  }
+
+}

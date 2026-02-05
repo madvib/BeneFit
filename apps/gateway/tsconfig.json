@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "lib": ["ESNext"],
+    "types": [
+      "../../types/cloudflare-runtime.d.ts",
+      "../../types/vite-env.d.ts",
+      "./worker-env.d.ts",
+      "node"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/client.ts"],
+  "references": [
+    {
+      "path": "../actors/user-hub"
+    },
+    {
+      "path": "../../packages/domain/training/core"
+    },
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/domain/integrations"
+    },
+    {
+      "path": "../../packages/domain/training/application"
+    },
+    {
+      "path": "../../packages/domain/coach"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+import { z } from 'zod';
+import { Result, BaseUseCase } from '@bene/shared';
+import { toCompletedWorkoutView, type CompletedWorkoutView } from '@bene/training-core';
+import type { CompletedWorkoutRepository } from '../../repositories/completed-workout-repository.js';
+
+
+
+// Single request schema with ALL fields
+export const GetWorkoutHistoryRequestSchema = z.object({
+  // Server context
+  userId: z.uuid(),
+
+  // Client data
+  limit: z.number().int().min(1).max(100).optional(),
+  offset: z.number().int().min(0).optional(),
+});
+
+// Zod inferred type with original name
+export type GetWorkoutHistoryRequest = z.infer<typeof GetWorkoutHistoryRequestSchema>;
+
+
+
+export interface GetWorkoutHistoryResponse {
+  workouts: CompletedWorkoutView[];
+  total: number;
+}
+
+
+export class GetWorkoutHistoryUseCase extends BaseUseCase<
+  GetWorkoutHistoryRequest,
+  GetWorkoutHistoryResponse
+> {
+  constructor(private completedWorkoutRepository: CompletedWorkoutRepository) {
+    super();
+  }
+
+  protected async performExecution(
+    request: GetWorkoutHistoryRequest,
+  ): Promise<Result<GetWorkoutHistoryResponse>> {
+    const workoutsResult = await this.completedWorkoutRepository.findByUserId(
+      request.userId,
+      request.limit || 20,
+      request.offset || 0,
+    );
+
+    if (workoutsResult.isFailure) {
+      return Result.fail(workoutsResult.error);
+    }
+
+    const workouts = workoutsResult.value;
+
+    return Result.ok({
+      workouts: workouts.map(toCompletedWorkoutView),
+      total: workouts.length,
+    });
+  }
+}

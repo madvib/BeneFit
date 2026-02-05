@@ -1,0 +1,21 @@
+{
+  "name": "@bene/integrations-service",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@bene/shared": "workspace:*",
+    "@bene/integrations-domain": "workspace:*",
+    "@bene/training-core": "workspace:*"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
+  }
+}

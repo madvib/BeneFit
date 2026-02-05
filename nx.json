@@ -1,0 +1,91 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tui":{"enabled":true},
+  "plugins": [
+    {
+      "plugin": "./tools/nx-plugin/src/plugins/swc_inference.ts",
+      "options": {
+        "buildTargetName": "build"
+      }
+    },
+    {
+      "plugin": "./tools/nx-plugin/src/plugins/eslint_inference.ts"
+    },
+    {
+      "plugin": "./tools/nx-plugin/src/plugins/wrangler/target_inference.ts"
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": ["packages/**", "tools/**", "apps/**"],
+      "options": {
+        "build": false,
+        "typecheck": {
+          "targetName": "typecheck"
+        }
+      }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "include": ["apps/**", "packages/**"],
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "vite:typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "vitest:test",
+        "ciTargetName": "test-ci"
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    }
+  ],
+  "targetDefaults": {
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "@nx/eslint:lint": {
+      "inputs": ["default", "^default"],
+      "cache": true,
+      "options": {
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,tsx,js,jsx}"],
+        "exclude": ["{projectRoot}/dist/**/*", "{projectRoot}/node_modules/**/*"],
+        "fix": true
+      }
+    },
+    "typecheck": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": [],
+      "options": {
+        "tsConfig": "{projectRoot}/tsconfig.json",
+        "noEmit": true
+      },
+      "cache": true
+    }
+  },
+  "generators": {
+    "@nx/react": {
+      "library": {
+        "unitTestRunner": "none"
+      }
+    }
+  }
+}

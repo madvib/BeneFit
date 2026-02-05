@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    {
+      "name": "swc_inference",
+      "path": "./src/plugins/swc_inference.ts"
+    },
+    {
+      "name": "eslint_inference",
+      "path": "./src/plugins/eslint_inference.ts"
+    }
+  ]
+}

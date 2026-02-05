@@ -1,0 +1,39 @@
+import { BadgeCheck, Heart, Zap } from 'lucide-react';
+import { IconBox, SpotlightCard, typography } from '@/lib/components';
+
+export default function Benefits() {
+  const benefits = [
+    {
+      icon: <BadgeCheck />,
+      title: 'Trusted by Thousands',
+      description:
+        'Over 100,000 active users track their fitness goals with our platform every day.',
+    },
+    {
+      icon: <Zap />,
+      title: 'Comprehensive Tracking',
+      description: 'Track workouts, nutrition, sleep, and more in one integrated platform.',
+    },
+    {
+      icon: <Heart />,
+      title: 'Community Focused',
+      description: 'Connect with friends and join challenges to stay motivated on your journey.',
+    },
+  ];
+
+  return (
+    <SpotlightCard className="mb-20">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {benefits.map((benefit, index) => (
+          <div key={index} className="text-center">
+            <IconBox size="xl" className="mx-auto mb-4">
+              {benefit.icon}
+            </IconBox>
+            <h3 className={`${typography.h3} mb-2`}>{benefit.title}</h3>
+            <p className={`${typography.p} text-muted-foreground`}>{benefit.description}</p>
+          </div>
+        ))}
+      </div>
+    </SpotlightCard>
+  );
+}

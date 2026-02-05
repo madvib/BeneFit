@@ -1,0 +1,151 @@
+'use client';
+
+import { Button, Card, DateDisplay, SectionHeader, typography } from '@/lib/components';
+import { Calendar, Users, ChevronRight } from 'lucide-react';
+
+export interface Event {
+  id: string;
+  title: string;
+  date: string;
+  image: string;
+  participants: number;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  members: number;
+  activityType: string;
+  image: string;
+}
+
+interface ExploreViewProps {
+  events: Event[];
+  featuredTeams: Team[];
+}
+
+export default function ExploreView({ events, featuredTeams }: ExploreViewProps) {
+  return (
+    <div className="mx-auto max-w-400 p-4 md:p-6 lg:p-8">
+      {/* Hero Section TODO is there a reusable primitive? */}
+      <div className="bg-primary text-primary-foreground relative mb-12 overflow-hidden rounded-3xl px-8 py-16 md:px-16">
+        <div className="relative z-10 max-w-2xl">
+          <h1 className={`${typography.h1Inherit} mb-4`}>
+            Discover Your Next Challenge
+          </h1>
+          <p className={`${typography.lead} text-primary-foreground/80 mb-8`}>
+            Find local events, join communities, and connect with expert coaches to elevate your
+            fitness journey.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Button
+              variant="surface"
+              size="lg"
+              className={`${typography.p} rounded-full px-6 py-6 transition-transform hover:scale-105`}
+            >
+              Find Events
+            </Button>
+            <Button
+              variant="glass"
+              size="lg"
+              className={`${typography.p} rounded-full px-6 py-6 transition-colors`}
+            >
+              Browse Teams
+            </Button>
+          </div>
+        </div>
+        {/* Decorative Background */}
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute right-40 bottom-0 h-64 w-64 rounded-full bg-black/10 blur-3xl" />
+      </div>
+
+      {/* Upcoming Events */}
+      <section className="mb-12">
+        <SectionHeader
+          title="Upcoming Events"
+          action={
+            <Button variant="link" className={`${typography.small} p-0`} onClick={() => {}}>
+              View all <ChevronRight size={16} />
+            </Button>
+          }
+        />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {events.map((event) => (
+            <Card
+              key={event.id}
+              className="group border-border bg-card overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg"
+              image={undefined}
+            >
+              <div className="bg-accent/50 -mx-6 -mt-6 mb-6 flex aspect-video w-[calc(100%+3rem)] items-center justify-center">
+                {/* Fallback image if needed since we removed category logic for placeholder */}
+                <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
+              </div>
+
+              <h3 className={`${typography.h4} text-foreground mb-2`}>{event.title}</h3>
+              <div className={`${typography.small} text-muted-foreground space-y-2`}>
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} />
+                  <DateDisplay date={event.date} format="short" as="span" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users size={16} />
+                  <span>{event.participants} participating</span>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Teams */}
+      <section>
+        <SectionHeader
+          title="Featured Teams"
+          action={
+            <Button variant="link" className={`${typography.small} p-0`} onClick={() => {}}>
+              View all <ChevronRight size={16} />
+            </Button>
+          }
+        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {featuredTeams.map((team) => (
+            <Card
+              key={team.id}
+              className="border-border bg-card hover:border-primary/50 flex flex-col items-center text-center transition-all hover:shadow-md"
+            >
+              <div className="bg-accent mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full">
+                <img src={team.image} alt={team.name} className="h-full w-full object-cover" />
+              </div>
+              <h3 className={`${typography.large} text-foreground mb-1`}>{team.name}</h3>
+              <p className={`${typography.small} text-muted-foreground mb-4`}>
+                {team.activityType}
+              </p>
+              <div
+                className={`${typography.mutedXs} text-muted-foreground mt-auto flex items-center gap-2`}
+              >
+                <Users size={14} />
+                <span>{team.members} members</span>
+              </div>
+              <Button variant="soft" className={`${typography.p} mt-4 w-full rounded-xl`}>
+                Join Team
+              </Button>
+            </Card>
+          ))}
+          {/* Create Team Card */}
+          <Button
+            variant="dashed"
+            className="flex h-full w-full flex-col items-center justify-center rounded-xl p-6 text-center transition-all"
+          >
+            <div className="bg-background mb-4 flex h-16 w-16 items-center justify-center rounded-full shadow-sm">
+              <Users size={32} className="text-primary" />
+            </div>
+            <h3 className={`${typography.large} text-foreground`}>Create a Team</h3>
+            <p className={`${typography.small} text-muted-foreground`}>
+              Start your own community
+            </p>
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}

@@ -1,0 +1,13 @@
+/**
+ * Input DTO for <%= className %>
+ */
+export interface <%= className %>Input {
+  // TODO: Define input properties
+}
+
+/**
+ * Output DTO for <%= className %>
+ */
+export interface <%= className %>Output {
+  // TODO: Define output properties
+}

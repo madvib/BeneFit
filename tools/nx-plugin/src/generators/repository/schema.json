@@ -1,0 +1,30 @@
+{
+  "cli": "nx",
+  "id": "repository",
+  "title": "Generate Repository",
+  "type": "object",
+  "properties": {
+    "entity": {
+      "type": "string",
+      "description": "Entity name (PascalCase)",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What entity is this repository for?"
+    },
+    "feature": {
+      "type": "string",
+      "description": "Feature name (kebab-case)",
+      "x-prompt": "What feature does this belong to?"
+    },
+    "implementation": {
+      "type": "string",
+      "description": "Implementation technology",
+      "default": "Postgres",
+      "enum": ["Postgres", "Redis", "InMemory"],
+      "x-prompt": "What implementation?"
+    }
+  },
+  "required": ["entity", "feature"]
+}

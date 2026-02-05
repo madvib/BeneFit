@@ -1,0 +1,56 @@
+{
+  "name": "@bene/react-api-client",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./fixtures": {
+      "development": "./src/fixtures/index.ts",
+      "types": "./src/fixtures/index.d.ts"
+    },
+    "./test": {
+      "development": "./src/test/index.ts",
+      "types": "./src/test/index.ts",
+      "default": "./src/test/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "@bene/shared": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "agents": "catalog:",
+    "better-auth": "catalog:",
+    "hono": "4.11.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bene/training-application": "workspace:*",
+    "@bene/coach-domain": "workspace:*",
+    "@bene/integrations-domain": "workspace:*"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          "@bene/gateway:build-client",
+          "default"
+        ],
+        "parallel": false
+      }
+    },
+    "tags": [
+      "scope:client",
+      "type:library",
+      "layer:interface"
+    ]
+  }
+}

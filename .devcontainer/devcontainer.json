@@ -1,33 +1,28 @@
 {
-  "name": "Node.js & TypeScript",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
-  // 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
-  "features": {
-    "ghcr.io/devcontainers-extra/features/pnpm:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers-extra/features/supabase-cli": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  "name": "BeneFit NX Monorepo",
+  // "image": "benefit-nx-dev:latest",
+  "build": {
+    "dockerfile": "Dockerfile", // Assumes Dockerfile is in the same directory
+    "context": ".." // Context set to the project root (one level up)
   },
   "containerEnv": {
-    "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
     "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}",
-    "GITHUB_PAT": "${localEnv:GITHUB_PAT}",
-    "PNPM_HOME": "/root/.local/share/pnpm/"
+    "GITHUB_PAT": "${localEnv:GITHUB_PAT}"
   },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}"
+    "PATH": "${containerEnv:PATH}:${containerEnv:PNPM_HOME}",
+    "PNPM_HOME": "/home/node/.local/share/pnpm"
   },
   "mounts": [
-    "source=global-node_modules,target=/usr/local/lib/node_modules,type=volume",
-    "source=vibe-kanban,target=/root/.local/share/vibe-kanban,type=volume",
-    "source=pnpm_home,target=/root/.local/share/pnpm/,type=volume"
+    "source=${localEnv:HOME}/.local/share/pnpm,target=/home/node/.local/share/pnpm/,type=bind"
   ],
   "postCreateCommand": "pnpm config set store-dir $PNPM_HOME/store && pnpm install", //sudo chown -R node:node $PNPM_HOME && 
-  // 👇 Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
-  // 👇 Configure tool-specific properties.
-  // "customizations": {},
-  "remoteUser": "root",
+  "runArgs": [
+    "--env-file",
+    ".devcontainer/.env"
+  ],
+  "remoteUser": "node",
+  "containerUser": "node",
   "customizations": {
     "vscode": {
       "extensions": [

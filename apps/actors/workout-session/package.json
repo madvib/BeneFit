@@ -1,0 +1,24 @@
+{
+  "name": "@bene/workout-session",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
+  },
+  "dependencies": {
+    "@bene/shared": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "agents": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:infrastructure",
+      "runtime:durable-object"
+    ]
+  }
+}

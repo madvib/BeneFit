@@ -1,0 +1,152 @@
+import {
+  planTemplates,
+  NewPlanTemplate,
+} from '../../../src/d1/static_content/schema/plan_templates.js';
+import {
+  templateRatings,
+  NewTemplateRating,
+} from '../../../src/d1/static_content/schema/template_ratings.js';
+import {
+  templateTags,
+  NewTemplateTag,
+} from '../../../src/d1/static_content/schema/template_tags.js';
+import { useLocalD1 } from '../../../../../tools/drizzle/get-d1-helper.ts';
+import { drizzle } from 'drizzle-orm/d1';
+
+const now = Math.floor(Date.now() / 1000);
+
+// Use your schema types for type safety
+const plans: NewPlanTemplate[] = [
+  {
+    id: 'plan_001',
+    name: 'Couch to 5k',
+    description: 'Beginner-friendly running plan to get you from couch to completing a 5k',
+    authorUserId: 'user_001',
+    authorName: 'Mike Tyson',
+    minExperienceLevel: 'beginner',
+    maxExperienceLevel: 'advanced',
+    durationType: 'fixed',
+    durationWeeksMin: 9,
+    durationWeeksMax: 9,
+    frequencyType: 'fixed',
+    workoutsPerWeekMin: 3,
+    workoutsPerWeekMax: 3,
+    tags: JSON.stringify(['beginner', 'running', 'cardio']),
+    requiredEquipment: JSON.stringify(['none']),
+    structureJson: JSON.stringify({ weeks: [] }),
+    rulesJson: JSON.stringify({}),
+    isPublic: true,
+    isFeatured: true,
+    isVerified: true,
+    ratingAverage: 4.5,
+    ratingCount: 10,
+    usageCount: 100,
+    version: 1,
+    createdAt: new Date(now * 1000),
+    updatedAt: new Date(now * 1000),
+    publishedAt: null,
+  },
+  {
+    id: 'plan_002',
+    name: '5x5 Stronglifts',
+    description: 'Classic strength building program focusing on compound movements',
+    authorUserId: 'user_001',
+    authorName: 'Mike Tyson',
+    minExperienceLevel: 'beginner',
+    maxExperienceLevel: 'advanced',
+    durationType: 'variable',
+    durationWeeksMin: 10,
+    durationWeeksMax: 12,
+    frequencyType: 'flexible',
+    workoutsPerWeekMin: 3,
+    workoutsPerWeekMax: 3,
+    tags: JSON.stringify(['intermediate', 'strength', 'compound']),
+    requiredEquipment: JSON.stringify(['barbell', 'squat_rack']),
+    structureJson: JSON.stringify({ weeks: [] }),
+    rulesJson: JSON.stringify({}),
+    isPublic: true,
+    isFeatured: true,
+    isVerified: true,
+    ratingAverage: 4.8,
+    ratingCount: 8,
+    usageCount: 85,
+    version: 1,
+    createdAt: new Date((now + 1000) * 1000),
+    updatedAt: new Date((now + 1000) * 1000),
+    publishedAt: null,
+  },
+];
+
+const ratings: NewTemplateRating[] = [
+  {
+    id: 'rating_001',
+    templateId: 'plan_001',
+    userId: 'user_002',
+    rating: 5,
+    reviewText: 'Great for beginners! Really helped me get started with running.',
+    createdAt: new Date(now * 1000),
+  },
+  {
+    id: 'rating_002',
+    templateId: 'plan_002',
+    userId: 'user_003',
+    rating: 5,
+    reviewText: 'The classic! Builds serious strength if you stick with it.',
+    createdAt: new Date((now + 500) * 1000),
+  },
+];
+
+const tags: NewTemplateTag[] = [
+  { id: 'tag_001', templateId: 'plan_001', tag: 'beginner' },
+  { id: 'tag_002', templateId: 'plan_001', tag: 'running' },
+  { id: 'tag_003', templateId: 'plan_002', tag: 'strength' },
+  { id: 'tag_004', templateId: 'plan_002', tag: 'intermediate' },
+];
+
+/**
+ * Seeds the Static Content database using Drizzle ORM and D1Helper.
+ */
+export async function seedStaticContent() {
+  console.log('🌱 Seeding Static Content database with Drizzle ORM...');
+
+  try {
+    // Execute the seeding logic using the D1 binding
+    await useLocalD1('DB_STATIC_CONTENT', async (binding) => {
+      // Initialize the type-safe Drizzle client
+      const db = drizzle(binding);
+
+      console.log('  - Clearing existing data...');
+      // Use Drizzle ORM for clear operations
+      await db.delete(templateTags);
+      await db.delete(templateRatings);
+      await db.delete(planTemplates);
+
+      // --- 2. Insert Data ---
+
+      console.log(`  - Inserting ${plans.length} plan templates...`);
+      // Use Drizzle ORM for batch insertion
+      await db.insert(planTemplates).values(plans);
+
+      console.log(`  - Inserting ${ratings.length} template ratings...`);
+      // Use Drizzle ORM for batch insertion
+      await db.insert(templateRatings).values(ratings);
+
+      console.log(`  - Inserting ${tags.length} template tags...`);
+      // Use Drizzle ORM for batch insertion
+      await db.insert(templateTags).values(tags);
+    });
+
+    console.log('✅ Static Content database seeded successfully');
+  } catch (error) {
+    console.error('❌ Error seeding Static Content database:', error);
+    throw error;
+  }
+}
+
+// This block makes the script runnable directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedStaticContent().catch((error) => {
+    console.error('Failed to seed database:', error);
+    process.exit(1);
+  });
+}

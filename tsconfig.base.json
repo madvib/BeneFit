@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "incremental": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": [
+      "es2022"
+    ],
+    "strict": true,
+    "importHelpers": false,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noEmitOnError": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "paths": {
+      "@/tools/*": [
+        "./tools/*"
+      ]
+    }
+  }
+}

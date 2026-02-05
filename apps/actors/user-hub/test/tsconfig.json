@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+
+  "compilerOptions": {
+    "rootDir": "..",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "types": ["@cloudflare/vitest-pool-workers", "../../../../types/cloudflare-runtime.d.ts"]
+  },
+  "include": ["./**/*.ts", "../src/**/*", "../migrations", "../worker-env.d.ts"]
+}

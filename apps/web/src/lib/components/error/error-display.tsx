@@ -1,0 +1,206 @@
+
+
+import { Button, typography } from '@/lib/components';
+import * as React from 'react';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Bug,
+  ChevronDown,
+  ChevronRight,
+  RefreshCw,
+  ShieldAlert,
+  XCircle,
+} from 'lucide-react';
+import { useRouter } from '@tanstack/react-router';
+import { motion, AnimatePresence } from 'motion/react';
+
+export const getSeverityColor = (severity?: string | null): string => {
+  switch (severity) {
+    case 'warning':
+      return '#f59e0b';
+    case 'info':
+      return '#3b82f6';
+    default:
+      return '#ef4444';
+  }
+};
+
+export interface ErrorDisplayProps {
+  severity?: 'error' | 'warning' | 'info' | null;
+  variant?: 'page' | 'card' | 'inline' | null;
+  title?: string;
+  message: string;
+  error?: Error | string;
+  showBackButton?: boolean;
+  showRefreshButton?: boolean;
+  showReportButton?: boolean;
+  onReportClick?: () => void;
+  onRefresh?: () => void;
+  backHref?: string;
+  actions?: React.ReactNode;
+  className?: string;
+}
+
+export function ErrorDisplay({
+  severity = 'error',
+  variant = 'page',
+  title,
+  message,
+  error,
+  showBackButton,
+  showRefreshButton,
+  showReportButton,
+  onReportClick,
+  onRefresh,
+  backHref,
+  actions,
+  className,
+}: Readonly<ErrorDisplayProps>) {
+  const router = useRouter();
+  const [showTechnicalDetails, setShowTechnicalDetails] = React.useState(false);
+
+  const handleRefresh = React.useCallback(() => {
+    if (onRefresh) {
+      onRefresh();
+    } else {
+      globalThis.location.reload();
+    }
+  }, [onRefresh]);
+
+  const handleBack = React.useCallback(() => {
+    if (backHref) {
+      router.navigate({ to: backHref });
+    } else {
+      router.history.back();
+    }
+  }, [backHref, router]);
+
+  // Determine icon based on severity
+  const Icon = React.useMemo(() => {
+    if (severity === 'warning') return ShieldAlert;
+    if (variant === 'inline') return AlertCircle;
+    return XCircle;
+  }, [severity, variant]);
+
+  const technicalDetails = React.useMemo(() => {
+    if (!error) return null;
+
+    // Environment-aware detail visibility
+    const env = process.env.NEXT_PUBLIC_ENV || 'dev';
+    const canShowDetails = env === 'dev' || env === 'staging';
+
+    if (!canShowDetails && variant !== 'inline') {
+      return null;
+    }
+
+    return typeof error === 'string' ? error : error.stack || error.message;
+  }, [error, variant]);
+
+  const isPage = variant === 'page';
+  const isInline = variant === 'inline';
+
+  return (
+    <div
+      className={`flex flex-col items-center justify-center ${isInline ? 'flex-row' : ''} ${className ?? ''}`}
+    >
+      {/* Icon Section */}
+      <div
+        className={`flex items-center justify-center rounded-3xl ${
+          isInline ? 'mr-3 bg-transparent' : 'mb-6 h-20 w-20 bg-current/10 ring-1 ring-current/20'
+        }`}
+      >
+        <Icon size={isInline ? 24 : 40} strokeWidth={1.5} />
+      </div>
+
+      {/* Text Section */}
+      <div className={isInline ? 'flex-1 text-left' : 'text-center'}>
+        {title && (
+          <h2
+            className={`${isPage ? typography.h1 : typography.h4} mb-1 border-none pb-0 ${
+              isPage ? 'mb-4' : ''
+            }`}
+          >
+            {title}
+          </h2>
+        )}
+        <p
+          className={`${isPage ? typography.lead : typography.muted} mt-0 max-w-lg leading-relaxed ${isPage ? 'mx-auto' : ''}`}
+        >
+          {message}
+        </p>
+
+        {/* Technical Details */}
+        {technicalDetails && (
+          <div className="mt-6 w-full text-left">
+            <button
+              onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
+              className={`${typography.xs} text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors`}
+            >
+              {showTechnicalDetails ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              Technical Details
+            </button>
+            <AnimatePresence>
+              {showTechnicalDetails && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="mt-2 overflow-hidden"
+                >
+                  <pre
+                    className={`${typography.mutedXs} bg-muted max-h-48 overflow-auto rounded-xl p-4 font-mono leading-tight break-all whitespace-pre-wrap`}
+                  >
+                    {technicalDetails}
+                  </pre>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* Action Section */}
+        {(showBackButton || showRefreshButton || showReportButton || actions) && (
+          <div
+            className={`flex flex-wrap items-center gap-3 ${
+              isInline ? 'mt-4' : 'mt-8 justify-center'
+            }`}
+          >
+            {showBackButton && (
+              <Button variant="outline" onClick={handleBack} className="rounded-2xl px-6">
+                <ArrowLeft size={16} className="mr-2" />
+                Go Back
+              </Button>
+            )}
+
+            {showRefreshButton && (
+              <Button
+                onClick={handleRefresh}
+                variant={severity === 'error' ? 'destructive' : 'default'}
+                className="rounded-2xl px-6"
+              >
+                <RefreshCw size={16} className="mr-2" />
+                Retry
+              </Button>
+            )}
+
+            {showReportButton && (
+              <Button
+                variant="ghost"
+                onClick={onReportClick}
+                className="text-muted-foreground hover:text-foreground rounded-2xl px-6"
+              >
+                <Bug size={16} className="mr-2" />
+                Report Bug
+              </Button>
+            )}
+
+            {actions}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+

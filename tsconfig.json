@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./tools/nx-plugin"
+    },
+    {
+      "path": "./packages/domain/integrations"
+    },
+    {
+      "path": "./packages/shared"
+    },
+    {
+      "path": "./packages/domain/training/application"
+    },
+    {
+      "path": "./packages/domain/training/core"
+    },
+    {
+      "path": "./packages/domain/coach"
+    },
+    {
+      "path": "./packages/persistence"
+    },
+    {
+      "path": "./packages/react-api-client"
+    },
+    {
+      "path": "./apps/actors/user-hub"
+    },
+    {
+      "path": "./apps/gateway"
+    }
+  ]
+}

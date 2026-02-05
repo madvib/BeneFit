@@ -1,4 +1,13 @@
 packages:
-
-  # all packages in direct subdirs of apps/
-  - 'apps/*'
+  - 'apps/**'
+  - 'packages/**'
+  - 'tools/*'
+catalog:
+  '@tanstack/react-query': '5.90.12'
+  '@tanstack/react-form': '1.28.0'
+  'better-auth': '1.4.17'
+  agents: '0.3.6'
+  drizzle-orm: '0.45.1'
+  react: '^19.2.3'
+  react-dom: '^19.2.3'
+  zod: '4.3.6'

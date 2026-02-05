@@ -1,0 +1,60 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "gateway",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-12-12",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "UserHub",
+        "name": "USER_HUB",
+        "script_name": "user-hub-handler",
+      },
+      {
+        "class_name": "WorkoutSession",
+        "name": "WORKOUT_SESSION",
+        "script_name": "workout-session-handler",
+      },
+    ],
+  },
+  "d1_databases": [
+    {
+      "binding": "DB_USER_AUTH",
+      "database_name": "db-user-auth",
+      "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
+      "migrations_dir": "src/lib/better-auth/migrations/"
+    }
+  ]
+  // "vars": {
+  //   "MY_VAR": "my-variable"
+  // },
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV_NAMESPACE",
+  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  //   }
+  // ],
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MY_BUCKET",
+  //     "bucket_name": "my-bucket"
+  //   }
+  // ],
+  // "d1_databases": [
+  //   {
+  //     "binding": "MY_DB",
+  //     "database_name": "my-database",
+  //     "database_id": ""
+  //   }
+  // ],
+  // "ai": {
+  //   "binding": "AI"
+  // },
+  // "observability": {
+  //   "enabled": true,
+  //   "head_sampling_rate": 1
+  // }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@bene/coach-domain",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./fixtures": {
+      "development": "./dist/fixtures.js",
+      "types": "./dist/fixtures.d.ts"
+    }
+  },
+  "dependencies": {
+    "@swc/helpers": "~0.5.11",
+    "@bene/shared": "workspace:*",
+    "@bene/training-core": "workspace:*",
+    "@bene/training-application": "workspace:*",
+    "zod": "catalog:"
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/coach/src",
+    "tags": [
+      "type:domain",
+      "scope:coach",
+      "layer:core",
+      "layer:application"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "generators": {
+    "domain-inventory": {
+      "factory": "./src/generators/domain-inventory/generator",
+      "schema": "./src/generators/domain-inventory/schema.json",
+      "description": "Generates domain inventory artifacts"
+    },
+    "entity": {
+      "factory": ".src/generators/entity/generator",
+      "schema": ".src/generators/entity/schema.json",
+      "description": "Generate a domain entity"
+    },
+    "use-case": {
+      "factory": ".src/generators/use-case/generator",
+      "schema": ".src/generators/use-case/schema.json",
+      "description": "Generate a use case"
+    },
+    "repository": {
+      "factory": ".src/generators/repository/generator",
+      "schema": ".src/generators/repository/schema.json",
+      "description": "Generate a repository port and implementation"
+    }
+  }
+}

@@ -1,9 +1,0 @@
-{
-  "id": 1,
-  "title": "Run 50 miles",
-  "description": "Complete 50 miles of running this month",
-  "targetValue": 50,
-  "currentValue": 32.5,
-  "unit": "miles",
-  "deadline": "2023-05-31"
-}

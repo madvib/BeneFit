@@ -1,0 +1,104 @@
+import { EmptyState, OAuthButton, PageHeader, typography } from '@/lib/components';
+import { ConnectedService } from '@bene/react-api-client';
+import { Share2, CheckCircle } from 'lucide-react';
+import ServiceCard from './service-card';
+import { AVAILABLE_SERVICES } from '@/lib/constants/services';
+
+interface ConnectionsViewProps {
+  connectedServices: ConnectedService[];
+  onDisconnect: (_id: string) => Promise<void>;
+  onSync: (_serviceId: string) => Promise<void>;
+  syncingServiceId: string | null;
+}
+
+export default function ConnectionsView({
+  connectedServices,
+  onDisconnect,
+  onSync,
+  syncingServiceId,
+}: Readonly<ConnectionsViewProps>) {
+  // Filter available services to only show those not already connected
+  const connectedServiceTypes = new Set(connectedServices.map((s) => s.serviceType));
+  const availableServices = AVAILABLE_SERVICES.filter(
+    (service) => !connectedServiceTypes.has(service.serviceType),
+  );
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Connections"
+        description="Manage your connected services and integrations"
+        align="left"
+      />
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* Connected Services - Left Column (Larger) */}
+        <div className="space-y-4 lg:col-span-2">
+          <h3 className={typography.h3}>Connected Services</h3>
+          <div className="flex flex-col gap-4">
+            {connectedServices.length > 0 ? (
+              connectedServices.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onDisconnect={onDisconnect}
+                  onSync={onSync}
+                  isSyncing={syncingServiceId === service.id}
+                />
+              ))
+            ) : (
+              <EmptyState
+                icon={Share2}
+                title="No services connected yet"
+                description="Connect your favorite apps to sync data."
+                className="py-8"
+                iconClassName="opacity-50"
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Available Services - Right Column (Smaller) */}
+        <div className="space-y-4 lg:col-span-1">
+          <h3 className={typography.h3}>Available Services</h3>
+          <div className="flex flex-col gap-4">
+            {availableServices.length > 0 ? (
+              availableServices.map((service) => (
+                <div
+                  key={service.id}
+                  className="border-border flex flex-col gap-4 rounded-lg border p-6 shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-muted rounded-full p-3">
+                      <img src={service.icon} alt={service.displayName} className="h-6 w-6" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className={typography.h4}>{service.displayName}</h4>
+                      <p className={`${typography.p} text-muted-foreground`}>
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                  <OAuthButton
+                    provider={service.serviceType}
+                    text={`Connect ${service.displayName}`}
+                    mode="link"
+                    callbackURL="/user/connections"
+                  />
+                </div>
+              ))
+            ) : (
+              <EmptyState
+                icon={CheckCircle}
+                title="All available services are connected"
+                description=""
+                className="col-span-full py-8"
+                iconClassName="text-green-500 bg-green-500/10"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

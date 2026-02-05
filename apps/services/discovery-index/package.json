@@ -1,0 +1,16 @@
+{
+  "name": "@bene/discovery-index",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "nx": {
+    "tags": [
+      "scope:backend",
+      "type:app",
+      "layer:service",
+      "runtime:worker"
+    ]
+  }
+}

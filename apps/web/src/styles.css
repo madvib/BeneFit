@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@source "../../../packages/ui/src";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@custom-variant hover (&:hover);
+
+:root {
+  --header-height: 64px;
+  --background: #f0f8ff;
+  --background-muted: #ffffff;
+  --foreground: #0c2d48;
+  --primary: #034a95;
+  --primary-foreground: #ffffff;
+  --secondary: #b3d7ff;
+  --secondary-foreground: #0c2d48;
+  --muted: #e9ecef;
+  --muted-foreground: #6c757d;
+  --accent: #f8f9fa;
+  --accent-foreground: #212529;
+  --ring: #86b7fe;
+  --success: #15803d;
+  --warning: #a16207;
+  --info: #1d4ed8;
+  --error: #bf1616;
+  --destructive: #bf1616;
+  /* Brand gradient: blue to purple (Light Theme - slightly brighter) */
+  --gradient-start: #2563eb;
+  --gradient-middle: #4f46e5;
+  --gradient-end: #7c3aed;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+}
+
+.dark {
+  --background: #030712;
+  --background-muted: #1a1a2e;
+  --foreground: #f0f8ff;
+  --primary: #b3d7ff;
+  --primary-foreground: #0c2d48;
+  --secondary: #032d5d;
+  --secondary-foreground: #ffffff;
+  --muted: #2b3440;
+  --muted-foreground: #9ca3af;
+  --accent: #1f2937;
+  --accent-foreground: #f9fafb;
+  --ring: #6366f1;
+  --success: #4ade80;
+  --warning: #facc15;
+  --info: #60a5fa;
+  --error: #bf1616;
+  --destructive: #bf1616;
+  /* Brand gradient: blue to purple (Dark Theme - neon/vibrant) */
+  --gradient-start: #2563eb;
+  --gradient-middle: #4f46e5;
+  --gradient-end: #7c3aed;
+  --border: #1f2937;
+  --input: #1f2937;
+  /* --gradient-start: #3b82f6;
+  --gradient-middle: #818cf8;
+  --gradient-end: #a855f7; */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-muted: var(--background-muted);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--primary-foreground);
+  --color-error: var(--error);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  box-sizing: border-box;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) var(--muted);
+}
+
+/* Utility to hide legacy if needed */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shiny Text Animation Support */
+.animate-shine {
+  animation-name: shine;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 12s linear infinite;
+}
+
+.animate-reverse-spin-slow {
+  animation: spin 12s linear infinite reverse;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Blob Animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+.animate-blob {
+  animation: blob 7s infinite;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Slow Bounce */
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(-5%);
+  }
+  50% {
+    transform: translateY(5%);
+  }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}

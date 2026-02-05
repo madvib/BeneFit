@@ -1,0 +1,78 @@
+
+import { PrimaryGoalGrid, SecondaryGoalsList, typography, useAppForm } from '@/lib/components';
+import { revalidateLogic } from '@tanstack/react-form';
+import { type SecondaryFitnessGoal,type PrimaryFitnessGoal, trainingSchemas } from '@bene/react-api-client';
+
+interface FitnessGoalsFormProps {
+  initialPrimary: PrimaryFitnessGoal;
+  initialSecondary: SecondaryFitnessGoal[];
+  onSave: (_goals: { primary: PrimaryFitnessGoal; secondary: SecondaryFitnessGoal[] }) => Promise<void>;
+  isLoading?: boolean;
+}
+
+export function FitnessGoalsForm({
+  initialPrimary,
+  initialSecondary,
+  onSave,
+  isLoading,
+}: Readonly<FitnessGoalsFormProps>) {
+  const form = useAppForm({
+    defaultValues: {
+      primary: initialPrimary || 'strength',
+      secondary: initialSecondary || [],
+    },
+    validators: {
+      onDynamic: trainingSchemas.UpdateFitnessGoalsFormSchema,
+    },
+    validationLogic: revalidateLogic(),
+    onSubmit: async ({ value }) => {
+      await onSave(value);
+    },
+  });
+
+  return (
+    <form.AppForm>
+      <form.Root title="Fitness Goals" subtitle="Update your training focus and objectives.">
+        <div className="space-y-6">
+          {/* Primary Goal Field */}
+          <form.AppField name="primary">
+            {(field) => (
+              <div>
+                <label className={`${typography.h4} mb-3 block`}>Primary Goal</label>
+                <PrimaryGoalGrid
+                  selected={field.state.value as PrimaryFitnessGoal}
+                  onChange={field.handleChange}
+                  isLoading={isLoading}
+                />
+                {field.state.meta.errors ? (
+                  <p className={`${typography.xs} text-destructive mt-1`}>
+                    {field.state.meta.errors.join(', ')}
+                  </p>
+                ) : null}
+              </div>
+            )}
+          </form.AppField>
+
+          {/* Secondary Goals Field */}
+          <form.AppField name="secondary">
+            {(field) => (
+              <div>
+                <label className={`${typography.h4} mb-3 block`}>Secondary Goals</label>
+                <SecondaryGoalsList
+                  selected={(field.state.value)}
+                  onChange={field.handleChange}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
+          </form.AppField>
+        </div>
+
+        <form.SubmissionError />
+        <div className="flex justify-end pt-4">
+          <form.SubmitButton label="Save Goals" submitLabel="Saving..." />
+        </div>
+      </form.Root>
+    </form.AppForm>
+  );
+}

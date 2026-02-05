@@ -1,0 +1,35 @@
+{
+  "name": "@bene/integrations-domain",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./fixtures": {
+      "development": "./dist/fixtures.js",
+      "types": "./dist/fixtures.d.ts"
+    }
+  },
+  "dependencies": {
+    "@bene/shared": "workspace:*",
+    "@swc/helpers": "~0.5.11",
+    "zod": "catalog:"
+  },
+  "nx": {
+    "sourceRoot": "packages/domain/integrations/src",
+    "tags": [
+      "type:domain",
+      "scope:integrations",
+      "layer:core",
+      "layer:application"
+    ]
+  }
+}
