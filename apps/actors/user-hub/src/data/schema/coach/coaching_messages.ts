@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
+import { CoachAction } from '@bene/coach-domain';
 import { coachingConversation } from './coaching_conversation';
 
 export const coachingMessages = sqliteTable(
@@ -11,7 +12,11 @@ export const coachingMessages = sqliteTable(
       .notNull(),
     role: text('role', { enum: ['user', 'assistant'] }).notNull(),
     content: text('content').notNull(),
-    contextJson: text('context_json', { mode: 'json' }), // nullable - relevant workout data
+    contextJson: text('context_json', { mode: 'json' }).$type<{
+      actions?: CoachAction[];
+      checkInId?: string;
+      tokens?: number;
+    }>(), // nullable - relevant workout data
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).default(sql`(unixepoch() * 1000)`),
   },
   (table) => [

@@ -4,9 +4,6 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/web"
-    },
-    {
       "path": "./tools/nx-plugin"
     },
     {

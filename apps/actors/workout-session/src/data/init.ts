@@ -1,6 +1,5 @@
 import { migrate } from 'drizzle-orm/durable-sqlite/migrator';
 import { drizzle } from 'drizzle-orm/durable-sqlite';
-import { seedWorkoutSession } from './seed.js';
 import migrations from '../../migrations/migrations.js';
 import { sessionMetadata } from './schema/session_metadata.js';
 /**
@@ -19,6 +18,7 @@ export async function initializeWorkoutSessionDB(storage: DurableObjectStorage) 
 
   // Optionally seed the database if in local development
   if (import.meta.env.DEV && (await db.select().from(sessionMetadata).limit(1)).length === 0) {
+    const { seedWorkoutSession } = await import("./seed.js");
     console.log('🌱 Seeding database with initial data...');
     await seedWorkoutSession(storage);
   }

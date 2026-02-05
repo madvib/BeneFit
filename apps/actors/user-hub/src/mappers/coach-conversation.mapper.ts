@@ -1,21 +1,52 @@
 import { CoachConversation, CoachMsg, CheckIn } from '@bene/coach-domain';
-import { coachingConversation } from '../data/schema';
+import { coachingConversation, coachingMessages, checkIns } from '../data/schema';
+
+export function toMessageDomain(
+  row: typeof coachingMessages.$inferSelect,
+): CoachMsg {
+  return {
+    id: row.id,
+    role: row.role === 'assistant' ? 'coach' : 'user',
+    content: row.content,
+    timestamp: row.createdAt,
+    actions: row.contextJson?.actions || [],
+    checkInId: row.contextJson?.checkInId,
+  } as CoachMsg;
+}
+
+export function toCheckInDomain(
+  row: typeof checkIns.$inferSelect,
+): CheckIn {
+  return {
+    id: row.id,
+    type: row.type as CheckIn['type'],
+    triggeredBy: row.triggeredBy || undefined,
+    question: row.question,
+    userResponse: row.userResponse || undefined,
+    coachAnalysis: row.coachAnalysis || undefined,
+    actions: row.actionsJson || [],
+    status: row.status as CheckIn['status'],
+    createdAt: row.createdAt,
+    respondedAt: row.respondedAt || undefined,
+    dismissedAt: row.dismissedAt || undefined,
+  } as CheckIn;
+}
 
 export function toDomain(
   row: typeof coachingConversation.$inferSelect,
-  messages: CoachMsg[],
-  checkIns: CheckIn[],
+  messages: CoachMsg[] = [],
+  checkIns: CheckIn[] = [],
 ): CoachConversation {
   // Deeply rehydrate dates in the context snapshot
   const context = {
     ...row.contextJson,
-    userGoals: {
+    userGoals: row.contextJson?.userGoals ? {
       ...row.contextJson.userGoals,
       targetDate: row.contextJson.userGoals.targetDate
         ? new Date(row.contextJson.userGoals.targetDate)
         : undefined,
-    },
-    recentWorkouts: row.contextJson.recentWorkouts.map((w) => ({
+    } : undefined,
+    recentWorkouts: (row.contextJson?.recentWorkouts || []).map((w) => ({
       ...w,
       date: new Date(w.date),
     })),
@@ -35,7 +66,7 @@ export function toDomain(
     startedAt: row.startedAt,
     lastMessageAt: row.lastMessageAt,
     lastContextUpdateAt: row.lastContextUpdateAt,
-  };
+  } as CoachConversation;
 }
 
 export function toDatabase(
@@ -53,5 +84,43 @@ export function toDatabase(
     startedAt: conversation.startedAt,
     lastMessageAt: conversation.lastMessageAt,
     lastContextUpdateAt: conversation.lastContextUpdateAt,
+  };
+}
+
+export function toMessageDatabase(
+  conversationId: string,
+  msg: CoachMsg,
+): typeof coachingMessages.$inferInsert {
+  return {
+    id: msg.id,
+    conversationId,
+    role: msg.role === 'coach' ? 'assistant' : 'user',
+    content: msg.content,
+    contextJson: {
+      actions: msg.actions,
+      checkInId: msg.checkInId,
+      tokens: msg.tokens,
+    },
+    createdAt: msg.timestamp,
+  };
+}
+
+export function toCheckInDatabase(
+  conversationId: string,
+  ci: CheckIn,
+): typeof checkIns.$inferInsert {
+  return {
+    id: ci.id,
+    conversationId,
+    type: ci.type,
+    triggeredBy: ci.triggeredBy,
+    question: ci.question,
+    userResponse: ci.userResponse,
+    coachAnalysis: ci.coachAnalysis,
+    actionsJson: ci.actions,
+    status: ci.status,
+    createdAt: ci.createdAt,
+    respondedAt: ci.respondedAt,
+    dismissedAt: ci.dismissedAt,
   };
 }

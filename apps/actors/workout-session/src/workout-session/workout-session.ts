@@ -32,41 +32,41 @@ export default class WorkoutSession extends Agent<Env, WorkoutSessionState> {
 
   // ===== WEBSOCKET (Real-Time) =====
 
-  async onWebSocketMessage(ws: WebSocket, message: string) {
-    const data = JSON.parse(message);
+  // async onWebSocketMessage(ws: WebSocket, message: string) {
+  //   const data = JSON.parse(message);
 
-    switch (data.type) {
-      case 'start_workout': {
-        const session = await (
-          await this.workouts()
-        ).start({
-          userId: data.userId,
-          workoutId: data.workoutId,
-          userName: data.userName || 'User',
-          workoutType: data.workoutType || 'custom',
-          activities: data.activities || [],
-          ...data,
-        } as any);
-        ws.send(JSON.stringify({ type: 'workout_started', session }));
-        break;
-      }
+  //   switch (data.type) {
+  //     case 'start_workout': {
+  //       // const session = await (
+  //       //   await this.workouts()
+  //       // ).start({
+  //       //   userId: data.userId,
+  //       //   workoutId: data.workoutId,
+  //       //   userName: data.userName || 'User',
+  //       //   workoutType: data.workoutType || 'custom',
+  //       //   activities: data.activities || [],
+  //       //   ...data,
+  //       // });
+  //       ws.send(JSON.stringify({ type: 'workout_started' }));
+  //       break;
+  //     }
 
-      case 'complete_workout': {
-        const completed = await (
-          await this.workouts()
-        ).complete({
-          sessionId: data.sessionId,
-          userId: data.userId,
-          endedAt: new Date(),
-          durationMinutes: data.durationMinutes || 30,
-          perceivedExertion: data.perceivedExertion || 5, // Default
-          ...data,
-        } as any);
-        ws.send(JSON.stringify({ type: 'workout_completed', completed }));
-        break;
-      }
-    }
-  }
+  //     case 'complete_workout': {
+  //       // const completed = await (
+  //       //   await this.workouts()
+  //       // ).complete({
+  //       //   sessionId: data.sessionId,
+  //       //   userId: data.userId,
+  //       //   endedAt: new Date(),
+  //       //   durationMinutes: data.durationMinutes || 30,
+  //       //   perceivedExertion: data.perceivedExertion || 5, // Default
+  //       //   ...data,
+  //       // });
+  //       ws.send(JSON.stringify({ type: 'workout_completed' }));
+  //       break;
+  //     }
+  //   }
+  // }
 
   // ===== Factory Getters =====
 

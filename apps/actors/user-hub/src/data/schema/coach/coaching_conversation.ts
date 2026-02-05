@@ -1,7 +1,9 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
 
 import { CoachContext } from '@bene/coach-domain';
+import { coachingMessages } from './coaching_messages';
+import { checkIns } from './check_ins';
 
 export const coachingConversation = sqliteTable('coaching_conversation', {
   id: text('id').primaryKey(),
@@ -27,10 +29,12 @@ export const coachingConversation = sqliteTable('coaching_conversation', {
     .default(sql`(unixepoch() * 1000)`)
     .notNull(),
   lastContextUpdateAt: integer('last_context_update_at', { mode: 'timestamp_ms' }).notNull(),
-
-  // Note: Messages are in separate coaching_messages table
-  // Note: Check-ins are in separate check_ins table
 });
+
+export const coachingConversationRelations = relations(coachingConversation, ({ many }) => ({
+  messages: many(coachingMessages),
+  checkIns: many(checkIns),
+}));
 
 export type CoachConversation = typeof coachingConversation.$inferSelect;
 export type NewCoachConversation = typeof coachingConversation.$inferInsert;

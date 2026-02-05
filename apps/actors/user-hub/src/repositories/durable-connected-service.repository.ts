@@ -1,19 +1,10 @@
 import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
 import { eq, and, desc, or, isNull, lt } from 'drizzle-orm';
-import {
-  Result,
-  EntityNotFoundError,
-  QueryError,
-  SaveError,
-  DeleteError,
-} from '@bene/shared';
+import { Result, EntityNotFoundError, QueryError, SaveError, DeleteError } from '@bene/shared';
 import type { ConnectedService, ServiceType } from '@bene/integrations-domain';
 import type { ConnectedServiceRepository } from '@bene/integrations-domain';
 import { toDatabase, toDomain } from '../mappers/connected-service.mapper.js';
-import {
-  connectedServices,
-  integrations_schema,
-} from '../data/schema/integrations/index.js';
+import { connectedServices, integrations_schema } from '../data/schema/integrations/index.js';
 
 export class DurableConnectedServiceRepository implements ConnectedServiceRepository {
   constructor(private db: DrizzleSqliteDODatabase<typeof integrations_schema>) {}
@@ -34,11 +25,7 @@ export class DurableConnectedServiceRepository implements ConnectedServiceReposi
       return Result.ok(service);
     } catch (error) {
       return Result.fail(
-        new QueryError(
-          'find',
-          'ConnectedService',
-          error instanceof Error ? error : undefined,
-        ),
+        new QueryError('find', 'ConnectedService', error instanceof Error ? error : undefined),
       );
     }
   }
@@ -141,20 +128,14 @@ export class DurableConnectedServiceRepository implements ConnectedServiceReposi
       return Result.ok();
     } catch (error) {
       return Result.fail(
-        new SaveError(
-          'ConnectedService',
-          service.id,
-          error instanceof Error ? error : undefined,
-        ),
+        new SaveError('ConnectedService', service.id, error instanceof Error ? error : undefined),
       );
     }
   }
 
   async delete(serviceId: string): Promise<Result<void>> {
     try {
-      await this.db
-        .delete(connectedServices)
-        .where(eq(connectedServices.id, serviceId));
+      await this.db.delete(connectedServices).where(eq(connectedServices.id, serviceId));
 
       return Result.ok();
     } catch (error) {

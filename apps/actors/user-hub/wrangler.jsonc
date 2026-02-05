@@ -10,15 +10,6 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "rules": [
-    {
-      "type": "Text",
-      "globs": [
-        "**/*.sql"
-      ],
-      "fallthrough": true,
-    },
-  ],
   "durable_objects": {
     "bindings": [
       {

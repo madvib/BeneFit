@@ -7,15 +7,11 @@
   "name": "workout-session-handler",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-05",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "rules": [
     {
       "type": "Text",
-      "globs": [
-        "**/*.sql"
-      ],
+      "globs": ["**/*.sql"],
       "fallthrough": true,
     },
   ],
@@ -29,9 +25,7 @@
   },
   "migrations": [
     {
-      "new_sqlite_classes": [
-        "UserHub"
-      ],
+      "new_sqlite_classes": ["WorkoutSession"],
       "tag": "v1",
     },
   ],

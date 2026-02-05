@@ -31,8 +31,9 @@ export class UserHub extends Agent<Env, UserHubState> {
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
+
     ctx.blockConcurrencyWhile(async () => {
-      await initializeUserHubDB(ctx.storage);
+      await initializeUserHubDB(ctx, env);
     });
   }
 

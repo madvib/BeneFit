@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "cb4a37c9-b062-44e9-b443-2fd266b79c92",
+  "id": "02be6585-c4f7-4ff1-9863-f6015a963607",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "check_ins": {
@@ -76,7 +76,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "responded_at": {
           "name": "responded_at",
@@ -192,7 +192,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "last_message_at": {
           "name": "last_message_at",
@@ -200,7 +200,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "last_context_update_at": {
           "name": "last_context_update_at",
@@ -260,7 +260,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         }
       },
       "indexes": {
@@ -445,7 +445,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -453,7 +453,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         }
       },
       "indexes": {},
@@ -866,7 +866,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -874,7 +874,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "last_active_at": {
           "name": "last_active_at",
@@ -882,7 +882,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         }
       },
       "indexes": {},
@@ -1304,7 +1304,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         }
       },
       "indexes": {
@@ -1798,7 +1798,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "last_sync_at": {
           "name": "last_sync_at",
@@ -1813,7 +1813,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -1821,7 +1821,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(unixepoch())"
+          "default": "(unixepoch() * 1000)"
         }
       },
       "indexes": {

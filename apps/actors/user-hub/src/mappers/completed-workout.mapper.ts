@@ -1,6 +1,7 @@
 import type {
   NewDbCompletedWorkout,
   DbCompletedWorkout,
+  WorkoutReaction
 } from '../data/schema';
 import { CompletedWorkout, CompletedWorkoutSchema } from '@bene/training-core';
 
@@ -54,7 +55,7 @@ export function toDatabase(workout: CompletedWorkout): NewDbCompletedWorkout {
 }
 
 // Database to Domain
-export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
+export function toDomain(row: DbCompletedWorkout & { reactions: WorkoutReaction[] }): CompletedWorkout {
   const data = {
     id: row.id,
     userId: row.userId,
@@ -80,8 +81,14 @@ export function toDomain(row: DbCompletedWorkout): CompletedWorkout {
     // Verification (from JSON)
     verification: row.verificationJson,
 
-    // Social (reactions loaded separately, not from this row)
-    reactions: [],
+    // Social - map reactions if they exist
+    reactions: row.reactions ? row.reactions.map(r => ({
+      id: r.id,
+      userId: r.userId,
+      userName: r.userName,
+      type: r.reactionType as 'heart' | 'fire' | 'clap' | 'strong',
+      createdAt: r.createdAt,
+    })) : [],
     isPublic: row.isPublic ?? false,
     multiplayerSessionId: row.multiplayerSessionId ?? undefined,
 

@@ -1,13 +1,7 @@
 import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
 
 import { eq } from 'drizzle-orm';
-import {
-  Result,
-  EntityNotFoundError,
-  QueryError,
-  SaveError,
-  DeleteError,
-} from '@bene/shared';
+import { Result, EntityNotFoundError, QueryError, SaveError, DeleteError } from '@bene/shared';
 import type { UserProfile } from '@bene/training-core';
 import type { UserProfileRepository } from '@bene/training-application';
 
@@ -26,7 +20,7 @@ import {
 } from '../data/schema/index.js';
 
 export class DurableUserProfileRepository implements UserProfileRepository {
-  constructor(private db: DrizzleSqliteDODatabase<typeof user_profile_schema>) { }
+  constructor(private db: DrizzleSqliteDODatabase<typeof user_profile_schema>) {}
 
   async findById(userId: string): Promise<Result<UserProfile>> {
     try {
@@ -52,11 +46,7 @@ export class DurableUserProfileRepository implements UserProfileRepository {
       return Result.ok(profile);
     } catch (error) {
       return Result.fail(
-        new QueryError(
-          'find',
-          'UserProfile',
-          error instanceof Error ? error : undefined,
-        ),
+        new QueryError('find', 'UserProfile', error instanceof Error ? error : undefined),
       );
     }
   }
@@ -81,25 +71,21 @@ export class DurableUserProfileRepository implements UserProfileRepository {
       // Save achievements (if any)
       if (profile.stats.achievements && profile.stats.achievements.length > 0) {
         const achievementRows = profile.stats.achievements.map((achievement) =>
-          achievementToDatabase(profile.userId, achievement)
+          achievementToDatabase(profile.userId, achievement),
         );
 
         // Insert achievements (ignore conflicts since achievements are immutable once earned)
         await Promise.all(
           achievementRows.map((row) =>
-            this.db.insert(achievementsTable).values(row).onConflictDoNothing()
-          )
+            this.db.insert(achievementsTable).values(row).onConflictDoNothing(),
+          ),
         );
       }
 
       return Result.ok();
     } catch (error) {
       return Result.fail(
-        new SaveError(
-          'UserProfile',
-          profile.userId,
-          error instanceof Error ? error : undefined,
-        ),
+        new SaveError('UserProfile', profile.userId, error instanceof Error ? error : undefined),
       );
     }
   }
@@ -111,11 +97,7 @@ export class DurableUserProfileRepository implements UserProfileRepository {
       return Result.ok();
     } catch (error) {
       return Result.fail(
-        new DeleteError(
-          'UserProfile',
-          userId,
-          error instanceof Error ? error : undefined,
-        ),
+        new DeleteError('UserProfile', userId, error instanceof Error ? error : undefined),
       );
     }
   }

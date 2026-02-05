@@ -1,12 +1,6 @@
 import { type DrizzleSqliteDODatabase } from 'drizzle-orm/durable-sqlite';
 import { eq, and, desc } from 'drizzle-orm';
-import {
-  Result,
-  EntityNotFoundError,
-  QueryError,
-  SaveError,
-  DeleteError,
-} from '@bene/shared';
+import { Result, EntityNotFoundError, QueryError, SaveError, DeleteError } from '@bene/shared';
 import type { FitnessPlan } from '@bene/training-core';
 import type { FitnessPlanRepository } from '@bene/training-application';
 import { toDomain, toDatabase } from '../mappers/workout-plan.mapper.js';
@@ -31,11 +25,7 @@ export class DurableFitnessPlanRepository implements FitnessPlanRepository {
       return Result.ok(plan);
     } catch (error) {
       return Result.fail(
-        new QueryError(
-          'find',
-          'FitnessPlan',
-          error instanceof Error ? error : undefined,
-        ),
+        new QueryError('find', 'FitnessPlan', error instanceof Error ? error : undefined),
       );
     }
   }
@@ -66,12 +56,7 @@ export class DurableFitnessPlanRepository implements FitnessPlanRepository {
       const row = await this.db
         .select()
         .from(activeFitnessPlan)
-        .where(
-          and(
-            eq(activeFitnessPlan.userId, userId),
-            eq(activeFitnessPlan.status, 'active'),
-          ),
-        )
+        .where(and(eq(activeFitnessPlan.userId, userId), eq(activeFitnessPlan.status, 'active')))
         .limit(1);
 
       if (row.length === 0) {
@@ -82,11 +67,7 @@ export class DurableFitnessPlanRepository implements FitnessPlanRepository {
       return Result.ok(plan);
     } catch (error) {
       return Result.fail(
-        new QueryError(
-          'find active',
-          'FitnessPlan',
-          error instanceof Error ? error : undefined,
-        ),
+        new QueryError('find active', 'FitnessPlan', error instanceof Error ? error : undefined),
       );
     }
   }
@@ -103,11 +84,7 @@ export class DurableFitnessPlanRepository implements FitnessPlanRepository {
       return Result.ok();
     } catch (error) {
       return Result.fail(
-        new SaveError(
-          'FitnessPlan',
-          plan.id,
-          error instanceof Error ? error : undefined,
-        ),
+        new SaveError('FitnessPlan', plan.id, error instanceof Error ? error : undefined),
       );
     }
   }
@@ -119,11 +96,7 @@ export class DurableFitnessPlanRepository implements FitnessPlanRepository {
       return Result.ok();
     } catch (error) {
       return Result.fail(
-        new DeleteError(
-          'WorkoutPlan',
-          planId,
-          error instanceof Error ? error : undefined,
-        ),
+        new DeleteError('WorkoutPlan', planId, error instanceof Error ? error : undefined),
       );
     }
   }

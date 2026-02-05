@@ -16,17 +16,31 @@ import {
 } from '../mappers/user-profile.mapper.js';
 import { toDatabase as workoutToDb } from '../mappers/completed-workout.mapper.js';
 import { toDatabase as planToDb } from '../mappers/workout-plan.mapper.js';
-import { toDatabase as coachConvToDb } from '../mappers/coach-conversation.mapper.js';
+import {
+  toDatabase as coachConvToDb,
+  toMessageDatabase,
+  toCheckInDatabase,
+} from '../mappers/coach-conversation.mapper.js';
 import { toDatabase as serviceToDb } from '../mappers/connected-service.mapper.js';
 
 /**
  * Seed script using Domain Fixtures and Mappers.
  * This is a dynamic alternative to static seed-data files.
- * 
+ *
  * Works with both LibSQL (tests) and DurableObjectSQLite (staging)
  */
-export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema>) {
+export async function seedUserHub(
+  db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema.user_do_schema>,
+  targetUserId?: string,
+) {
   console.log('🌱 Seeding User Hub Data (Fixture-based)...');
+
+  const usersToSeed = targetUserId ? SEED_USERS.filter((u) => u.id === targetUserId) : SEED_USERS;
+
+  if (usersToSeed.length === 0) {
+    console.warn(`⚠️ No seed user found for ID: ${targetUserId}`);
+    return;
+  }
 
   try {
     // Clear all data first for a clean seed
@@ -44,8 +58,8 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
     await db.delete(schema.coachingConversation);
     await db.delete(schema.connectedServices);
 
-    for (const user of SEED_USERS) {
-      console.log(`  - Seeding user: ${ user.name } (${ user.id })`);
+    for (const user of usersToSeed) {
+      console.log(`  - Seeding user: ${user.name} (${user.id})`);
       const persona = SEED_PERSONAS[user.id as keyof typeof SEED_PERSONAS];
 
       // ==========================================
@@ -54,7 +68,7 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       const profileDomain = createUserProfileFixture({
         userId: user.id,
         displayName: user.name,
-        avatar: user.avatarUrl
+        avatar: user.avatarUrl,
       });
       const profileDb = profileToDb(profileDomain);
       const statsDb = toStatsDatabase(profileDomain);
@@ -63,8 +77,15 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       await db.insert(schema.userStats).values(statsDb);
 
       if (profileDomain.stats.achievements && profileDomain.stats.achievements.length > 0) {
-        const achievementsDb = profileDomain.stats.achievements.map((a) => achievementToDatabase(user.id, a));
-        await db.insert(schema.achievements).values(achievementsDb);
+        const achievementsDb = profileDomain.stats.achievements.map((a) =>
+          achievementToDatabase(user.id, a),
+        );
+        // Batch insert to avoid SQLite variable limit (999 max)
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < achievementsDb.length; i += BATCH_SIZE) {
+          const batch = achievementsDb.slice(i, i + BATCH_SIZE);
+          await db.insert(schema.achievements).values(batch);
+        }
       }
 
       // ==========================================
@@ -78,14 +99,38 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       const conversationDb = coachConvToDb(conversation);
       await db.insert(schema.coachingConversation).values(conversationDb);
 
+      // Seed messages in batches to avoid SQLite variable limit (999 max)
+      if (conversation.messages.length > 0) {
+        const messageRows = conversation.messages.map((m) =>
+          toMessageDatabase(conversation.id, m),
+        );
+        // With complex JSON columns, use very small batches to stay under 999 variable limit
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < messageRows.length; i += BATCH_SIZE) {
+          const batch = messageRows.slice(i, i + BATCH_SIZE);
+          await db.insert(schema.coachingMessages).values(batch);
+        }
+      }
+
+      // Seed check-ins in batches
+      if (conversation.checkIns.length > 0) {
+        const checkInRows = conversation.checkIns.map((ci) =>
+          toCheckInDatabase(conversation.id, ci),
+        );
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < checkInRows.length; i += BATCH_SIZE) {
+          const batch = checkInRows.slice(i, i + BATCH_SIZE);
+          await db.insert(schema.checkIns).values(batch);
+        }
+      }
+
       // ==========================================
       // 3. Integrations
       // ==========================================
-      // Seed a service for users who have it
-      if (user.id === SEED_USERS[0].id || user.id === SEED_USERS[1].id) {
+      if (persona.sync) {
         const service = createConnectedServiceFixture({
           userId: user.id,
-          serviceType: user.id === SEED_USERS[0].id ? 'strava' : 'garmin',
+          serviceType: persona.sync as 'strava' | 'garmin',
         });
         const serviceDb = serviceToDb(service);
         await db.insert(schema.connectedServices).values(serviceDb);
@@ -94,15 +139,16 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
       // ==========================================
       // 4. Training (Workouts & Plans)
       // ==========================================
-      // Seed workouts if they have them in persona or just seed 1 for everyone
-      if (user.id !== SEED_USERS[2].id) { // USER_003 is the "empty" user in repository tests
-        const workout = createCompletedWorkoutFixture({
-          userId: user.id,
-          workoutType: 'strength',
-          description: 'Fixture generated workout',
-        });
-        const workoutDb = workoutToDb(workout);
-        await db.insert(schema.completedWorkouts).values(workoutDb);
+      // Generate some history for everyone except "New User"
+      if (persona.plan !== null) {
+        const numWorkouts = 5;
+        for (let i = 0; i < numWorkouts; i++) {
+          const workout = createCompletedWorkoutFixture({
+            userId: user.id,
+          });
+          const workoutDb = workoutToDb(workout);
+          await db.insert(schema.completedWorkouts).values(workoutDb);
+        }
       }
 
       if (persona.plan) {
@@ -118,7 +164,6 @@ export async function seedUserHub(db: BaseSQLiteDatabase<'async' | 'sync', unkno
     }
 
     console.log('✅ Seed Complete');
-
   } catch (error) {
     console.error('❌ Seed Failed:', error);
     throw error;

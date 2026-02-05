@@ -4,9 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "schema:generate": "drizzle-kit generate --config=drizzle/drizzle.config.ts"
   },
   "dependencies": {
     "@bene/shared": "workspace:*",

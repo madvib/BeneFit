@@ -5,25 +5,29 @@ import path from 'path';
 
 export default defineConfig(({ mode }) => ({
   envDir: '../../../',
-  plugins: mode === 'test' ? [viteTsConfigPaths()] : [
-    cloudflare({
-      persistState: { path: '../../../.wrangler/state' },
-    }),
-    viteTsConfigPaths(),
-    {
-      name: 'sql-loader',
-      transform(code, id) {
-        if (/[.]sql/i.test(id)) {
-          return `export default ${ JSON.stringify(code) }`;
-        }
-        return {
-          code,
-          map: null,
-        };
+  plugins:
+    [
+      viteTsConfigPaths(),
+      {
+        name: 'sql-loader',
+        transform(code, id) {
+          if (/[.]sql/i.test(id)) {
+            return `export default ${ JSON.stringify(code) }`;
+          }
+          return {
+            code,
+            map: null,
+          };
+        },
       },
-    },
-  ],
+      mode === 'test'
+        ? null
+        : cloudflare({
+          persistState: { path: '../../../.wrangler/state' },
+        }),
+    ],
   resolve: {
+    conditions: ['development', 'import', 'module', 'browser', 'default'],
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
@@ -32,9 +36,5 @@ export default defineConfig(({ mode }) => ({
     exclude: ['cloudflare:*', '@bene/*'],
     include: ['agents', 'drizzle-orm'],
   },
-  test: {
-    globals: true,
-    environment: 'node',
-    include: ['**/__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-  },
+
 }));

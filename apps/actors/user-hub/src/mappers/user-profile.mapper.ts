@@ -18,6 +18,7 @@ type ProfileWithRelations = Profile & {
 export function toProfileDatabase(profile: UserProfile): NewProfile {
   // Extract lastAssessmentDate from experienceProfile
   const { lastAssessmentDate, ...experienceData } = profile.experienceProfile;
+  const safeLastAssessmentDate = lastAssessmentDate || new Date();
 
   // Extract targetDate from fitnessGoals
   const { targetDate: fitnessGoalsTargetDate, ...fitnessGoalsData } = profile.fitnessGoals;
@@ -32,7 +33,7 @@ export function toProfileDatabase(profile: UserProfile): NewProfile {
     location: profile.location,
     timezone: profile.timezone,
 
-    lastAssessmentDate,
+    lastAssessmentDate: safeLastAssessmentDate,
     experienceProfileJson: experienceData,
     fitnessGoalsTargetDate: fitnessGoalsTargetDate || null,
     fitnessGoalsJson: fitnessGoalsData,
