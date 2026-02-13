@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { Result, BaseUseCase } from '@bene/shared';
+import { Result, BaseUseCase, EntityNotFoundError } from '@bene/shared';
 import {
   toCoachMsgView,
   toCheckInView,
   type CoachMsgView,
   type CheckInView,
-  CoachConversationQueries
+  CoachConversationQueries,
 } from '@/core/index.js';
 import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
 
@@ -34,7 +34,7 @@ export interface GetCoachHistoryResponse {
 
 /**
  * Use case for retrieving coaching history.
- * 
+ *
  * Pattern: Loads aggregate → Filters/Slices → Maps to domain views
  */
 export class GetCoachHistoryUseCase extends BaseUseCase<
@@ -48,12 +48,26 @@ export class GetCoachHistoryUseCase extends BaseUseCase<
   protected async performExecution(
     request: GetCoachHistoryRequest,
   ): Promise<Result<GetCoachHistoryResponse>> {
-    const conversationResult = await this.conversationRepository.findByUserId(
-      request.userId,
-    );
+    const conversationResult = await this.conversationRepository.findByUserId(request.userId);
 
     if (conversationResult.isFailure) {
-      return Result.fail(conversationResult.error);
+      const error = conversationResult.error;
+
+      // If no conversation exists yet, return empty state - this is normal for new users
+      if (error instanceof EntityNotFoundError) {
+        return Result.ok({
+          messages: [],
+          pendingCheckIns: [],
+          stats: {
+            totalMessages: 0,
+            totalCheckIns: 0,
+            actionsApplied: 0,
+          },
+        });
+      }
+
+      // For other errors (DB connection, etc.), fail hard
+      return Result.fail(error);
     }
 
     const conversation = conversationResult.value;

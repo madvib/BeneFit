@@ -1,8 +1,12 @@
 import { describe, it, beforeEach, vi, expect } from 'vitest';
 
-import { Result } from '@bene/shared';
+import { Result, EntityNotFoundError } from '@bene/shared';
 
-import { createCoachConversationFixture, createCoachMsgFixture, createCheckInFixture } from '@/fixtures.js';
+import {
+  createCoachConversationFixture,
+  createCoachMsgFixture,
+  createCheckInFixture,
+} from '@/fixtures.js';
 import { CoachConversationRepository } from '@/application/ports/coach-conversation-repository.js';
 
 import { GetCoachHistoryUseCase } from '../get-coaching-history.js';
@@ -24,7 +28,11 @@ describe('GetCoachHistoryUseCase', () => {
 
   it('should successfully retrieve coaching history', async () => {
     const userId = crypto.randomUUID();
-    const mockMessage = createCoachMsgFixture({ role: 'user', content: 'Hello coach!', actions: [] });
+    const mockMessage = createCoachMsgFixture({
+      role: 'user',
+      content: 'Hello coach!',
+      actions: [],
+    });
     const mockCheckIn = createCheckInFixture({ status: 'pending', actions: [] });
     const mockConversation = createCoachConversationFixture({
       userId,
@@ -80,12 +88,36 @@ describe('GetCoachHistoryUseCase', () => {
     }
   });
 
-  it('should fail if conversation is not found', async () => {
+  it('should return empty state for new users with no conversation', async () => {
     // Arrange
     const userId = crypto.randomUUID();
 
     vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
-      Result.fail(new Error('No coaching history found')),
+      Result.fail(new EntityNotFoundError('CoachConversation', userId)),
+    );
+
+    // Act
+    const result = await useCase.execute({
+      userId,
+    });
+
+    // Assert - Should succeed with empty data
+    expect(result.isSuccess).toBe(true);
+    if (result.isSuccess) {
+      expect(result.value.messages).toEqual([]);
+      expect(result.value.pendingCheckIns).toEqual([]);
+      expect(result.value.stats.totalMessages).toBe(0);
+      expect(result.value.stats.totalCheckIns).toBe(0);
+      expect(result.value.stats.actionsApplied).toBe(0);
+    }
+  });
+
+  it('should fail for database errors that are not EntityNotFoundError', async () => {
+    // Arrange
+    const userId = crypto.randomUUID();
+
+    vi.mocked(mockConversationRepository.findByUserId).mockResolvedValue(
+      Result.fail(new Error('Database connection failed')),
     );
 
     // Act
@@ -96,7 +128,7 @@ describe('GetCoachHistoryUseCase', () => {
     // Assert
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
-      expect(result.errorMessage).toBe('No coaching history found');
+      expect(result.errorMessage).toBe('Database connection failed');
     }
   });
 });
