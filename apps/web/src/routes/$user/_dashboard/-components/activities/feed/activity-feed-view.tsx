@@ -1,9 +1,17 @@
-import { Badge, Button, Card, typography } from '@/lib/components';
+import { Badge, Button, Card, typography, EmptyState } from '@/lib/components';
 import { useState } from 'react';
-import { Heart, MessageCircle, Filter, History as HistoryIcon, LayoutList } from 'lucide-react';
+import {
+  Heart,
+  MessageCircle,
+  Filter,
+  History as HistoryIcon,
+  LayoutList,
+  Sparkles,
+} from 'lucide-react';
 import type { CompletedWorkout } from '@bene/react-api-client';
 import { safeFormatTimeAgo } from '@/lib/utils/date-format';
 import WorkoutList from '../history/workout-list';
+import { useNavigate } from '@tanstack/react-router';
 
 // TODO This should be more legible and clear what is going on. try to reduce amount of code
 
@@ -24,6 +32,7 @@ export function ActivityFeedView({
   onSelectWorkout,
   defaultTab = 'feed',
 }: Readonly<ActivityFeedViewProps>) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'feed' | 'history'>(defaultTab);
   const [visibleCount, setVisibleCount] = useState(5);
 
@@ -157,10 +166,23 @@ export function ActivityFeedView({
         ))}
 
         {mappedFeedItems.length === 0 && (
-          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
-            <Filter size={32} className="mb-3 opacity-20" />
-            <p>No activity found.</p>
-          </div>
+          <EmptyState
+            icon={Sparkles}
+            title="Ready to start your journey?"
+            description="Your activity feed will light up once you complete your first workout. Let's make today count!"
+            action={
+              <Button
+                onClick={() => {
+                  navigate({ search: (prev) => ({ ...prev, modal: 'generate-plan' }) });
+                }}
+                variant="default"
+                className={`${typography.small} text-primary-foreground mt-4`}
+              >
+                Generate Your Plan
+              </Button>
+            }
+            iconClassName="text-primary opacity-40"
+          />
         )}
 
         {mappedFeedItems.length > visibleCount && (

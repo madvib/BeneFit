@@ -3,9 +3,11 @@ import { HEADER_CONFIG, type NavItem } from '@/lib/components';
 
 export function NavigationLinks({
   mobile,
+  onLinkClick,
   variant,
 }: {
   mobile: boolean;
+  onLinkClick?: () => void;
   variant: 'marketing' | 'application' | 'account' | 'auth';
 }) {
   const items = (): NavItem[] => {
@@ -26,7 +28,7 @@ export function NavigationLinks({
   return items()
     .filter((link) => !link.disabled)
     .map((link) => (
-      <Link key={link.href} to={link.href} className={linkClass}>
+      <Link key={link.href} to={link.href} className={linkClass} onClick={onLinkClick}>
         {link.label}
       </Link>
     ));

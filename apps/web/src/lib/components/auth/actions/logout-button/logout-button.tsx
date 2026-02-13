@@ -17,7 +17,7 @@ export function LogoutButton({ variant = 'default', className }: LogoutButtonPro
 
   const handleSignOut = async () => {
     setLoading(true);
-    const { error } = await authClient.signOut();
+    const { error } = await authClient().signOut();
     if (error) {
       console.error('Error signing out:', error);
     } else {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useSession } from '@bene/react-api-client';
-import { ImageCard, LoadingSpinner } from '@/lib/components';
+import { ImageCard } from '@/lib/components';
 import { ROUTES, MODALS } from '@/lib/constants';
 import { HomeHero, FeaturesSection } from './-components';
 
@@ -40,14 +40,6 @@ function LandingPage() {
       description: 'Connect with like-minded individuals on your wellness journey.',
     },
   ];
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <LoadingSpinner variant="screen" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen w-full items-center">

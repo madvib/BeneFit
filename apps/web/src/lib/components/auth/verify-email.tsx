@@ -23,7 +23,7 @@ export function VerifyEmail() {
         return;
       }
 
-      const { error: verifyError } = await authClient.verifyEmail({
+      const { error: verifyError } = await authClient().verifyEmail({
         query: { token },
       });
 
@@ -34,8 +34,8 @@ export function VerifyEmail() {
         setSuccess(true);
         setLoading(false);
         setTimeout(() => {
-            // Close modal and go to activities
-            navigate({ to: ROUTES.USER.ACTIVITIES, search: {} });
+          // Close modal and go to activities
+          navigate({ to: ROUTES.USER.ACTIVITIES, search: {} });
         }, 2000);
       }
     };
@@ -77,13 +77,13 @@ export function VerifyEmail() {
       <div className="w-full space-y-3">
         <button
           onClick={() => navigate({ search: { m: MODALS.LOGIN } })}
-          className="btn btn-primary w-full rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
+          className="btn btn-primary bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-2"
         >
           Go to Login
         </button>
         <button
           onClick={() => navigate({ search: { m: MODALS.CONFIRM_EMAIL } })}
-          className="btn btn-secondary w-full rounded-md border border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+          className="btn btn-secondary border-input bg-background hover:bg-accent hover:text-accent-foreground w-full rounded-md border px-4 py-2"
         >
           Resend Verification Email
         </button>

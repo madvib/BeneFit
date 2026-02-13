@@ -6,7 +6,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryProvider>
       <ThemeProvider>
-      <UIProvider>{children}</UIProvider>
+        <UIProvider>{children}</UIProvider>
       </ThemeProvider>
     </QueryProvider>
   );

@@ -1,7 +1,10 @@
-export * from './client';
+export { getApiClient, resetApiClient, ApiError, type ApiClient } from './client';
+export { initializeApiClients } from './lib/config/runtime';
 export * from './websocket';
 export {
   authClient,
+  getAuthClient,
+  resetAuthClient,
   getAuthErrorMessage,
   getAuthErrorContext,
   type AuthErrorContext,
@@ -23,4 +26,3 @@ export * from './hooks/use-integrations';
 export * from './hooks/use-session';
 export * from './hooks/use-websocket';
 export { useSession } from './hooks/use-session';
-

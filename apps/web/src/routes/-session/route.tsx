@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useWorkoutSession } from '@bene/react-api-client';
+import { ErrorPage, LoadingSpinner } from '@/lib/components';
 import SessionView from './session-view';
 
 // This route is ignored by the router due to the leading '-' in the directory name.
@@ -9,7 +10,7 @@ export default function SessionPage() {
   const router = useRouter();
   // We can't use useParams properly here since this isn't a registered route
   // In a real implementation we'd probably use a route param
-  const sessionId = 'mock-session-id'; 
+  const sessionId = 'mock-session-id';
   const { data: session, isLoading, isError } = useWorkoutSession(sessionId);
 
   const handleBack = () => {
@@ -24,14 +25,16 @@ export default function SessionPage() {
     router.navigate({ to: '/user/activities' });
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError || !session) return <div>Error loading session</div>;
+  if (isLoading) return <LoadingSpinner variant="screen" text="Loading session..." />;
+  if (isError || !session)
+    return (
+      <ErrorPage
+        title="Session Error"
+        message="Unable to load your workout session."
+        showBackButton
+        showRefreshButton
+      />
+    );
 
-  return (
-    <SessionView
-      session={session}
-      onAbort={handleBack}
-      onComplete={handleComplete}
-    />
-  );
+  return <SessionView session={session} onAbort={handleBack} onComplete={handleComplete} />;
 }

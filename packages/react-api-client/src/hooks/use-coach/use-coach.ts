@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InferRequestType } from 'hono/client';
-import { client } from '../../client';
+import { getApiClient } from '../../client';
 import { fetchApi, type ApiSuccessResponse } from '../../lib/api-client';
 
 // Query keys factory
@@ -14,44 +14,44 @@ export const coachKeys = {
 // Based on actual routes from gateway/src/routes/coach.ts
 // Routes: POST /message, POST /summary, GET /history, POST /check-in/dismiss, POST /check-in/respond, POST /check-in/trigger
 
-const $getHistory = client.api.coach.history.$get;
-export type GetCoachHistoryResponse = ApiSuccessResponse<typeof $getHistory>;
+// Lazy getters for API endpoints - only called when hooks are used
+const get$getHistory = () => getApiClient().api.coach.history.$get;
+export type GetCoachHistoryResponse = ApiSuccessResponse<ReturnType<typeof get$getHistory>>;
 
 export function useCoachHistory() {
   return useQuery<GetCoachHistoryResponse>({
     queryKey: coachKeys.history(),
-    queryFn: () => fetchApi($getHistory),
+    queryFn: () => fetchApi(get$getHistory()),
   });
 }
 
-const $sendMessage = client.api.coach.message.$post;
-export type SendMessageRequest = InferRequestType<typeof $sendMessage>;
+const get$sendMessage = () => getApiClient().api.coach.message.$post;
+export type SendMessageRequest = InferRequestType<ReturnType<typeof get$sendMessage>>;
 
 export function useSendMessage() {
   return useMutation({
-    mutationFn: (request: SendMessageRequest) => fetchApi($sendMessage, request),
+    mutationFn: (request: SendMessageRequest) => fetchApi(get$sendMessage(), request),
   });
 }
 
-const $dismissCheckIn = client.api.coach['check-in'].dismiss.$post;
-export type DismissCheckInRequest = InferRequestType<typeof $dismissCheckIn>;
+const get$dismissCheckIn = () => getApiClient().api.coach['check-in'].dismiss.$post;
+export type DismissCheckInRequest = InferRequestType<ReturnType<typeof get$dismissCheckIn>>;
 
 export function useDismissCheckIn() {
   return useMutation({
-    mutationFn: (request: DismissCheckInRequest) => fetchApi($dismissCheckIn, request),
-    onSuccess: () => {
-    },
+    mutationFn: (request: DismissCheckInRequest) => fetchApi(get$dismissCheckIn(), request),
+    onSuccess: () => {},
   });
 }
 
-const $respondToCheckIn = client.api.coach['check-in'].respond.$post;
-export type RespondToCheckInRequest = InferRequestType<typeof $respondToCheckIn>;
+const get$respondToCheckIn = () => getApiClient().api.coach['check-in'].respond.$post;
+export type RespondToCheckInRequest = InferRequestType<ReturnType<typeof get$respondToCheckIn>>;
 
 export function useRespondToCheckIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: RespondToCheckInRequest) => fetchApi($respondToCheckIn, request),
+    mutationFn: (request: RespondToCheckInRequest) => fetchApi(get$respondToCheckIn(), request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: coachKeys.history() });
       queryClient.invalidateQueries({ queryKey: ['fitness-plan', 'active'] }); // Invalidate plan in case of adjustments
@@ -59,27 +59,29 @@ export function useRespondToCheckIn() {
   });
 }
 
-const $triggerProactiveCheckIn = client.api.coach['check-in'].trigger.$post;
+const get$triggerProactiveCheckIn = () => getApiClient().api.coach['check-in'].trigger.$post;
 export type TriggerProactiveCheckInRequest = InferRequestType<
-  typeof $triggerProactiveCheckIn
+  ReturnType<typeof get$triggerProactiveCheckIn>
 >;
 
 export function useTriggerProactiveCheckIn() {
   return useMutation({
-    mutationFn: (request: TriggerProactiveCheckInRequest) => fetchApi($triggerProactiveCheckIn, request),
+    mutationFn: (request: TriggerProactiveCheckInRequest) =>
+      fetchApi(get$triggerProactiveCheckIn(), request),
   });
 }
 
-const $generateWeeklySummary = client.api.coach.summary.$post;
+const get$generateWeeklySummary = () => getApiClient().api.coach.summary.$post;
 export type GenerateWeeklySummaryRequest = InferRequestType<
-  typeof $generateWeeklySummary
+  ReturnType<typeof get$generateWeeklySummary>
 >;
 
 export function useGenerateWeeklySummary() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: GenerateWeeklySummaryRequest) => fetchApi($generateWeeklySummary, request),
+    mutationFn: (request: GenerateWeeklySummaryRequest) =>
+      fetchApi(get$generateWeeklySummary(), request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: coachKeys.history() });
     },

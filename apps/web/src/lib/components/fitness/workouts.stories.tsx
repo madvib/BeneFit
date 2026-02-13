@@ -3,12 +3,18 @@ import type { Meta, StoryObj } from '@storybook/react';
 import * as fixtures from '@bene/react-api-client/fixtures';
 import { getActivityStatusConfig } from '@/lib/constants';
 import { Badge } from '@/lib/components';
-import {  ScheduledWorkoutView, CompletedWorkoutView, RPEPicker, SkipWorkoutModal } from './index';
+import {
+  ScheduledWorkoutView,
+  CompletedWorkoutView,
+  IntensitySlider,
+  SkipWorkoutModal,
+} from './index';
 import { typography } from '../theme/typography/typography';
 
 // --- PURE FIXTURE DATA ---
 // We use high-fidelity fixtures directly from the API client to avoid hardcoded boilerplate.
-const todayWorkout = fixtures.buildGetTodaysWorkoutResponse({ success: true, seed: 101 }).value?.workout;
+const todayWorkout = fixtures.buildGetTodaysWorkoutResponse({ success: true, seed: 101 }).value
+  ?.workout;
 const historyData = fixtures.buildGetWorkoutHistoryResponse({ seed: 202 }).value;
 const completedWorkout = historyData?.workouts?.[0];
 
@@ -17,7 +23,13 @@ const meta: Meta = {
   parameters: {
     layout: 'padded',
   },
-  decorators: [(Story) => <div className="bg-background min-h-screen p-8"><Story /></div>],
+  decorators: [
+    (Story) => (
+      <div className="bg-background min-h-screen p-8">
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export default meta;
@@ -50,8 +62,8 @@ export const ScheduledModal: StoryObj<typeof ScheduledWorkoutView> = {
 export const ScheduledInline: StoryObj<typeof ScheduledWorkoutView> = {
   name: 'Scheduled / Inline',
   render: (args) => (
-    <div className="max-w-[500px] mx-auto">
-       <ScheduledWorkoutView {...args} />
+    <div className="mx-auto max-w-[500px]">
+      <ScheduledWorkoutView {...args} />
     </div>
   ),
   args: {
@@ -79,7 +91,7 @@ export const CompletedModal: StoryObj<typeof CompletedWorkoutView> = {
     isOpen: true,
     onClose: () => alert('Close Modal'),
     workout: completedWorkout!,
-  }
+  },
 };
 
 // --- UTILITY STORIES ---
@@ -121,7 +133,7 @@ export const RpeSelection: StoryObj = {
     const [value, setValue] = React.useState(7);
     return (
       <div className="max-w-md p-6">
-        <RPEPicker value={value} onChange={setValue} />
+        <IntensitySlider value={value} onChange={setValue} variant="rpe" />
         <div className={`${typography.small} ${typography.muted} mt-4 text-center`}>
           Current Value: {value}
         </div>

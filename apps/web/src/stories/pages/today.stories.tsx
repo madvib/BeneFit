@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as fixtures from '@bene/react-api-client/fixtures';
 import { Carousel } from '@/lib/components';
-import { Route } from '@/routes/$user/_dashboard/today';
-import TodayView from '@/routes/$user/_dashboard/-components/today';
+import TodayView from '@/routes/$user/_dashboard/-components/today/today-view';
 
 const mockWorkoutResult = fixtures.buildGetTodaysWorkoutResponse({
   hasWorkout: true,

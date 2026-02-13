@@ -13,33 +13,6 @@ export default defineConfig(() => ({
       entryRoot: 'src',
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
-    {
-      name: 'preserve-directives',
-      transform(code, id) {
-        if (id.includes('node_modules')) return;
-        if (code.includes("'use client'") || code.includes('"use client"')) {
-          return {
-            code,
-            map: null,
-            meta: { hasUseClient: true },
-          };
-        }
-      },
-      renderChunk(code, chunk) {
-        const hasUseClient = Object.keys(chunk.modules).some((moduleId) => {
-          const moduleInfo = this.getModuleInfo(moduleId);
-          return moduleInfo?.meta?.hasUseClient;
-        });
-        if (
-          hasUseClient &&
-          !code.includes("'use client'") &&
-          !code.includes('"use client"')
-        ) {
-          return "'use client';\n" + code;
-        }
-        return null;
-      },
-    },
   ],
   resolve: {
     conditions: ['development', 'import', 'module', 'browser', 'default'],
@@ -47,12 +20,7 @@ export default defineConfig(() => ({
   define: {
     'import.meta.vitest': 'undefined',
   },
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [],
-  // },
-  // Configuration for building your library.
-  // See: https://vite.dev/guide/build.html#library-mode
+
   build: {
     outDir: './dist',
     emptyOutDir: true,

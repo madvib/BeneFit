@@ -79,21 +79,17 @@ export function Modal({
     setIsConfirmationOpen(false);
   }, [onClose]);
 
-  // Prevent scrolling when modal is open
-  useEffect(() => {
-    setIsModalOpen(effectiveOpen);
-    if (effectiveOpen) {
-      document.body.style.overflow = 'hidden';
-    }
-  }, [effectiveOpen, setIsModalOpen]);
+useEffect(() => {
+  setIsModalOpen(effectiveOpen);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      setIsModalOpen(false);
-      document.body.style.overflow = 'unset';
-    };
-  }, [setIsModalOpen]);
+  if (effectiveOpen) {
+    document.body.style.overflow = 'hidden';
+  }
+  return () => {
+    document.body.style.overflow = '';
+    setIsModalOpen(false);
+  };
+}, [effectiveOpen, setIsModalOpen]);
 
   // Handle escape key
   useEffect(() => {

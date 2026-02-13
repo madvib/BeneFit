@@ -2,7 +2,6 @@
   "name": "@bene/web",
   "private": true,
   "type": "module",
-
   "dependencies": {
     "@bene/react-api-client": "workspace:*",
     "@bene/shared": "workspace:*",
@@ -34,7 +33,18 @@
     "@tanstack/react-router-devtools": "^1.157.16",
     "web-vitals": "^5.1.0"
   },
-   "nx": {
+  "nx": {
+    "targets": {
+      "storybook-deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": [
+            "pnpm wrangler deploy --config wrangler-storybook.jsonc"
+          ],
+          "cwd": "{projectRoot}"
+        }
+      }
+    },
     "tags": [
       "scope:frontend",
       "type:app",

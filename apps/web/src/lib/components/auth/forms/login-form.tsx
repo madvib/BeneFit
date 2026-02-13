@@ -6,7 +6,7 @@ import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 import { useAppForm, typography, OAuthButton } from '@/lib/components';
 
 export function LoginForm() {
-    const search = useSearch({ strict: false });
+  const search = useSearch({ strict: false });
   const next = search?.next ?? ROUTES.USER.ACTIVITIES;
   const form = useAppForm({
     defaultValues: {
@@ -18,7 +18,7 @@ export function LoginForm() {
     },
     validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email({
+      await authClient().signIn.email({
         ...value,
         fetchOptions: {
           onError(ctx) {

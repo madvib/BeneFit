@@ -23,7 +23,7 @@ export function SignupForm({ isModalRoute = false }) {
     onSubmit: async ({ value }) => {
       const fullName = `${value.name} ${value.surname}`;
 
-      await authClient.signUp.email({
+      await authClient().signUp.email({
         email: value.email,
         password: value.password,
         name: fullName,

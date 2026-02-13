@@ -1,10 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { workoutScenarios, fitnessPlanScenarios, profileScenarios } from '@bene/react-api-client/test';
-import { Carousel, LoadingSpinner,ScheduledWorkoutView } from '@/lib/components';
+import {
+  workoutScenarios,
+  fitnessPlanScenarios,
+  profileScenarios,
+} from '@bene/react-api-client/test';
+import { Carousel, LoadingSpinner, ScheduledWorkoutView } from '@/lib/components';
 import { PlanOverview, QuickActions, WeeklySchedule, PlanOnboarding, PlanPreview } from './index';
 import { useActivePlan, useGeneratePlan, useTodaysWorkout } from '@bene/react-api-client';
-import PlanPage from '../page';
+import { Route } from '@/routes/$user/_dashboard/plan';
+
+const PlanPage = Route.options.component!;
 
 const meta: Meta<typeof PlanPage> = {
   title: 'Features/Fitness Plan',
@@ -67,7 +73,10 @@ export const PlanOverviewShowcase: StoryObj = {
       <Carousel>
         {/* Active Plan */}
         <div className="max-w-2xl p-6">
-          <PlanOverview currentPlan={data?.plan ?? null} onEditPlan={() => alert('Edit Plan Clicked')} />
+          <PlanOverview
+            currentPlan={data?.plan ?? null}
+            onEditPlan={() => alert('Edit Plan Clicked')}
+          />
         </div>
         {/* Empty State */}
         <div className="h-[400px] max-w-2xl p-6">
@@ -83,7 +92,7 @@ export const WeeklyScheduleInteractive: StoryObj = {
   render: () => {
     const { data, isLoading } = useActivePlan();
     const [selectedWeek, setSelectedWeek] = useState(1);
-    
+
     if (isLoading) return <LoadingSpinner variant="screen" text="Loading schedule..." />;
 
     return (
@@ -102,27 +111,27 @@ export const WeeklyScheduleInteractive: StoryObj = {
 export const QuickActionsBar: StoryObj = {
   render: () => (
     <div className="p-6">
-       <QuickActions
-            onCreatePlan={() => {}}
-            onSavePlan={() => {}}
-            onExportPlan={() => {}}
-            onPausePlan={() => {}}
-            isLoading={false}
-          />
+      <QuickActions
+        onCreatePlan={() => {}}
+        onSavePlan={() => {}}
+        onExportPlan={() => {}}
+        onPausePlan={() => {}}
+        isLoading={false}
+      />
     </div>
-  )
+  ),
 };
 
 export const Onboarding: StoryObj = {
   render: () => (
-    <div className="h-screen w-full bg-background p-6">
-      <PlanOnboarding 
-        onGenerate={async () => new Promise(resolve => setTimeout(resolve, 2000))} 
+    <div className="bg-background h-screen w-full p-6">
+      <PlanOnboarding
+        onGenerate={async () => new Promise((resolve) => setTimeout(resolve, 2000))}
         onBrowse={() => {}}
         isLoading={false}
       />
     </div>
-  )
+  ),
 };
 
 export const WorkoutDetailModalStory: StoryObj = {
@@ -130,11 +139,11 @@ export const WorkoutDetailModalStory: StoryObj = {
   render: () => {
     const { data } = useTodaysWorkout();
     return (
-      <ScheduledWorkoutView 
-        workout={data?.workout} 
+      <ScheduledWorkoutView
+        workout={data?.workout}
         layout="modal"
-        isOpen={true} 
-        onClose={() => {}} 
+        isOpen={true}
+        onClose={() => {}}
       />
     );
   },
@@ -149,11 +158,11 @@ export const PlanPreviewStory: StoryObj = {
     // Use a button to trigger the mock generation if no data is present
     if (!data) {
       return (
-        <div className="p-12 flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 p-12">
           <p>This story simulates the generation flow. Click below to mock a plan preview.</p>
-          <button 
+          <button
             onClick={() => generatePlan.mutate({ json: { goals: { primary: 'strength' } } })}
-            className="px-4 py-2 bg-primary text-white rounded-xl"
+            className="bg-primary rounded-xl px-4 py-2 text-white"
             disabled={generatePlan.isPending}
           >
             {generatePlan.isPending ? 'Generating...' : 'Mock Generation'}
@@ -174,4 +183,3 @@ export const PlanPreviewStory: StoryObj = {
     );
   },
 };
-

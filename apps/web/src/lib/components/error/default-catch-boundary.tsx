@@ -2,19 +2,20 @@ import {
   Link,
   rootRouteId,
   useMatch,
-  useRouter,type  ErrorComponentProps
-} from '@tanstack/react-router'
-import { ErrorPage } from './error/page-error'
-import { Button } from './ui-primitives/buttons/button'
+  useRouter,
+  type ErrorComponentProps,
+} from '@tanstack/react-router';
+import { ErrorPage } from './page-error';
+import { Button } from '../ui-primitives/buttons/button';
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
-  const router = useRouter()
+  const router = useRouter();
   const isRoot = useMatch({
     strict: false,
     select: (state) => state.id === rootRouteId,
-  })
+  });
 
-  console.error(error)
+  console.error(error);
 
   return (
     <ErrorPage
@@ -22,28 +23,25 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
       message={error.message || 'An unexpected error occurred.'}
       severity="error"
       onRefresh={() => {
-        router.invalidate()
+        router.invalidate();
       }}
       showRefreshButton
       actions={
         <div className="flex gap-2">
-           <Button
-            onClick={() => router.invalidate()}
-            variant="default"
-           >
+          <Button onClick={() => router.invalidate()} variant="default">
             Try Again
           </Button>
           {isRoot ? (
             <Link
               to="/"
-              className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded px-4 py-2 transition-colors"
             >
               Home
             </Link>
           ) : (
-             <Link
+            <Link
               to="/"
-              className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded px-4 py-2 transition-colors"
             >
               Go Back
             </Link>
@@ -51,5 +49,5 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         </div>
       }
     />
-  )
+  );
 }

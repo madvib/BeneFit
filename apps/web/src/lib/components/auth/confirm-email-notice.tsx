@@ -20,7 +20,7 @@ export function ConfirmEmailNotice({ email = '', onClose }: Readonly<ConfirmEmai
         return;
       }
 
-      const { error } = await authClient.sendVerificationEmail({
+      const { error } = await authClient().sendVerificationEmail({
         email: value.email,
         callbackURL: `${globalThis.location.origin}/callback`, // Handled by callback route
       });

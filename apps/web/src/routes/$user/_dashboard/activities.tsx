@@ -1,5 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Activity, Calendar } from 'lucide-react';
 import { useWorkoutHistory, useProfile, CompletedWorkout } from '@bene/react-api-client';
 import {
@@ -11,17 +10,24 @@ import {
   ProgressBar,
   ProgressChart,
   typography,
-  CompletedWorkoutView
+  CompletedWorkoutView,
 } from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 import { ActivityFeedView } from './-components/activities';
+import { z } from 'zod';
+
+const activitiesSearchSchema = z.object({
+  workoutId: z.string().optional(),
+});
 
 export const Route = createFileRoute('/$user/_dashboard/activities')({
+  validateSearch: (search) => activitiesSearchSchema.parse(search),
   component: ActivityFeedPage,
 });
 
 function ActivityFeedPage() {
-  const [selectedWorkout, setSelectedWorkout] = useState<CompletedWorkout | null>(null);
+  const navigate = useNavigate();
+  const { workoutId } = Route.useSearch();
 
   const historyQuery = useWorkoutHistory({ query: {} });
   const profileQuery = useProfile();
@@ -44,8 +50,11 @@ function ActivityFeedPage() {
   const rawItems = historyQuery.data || { workouts: [] };
   const allWorkouts = (rawItems.workouts || []) as unknown as CompletedWorkout[];
 
+  // Find selected workout based on search param
+  const selectedWorkout = workoutId ? allWorkouts.find((w) => w.id === workoutId) : null;
+
   const renderSidebar = () => (
-    <div className="space-y-6">
+    <div className="flex min-w-0 flex-col space-y-6">
       {/* Weekly Progress Chart */}
       <ProgressChart
         data={[
@@ -67,7 +76,7 @@ function ActivityFeedPage() {
         headerClassName="border-b border-border"
       >
         <div className="space-y-4">
-                 {[
+          {[
             { label: 'Running', value: 45, color: 'bg-blue-500' },
             { label: 'Strength', value: 30, color: 'bg-green-500' },
             { label: 'Yoga', value: 15, color: 'bg-purple-500' },
@@ -122,13 +131,21 @@ function ActivityFeedPage() {
           <ActivityFeedView
             workouts={allWorkouts}
             userProfile={profileQuery.data ?? undefined}
-            onSelectWorkout={setSelectedWorkout}
+            onSelectWorkout={(workout) => {
+              navigate({
+                search: (prev) => ({ ...prev, workoutId: workout.id }),
+              });
+            }}
           />
 
           {selectedWorkout && (
             <CompletedWorkoutView
               isOpen={!!selectedWorkout}
-              onClose={() => setSelectedWorkout(null)}
+              onClose={() => {
+                navigate({
+                  search: (prev) => ({ ...prev, workoutId: undefined }),
+                });
+              }}
               workout={selectedWorkout}
               variant="modal"
             />

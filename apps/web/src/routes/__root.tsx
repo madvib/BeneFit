@@ -8,14 +8,11 @@ import {
   ErrorComponentProps,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { ErrorPage } from '@/lib/components';
-import { AuthModals } from '@/lib/components/auth/auth-modals';
-import { PlanModals } from '@/lib/components/fitness/plan-modals';
-import { GeneratePlanRequest } from '@bene/react-api-client';
+import '@/lib/api-init'; // Initialize API clients before any components render
 import { Providers } from '@/lib/providers/providers';
-import appCss from '@/styles.css?url';
-import { DefaultCatchBoundary } from '../lib/components/DefaultCatchBoundary';
 import { MODALS } from '@/lib/constants';
+import { ErrorPage, DefaultCatchBoundary, AuthModals, PlanModals } from '@/lib/components';
+import appCss from '@/styles.css?url';
 
 // Define search params schema for the root route
 const rootSearchSchema = z.object({
@@ -76,26 +73,11 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const { m, email } = Route.useSearch();
-  const navigate = Route.useNavigate();
-
-  const handleCloseModal = () => {
-    navigate({
-      search: (prev) => ({ ...prev, m: undefined, token: undefined, email: undefined }),
-      replace: true,
-    });
-  };
-
-  const handleSwitchModal = (modal: string) => {
-    navigate({
-      search: (prev) => ({ ...prev, m: modal }),
-      replace: true,
-    });
-  };
 
   return (
     <RootDocument>
       <Outlet />
-      <AuthModals activeModal={m} email={email} onSwitch={handleSwitchModal} />
+      <AuthModals activeModal={m} email={email} />
       <PlanModals activeModal={m} />
     </RootDocument>
   );

@@ -24,7 +24,7 @@ export function ProtectedRoute({
   requireEmailVerified = false,
   fallback,
 }: ProtectedRouteProps) {
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = authClient().useSession();
   const router = useRouter();
   const pathname = useLocation().pathname;
   const hasChecked = useRef(false);
@@ -66,11 +66,16 @@ export function ProtectedRoute({
   // Email verification required but not verified
   if (requireEmailVerified && !isEmailVerified) {
     return (
-      <Modal isOpen={true} onClose={() => router.navigate({ to: ROUTES.HOME })} size="sm" unstyled>
-         <ConfirmEmailNotice 
-            email={session?.user?.email} 
-            onClose={() => router.navigate({ to: ROUTES.HOME })} 
-         />
+      <Modal
+        isOpen={true}
+        onClose={() => router.navigate({ to: ROUTES.HOME })}
+        size="sm"
+        unstyled
+      >
+        <ConfirmEmailNotice
+          email={session?.user?.email}
+          onClose={() => router.navigate({ to: ROUTES.HOME })}
+        />
       </Modal>
     );
   }

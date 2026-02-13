@@ -1,5 +1,3 @@
-
-
 import { Card, typography } from '@/lib/components';
 import { useState } from 'react';
 import { Check, AlertCircle, ChevronDown, ChevronUp, Link } from 'lucide-react';
@@ -8,7 +6,7 @@ import { ROUTES } from '@/lib/constants';
 
 export function SessionInfo() {
   const [showSessionInfo, setShowSessionInfo] = useState(false);
-  const { data } = authClient.useSession();
+  const { data } = authClient().useSession();
   const isEmailVerified = data?.user?.emailVerified ?? false;
 
   return (

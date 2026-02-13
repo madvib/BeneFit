@@ -70,7 +70,7 @@ export function UserAccountMenu({
               <div className="w-full py-2">
                 <LogoutButton
                   variant="ghost"
-                  className="w-full justify-start px-4 py-2 text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  className="text-destructive/90 hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive w-full justify-start px-4 py-2 transition-colors"
                 />
               </div>
             </div>
@@ -105,7 +105,7 @@ export function UserAccountMenu({
               <div className="border-border/50 mt-1 border-t pt-2">
                 <LogoutButton
                   variant="ghost"
-                  className="w-full justify-start px-2 py-2 text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  className="text-destructive/90 hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive w-full justify-start px-2 py-2 transition-colors"
                 />
               </div>
             </div>

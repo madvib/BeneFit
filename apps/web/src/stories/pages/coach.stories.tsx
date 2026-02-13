@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { coachScenarios } from '@bene/react-api-client/test';
 import { ChatHeader } from '@/lib/components';
-import { Route } from '@/routes/$user/coach';
+import { Route } from '@/routes/$user/_chat/coach';
 
 const CoachPage = Route.options.component!;
 
@@ -11,10 +11,8 @@ const meta: Meta<typeof CoachPage> = {
   parameters: {
     layout: 'fullscreen',
     msw: {
-      handlers: [
-        ...coachScenarios.withMessages,
-      ]
-    }
+      handlers: [...coachScenarios.withMessages],
+    },
   },
 };
 
@@ -22,10 +20,10 @@ export default meta;
 type Story = StoryObj<typeof CoachPage>;
 
 const CoachLayout = ({ children }: { children: React.ReactNode }) => (
-    <div className="h-[100dvh] w-full overflow-hidden flex flex-col bg-background">
-      <ChatHeader title="AI Coach" />
-      {children}
-    </div>
+  <div className="bg-background flex h-[100dvh] w-full flex-col overflow-hidden">
+    <ChatHeader title="AI Coach" />
+    {children}
+  </div>
 );
 
 export const Default: Story = {
@@ -39,10 +37,8 @@ export const Default: Story = {
 export const WithPendingCheckIn: Story = {
   parameters: {
     msw: {
-        handlers: [
-            ...coachScenarios.withPendingCheckIn,
-        ]
-    }
+      handlers: [...coachScenarios.withPendingCheckIn],
+    },
   },
   render: () => (
     <CoachLayout>
@@ -54,29 +50,25 @@ export const WithPendingCheckIn: Story = {
 export const EmptyHistory: Story = {
   parameters: {
     msw: {
-        handlers: [
-            ...coachScenarios.emptyHistory,
-        ]
-    }
+      handlers: [...coachScenarios.emptyHistory],
+    },
   },
   render: () => (
-      <CoachLayout>
-        <CoachPage />
-      </CoachLayout>
-  )
+    <CoachLayout>
+      <CoachPage />
+    </CoachLayout>
+  ),
 };
 
 export const LoadingError: Story = {
-    parameters: {
-        msw: {
-            handlers: [
-                ...coachScenarios.serverError
-            ]
-        }
+  parameters: {
+    msw: {
+      handlers: [...coachScenarios.serverError],
     },
-    render: () => (
-        <CoachLayout>
-            <CoachPage />
-        </CoachLayout>
-    )
-}
+  },
+  render: () => (
+    <CoachLayout>
+      <CoachPage />
+    </CoachLayout>
+  ),
+};

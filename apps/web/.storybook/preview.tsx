@@ -3,6 +3,7 @@ import type { Preview } from '@storybook/react';
 import { withThemeByClassName } from '@storybook/addon-themes';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { handlers } from '@bene/react-api-client/test';
+import { initializeApiClients } from '@bene/react-api-client';
 import { ThemeProvider } from '../src/lib/providers/theme-provider';
 import { UIProvider } from '../src/lib/providers/ui-context';
 import '../src/styles.css';
@@ -14,10 +15,17 @@ import {
 } from '@tanstack/react-router';
 import { useMemo } from 'react';
 
-// Initialize MSW with default handlers for all stories
-initialize({
-  onUnhandledRequest: 'bypass', // Don't warn for unhandled requests
+// Initialize API clients for Storybook
+initializeApiClients({
+  baseUrl: 'http://localhost:8787', // Mock base URL for Storybook
 });
+
+// Initialize MSW with default handlers for all stories (only in browser)
+if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+  initialize({
+    onUnhandledRequest: 'bypass', // Don't warn for unhandled requests
+  });
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {

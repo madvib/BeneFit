@@ -13,7 +13,7 @@ export function SecurityForm() {
       onChange: authSchemas.ChangePasswordSchema,
     },
     onSubmit: async ({ value }) => {
-      await authClient.changePassword({
+      await authClient().changePassword({
         currentPassword: value.currentPassword,
         newPassword: value.newPassword,
         revokeOtherSessions: true,
@@ -34,7 +34,11 @@ export function SecurityForm() {
 
   return (
     <form.AppForm>
-      <form.Root title="Security" subtitle="Manage your password and active sessions." variant="default">
+      <form.Root
+        title="Security"
+        subtitle="Manage your password and active sessions."
+        variant="default"
+      >
         <form.SubmissionError />
         <FormSuccessMessage message={authSubmit.success} />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -70,7 +74,7 @@ export function SecurityForm() {
             </form.AppField>
           </div>
 
-          <div className="bg-muted/50 flex flex-col justify-center gap-4 rounded-xl border p-6 dark:bg-muted/20">
+          <div className="bg-muted/50 dark:bg-muted/20 flex flex-col justify-center gap-4 rounded-xl border p-6">
             <h4 className={`${typography.h4} text-primary`}>Password Requirements</h4>
             <ul className={`${typography.muted} list-inside list-disc space-y-2`}>
               <li>At least 8 characters long</li>
@@ -80,7 +84,7 @@ export function SecurityForm() {
             </ul>
           </div>
         </div>
-        
+
         <div className="flex justify-end pt-6">
           <form.SubmitButton label="Update Password" submitLabel="Updating..." className="px-8" />
         </div>

@@ -15,7 +15,7 @@ export function PasswordResetForm() {
     },
     validationLogic: revalidateLogic(),
     onSubmit: async ({ value }) => {
-      await authClient.requestPasswordReset({
+      await authClient().requestPasswordReset({
         email: value.email,
         redirectTo: `${globalThis.location.origin}/?m=${MODALS.UPDATE_PASSWORD}`,
         fetchOptions: {

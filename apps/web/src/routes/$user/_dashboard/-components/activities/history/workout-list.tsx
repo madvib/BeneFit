@@ -41,7 +41,8 @@ export default function WorkoutList(data: Readonly<WorkoutListProps>) {
                   setSearchTerm('');
                   setSelectedFilter('all');
                 }}
-                className={`${typography.small} text-primary mt-2 hover:underline`}
+                variant="ghost"
+                className={`${typography.small} text-primary hover:text-primary/80 mt-2 hover:underline`}
               >
                 Clear filters
               </Button>
@@ -71,16 +72,18 @@ export default function WorkoutList(data: Readonly<WorkoutListProps>) {
           </div>
         )}
       </div>
-      <div className="bg-muted/10 border-muted border-t px-6 py-3 text-center">
-        {/*TODO needs to load more*/}
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`${typography.labelXs} text-muted-foreground hover:text-primary transition-colors`}
-        >
-          Load More History
-        </Button>
-      </div>
+      {filteredData.length > 0 && (
+        <div className="bg-muted/10 border-muted border-t px-6 py-3 text-center">
+          {/*TODO needs to load more*/}
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`${typography.labelXs} text-muted-foreground hover:text-primary transition-colors`}
+          >
+            Load More History
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

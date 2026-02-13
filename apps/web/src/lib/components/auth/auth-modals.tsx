@@ -8,14 +8,21 @@ import {
 import { ConfirmEmailNotice } from '@/lib/components/auth/confirm-email-notice';
 import { VerifyEmail } from '@/lib/components/auth/verify-email';
 import { MODALS } from '@/lib/constants';
+import { useHydrated } from '@/lib/hooks/use-hydrated';
 
 interface AuthModalsProps {
   activeModal?: string;
   email?: string;
-  onSwitch: (_modal: string) => void;
 }
 
-export function AuthModals({ activeModal, email, onSwitch }: Readonly<AuthModalsProps>) {
+export function AuthModals({ activeModal, email }: Readonly<AuthModalsProps>) {
+  const isHydrated = useHydrated();
+
+  // Don't render modals until after hydration to prevent SSR/client mismatch with Framer Motion
+  if (!isHydrated) {
+    return null;
+  }
+
   return (
     <>
       <Modal isOpen={activeModal === MODALS.LOGIN} size="sm" unstyled>
@@ -31,7 +38,7 @@ export function AuthModals({ activeModal, email, onSwitch }: Readonly<AuthModals
       </Modal>
 
       <Modal isOpen={activeModal === MODALS.UPDATE_PASSWORD} size="sm" unstyled>
-        <UpdatePasswordForm onPasswordUpdated={() => onSwitch(MODALS.LOGIN)} />
+        <UpdatePasswordForm />
       </Modal>
 
       <Modal isOpen={activeModal === MODALS.CONFIRM_EMAIL} size="sm" unstyled>

@@ -1,5 +1,3 @@
-
-
 import { Button, FormSuccessMessage, typography, useAppForm } from '@/lib/components';
 import { useState } from 'react';
 import { authClient } from '@bene/react-api-client';
@@ -23,7 +21,7 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
   const nameForm = useAppForm({
     defaultValues: { name: initialData?.name ?? '' },
     onSubmit: async ({ value }) => {
-      await authClient.updateUser({
+      await authClient().updateUser({
         name: value.name,
         fetchOptions: {
           onError(ctx) {
@@ -42,7 +40,7 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
   const emailForm = useAppForm({
     defaultValues: { email },
     onSubmit: async ({ value }) => {
-      await authClient.changeEmail({
+      await authClient().changeEmail({
         newEmail: value.email,
         fetchOptions: {
           onError(ctx) {
@@ -65,7 +63,11 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
     <div className="space-y-8">
       {/* Name Form */}
       <nameForm.AppForm>
-        <nameForm.Root title="Display Name" subtitle="How you appear to others on Bene." variant="default">
+        <nameForm.Root
+          title="Display Name"
+          subtitle="How you appear to others on Bene."
+          variant="default"
+        >
           <nameForm.SubmissionError />
           <FormSuccessMessage message={nameAuthSubmit.success} />
 
@@ -78,14 +80,22 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
           </div>
 
           <div className="flex justify-end pt-4">
-            <nameForm.SubmitButton label="Save Changes" submitLabel="Saving..." className="px-8" />
+            <nameForm.SubmitButton
+              label="Save Changes"
+              submitLabel="Saving..."
+              className="px-8"
+            />
           </div>
         </nameForm.Root>
       </nameForm.AppForm>
 
       {/* Email Form */}
       <emailForm.AppForm>
-        <emailForm.Root title="Email Address" subtitle="Your primary email for notifications and login." variant="default">
+        <emailForm.Root
+          title="Email Address"
+          subtitle="Your primary email for notifications and login."
+          variant="default"
+        >
           <emailForm.SubmissionError />
           <FormSuccessMessage message={emailAuthSubmit.success} />
 
@@ -104,7 +114,11 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
               </div>
 
               <div className="flex justify-end pt-4">
-                <emailForm.SubmitButton label="Update Email" submitLabel="Saving..." className="px-8" />
+                <emailForm.SubmitButton
+                  label="Update Email"
+                  submitLabel="Saving..."
+                  className="px-8"
+                />
               </div>
             </>
           ) : (
@@ -114,11 +128,14 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
                   <span className="block h-2 w-2 rounded-full bg-yellow-600 dark:bg-yellow-500" />
                 </div>
                 <div className="space-y-1">
-                  <p className={`${typography.p} text-yellow-800 dark:text-yellow-200 font-medium`}>
+                  <p
+                    className={`${typography.p} font-medium text-yellow-800 dark:text-yellow-200`}
+                  >
                     Email Verification Required
                   </p>
                   <p className={`${typography.muted} text-yellow-700/80 dark:text-yellow-400/80`}>
-                    Your email must be verified before it can be changed to ensure account security.
+                    Your email must be verified before it can be changed to ensure account
+                    security.
                   </p>
                 </div>
               </div>
@@ -130,7 +147,7 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
                   onClick={async () => {
                     setIsVerifying(true);
                     try {
-                      await authClient.sendVerificationEmail({
+                      await authClient().sendVerificationEmail({
                         email,
                         callbackURL: '/email-confirmed',
                       });
@@ -141,13 +158,15 @@ export function PersonalInfoForm({ initialData }: PersonalInfoFormProps) {
                     }
                   }}
                   disabled={isVerifying}
-                  className="bg-yellow-100 hover:bg-yellow-200 text-yellow-900 border-none dark:bg-yellow-800 dark:text-yellow-100 dark:hover:bg-yellow-700"
+                  className="border-none bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-800 dark:text-yellow-100 dark:hover:bg-yellow-700"
                 >
                   {isVerifying ? 'Sending…' : 'Send Verification Email'}
                 </Button>
 
                 {verifySuccess && (
-                  <p className={`${typography.xs} text-green-600 font-medium animate-in fade-in slide-in-from-left-2`}>
+                  <p
+                    className={`${typography.xs} animate-in fade-in slide-in-from-left-2 font-medium text-green-600`}
+                  >
                     Verification email sent successfully!
                   </p>
                 )}

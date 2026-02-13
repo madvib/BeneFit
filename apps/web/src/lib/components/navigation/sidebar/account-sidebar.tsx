@@ -1,4 +1,3 @@
-
 import { Button, HEADER_CONFIG, typography } from '@/lib/components';
 import { LogoutButton } from '@/lib/components/auth/actions/logout-button/logout-button';
 import { Link, useLocation } from '@tanstack/react-router';
@@ -24,7 +23,7 @@ export const AccountSidebar = ({ className }: AccountSidebarProps) => {
             (item.href !== '/user/account' && pathname.startsWith(`${item.href}/`));
 
           return (
-            <Link key={item.href} to={item.href}  className="block">
+            <Link key={item.href} to={item.href} className="block">
               <Button
                 variant="ghost"
                 className={`w-full justify-start px-3 py-2 text-left ${
@@ -44,11 +43,9 @@ export const AccountSidebar = ({ className }: AccountSidebarProps) => {
       <div className="border-muted/20 mt-auto border-t p-3">
         <LogoutButton
           variant="ghost"
-          className="w-full justify-start text-destructive/90 hover:bg-destructive/10 hover:text-destructive transition-colors"
+          className="text-destructive/90 hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive w-full justify-start transition-colors"
         />
       </div>
     </div>
   );
 };
-
-

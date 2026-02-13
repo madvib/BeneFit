@@ -1,16 +1,12 @@
-
-
+import { useNavigate } from '@tanstack/react-router';
 import { FormSuccessMessage } from '@/lib/components';
 import { authClient, authSchemas } from '@bene/react-api-client';
-import { ROUTES } from '@/lib/constants';
+import { ROUTES, MODALS } from '@/lib/constants';
 import { useAppForm } from '@/lib/components';
 import { useAuthFormSubmit } from '@/lib/hooks/use-auth-submit';
 
-interface UpdatePasswordFormProps {
-  onPasswordUpdated?: () => void;
-}
-
-export function UpdatePasswordForm({ onPasswordUpdated }: UpdatePasswordFormProps) {
+export function UpdatePasswordForm() {
+  const navigate = useNavigate();
   const form = useAppForm({
     defaultValues: {
       password: '',
@@ -20,14 +16,17 @@ export function UpdatePasswordForm({ onPasswordUpdated }: UpdatePasswordFormProp
       onBlur: authSchemas.UpdatePasswordSchema,
     },
     onSubmit: async ({ value }) => {
-      await authClient.resetPassword({
+      await authClient().resetPassword({
         newPassword: value.password,
         fetchOptions: {
           onError(ctx) {
             authSubmit.onAuthError(ctx.error);
           },
           onSuccess() {
-            if (onPasswordUpdated) onPasswordUpdated();
+            navigate({
+              search: (prev) => ({ ...prev, m: MODALS.LOGIN }),
+              replace: true,
+            });
             authSubmit.onAuthSuccess({
               message: 'Password changed successfully!',
               redirectTo: ROUTES.MODAL.LOGIN,

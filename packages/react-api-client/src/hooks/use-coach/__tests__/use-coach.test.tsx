@@ -1,29 +1,12 @@
 // @vitest-environment happy-dom
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../../test/setup.js';
 import { buildGetCoachHistoryResponse } from '../../../fixtures/coach.js';
 import { toHttpResponse } from '../../../test/msw/utils.js';
 import { useCoachHistory, useSendMessage } from '../use-coach.js';
-
-/**
- * Test wrapper with React Query provider
- */
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-
-  return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-}
+import { createWrapper } from '../../../test/test-utils.js';
 
 describe('useCoachHistory', () => {
   it('fetches coach history successfully', async () => {

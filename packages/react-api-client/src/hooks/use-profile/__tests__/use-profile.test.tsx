@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../../test/setup.js';
 import {
@@ -12,25 +11,7 @@ import {
   useUserStats,
   useUpdateConstraints,
 } from '../use-profile.js';
-import type { ReactNode } from 'react';
-
-/**
- * Test wrapper with React Query provider
- */
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-
-  return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
-}
+import { createWrapper } from '../../../test/test-utils.js';
 
 describe('useProfile', () => {
   it('fetches user profile successfully', async () => {
@@ -71,7 +52,7 @@ describe('useCreateProfile', () => {
         name: 'John Doe',
         email: 'john@example.com',
         // Minimal required fields
-      } as any, 
+      } as any,
     });
 
     await waitFor(() => expect(result.current.isPending).toBe(true));

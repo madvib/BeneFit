@@ -25,9 +25,9 @@ export default function HomeHero({
   secondaryLink,
 }: HeroProps) {
   return (
-    <div className="max-w-2xl flex-1 text-center lg:text-left">
+    <div className="max-w-2xl flex-1 text-center">
       <PageHeader title={`${title} ${primaryWord}`} description={subtitle} />
-      <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Link to={primaryLink.href} search={primaryLink.search}>
           <Button size="lg" className="w-full sm:w-auto">
             {primaryLink.text}

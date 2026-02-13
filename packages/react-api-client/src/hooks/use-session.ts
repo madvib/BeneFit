@@ -2,7 +2,7 @@ import { authClient, AuthUser, AuthSession } from '../lib/auth/auth.js';
 
 export function useSession() {
   // Use Better Auth hooks directly
-  const { data: session, isPending, error } = authClient.useSession();
+  const { data: session, isPending, error } = authClient().useSession();
 
   // Use profile hook to get additional user data if needed
   // For now we just return the session user, but this can be expanded

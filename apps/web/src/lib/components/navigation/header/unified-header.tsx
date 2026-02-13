@@ -50,7 +50,7 @@ export function UnifiedHeader({
             </button>
           </div>
           <nav className="flex flex-col gap-4">
-            <NavigationLinks mobile={true} variant={variant} />
+            <NavigationLinks mobile={true} variant={variant} onLinkClick={() => setMobileOpen(false)} />
             {isAuthenticated ? (
               <div className={'flex-col gap-4 md:hidden'}>
                 <UserAccountMenu isLoggedIn variant="accordian" />
@@ -60,7 +60,7 @@ export function UnifiedHeader({
               <div className="border-muted mt-6 flex flex-col gap-3 border-t pt-6">
                 <ThemeToggle />
 
-                <AuthCTA showModal={false} />
+                <AuthCTA showModal={variant === 'marketing'} onLinkClick={() => setMobileOpen(false)} />
               </div>
             )}
           </nav>

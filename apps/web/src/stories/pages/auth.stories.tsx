@@ -2,12 +2,7 @@ import { CheckCircle2, Zap, BarChart3, Users } from 'lucide-react';
 import { profileScenarios } from '@bene/react-api-client/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LoginForm, SignupForm, typography } from '@/lib/components';
-// In web-start, pages are routes. We can import the component directly if exported, or mock it.
-// ConfirmEmailPage is likely the component export from src/routes/auth/confirm-email.tsx
-import { Route as ConfirmEmailRoute } from '@/routes/auth/confirm-email';
-
-// Extract component from Route
-const ConfirmEmailPage = ConfirmEmailRoute.options.component!;
+import { ConfirmEmailNotice } from '@/lib/components/auth/confirm-email-notice';
 
 const meta: Meta = {
   title: 'Pages/Authentication',
@@ -65,7 +60,7 @@ export const Login: StoryObj = {
       </div>
 
       {/* Right Section: Login Form */}
-      <div className="flex w-full items-center justify-center bg-background p-6 md:w-1/2">
+      <div className="bg-background flex w-full items-center justify-center p-6 md:w-1/2">
         <div className="w-full max-w-md">
           <LoginForm />
         </div>
@@ -118,7 +113,7 @@ export const Signup: StoryObj = {
       </div>
 
       {/* Right Section: Signup Form */}
-      <div className="flex w-full items-center justify-center bg-background p-6 md:w-1/2">
+      <div className="bg-background flex w-full items-center justify-center p-6 md:w-1/2">
         <div className="scrollbar-none max-h-[calc(100vh-4rem)] w-full max-w-md overflow-y-auto">
           <SignupForm />
         </div>
@@ -128,11 +123,5 @@ export const Signup: StoryObj = {
 };
 
 export const ConfirmEmail: StoryObj = {
-  render: () => <ConfirmEmailPage />,
-  parameters: {
-    msw: {
-      handlers: [],
-    },
-    // TanStack Router context might be needed here, or minimal mock
-  },
+  render: () => <ConfirmEmailNotice email="user@example.com" />,
 };

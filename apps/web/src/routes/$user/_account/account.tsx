@@ -1,6 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { authClient } from '@bene/react-api-client';
-import { ErrorPage, LoadingSpinner, OAuthProviderList, PageHeader, PersonalInfoForm, SecurityForm, SessionInfo } from '@/lib/components';
+import {
+  ErrorPage,
+  LoadingSpinner,
+  OAuthProviderList,
+  PageHeader,
+  PersonalInfoForm,
+  SecurityForm,
+  SessionInfo,
+} from '@/lib/components';
 import { ROUTES } from '@/lib/constants';
 
 export const Route = createFileRoute('/$user/_account/account')({
@@ -8,7 +16,7 @@ export const Route = createFileRoute('/$user/_account/account')({
 });
 
 function AccountClient() {
-  const { data, isPending, error } = authClient.useSession();
+  const { data, isPending, error } = authClient().useSession();
 
   if (isPending) {
     return <LoadingSpinner variant="screen" text="Loading account settings..." />;
@@ -27,7 +35,11 @@ function AccountClient() {
 
   return (
     <div className="space-y-10">
-      <PageHeader title="Account Settings" description="Manage your account settings" align="left" />
+      <PageHeader
+        title="Account Settings"
+        description="Manage your account settings"
+        align="left"
+      />
 
       <div className="space-y-8">
         {/* Personal Info Form */}
@@ -45,7 +57,7 @@ function AccountClient() {
         {/* OAuth Providers */}
         <OAuthProviderList />
 
-        <div className="pt-8 border-t">
+        <div className="border-t pt-8">
           <SessionInfo />
         </div>
       </div>

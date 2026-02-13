@@ -9,14 +9,14 @@ import path from 'path';
 
 const config = defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../node_modules/.vite/apps/web-start',
+  cacheDir: '../../node_modules/.vite/apps/web',
+  envDir: path.resolve(import.meta.dirname, '../../'),
   server: { port: 3000, cors: false },
   plugins: [
     devtools(),
     cloudflare({
       viteEnvironment: { name: 'ssr' },
       persistState: { path: '../../.wrangler/state' },
-      // auxiliaryWorkers: [{ configPath: '../gateway/wrangler.jsonc' }],
     }),
     viteTsConfigPaths(),
     tailwindcss(),
@@ -25,7 +25,7 @@ const config = defineConfig(() => ({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
 }));

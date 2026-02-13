@@ -1,4 +1,3 @@
-
 import { Button, GoogleLogo, StravaLogo } from '@/lib/components';
 import { useState } from 'react';
 import { authClient } from '@bene/react-api-client';
@@ -24,11 +23,11 @@ export function OAuthButton({
     setIsLoading(true);
     try {
       await (mode === 'link'
-        ? authClient.linkSocial({
+        ? authClient().linkSocial({
             provider,
             callbackURL: `${globalThis.location.origin}/user/account`,
           })
-        : authClient.signIn.social({
+        : authClient().signIn.social({
             provider,
             callbackURL: `${globalThis.location.origin}${callbackURL}`,
           }));

@@ -20,7 +20,7 @@ const containerVariants = cva('flex items-center justify-center', {
   variants: {
     variant: {
       default: '',
-      screen: 'bg-background flex min-h-screen items-center justify-center',
+      screen: 'flex min-h-screen w-full items-center justify-center',
     },
   },
   defaultVariants: {

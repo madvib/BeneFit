@@ -6,7 +6,7 @@ import { Check, ExternalLink } from 'lucide-react';
 export function OAuthProviderList() {
   const [providers, setProviders] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const { data: session } = authClient.useSession();
+  const { data: session } = authClient().useSession();
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -14,7 +14,7 @@ export function OAuthProviderList() {
         setLoading(true);
         // Get already linked providers
         if (session?.user) {
-          const linkedAccounts = await authClient.listAccounts();
+          const linkedAccounts = await authClient().listAccounts();
           if (linkedAccounts.data) {
             const linkedProviderIds = linkedAccounts.data
               .map((account) => account.providerId)
@@ -36,7 +36,7 @@ export function OAuthProviderList() {
 
   const unlinkProvider = async (providerId: string) => {
     try {
-      const result = await authClient.unlinkAccount({
+      const result = await authClient().unlinkAccount({
         providerId,
       });
 
@@ -67,7 +67,7 @@ export function OAuthProviderList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-lg border p-5">
+      <div className="flex flex-col items-center justify-between gap-4 rounded-lg border p-5 sm:flex-row">
         <div className="flex items-center gap-4 text-center sm:text-left">
           <div>
             <div className={`${typography.h4} capitalize`}>Google</div>
@@ -87,12 +87,17 @@ export function OAuthProviderList() {
           <Button
             variant="outline"
             onClick={() => unlinkProvider('google')}
-            className="w-full sm:w-auto px-8"
+            className="w-full px-8 sm:w-auto"
           >
             Unlink
           </Button>
         ) : (
-          <OAuthButton provider="google" mode="link" text="Link" className="w-full sm:w-auto px-8" />
+          <OAuthButton
+            provider="google"
+            mode="link"
+            text="Link"
+            className="w-full px-8 sm:w-auto"
+          />
         )}
       </div>
     </div>
