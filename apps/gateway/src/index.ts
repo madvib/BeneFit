@@ -20,9 +20,9 @@ const app = new Hono<{
   .use(
     '/api/*',
     cors({
-      origin: 'http://localhost:3000',
+      origin: ['http://localhost:3000', 'https://staging.getbene.fit', 'https://getbene.fit'],
       allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['POST', 'GET', 'OPTIONS'],
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       credentials: true,
     }),
   )

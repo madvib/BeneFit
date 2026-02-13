@@ -7,7 +7,9 @@
     "strict": true,
     "skipLibCheck": true,
     "composite": true,
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "types": [
       "../../types/cloudflare-runtime.d.ts",
       "../../types/vite-env.d.ts",
@@ -17,8 +19,12 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/client.ts"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/client.ts"
+  ],
   "references": [
     {
       "path": "../actors/user-hub"

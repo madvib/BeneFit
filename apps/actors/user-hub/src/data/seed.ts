@@ -27,7 +27,6 @@ import { toDatabase as serviceToDb } from '../mappers/connected-service.mapper.j
  * Seed script using Domain Fixtures and Mappers.
  * This is a dynamic alternative to static seed-data files.
  *
- * Works with both LibSQL (tests) and DurableObjectSQLite (staging)
  */
 export async function seedUserHub(
   db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema.user_do_schema>,

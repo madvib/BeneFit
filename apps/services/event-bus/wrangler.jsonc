@@ -7,6 +7,9 @@
 	"name": "event-bus",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-12-13",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"observability": {
 		"enabled": true
 	},
@@ -29,7 +32,15 @@
 				"binding": "INTEGRATION_SYNC_QUEUE",
 				"queue": "integration-sync"
 			}
-		],
+		]
+	},
+	"env": {
+		"staging": {
+			"name": "event-bus-staging"
+		},
+		"production": {
+			"name": "event-bus-production"
+		}
 	}
 }
 /**

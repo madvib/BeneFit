@@ -26,23 +26,48 @@
       "tag": "v1",
     },
   ],
-  "services": [
-    {
-      "binding": "AI_SERVICE",
-      "service": "ai",
+  "env": {
+    "staging": {
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "UserHub",
+            "name": "USER_HUB"
+          }
+        ]
+      },
+      "services": [
+        {
+          "binding": "AI_SERVICE",
+          "service": "ai-service-staging"
+        },
+        {
+          "binding": "EVENT_BUS",
+          "service": "event-bus-staging"
+        }
+      ]
     },
-    {
-      "binding": "EVENT_BUS",
-      "service": "event-bus",
-    },
-  ],
-  "d1_databases": [
-    {
-      "binding": "PLAN_TEMPLATE_DB",
-      "database_name": "bene-fit-plan-templates-dev",
-      "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    },
-  ],
+    "production": {
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "UserHub",
+            "name": "USER_HUB"
+          }
+        ]
+      },
+      "services": [
+        {
+          "binding": "AI_SERVICE",
+          "service": "ai-service-production"
+        },
+        {
+          "binding": "EVENT_BUS",
+          "service": "event-bus-production"
+        }
+      ]
+    }
+  },
   "observability": {
     "enabled": true,
   },

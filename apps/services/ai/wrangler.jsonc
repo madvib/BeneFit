@@ -7,11 +7,28 @@
   "name": "ai",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-13",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "observability": {
     "enabled": true,
   },
   "ai": {
     "binding": "AI"
+  },
+  "env": {
+    "staging": {
+      "name": "ai-service-staging",
+      "vars": {
+        "DEFAULT_PROVIDER": "cloudflare"
+      }
+    },
+    "production": {
+      "name": "ai-service-production",
+      "vars": {
+        "DEFAULT_PROVIDER": "cloudflare"
+      }
+    }
   }
   /**
    * Smart Placement

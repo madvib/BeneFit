@@ -25,9 +25,14 @@ export async function initializeUserHubDB(state: DurableObjectState, env: Env) {
     (uid) => env.USER_HUB.idFromName(uid).toString() === state.id.toString(),
   );
   // Optionally seed the database if in local development and this IS a seed user
-  if (import.meta.env.DEV && seedUserId && SEED_PERSONAS[seedUserId] && (await db.select().from(schema.profile).limit(1)).length === 0) {
+  if (
+    !(import.meta.env.MODE == 'production') &&
+    seedUserId &&
+    SEED_PERSONAS[seedUserId] &&
+    (await db.select().from(schema.completedWorkouts).limit(1)).length === 0
+  ) {
     const { seedUserHub } = await import('./seed.js');
-    console.log(`🌱 Seeding database for Seed User: ${ seedUserId }`);
+    console.log(`🌱 Seeding database for Seed User: ${seedUserId}`);
     // Note: Ideally seedUserHub should accept seedUserId to only seed that user's data
     await seedUserHub(db, seedUserId);
   }

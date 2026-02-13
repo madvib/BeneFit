@@ -2,19 +2,24 @@ import { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 import {
   createWorkoutSessionFixture,
   createSessionParticipantFixture,
-  createSessionFeedItemFixture
+  createSessionFeedItemFixture,
 } from '@bene/training-core/fixtures';
 import { SEED_USERS } from '@bene/shared';
 import * as schema from './schema/index.js';
-import { toDatabase, toParticipantDatabase, toChatDatabase } from '../mappers/workout-session.mapper.js';
+import {
+  toDatabase,
+  toParticipantDatabase,
+  toChatDatabase,
+} from '../mappers/workout-session.mapper.js';
 
 /**
  * Seeds the Workout Session database using Drizzle ORM.
  * This is a dynamic alternative to static seed-data files.
- * 
- * Works with both LibSQL (tests) and DurableObjectSQLite (staging)
+ *
  */
-export async function seedWorkoutSession(db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema>) {
+export async function seedWorkoutSession(
+  db: BaseSQLiteDatabase<'async' | 'sync', unknown, typeof schema>,
+) {
   console.log('🌱 Seeding Workout Session Data (Fixture-based)...');
 
   try {
@@ -27,7 +32,7 @@ export async function seedWorkoutSession(db: BaseSQLiteDatabase<'async' | 'sync'
 
     // Seed for first user (DO normally handles one session)
     const user = SEED_USERS[0];
-    console.log(`  - Seeding session for user: ${ user.name } (${ user.id })`);
+    console.log(`  - Seeding session for user: ${user.name} (${user.id})`);
 
     // 1. Create Workout Session
     const session = createWorkoutSessionFixture({
@@ -63,14 +68,13 @@ export async function seedWorkoutSession(db: BaseSQLiteDatabase<'async' | 'sync'
       type: 'chat_message',
       userId: otherUser.id,
       userName: otherUser.name,
-      content: 'Let\'s go!',
+      content: "Let's go!",
     });
 
     const chatDb = toChatDatabase(session.id, otherDb.id, chatItem);
     await db.insert(schema.sessionChat).values(chatDb).onConflictDoNothing();
 
     console.log('✅ Seed Complete');
-
   } catch (error) {
     console.error('❌ Seed Failed:', error);
     throw error;

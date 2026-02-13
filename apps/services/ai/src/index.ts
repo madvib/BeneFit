@@ -1,12 +1,7 @@
-///<reference path="../../../../types/cloudflare-runtime.d.ts" />
-///<reference path="../worker-env.d.ts" />
-
 import type {
   AIProvider,
   AICompletionRequest,
-  AICompletionResponse,
   AIStreamChunk,
-  Result,
 } from '@bene/shared';
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import { AnthropicProvider } from './providers/anthropic-provider';
@@ -33,7 +28,7 @@ export interface ChatResponse {
   };
 }
 
-export interface StreamChatRequest extends ChatRequest {}
+export type StreamChatRequest = ChatRequest;
 
 export default class AIService extends WorkerEntrypoint<Env> {
   private providers: Map<string, AIProvider> = new Map();
@@ -87,7 +82,7 @@ export default class AIService extends WorkerEntrypoint<Env> {
     const provider = this.providers.get(providerName);
 
     if (!provider) {
-      throw new Error(`Provider ${providerName} not configured`);
+      throw new Error(`Provider ${ providerName } not configured`);
     }
 
     return provider;
@@ -111,7 +106,7 @@ export default class AIService extends WorkerEntrypoint<Env> {
     const result = await provider.complete(aiRequest);
 
     if (!result.isSuccess) {
-      throw new Error(`AI provider error: ${result.error?.message}`);
+      throw new Error(`AI provider error: ${ result.error?.message }`);
     }
 
     const response = result.value;
@@ -173,5 +168,18 @@ export default class AIService extends WorkerEntrypoint<Env> {
   async getDefaultModel(provider?: string): Promise<string> {
     const p = this.getProvider(provider);
     return p.getDefaultModel();
+  }
+
+  /**
+   * HTTP handler for health checks
+   */
+  async fetch(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/health') {
+      return Response.json({ status: 'ok', service: 'ai', timestamp: new Date().toISOString() });
+    }
+
+    return new Response('AI Service - Access via RPC', { status: 404 });
   }
 }

@@ -20,7 +20,7 @@ export async function initializeWorkoutSessionDB(storage: DurableObjectStorage) 
   if (import.meta.env.DEV && (await db.select().from(sessionMetadata).limit(1)).length === 0) {
     const { seedWorkoutSession } = await import("./seed.js");
     console.log('🌱 Seeding database with initial data...');
-    await seedWorkoutSession(storage);
+    await seedWorkoutSession(db);
   }
 
   console.log('✅ Workout Session database initialized successfully');

@@ -1,4 +1,3 @@
-// sqlite/durableObject.ts
 import fs from 'fs';
 import path from 'path';
 import { getPersistPath } from './get-persist-path';

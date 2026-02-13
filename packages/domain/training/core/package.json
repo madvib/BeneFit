@@ -15,7 +15,8 @@
     },
     "./fixtures": {
       "development": "./dist/fixtures.js",
-      "types": "./dist/fixtures.d.ts"
+      "types": "./dist/fixtures.d.ts",
+      "default": "./dist/fixtures.js"
     }
   },
   "dependencies": {

@@ -7,13 +7,8 @@
   "name": "workout-session-handler",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-05",
-  "compatibility_flags": ["nodejs_compat"],
-  "rules": [
-    {
-      "type": "Text",
-      "globs": ["**/*.sql"],
-      "fallthrough": true,
-    },
+  "compatibility_flags": [
+    "nodejs_compat"
   ],
   "durable_objects": {
     "bindings": [
@@ -25,20 +20,56 @@
   },
   "migrations": [
     {
-      "new_sqlite_classes": ["WorkoutSession"],
+      "new_sqlite_classes": [
+        "WorkoutSession"
+      ],
       "tag": "v1",
     },
   ],
-  "services": [
-    {
-      "binding": "AI_SERVICE",
-      "service": "ai",
+  "env": {
+    "staging": {
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "WorkoutSession",
+            "name": "WORKOUT_SESSION"
+          }
+        ]
+      },
+      "d1_databases": [],
+      "services": [
+        {
+          "binding": "AI_SERVICE",
+          "service": "ai-service-staging"
+        },
+        {
+          "binding": "EVENT_BUS",
+          "service": "event-bus-staging"
+        }
+      ]
     },
-    {
-      "binding": "EVENT_BUS",
-      "service": "event-bus",
-    },
-  ],
+    "production": {
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "WorkoutSession",
+            "name": "WORKOUT_SESSION"
+          }
+        ]
+      },
+      "d1_databases": [],
+      "services": [
+        {
+          "binding": "AI_SERVICE",
+          "service": "ai-service-production"
+        },
+        {
+          "binding": "EVENT_BUS",
+          "service": "event-bus-production"
+        }
+      ]
+    }
+  },
   "observability": {
     "enabled": true,
   },

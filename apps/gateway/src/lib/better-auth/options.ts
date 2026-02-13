@@ -8,7 +8,7 @@ import { env } from 'cloudflare:workers';
  * Docs: https://www.better-auth.com/docs/reference/options
  */
 export const betterAuthOptions: BetterAuthOptions = {
-  trustedOrigins: ['http://localhost:3000', 'https://getbene.fit'],
+  trustedOrigins: ['http://localhost:3000', 'https://staging.getbene.fit', 'https://getbene.fit'],
   appName: 'BeneFit',
   baseURL: env.BETTER_AUTH_URL || 'http://localhost:8787',
   secret: env.BETTER_AUTH_SECRET || '',
@@ -19,7 +19,7 @@ export const betterAuthOptions: BetterAuthOptions = {
     requireEmailVerification: false, // TODO: Enable after setting up email provider
     sendResetPassword: async ({ user, url }) => {
       // TODO: Implement email sending via Resend
-      console.log(`Password reset for ${ user.email }: ${ url }`);
+      console.log(`Password reset for ${user.email}: ${url}`);
     },
   },
 
@@ -36,14 +36,13 @@ export const betterAuthOptions: BetterAuthOptions = {
   // Advanced Security
   advanced: {
     database: {
-      generateId: 'uuid'
+      generateId: 'uuid',
     },
     cookiePrefix: 'bene',
     crossSubDomainCookies: {
       enabled: false, // Enable if using subdomains
     },
     useSecureCookies: import.meta.env.PROD,
-
   },
 
   // Rate Limiting (recommended for production)
