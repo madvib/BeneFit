@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
-import { user } from '../lib/better-auth/schema';
+import { user } from '../lib/better-auth/schema.js';
 
 /**
  * Middleware that gates routes to Pro subscribers only.

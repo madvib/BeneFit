@@ -1,7 +1,10 @@
 import { BetterAuthOptions } from 'better-auth';
 import { Resend } from 'resend';
 import { strava } from './providers/strava.js';
-import { env } from 'cloudflare:workers';
+import { env as typedEnv } from 'cloudflare:workers';
+
+// Cast to access vars not in the generated Env type (set via wrangler vars / .dev.vars)
+const env = typedEnv as unknown as Record<string, string>;
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 const fromEmail = env.EMAIL_FROM || 'BeneFit <noreply@getbene.fit>';

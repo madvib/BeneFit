@@ -4,8 +4,13 @@ import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
 import { user } from '../lib/better-auth/schema.js';
 
-function getStripe(env: Record<string, string>): Stripe {
-  return new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2025-04-30.basil' });
+function getStripe(env: Env): Stripe {
+  const key = (env as unknown as Record<string, string>).STRIPE_SECRET_KEY;
+  return new Stripe(key);
+}
+
+function getEnvVar(env: Env, key: string): string {
+  return (env as unknown as Record<string, string>)[key] || '';
 }
 
 /**
@@ -21,7 +26,7 @@ export const billingRoutes = new Hono<{
    */
   .get('/status', async (c) => {
     const authUser = c.get('user');
-    const stripe = getStripe(c.env as unknown as Record<string, string>);
+    const stripe = getStripe(c.env);
     const db = drizzle(c.env.DB_USER_AUTH);
 
     const [dbUser] = await db
@@ -32,8 +37,8 @@ export const billingRoutes = new Hono<{
 
     if (!dbUser?.stripeCustomerId) {
       return c.json({
-        plan: 'free',
-        status: 'active',
+        plan: 'free' as const,
+        status: 'active' as const,
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false,
       });
@@ -49,17 +54,23 @@ export const billingRoutes = new Hono<{
     const sub = subscriptions.data[0];
     if (!sub) {
       return c.json({
-        plan: 'free',
-        status: 'active',
+        plan: 'free' as const,
+        status: 'active' as const,
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false,
       });
     }
 
+    // In Stripe Dahlia API, current_period_end is on subscription items
+    const item = sub.items.data[0];
+    const periodEnd = item?.current_period_end
+      ? new Date(item.current_period_end * 1000).toISOString()
+      : null;
+
     return c.json({
-      plan: 'pro',
+      plan: 'pro' as const,
       status: sub.status,
-      currentPeriodEnd: new Date(sub.current_period_end * 1000).toISOString(),
+      currentPeriodEnd: periodEnd,
       cancelAtPeriodEnd: sub.cancel_at_period_end,
     });
   })
@@ -70,12 +81,12 @@ export const billingRoutes = new Hono<{
    */
   .post('/checkout', async (c) => {
     const authUser = c.get('user');
-    const stripe = getStripe(c.env as unknown as Record<string, string>);
+    const stripe = getStripe(c.env);
     const db = drizzle(c.env.DB_USER_AUTH);
-    const appUrl = (c.env as unknown as Record<string, string>).APP_URL || 'http://localhost:3000';
+    const appUrl = getEnvVar(c.env, 'APP_URL') || 'http://localhost:3000';
 
     // Get or create Stripe customer
-    let [dbUser] = await db
+    const [dbUser] = await db
       .select({ stripeCustomerId: user.stripeCustomerId })
       .from(user)
       .where(eq(user.id, authUser.id))
@@ -95,15 +106,11 @@ export const billingRoutes = new Hono<{
         .where(eq(user.id, authUser.id));
     }
 
+    const priceId = getEnvVar(c.env, 'STRIPE_PRO_PRICE_ID');
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
-      line_items: [
-        {
-          price: (c.env as unknown as Record<string, string>).STRIPE_PRO_PRICE_ID,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/{user}/billing?success=true`,
       cancel_url: `${appUrl}/{user}/billing?canceled=true`,
     });
@@ -117,9 +124,9 @@ export const billingRoutes = new Hono<{
    */
   .post('/portal', async (c) => {
     const authUser = c.get('user');
-    const stripe = getStripe(c.env as unknown as Record<string, string>);
+    const stripe = getStripe(c.env);
     const db = drizzle(c.env.DB_USER_AUTH);
-    const appUrl = (c.env as unknown as Record<string, string>).APP_URL || 'http://localhost:3000';
+    const appUrl = getEnvVar(c.env, 'APP_URL') || 'http://localhost:3000';
 
     const [dbUser] = await db
       .select({ stripeCustomerId: user.stripeCustomerId })
@@ -143,7 +150,7 @@ export const billingRoutes = new Hono<{
  * Stripe webhook handler (unauthenticated, mounted under /webhooks/stripe)
  */
 export const stripeWebhookRoute = new Hono<{ Bindings: Env }>().post('/', async (c) => {
-  const stripe = getStripe(c.env as unknown as Record<string, string>);
+  const stripe = getStripe(c.env);
   const signature = c.req.header('stripe-signature');
 
   if (!signature) {
@@ -157,7 +164,7 @@ export const stripeWebhookRoute = new Hono<{ Bindings: Env }>().post('/', async 
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      (c.env as unknown as Record<string, string>).STRIPE_WEBHOOK_SECRET,
+      getEnvVar(c.env, 'STRIPE_WEBHOOK_SECRET'),
     );
   } catch (err) {
     console.error('Stripe webhook signature verification failed:', err);
@@ -175,7 +182,6 @@ export const stripeWebhookRoute = new Hono<{ Bindings: Env }>().post('/', async 
           ? subscription.customer
           : subscription.customer.id;
 
-      // Update user's subscription status
       await db
         .update(user)
         .set({
