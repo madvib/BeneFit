@@ -15,13 +15,14 @@ import {
   GetCoachHistoryResponse,
 } from '@bene/coach-domain';
 import { handleResult } from '../lib/handle-result';
+import type { GatewayEnv } from '../lib/types';
 
 // Export client schemas (userId omitted) for use in fixtures
 export const SendMessageToCoachClientSchema = SendMessageToCoachRequestSchema.omit({ userId: true });
 export const DismissCheckInClientSchema = DismissCheckInRequestSchema.omit({ userId: true });
 export const RespondToCheckInClientSchema = RespondToCheckInRequestSchema.omit({ userId: true });
 
-export const coachRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+export const coachRoutes = new Hono<GatewayEnv>()
   .post(
     '/message',
     zValidator('json', SendMessageToCoachClientSchema),

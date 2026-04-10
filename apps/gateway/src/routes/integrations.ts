@@ -11,12 +11,13 @@ import {
   SyncServiceDataResponse,
 } from '@bene/integrations-domain';
 import { handleResult } from '../lib/handle-result';
+import type { GatewayEnv } from '../lib/types';
 
 // Export client schemas (userId omitted) for use in fixtures
 export const ConnectServiceClientSchema = ConnectServiceRequestSchema.omit({ userId: true });
 export const DisconnectServiceClientSchema = DisconnectServiceRequestSchema.omit({ userId: true });
 
-export const integrationRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+export const integrationRoutes = new Hono<GatewayEnv>()
   .post(
     '/connect',
     zValidator('json', ConnectServiceClientSchema),

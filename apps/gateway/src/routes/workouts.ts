@@ -18,6 +18,7 @@ import {
   GetTodaysWorkoutResponse,
 } from '@bene/training-application';
 import { handleResult } from '../lib/handle-result';
+import type { GatewayEnv } from '../lib/types';
 
 // Export client schemas (userId/userName omitted) for use in fixtures
 export const GetUpcomingWorkoutsClientSchema = GetUpcomingWorkoutsRequestSchema.omit({ userId: true });
@@ -28,10 +29,7 @@ export const CompleteWorkoutClientSchema = CompleteWorkoutRequestSchema.omit({ u
 export const JoinMultiplayerWorkoutClientSchema = JoinMultiplayerWorkoutRequestSchema.omit({ userId: true, userName: true });
 export const AddWorkoutReactionClientSchema = AddWorkoutReactionRequestSchema.omit({ userId: true, userName: true });
 
-export const workoutRoutes = new Hono<{
-  Bindings: Env;
-  Variables: { user: any };
-}>()
+export const workoutRoutes = new Hono<GatewayEnv>()
   .get('/today', async (c) => {
     const user = c.get('user');
 

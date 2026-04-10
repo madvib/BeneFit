@@ -1,133 +1,98 @@
-# Agent Instructions for the 'bene' Monorepo
-
-This document provides instructions for AI agents and automated tools to interact with, build, and test the `bene` monorepo.
+# Agent Instructions for the BeneFit Monorepo
 
 ## Overview
 
-This is a monorepo managed with pnpm and Turborepo. It contains the following:
+AI-native fitness app. TypeScript monorepo managed with **pnpm** + **Nx**. Cloudflare Workers as deployment target.
 
-- `apps/`: Houses individual applications.
-  - `bene-web`: A Next.js web application.
-- `packages/`: Intended for shared libraries, UI components, and configurations (e.g., TypeScript, ESLint).
+### Architecture
+
+```
+apps/
+  gateway/              Hono API gateway (Cloudflare Worker)
+  web/                  TanStack Start + React frontend (Cloudflare Pages via Vite)
+  actors/
+    user-hub/           Durable Object — per-user state (SQLite), facade pattern
+    workout-session/    Durable Object — live workout tracking
+  services/
+    ai/                 AI service (Cloudflare Workers AI, Anthropic, OpenAI)
+    event-bus/          Queue-based event bus (stub)
+    integrations/       Strava OAuth + sync
+    discovery-index/    Content discovery (stub)
+
+packages/
+  domain/
+    training/core/      Training entities, value objects, factories
+    training/application/ Use cases (plan generation, workouts, profile)
+    coach/              Coach conversation aggregate, check-ins, AI coaching
+    integrations/       Connected services, sync
+  shared/               Result pattern, base classes, domain types
+  react-api-client/     Typed React hooks (Hono RPC client), MSW handlers
+  persistence/          D1 migrations, drizzle helpers
+```
+
+### Key Patterns
+
+- **DDD**: Entities, VOs, aggregates with Zod schemas + `.brand<'DOMAIN'>()`
+- **Result pattern**: All use cases return `Result<T>`, no thrown exceptions in domain
+- **Hono RPC contract**: Gateway exports `AppType`, frontend uses `hc<AppType>` for typed client
+- **Type boundary**: Frontend imports from `@bene/react-api-client` only (never domain packages directly). Hooks use `InferResponseType`/`InferRequestType` from `hono/client`
+- **Auth**: better-auth with D1, Google OAuth, Strava OAuth
+- **Billing**: Stripe checkout + customer portal, Resend for email
 
 ## Tech Stack
 
-- **Package Manager**: pnpm
-- **Build System**: NX
-- **Framework (bene-web)**: Next.js
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Linting**: ESLint
+- **Package Manager**: pnpm 10.x
+- **Build System**: Nx 22.x
+- **Runtime**: Cloudflare Workers + Durable Objects
+- **Web Framework**: TanStack Start (React 19, Vite 7)
+- **API Framework**: Hono
+- **Database**: D1 (auth), DO SQLite (per-user data)
+- **ORM**: Drizzle
+- **Validation**: Zod 4.x
+- **Testing**: Vitest (unit/integration), Playwright (e2e)
+- **Styling**: Tailwind CSS 4.x
 
-## Getting Started
+## Commands
 
-To install all dependencies for the entire monorepo, run the following command from the root directory:
-
-```bash
-pnpm install
-```
-
-## Core Commands
-
-All commands should be run from the root of the monorepo.
-
-### Run Development Server
-
-To start the development server for the `bene-web` application:
+Run from repo root:
 
 ```bash
-pnpm --filter web dev
-```
-
-### Build for Production
-
-To build the `bene-web` application for production:
-
-```bash
-pnpm --filter web build
-```
-
-### Lint the Code
-
-To run the linter on the `bene-web` application:
-
-```bash
-pnpm --filter web lint
+pnpm install                          # Install deps
+pnpm dev                              # Start all dev servers
+pnpm -w run test:domain               # Run domain unit tests (618 tests)
+pnpm nx run @bene/gateway:test        # Run gateway API tests (29 tests)
+pnpm e2e                              # Run Playwright e2e tests (17 tests)
+pnpm build                            # Build all
+pnpm lint                             # Lint all
+pnpm typecheck                        # Typecheck all
+pnpm nx affected -t test              # Test only what changed
 ```
 
 ## Testing
 
-There are currently no test scripts configured for the applications.
+- **Domain tests**: 83 test files, 618 tests (packages/domain/*)
+- **Gateway API tests**: 6 test files, 29 tests using Hono `app.request()` with mocked DOs
+- **Actor tests**: 15 test files using `@cloudflare/vitest-pool-workers` + Miniflare
+- **React hook tests**: 5 test files with MSW handlers
+- **E2E tests**: 3 Playwright spec files, 17 tests (auth, dashboard, coach flows)
 
-## Contribution Guidelines
+## Guidelines
 
-- Ensure all code passes the linter before committing.
-- Update relevant documentation if you introduce new features or changes.
-- If adding new dependencies, use `pnpm add -w <package>` for root dependencies or `pnpm add --filter <workspace> <package>` for specific apps/packages.
-
-## Snippets [WIP]
-
--eslint-disable is NEVER an acceptable solution, either address the issue or log that you cannot with reasoning.
+1. **Do only what is asked.** No unsolicited refactoring or "improvements."
+2. **Respect the type boundary.** Frontend → `@bene/react-api-client` → Hono RPC types. Never import domain packages in web app code.
+3. **Run tests before committing.** `pnpm -w run test:domain` must pass.
+4. **Small, targeted changes.** Avoid 400+ file commits.
+5. **No eslint-disable.** Fix the issue or document why you can't.
+6. **Use Nx for tasks.** `nx run`, `nx run-many`, `nx affected` — not raw tool commands.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
 # General Guidelines for working with Nx
 
-- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
-- You have access to the Nx MCP server and its tools, use them to help the user
-- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
-- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
-- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
-- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+- When running tasks, always prefer running through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`)
+- Use the `nx_workspace` tool to understand workspace architecture
+- Use `nx_project_details` to analyze specific project structure and dependencies
+- Use `nx_docs` for configuration questions instead of assuming
 
 <!-- nx configuration end-->
-
-# AI Assistant Guidelines for Refactoring Work
-
-## Critical Rules to Follow:
-
-1. **Do Only What Is Asked**: When asked to update imports or make specific changes, ONLY make those specific changes. Do not modify implementation logic, add DTO interfaces, or make architectural changes unless explicitly requested.
-
-2. **Respect Original Structure**: Do not move files, change directory structures, or alter file locations unless specifically instructed. The existing code structure is intentional.
-
-3. **No Unwanted Complexity**: Do not add extra layers, conversion logic, or "helpful" abstractions that weren't requested. This creates more work, not less.
-
-4. **Verify Before Changing**: If uncertain about any change that might affect functionality, ask for clarification rather than assuming.
-
-5. **Small Changes Only**: Make targeted, minimal changes. Avoid sweeping refactorings that break working code.
-
-6. **Don't Touch Working Code**: If something is working, leave it alone unless explicitly asked to modify it.
-
-7. **Suggest missing features/functionality**: If you think a controller, utility function, or use-case is missing from the application, raise the issue and proceed with input. Do not try to fix issues or add functionality without guidance or approval.
-
-## Working with Monorepo Architecture:
-
-- Check package.json exports to determine correct import paths
-- Use the established export patterns: @bene/core/{feature}, @bene/application/
-  shared, etc.
-- Do not create new interfaces or types unless specifically requested
-
-## Git Impact Awareness:
-
-- Large changes (400+ files) break workflows and require rework
-- Focus on small, targeted commits that don't disrupt the codebase
-- Avoid creating merge conflicts or breaking existing functionality
-
-## Presentation State Management
-
-Keep in Component:
-
-Visual state (modals, tooltips, accordions)
-Navigation state (tabs, steps)
-Form input values (if controlled)
-Selection state (checkboxes, rows)
-Temporary UI state (hover, focus)
-
-Extract to Controller:
-
-API loading/error states
-Business validation
-Data fetching/mutations
-Authentication state
-Complex business logic

@@ -16,10 +16,9 @@ function getEnvVar(env: Env, key: string): string {
 /**
  * Billing routes (authenticated, mounted under /api/billing)
  */
-export const billingRoutes = new Hono<{
-  Bindings: Env;
-  Variables: { user: any };
-}>()
+import type { GatewayEnv } from '../lib/types.js';
+
+export const billingRoutes = new Hono<GatewayEnv>()
   /**
    * GET /api/billing/status
    * Returns the user's current subscription status

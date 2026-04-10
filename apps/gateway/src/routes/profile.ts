@@ -15,6 +15,7 @@ import {
   UpdateTrainingConstraintsRequestSchema,
 } from '@bene/training-application';
 import { handleResult } from '../lib/handle-result';
+import type { GatewayEnv } from '../lib/types';
 
 // Export client schemas (userId omitted) for use in fixtures
 export const CreateUserProfileClientSchema = CreateUserProfileRequestSchema.omit({ userId: true });
@@ -22,7 +23,7 @@ export const UpdateFitnessGoalsClientSchema = UpdateFitnessGoalsRequestSchema.om
 export const UpdatePreferencesClientSchema = UpdatePreferencesRequestSchema.omit({ userId: true });
 export const UpdateTrainingConstraintsClientSchema = UpdateTrainingConstraintsRequestSchema.omit({ userId: true });
 
-export const profileRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+export const profileRoutes = new Hono<GatewayEnv>()
   .get('/', async (c) => {
     const user = c.get('user');
 

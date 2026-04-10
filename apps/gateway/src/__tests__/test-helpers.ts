@@ -11,11 +11,16 @@ import {
   stripeWebhookRoute,
 } from '../routes/index.js';
 import { webhookRoutes } from '../routes/webhooks.js';
+import type { GatewayEnv } from '../lib/types.js';
+import type { AuthUser } from '../lib/types.js';
 
-export const TEST_USER = {
+export const TEST_USER: AuthUser = {
   id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   email: 'test@example.com',
   name: 'Test User',
+  emailVerified: true,
+  createdAt: new Date('2025-01-01'),
+  updatedAt: new Date('2025-01-01'),
 };
 
 /**
@@ -52,7 +57,7 @@ export function createMockEnv(overrides: Record<string, any> = {}): Env {
 export function createTestApp(envOverrides: Record<string, any> = {}) {
   const mockEnv = createMockEnv(envOverrides);
 
-  const app = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+  const app = new Hono<GatewayEnv>()
     .onError(errorHandler)
     // Inject env for all routes
     .use('*', async (c, next) => {

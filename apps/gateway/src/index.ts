@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { secureHeaders } from 'hono/secure-headers';
 import { authMiddleware } from './middleware/auth';
 import { errorHandler } from './middleware/on-error';
 import {
@@ -13,12 +14,11 @@ import {
   stripeWebhookRoute,
 } from './routes';
 import { createAuth } from './lib/better-auth/auth';
+import type { GatewayEnv } from './lib/types';
 
-const app = new Hono<{
-  Bindings: Env;
-  Variables: { user: any };
-}>()
+const app = new Hono<GatewayEnv>()
   .onError(errorHandler)
+  .use('*', secureHeaders())
   .use(
     '/api/*',
     cors({
