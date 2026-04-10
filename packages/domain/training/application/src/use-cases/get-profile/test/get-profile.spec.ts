@@ -59,12 +59,36 @@ describe('GetProfileUseCase', () => {
     }
   });
 
-  it('should fail if profile is not found', async () => {
+  it('should create default profile if not found', async () => {
     // Arrange
     const userId = crypto.randomUUID();
 
     vi.mocked(mockProfileRepository.findById).mockResolvedValue(
       Result.fail(new Error('Profile not found')),
+    );
+    vi.mocked(mockProfileRepository.save).mockResolvedValue(Result.ok(undefined as any));
+
+    // Act
+    const result = await useCase.execute({ userId });
+
+    // Assert — use case auto-creates a default profile
+    expect(result.isSuccess).toBe(true);
+    if (result.isSuccess) {
+      expect(result.value.userId).toBe(userId);
+      expect(result.value.displayName).toBe('New User');
+    }
+    expect(mockProfileRepository.save).toHaveBeenCalled();
+  });
+
+  it('should fail if profile not found and save fails', async () => {
+    // Arrange
+    const userId = crypto.randomUUID();
+
+    vi.mocked(mockProfileRepository.findById).mockResolvedValue(
+      Result.fail(new Error('Profile not found')),
+    );
+    vi.mocked(mockProfileRepository.save).mockResolvedValue(
+      Result.fail(new Error('Database write failed')),
     );
 
     // Act
@@ -74,7 +98,7 @@ describe('GetProfileUseCase', () => {
     expect(result.isFailure).toBe(true);
     if (result.isFailure) {
       expect(result.error).toBeInstanceOf(Error);
-      expect((result.error as Error).message).toBe('Profile not found');
+      expect((result.error as Error).message).toBe('Database write failed');
     }
   });
 });

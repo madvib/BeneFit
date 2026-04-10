@@ -62,7 +62,7 @@ describe('Domain Entity Pattern - Requirements', () => {
       }).transform((data) => ({
         ...data,
         id: data.id || crypto.randomUUID(),
-      })) satisfies z.ZodType<z.infer<typeof BaseSchema>>;
+      }));
 
       const result = CreateSchema.parse({ name: 'test' });
 
@@ -148,9 +148,9 @@ describe('Domain Entity Pattern - Requirements', () => {
           id: z.uuid().optional(),
         }).transform((data) => ({
           ...data,
-          id: data.id || randomUUID(),
+          id: data.id || crypto.randomUUID(),
           role,
-        })) satisfies z.ZodType<Message>;
+        }));
       }
 
       const CreateUserSchema = createMessageSchema('user', ['content']);
@@ -176,7 +176,7 @@ describe('Domain Entity Pattern - Requirements', () => {
         timestamp: z.date().optional(),
       }).transform((data) => ({
         ...data,
-        id: data.id || randomUUID(),
+        id: data.id || crypto.randomUUID(),
         timestamp: data.timestamp || new Date(),
       }));
 
