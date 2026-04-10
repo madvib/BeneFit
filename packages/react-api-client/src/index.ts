@@ -15,6 +15,7 @@ export * from './schemas/training/index.js';
 export * from './schemas/coach/index.js';
 
 // Export all hooks
+export * from './hooks/use-billing';
 export * from './hooks/use-coach';
 export * from './hooks/use-profile';
 export * from './hooks/use-fitness-plan';

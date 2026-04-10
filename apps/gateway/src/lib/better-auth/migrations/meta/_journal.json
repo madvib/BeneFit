@@ -15,6 +15,13 @@
       "when": 1767733018754,
       "tag": "0001_lying_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1744300800000,
+      "tag": "0002_add_billing_fields",
+      "breakpoints": true
     }
   ]
 }

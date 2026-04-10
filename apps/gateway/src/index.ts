@@ -9,6 +9,8 @@ import {
   profileRoutes,
   workoutRoutes,
   webhookRoutes,
+  billingRoutes,
+  stripeWebhookRoute,
 } from './routes';
 import { createAuth } from './lib/better-auth/auth';
 
@@ -38,7 +40,9 @@ const app = new Hono<{
   .route('/api/integrations', integrationRoutes)
   .route('/api/profile', profileRoutes)
   .route('/api/workouts', workoutRoutes)
+  .route('/api/billing', billingRoutes)
   .route('/webhooks', webhookRoutes)
+  .route('/webhooks/stripe', stripeWebhookRoute)
   .get('/api/ws', authMiddleware, async (c) => {
     const user = c.get('user');
     const id = c.env.USER_HUB.idFromName(user.id);
