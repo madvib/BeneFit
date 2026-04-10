@@ -20,9 +20,12 @@ const app = new Hono<{
   .use(
     '/api/*',
     cors({
-      origin: 'http://localhost:3000',
+      origin: (origin, c) => {
+        const allowed = c.env.CORS_ORIGIN || 'http://localhost:3000';
+        return allowed.split(',').includes(origin) ? origin : null;
+      },
       allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['POST', 'GET', 'OPTIONS'],
+      allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     }),
   )
@@ -36,7 +39,7 @@ const app = new Hono<{
   .route('/api/profile', profileRoutes)
   .route('/api/workouts', workoutRoutes)
   .route('/webhooks', webhookRoutes)
-  .get('/ws', async (c) => {
+  .get('/api/ws', authMiddleware, async (c) => {
     const user = c.get('user');
     const id = c.env.USER_HUB.idFromName(user.id);
     const stub = c.env.USER_HUB.get(id);

@@ -50,7 +50,7 @@ export default class AIService extends WorkerEntrypoint<Env> {
         'anthropic',
         new AnthropicProvider({
           apiKey: this.env.ANTHROPIC_API_KEY,
-          defaultModel: 'claude-3-5-sonnet-20241022',
+          defaultModel: 'claude-sonnet-4-5-20250514',
           defaultMaxTokens: 4096,
           defaultTemperature: 0.7,
         }),

@@ -1,0 +1,20 @@
+# Gateway Worker - Development Variables
+# Copy to .dev.vars and fill in values
+
+# Auth
+BETTER_AUTH_SECRET=your-secret-here
+BETTER_AUTH_URL=http://localhost:8787
+
+# CORS / Trusted Origins (comma-separated for multiple)
+CORS_ORIGIN=http://localhost:3000
+TRUSTED_ORIGINS=http://localhost:3000
+
+# Google OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Strava OAuth
+STRAVA_CLIENT_ID=
+STRAVA_CLIENT_SECRET=
+STRAVA_VERIFY_TOKEN=STRAVA
+STRAVA_SUBSCRIPTION_ID=

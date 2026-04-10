@@ -27,10 +27,15 @@
       "database_id": "6d3c7ec8-9f81-49ad-a83d-bc1061afb47e",
       "migrations_dir": "src/lib/better-auth/migrations/"
     }
-  ]
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
+  ],
+  "vars": {
+    "CORS_ORIGIN": "http://localhost:3000",
+    "TRUSTED_ORIGINS": "http://localhost:3000"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",

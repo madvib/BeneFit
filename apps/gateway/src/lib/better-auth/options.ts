@@ -8,7 +8,7 @@ import { env } from 'cloudflare:workers';
  * Docs: https://www.better-auth.com/docs/reference/options
  */
 export const betterAuthOptions: BetterAuthOptions = {
-  trustedOrigins: ['http://localhost:3000', 'https://getbene.fit'],
+  trustedOrigins: (env.TRUSTED_ORIGINS || 'http://localhost:3000').split(','),
   appName: 'BeneFit',
   baseURL: env.BETTER_AUTH_URL || 'http://localhost:8787',
   secret: env.BETTER_AUTH_SECRET || '',
