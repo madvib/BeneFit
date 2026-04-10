@@ -25,6 +25,8 @@
     "test:domain": "nx run-many -t test --projects=tag:type:domain",
     "lint:domain": "nx run-many -t lint --projects=tag:type:domain",
     "nx:affected": "nx affected -t lint test build",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
     "inspect-eslint": "eslint --inspect-config"
   },
   "devDependencies": {
@@ -47,6 +49,7 @@
     "@nx/vite": "22.3.3",
     "@nx/vitest": "22.3.3",
     "@nx/web": "22.3.3",
+    "@playwright/test": "^1.59.1",
     "@storybook/addon-themes": "^10.1.11",
     "@storybook/react": "10.1.11",
     "@storybook/react-vite": "10.1.11",
