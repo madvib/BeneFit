@@ -1,0 +1,9 @@
+# AI Service Worker - Development Variables
+# Copy to .dev.vars and fill in values
+
+# At least one provider key is required
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+
+# Provider config (defaults to 'cloudflare' if no API keys set)
+DEFAULT_PROVIDER=cloudflare

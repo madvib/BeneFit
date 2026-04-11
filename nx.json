@@ -58,6 +58,9 @@
     }
   ],
   "targetDefaults": {
+    "dev": {
+      "dependsOn": ["build-deps"]
+    },
     "test": {
       "dependsOn": ["^build"],
       "cache": true

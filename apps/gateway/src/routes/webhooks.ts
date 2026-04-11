@@ -31,7 +31,7 @@ export const webhookRoutes = new Hono<{ Bindings: Env }>()
     console.log('Strava webhook validation request:', { mode, verifyToken });
 
     // Verify the token matches our expected value
-    const expectedToken = (c.env as any).STRAVA_VERIFY_TOKEN || 'STRAVA';
+    const expectedToken = (c.env as unknown as Record<string, string>).STRAVA_VERIFY_TOKEN || 'STRAVA';
     if (verifyToken !== expectedToken) {
       console.error('Invalid verify token');
       return c.json({ error: 'Invalid verify token' }, 403);
@@ -63,6 +63,13 @@ export const webhookRoutes = new Hono<{ Bindings: Env }>()
     try {
       const event: StravaWebhookEvent = await c.req.json();
       console.log('Received Strava webhook event:', event);
+
+      // Verify subscription_id matches our known subscription
+      const expectedSubId = (c.env as unknown as Record<string, string>).STRAVA_SUBSCRIPTION_ID;
+      if (expectedSubId && String(event.subscription_id) !== expectedSubId) {
+        console.error('Invalid subscription_id:', event.subscription_id);
+        return c.json({ status: 'rejected' }, 200);
+      }
 
       // Only process activity events for now
       if (event.object_type !== 'activity') {

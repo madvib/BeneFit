@@ -113,29 +113,14 @@ function CoachPageContent({
   const [recommendations, setRecommendations] = useState<Recommendation[]>(
     getInitialRecommendations,
   );
-  //TODO remove hardcoded data
-  const [savedChats] = useState<{ id: string; title: string; excerpt?: string }[]>([
-    {
-      id: 'c-1',
-      title: 'Marathon Training Plan',
-      excerpt: 'Week 4 focusing on increasing mileage and tempo runs.',
-    },
-    {
-      id: 'c-2',
-      title: 'Nutrition Advice',
-      excerpt: 'Macro breakdown for high-carb days before long runs.',
-    },
-    {
-      id: 'c-3',
-      title: 'Recovery from Injury',
-      excerpt: 'Low impact cross-training options for knee pain.',
-    },
-    {
-      id: 'c-4',
-      title: 'Strength Routine',
-      excerpt: 'Upper body power focus with compound movements.',
-    },
-  ]);
+  // Pending check-ins as sidebar items (real data, not hardcoded)
+  const savedChats = (pendingCheckIns || []).map((ci) => ({
+    id: ci.id,
+    title: ci.triggeredBy
+      ? ci.triggeredBy.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      : 'Check-in',
+    excerpt: ci.question || 'Pending check-in',
+  }));
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -202,6 +187,21 @@ function CoachPageContent({
 
   return (
     <div className="chat-container relative flex h-full flex-1 overflow-hidden">
+      {/* Coach Stats Bar */}
+      {stats && (stats.totalMessages > 0 || stats.totalCheckIns > 0) && (
+        <div className="bg-muted/50 border-border absolute top-0 right-0 left-0 z-20 flex items-center justify-center gap-6 border-b px-4 py-2 text-xs">
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">{stats.totalMessages}</strong> messages
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">{stats.totalCheckIns}</strong> check-ins
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">{stats.actionsApplied}</strong> actions applied
+          </span>
+        </div>
+      )}
+
       {/* Mobile Combined Sidebar */}
       <MobileChatSidebar
         isOpen={mobileSidebarOpen}

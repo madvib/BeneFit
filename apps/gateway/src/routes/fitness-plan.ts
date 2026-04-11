@@ -13,6 +13,7 @@ import {
   GetCurrentPlanResponse,
 } from '@bene/training-application';
 import { handleResult } from '../lib/handle-result';
+import type { GatewayEnv } from '../lib/types';
 
 // Export client schemas (userId omitted) for use in fixtures
 export const GeneratePlanFromGoalsClientSchema = GeneratePlanFromGoalsRequestSchema.omit({ userId: true });
@@ -20,7 +21,7 @@ export const ActivatePlanClientSchema = ActivatePlanRequestSchema.omit({ userId:
 export const AdjustPlanClientSchema = AdjustPlanBasedOnFeedbackRequestSchema.omit({ userId: true });
 export const PausePlanClientSchema = PausePlanRequestSchema.omit({ userId: true });
 
-export const fitnessPlanRoutes = new Hono<{ Bindings: Env; Variables: { user: any } }>()
+export const fitnessPlanRoutes = new Hono<GatewayEnv>()
   .get('/active', async (c) => {
     const user = c.get('user');
 

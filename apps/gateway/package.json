@@ -26,6 +26,8 @@
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:",
     "hono": "^4.10.8",
+    "resend": "^6.10.0",
+    "stripe": "^22.0.1",
     "zod": "catalog:"
   },
   "nx": {
@@ -44,7 +46,7 @@
         ],
         "cache": {
           "enabled": true
-        } 
+        }
       },
       "test": {
         "executor": "@nx/vite:test",
@@ -61,5 +63,4 @@
       "runtime:worker"
     ]
   }
-
 }

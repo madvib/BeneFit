@@ -1,6 +1,21 @@
 import { BetterAuthOptions } from 'better-auth';
+import { Resend } from 'resend';
 import { strava } from './providers/strava.js';
-import { env } from 'cloudflare:workers';
+import { env as typedEnv } from 'cloudflare:workers';
+
+// Cast to access vars not in the generated Env type (set via wrangler vars / .dev.vars)
+const env = typedEnv as unknown as Record<string, string>;
+
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
+const fromEmail = env.EMAIL_FROM || 'BeneFit <noreply@getbene.fit>';
+
+async function sendEmail(to: string, subject: string, html: string) {
+  if (!resend) {
+    console.log(`[email stub] To: ${to}, Subject: ${subject}`);
+    return;
+  }
+  await resend.emails.send({ from: fromEmail, to, subject, html });
+}
 
 /**
  * Custom options for Better Auth
@@ -8,7 +23,7 @@ import { env } from 'cloudflare:workers';
  * Docs: https://www.better-auth.com/docs/reference/options
  */
 export const betterAuthOptions: BetterAuthOptions = {
-  trustedOrigins: ['http://localhost:3000', 'https://getbene.fit'],
+  trustedOrigins: (env.TRUSTED_ORIGINS || 'http://localhost:3000').split(','),
   appName: 'BeneFit',
   baseURL: env.BETTER_AUTH_URL || 'http://localhost:8787',
   secret: env.BETTER_AUTH_SECRET || '',
@@ -16,11 +31,25 @@ export const betterAuthOptions: BetterAuthOptions = {
   // Email & Password Authentication
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // TODO: Enable after setting up email provider
+    requireEmailVerification: !!env.RESEND_API_KEY,
     sendResetPassword: async ({ user, url }) => {
-      // TODO: Implement email sending via Resend
-      console.log(`Password reset for ${ user.email }: ${ url }`);
+      await sendEmail(
+        user.email,
+        'Reset your BeneFit password',
+        `<p>Click <a href="${url}">here</a> to reset your password.</p><p>If you didn't request this, ignore this email.</p>`,
+      );
     },
+  },
+
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail(
+        user.email,
+        'Verify your BeneFit email',
+        `<p>Welcome to BeneFit! Click <a href="${url}">here</a> to verify your email address.</p>`,
+      );
+    },
+    sendOnSignUp: !!env.RESEND_API_KEY,
   },
 
   // Session Configuration
@@ -68,11 +97,5 @@ export const betterAuthOptions: BetterAuthOptions = {
       clientId: env.STRAVA_CLIENT_ID || '',
       clientSecret: env.STRAVA_CLIENT_SECRET || '',
     }),
-    // TODO: Add email provider plugin when ready
-    // Example with Resend:
-    // resend({
-    //   apiKey: env.RESEND_API_KEY,
-    //   from: 'noreply@getbene.fit',
-    // }),
   ],
 };

@@ -77,7 +77,18 @@ export class UserHub extends Agent<Env, UserHubState> {
   // ===== WEBSOCKET HANDLING =====
 
   async onWebSocketMessage(ws: WebSocket, message: string) {
-    const data = JSON.parse(message);
+    let data: { type: string; [key: string]: unknown };
+    try {
+      data = JSON.parse(message);
+    } catch {
+      ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON' }));
+      return;
+    }
+
+    if (!data?.type || typeof data.type !== 'string') {
+      ws.send(JSON.stringify({ type: 'error', message: 'Missing message type' }));
+      return;
+    }
 
     switch (data.type) {
       // case 'chat':
@@ -85,8 +96,6 @@ export class UserHub extends Agent<Env, UserHubState> {
       //   break;
 
       case 'subscribe':
-        // Subscription logic usually requires access to local state,
-        // so it might reside here or in a specialized "ConnectionManager"
         ws.send(JSON.stringify({ type: 'connected', userId: data.userId }));
         break;
 

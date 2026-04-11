@@ -1,24 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { NotificationPreferences, PageHeader } from '@/lib/components';
-import { useState } from 'react';
+import { Bell } from 'lucide-react';
+import { EmptyState, PageHeader } from '@/lib/components';
 
 export const Route = createFileRoute('/$user/_account/notifications')({
   component: NotificationsPage,
 });
 
 function NotificationsPage() {
-  const [preferences, setPreferences] = useState({
-    email: true,
-    push: true,
-    marketing: false,
-    community: true,
-    workoutReminders: true,
-  });
-
-  const handleToggle = (key: keyof typeof preferences) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -27,13 +15,11 @@ function NotificationsPage() {
         align="left"
       />
 
-      <NotificationPreferences
-        emailNotifications={preferences.email}
-        pushNotifications={preferences.push}
-        workoutReminders={preferences.workoutReminders}
-        onEmailNotificationsChange={() => handleToggle('email')}
-        onPushNotificationsChange={() => handleToggle('push')}
-        onWorkoutRemindersChange={() => handleToggle('workoutReminders')}
+      <EmptyState
+        icon={Bell}
+        title="Coming soon"
+        description="Notification preferences will be available once email delivery is configured."
+        className="py-16"
       />
     </div>
   );

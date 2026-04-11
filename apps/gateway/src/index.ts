@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { secureHeaders } from 'hono/secure-headers';
 import { authMiddleware } from './middleware/auth';
 import { errorHandler } from './middleware/on-error';
 import {
@@ -9,20 +10,24 @@ import {
   profileRoutes,
   workoutRoutes,
   webhookRoutes,
+  billingRoutes,
+  stripeWebhookRoute,
 } from './routes';
 import { createAuth } from './lib/better-auth/auth';
+import type { GatewayEnv } from './lib/types';
 
-const app = new Hono<{
-  Bindings: Env;
-  Variables: { user: any };
-}>()
+const app = new Hono<GatewayEnv>()
   .onError(errorHandler)
+  .use('*', secureHeaders())
   .use(
     '/api/*',
     cors({
-      origin: 'http://localhost:3000',
+      origin: (origin, c) => {
+        const allowed = c.env.CORS_ORIGIN || 'http://localhost:3000';
+        return allowed.split(',').includes(origin) ? origin : null;
+      },
       allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['POST', 'GET', 'OPTIONS'],
+      allowMethods: ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     }),
   )
@@ -35,8 +40,10 @@ const app = new Hono<{
   .route('/api/integrations', integrationRoutes)
   .route('/api/profile', profileRoutes)
   .route('/api/workouts', workoutRoutes)
+  .route('/api/billing', billingRoutes)
   .route('/webhooks', webhookRoutes)
-  .get('/ws', async (c) => {
+  .route('/webhooks/stripe', stripeWebhookRoute)
+  .get('/api/ws', authMiddleware, async (c) => {
     const user = c.get('user');
     const id = c.env.USER_HUB.idFromName(user.id);
     const stub = c.env.USER_HUB.get(id);
