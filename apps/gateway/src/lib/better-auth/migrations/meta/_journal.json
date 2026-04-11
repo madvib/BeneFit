@@ -19,8 +19,8 @@
     {
       "idx": 2,
       "version": "6",
-      "when": 1744300800000,
-      "tag": "0002_add_billing_fields",
+      "when": 1775884471188,
+      "tag": "0002_next_komodo",
       "breakpoints": true
     }
   ]
